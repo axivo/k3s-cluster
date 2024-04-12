@@ -1,5 +1,32 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "argoproj/argo-cd",
+      "fileMatch": [
+        "roles/argocd/defaults/main.yaml$"
+      ],
+      "matchStrings": [
+        "argocd:\\s+name:.*\\s+version:\\s+(?<currentValue>.*)$"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "argoproj/argo-helm",
+      "extractVersionTemplate": "^argo-cd-(?<version>.*)$",
+      "fileMatch": [
+        "roles/argocd/defaults/main.yaml$"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:\\s+name:.*\\s+version:\\s+(?<currentValue>.*)$"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ],
   "extends": [
     "config:recommended"
   ]
