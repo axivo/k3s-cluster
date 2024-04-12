@@ -1,0 +1,19 @@
+---
+longhorn_vars:
+  kubernetes:
+    frontend:
+      loadbalancer:
+        ip: 192.168.4.20
+    helm:
+      chart:
+        name: longhorn
+        version: v1.6.1
+      repository:
+        name: longhorn
+        url: https://charts.longhorn.io
+    gateway:
+      service: longhorn-frontend
+      subdomain: longhorn
+    namespace: kube-system
+    pod:
+      deletion_policy: delete-both-statefulset-and-deployment-pod

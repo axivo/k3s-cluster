@@ -1,0 +1,15 @@
+[server]
+apollo
+boreas
+cerus
+
+[agent]
+chaos
+crios
+helios
+hermes
+hypnos
+
+[cluster:children]
+server
+agent

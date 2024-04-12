@@ -1,0 +1,32 @@
+---
+- name: Reboot
+  ansible.builtin.reboot:
+
+- name: Restart loadbalancer services
+  ansible.builtin.systemd_service:
+    name: '{{ services_item }}.service'
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  loop:
+    - haproxy
+    - keepalived
+  loop_control:
+    loop_var: services_item
+
+- name: Start service
+  ansible.builtin.systemd_service:
+    name: '{{ k3s_service_name }}.service'
+    state: started
+    daemon_reload: true
+    enabled: true
+
+- name: Stop service
+  ansible.builtin.systemd_service:
+    name: '{{ k3s_service_name }}.service'
+    state: stopped
+    enabled: false
+  failed_when:
+    - service.failed == true
+    - service.msg.find('Could not find the requested service') == -1
+  register: service

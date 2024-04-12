@@ -1,0 +1,22 @@
+---
+- name: Import facts
+  ansible.builtin.import_role:
+    name: k3s
+    tasks_from: facts
+
+- name: Remove Dependencies
+  when: ansible_host in k3s_server_hosts
+  block:
+    - name: Remove repository
+      kubernetes.core.helm_repository:
+        name: '{{ cilium_vars.kubernetes.helm.repository.name }}'
+        repo_state: absent
+      when: "'helm' in ansible_facts.packages"
+
+    - name: Remove files
+      ansible.builtin.file:
+        name: '{{ item }}'
+        state: absent
+      loop:
+        - /usr/local/bin/cilium
+        - /usr/local/bin/hubble

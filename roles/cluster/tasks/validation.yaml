@@ -1,0 +1,30 @@
+---
+- name: Validate trim disks prompt
+  ansible.builtin.assert:
+    that: prompt_trim_device in ['n', 'N', 'y', 'Y']
+    fail_msg: 'Valid entries: n, N, y, Y'
+    quiet: true
+
+- name: Get hardware product
+  ansible.builtin.shell: |
+    set -eo pipefail
+    lshw -class system -quiet | grep {{ cluster_vars.hardware.product | quote }}
+  args:
+    executable: /bin/bash
+  changed_when: hardware_product.rc == 0
+  register: hardware_product
+
+- name: Set valid hardware product fact
+  ansible.builtin.set_fact:
+    valid_hardware_product: true
+  when:
+    - ansible_facts.lsb.id == 'Ubuntu'
+    - ansible_facts.lsb.release is version('22.04', '>=')
+    - ansible_facts.machine == 'aarch64'
+    - hardware_product.rc == 0
+
+- name: Check internet connectivity
+  ansible.builtin.wait_for:
+    host: github.com
+    port: 443
+    timeout: 30

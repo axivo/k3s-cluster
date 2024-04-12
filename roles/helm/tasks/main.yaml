@@ -1,0 +1,84 @@
+---
+- name: Import facts
+  ansible.builtin.import_role:
+    name: k3s
+    tasks_from: facts
+
+- name: Install Dependencies
+  when: ansible_host in k3s_server_hosts
+  block:
+    - name: Install packages
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        autoremove: true
+        update_cache: true
+      loop:
+        - apt-transport-https
+        - python3-kubernetes
+
+    - name: Get file status
+      ansible.builtin.stat:
+        path: /usr/share/keyrings/helm-archive-keyring.gpg
+      changed_when: not gpg_key.stat.exists
+      register: gpg_key
+
+    - name: Helm Package
+      when: not gpg_key.stat.exists
+      block:
+        - name: Download key
+          ansible.builtin.get_url:
+            url: https://baltocdn.com/helm/signing.asc
+            dest: /tmp/signing.asc
+            owner: root
+            group: root
+            mode: '0644'
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+
+        - name: Dearmor key
+          ansible.builtin.command:
+            cmd: gpg --dearmor -o /usr/share/keyrings/helm-archive-keyring.gpg /tmp/signing.asc
+          changed_when: true
+
+        - name: Delete key
+          ansible.builtin.file:
+            path: /tmp/signing.asc
+            state: absent
+
+        - name: Get architecture
+          ansible.builtin.command:
+            cmd: dpkg --print-architecture
+          changed_when: false
+          register: architecture
+
+        - name: Install repository
+          ansible.builtin.deb822_repository:
+            architectures: '{{ architecture.stdout }}'
+            components: main
+            name: helm-stable
+            signed_by: /usr/share/keyrings/helm-archive-keyring.gpg
+            suites: all
+            uris: https://baltocdn.com/helm/stable/debian/
+            enabled: true
+            trusted: true
+
+    - name: Install Plugins
+      block:
+        - name: Install packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            autoremove: true
+            update_cache: true
+          loop:
+            - helm
+            - python3-jsonpatch
+
+        - name: Install diff plugin
+          kubernetes.core.helm_plugin:
+            plugin_path: https://github.com/databus23/helm-diff
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed

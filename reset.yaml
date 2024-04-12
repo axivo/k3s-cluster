@@ -1,0 +1,33 @@
+---
+- name: Cluster Reset
+  hosts: cluster
+  become: true
+  gather_facts: true
+  serial:
+    - 3
+    - 5
+  vars_prompt:
+    - name: prompt_remove_packages
+      prompt: Remove installed apt packages? [Y/n]
+      default: 'n'
+      private: false
+  tasks:
+    - name: Get packages information
+      ansible.builtin.package_facts:
+
+    - name: Reset cluster
+      ansible.builtin.include_role:
+        name: '{{ cluster_item }}'
+        tasks_from: reset
+      loop:
+        - cluster
+        - k3s
+        - argocd
+        - certmanager
+        - cilium
+        - longhorn
+        - prometheus
+        - sealedsecrets
+        - helm
+      loop_control:
+        loop_var: cluster_item

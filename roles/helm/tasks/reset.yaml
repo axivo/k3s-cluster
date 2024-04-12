@@ -1,0 +1,40 @@
+---
+- name: Import facts
+  ansible.builtin.import_role:
+    name: k3s
+    tasks_from: facts
+
+- name: Remove Dependencies
+  when: ansible_host in k3s_server_hosts
+  block:
+    - name: Remove plugin
+      kubernetes.core.helm_plugin:
+        plugin_name: diff
+        state: absent
+      when:
+        - "'helm' in ansible_facts.packages"
+        - "'python3-kubernetes' in ansible_facts.packages"
+
+    - name: Remove Packages
+      when: prompt_remove_packages in ['y', 'Y']
+      block:
+        - name: Remove packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: absent
+            autoremove: true
+            clean: true
+            purge: true
+          loop:
+            - apt-transport-https
+            - helm
+            - python3-jsonpatch
+            - python3-kubernetes
+
+        - name: Remove files
+          ansible.builtin.file:
+            name: '{{ item }}'
+            state: absent
+          loop:
+            - /etc/apt/sources.list.d/helm-stable.sources
+            - /usr/share/keyrings/helm-archive-keyring.gpg

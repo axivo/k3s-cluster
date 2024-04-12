@@ -1,0 +1,11 @@
+---
+certmanager_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: cert-manager
+        version: v1.14.4
+      repository:
+        name: jetstack
+        url: https://charts.jetstack.io
+    namespace: kube-system

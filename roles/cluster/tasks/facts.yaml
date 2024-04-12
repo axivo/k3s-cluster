@@ -1,0 +1,5 @@
+---
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    cluster_vars: '{{ cluster_vars }}'
+  run_once: true

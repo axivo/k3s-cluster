@@ -1,0 +1,386 @@
+---
+- name: Hardware Configuration
+  notify: Reboot
+  block:
+    - name: Bluetooth Configuration
+      when:
+        - cluster_vars.hardware.product == 'Raspberry Pi'
+        - not cluster_vars.service.bluetooth.enabled | default(false)
+      block:
+        - name: Disable bluetooth firmware
+          ansible.builtin.lineinfile:
+            dest: /boot/firmware/config.txt
+            insertafter: '[all]'
+            line: dtoverlay=disable-bt
+            regexp: ^dtoverlay=disable-bt
+
+        - name: Disable bluetooth services
+          ansible.builtin.systemd_service:
+            name: '{{ item }}'
+            state: stopped
+            enabled: false
+          loop:
+            - bluetooth.service
+            - hciuart.service
+
+    - name: WiFi Configuration
+      when:
+        - cluster_vars.hardware.product == 'Raspberry Pi'
+        - not cluster_vars.service.wifi.enabled | default(false)
+      block:
+        - name: Disable wifi firmware
+          ansible.builtin.lineinfile:
+            dest: /boot/firmware/config.txt
+            insertafter: '[all]'
+            line: dtoverlay=disable-wifi
+            regexp: ^dtoverlay=disable-wifi
+
+        - name: Disable wifi service
+          ansible.builtin.systemd_service:
+            name: wpa_supplicant.service
+            state: stopped
+            enabled: false
+
+    - name: Device Configuration
+      block:
+        - name: Set device id
+          ansible.builtin.command:
+            cmd: lsusb -s {{ cluster_vars.device.id }}
+          changed_when: false
+          register: device_id
+
+        - name: Device Trim
+          when: device_id.stdout.find(cluster_vars.device.name) != -1
+          block:
+            - name: Set device attributes fact
+              ansible.builtin.set_fact:
+                device_attributes: "{{ device_id.stdout | regex_search('ID\\s+(.*)\\s+' + cluster_vars.device.name, '\\1') | join | trim | split(':') }}"
+
+            - name: Device Rule Setup
+              when:
+                - device_attributes is iterable
+                - device_attributes | length == 2
+              block:
+                - name: Set device rule fact
+                  ansible.builtin.set_fact:
+                    device_rule:
+                      - ACTION=="add|change"
+                      - ATTRS{idVendor}=="{{ device_attributes[0] }}"
+                      - ATTRS{idProduct}=="{{ device_attributes[1] }}"
+                      - SUBSYSTEM=="scsi_disk"
+                      - ATTR{provisioning_mode}="unmap"
+
+                - name: Create device rule
+                  ansible.builtin.lineinfile:
+                    path: /etc/udev/rules.d/10-unmap.fstrim.rules
+                    line: "{{ device_rule | join(', ') }}"
+                    regexp: ^ACTION
+                    owner: root
+                    group: root
+                    mode: '0644'
+                    create: true
+
+                - name: Start fstrim.timer
+                  ansible.builtin.systemd_service:
+                    name: fstrim.timer
+                    state: started
+                    enabled: true
+
+            - name: Trim device
+              ansible.builtin.command:
+                cmd: fstrim -v /
+              changed_when: command.stdout.find('trimmed') != -1
+              register: command
+              when: prompt_trim_device in ['y', 'Y']
+
+- name: OS Configuration
+  block:
+    - name: Get host fqdn
+      ansible.builtin.command:
+        cmd: hostname --fqdn
+      changed_when: false
+      register: host_fqdn
+
+    - name: Get host all fqdns
+      ansible.builtin.command:
+        cmd: hostname --all-fqdns
+      changed_when: false
+      register: host_all_fqdns
+
+    - name: Set cluster host fact
+      ansible.builtin.set_fact:
+        cluster_host:
+          extension: "{{ host_all_fqdns.stdout | split | first | split('.') | last | default('local') }}"
+          fqdn: '{{ host_all_fqdns.stdout | split | first }}'
+          ipv4: "{{ ansible_default_ipv4['address'] }}"
+          name: '{{ ansible_host }}'
+
+    - name: Set host fqdn
+      ansible.builtin.replace:
+        path: /etc/hosts
+        regexp: ^127.0.1.1\s.+\s{{ cluster_host['name'] }}$
+        replace: 127.0.1.1 {{ cluster_host['fqdn'] }} {{ cluster_host['name'] }}
+      notify: Reboot
+      when: host_fqdn.stdout != cluster_host['fqdn']
+
+    - name: Set root full name
+      ansible.builtin.command:
+        cmd: chfn -f "{{ cluster_host['name'] }}" root
+      changed_when: false
+
+    - name: Create firmware purge configuration
+      ansible.builtin.copy:
+        content: "DPkg::Post-Invoke {\"/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true\";};\n"
+        dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
+        owner: root
+        group: root
+        mode: '0644'
+      when: cluster_vars.hardware.product == 'Raspberry Pi'
+
+    - name: Disable access time updates
+      ansible.builtin.replace:
+        path: /etc/fstab
+        regexp: discard,errors
+        replace: discard,noatime,errors
+      notify: Reboot
+
+    - name: Disable cloud-init service
+      ansible.builtin.file:
+        path: /etc/cloud/cloud-init.disabled
+        access_time: preserve
+        modification_time: preserve
+        state: touch
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reboot
+
+    - name: Disable firewall service
+      ansible.builtin.systemd_service:
+        name: ufw.service
+        state: stopped
+        enabled: false
+
+    - name: Set service facts
+      ansible.builtin.service_facts:
+
+    - name: Remove Snap Packages
+      when:
+        - ansible_facts.services['snapd.service'] is defined
+        - ansible_facts.services['snapd.service'].state == 'running'
+      block:
+        - name: Get snap packages
+          ansible.builtin.command:
+            cmd: snap list
+          changed_when: false
+          register: snap_packages
+
+        - name: Remove snap packages
+          community.general.snap:
+            name: '{{ item | split | first }}'
+            state: absent
+          loop: '{{ snap_packages.stdout_lines[1:] }}'
+          when: snap_packages.stdout_lines[1:] is iterable
+
+    - name: Disable snapd services
+      ansible.builtin.systemd_service:
+        name: '{{ item }}'
+        state: stopped
+        enabled: false
+      loop:
+        - snapd.service
+        - snapd.seeded.service
+        - snapd.socket
+
+    - name: Unattended Upgrades
+      notify: Restart unattended upgrades service
+      when: cluster_vars.unattended_upgrades.enabled | default(false)
+      block:
+        - name: Install history notification package
+          ansible.builtin.apt:
+            name: apt-listchanges
+            autoremove: true
+            update_cache: true
+
+        - name: Set unattended upgrades time-lapse fact
+          ansible.builtin.set_fact:
+            timelapse: '{{ cluster_vars.unattended_upgrades.reboot.timelapse * period }}'
+          delegate_facts: true
+          delegate_to: '{{ item }}'
+          loop: '{{ ansible_play_hosts }}'
+          loop_control:
+            index_var: period
+
+        - name: Set unattended upgrades reboot time
+          ansible.builtin.command:
+            cmd: date -d '{{ cluster_vars.unattended_upgrades.reboot.time }} {{ timelapse }}min' +'%H:%M'
+          changed_when: false
+          register: reboot_time
+
+        - name: Update unattended upgrades configuration
+          ansible.builtin.replace:
+            path: /etc/apt/apt.conf.d/50unattended-upgrades
+            regexp: '{{ item.regexp }}'
+            replace: '{{ item.replace }}'
+          loop:
+            - regexp: ^\/\/(\s+\"\${distro_id}:\${distro_codename}-updates\";)$
+              replace: '  \g<1>'
+            - regexp: ^(?:.*)(Unattended-Upgrade::Mail)\s.*;$
+              replace: '\g<1> "{{ cluster_vars.mail.user.alias }}";'
+            - regexp: ^\/\/(Unattended-Upgrade::Remove-Unused-Dependencies) "false";$
+              replace: '\g<1> "true";'
+            - regexp: ^\/\/(Unattended-Upgrade::Automatic-Reboot) "false";$
+              replace: '\g<1> "true";'
+            - regexp: ^(?:.*)(Unattended-Upgrade::Automatic-Reboot-Time)\s.*;$
+              replace: '\g<1> "{{ reboot_time.stdout }}";'
+
+- name: Mail Configuration
+  notify: Reload mail service
+  when: cluster_vars.mail.enabled | default(false)
+  block:
+    - name: Set mail configuration
+      ansible.builtin.debconf:
+        name: postfix
+        question: postfix/{{ item.question }}
+        value: '{{ item.value }}'
+        vtype: '{{ item.vtype }}'
+      when: item.enabled | default(false)
+      loop:
+        # General mail configuration type
+        - question: main_mailer_type
+          value: 'Satellite system'
+          vtype: select
+          enabled: true
+        # System mail name
+        - question: mailname
+          value: "{{ cluster_host['fqdn'] }}"
+          vtype: string
+          enabled: true
+        # SMTP relay host
+        - question: relayhost
+          value: '[{{ cluster_vars.mail.relay.host }}]:{{ cluster_vars.mail.relay.port }}'
+          vtype: string
+          enabled: true
+        # Recipient for root and postmaster mail
+        - question: root_address
+          value: "root@{{ cluster_host['fqdn'] }}"
+          vtype: string
+          enabled: true
+        # Other destinations to accept mail for (blank for none)
+        # Disabled, host name wrongly set as fqdn by postfix
+        - question: destinations
+          value: "$myhostname, {{ cluster_host['name'] }}, localhost.{{ cluster_host['extension'] }}, localhost"
+          vtype: string
+          enabled: false
+        # Force synchronous updates on mail queue
+        - question: chattr
+          value: 'true'
+          vtype: boolean
+          enabled: true
+        # Local networks
+        - question: mynetworks
+          value: "127.0.0.1/32, 127.0.1.1/32, {{ cluster_host['ipv4'] }}/32"
+          vtype: string
+          enabled: true
+        # Local address extension character
+        # Disabled, using default value, kept as reference
+        - question: recipient_delim
+          value: '+'
+          vtype: string
+          enabled: false
+        # Mailbox size limit (bytes)
+        - question: mailbox_limit
+          value: '51200000'
+          vtype: string
+          enabled: true
+        # Internet protocols to use
+        - question: protocols
+          value: '{{ cluster_vars.mail.protocols }}'
+          vtype: select
+          enabled: true
+
+    - name: Install mail package
+      ansible.builtin.apt:
+        name: bsd-mailx
+        autoremove: true
+        update_cache: true
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Create generic map
+      ansible.builtin.copy:
+        content: "root@{{ cluster_host['fqdn'] }} {{ cluster_vars.mail.user.alias }}\n"
+        dest: /etc/postfix/generic
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Set sasl password fact
+      ansible.builtin.set_fact:
+        sasl_password:
+          - '[{{ cluster_vars.mail.relay.host }}]'
+          - '{{ cluster_vars.mail.relay.port }} {{ cluster_vars.mail.user.name }}'
+          - '{{ cluster_vars.mail.user.password }}'
+      no_log: true
+
+    - name: Create sasl password map
+      ansible.builtin.copy:
+        content: "{{ sasl_password | join(':') }}\n"
+        dest: /etc/postfix/sasl/password
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Initialize map database
+      ansible.builtin.command:
+        cmd: postmap {{ item }}
+      changed_when: false
+      loop:
+        - /etc/postfix/generic
+        - /etc/postfix/sasl/password
+
+    - name: Set map file permissions
+      ansible.builtin.file:
+        path: '{{ item }}'
+        owner: root
+        group: root
+        mode: '0600'
+      loop:
+        - /etc/postfix/generic.db
+        - /etc/postfix/sasl/password.db
+
+    - name: Update mail configuration
+      ansible.builtin.command:
+        cmd: postconf -e '{{ item.name }} = {{ item.value }}'
+      changed_when: true
+      loop:
+        - name: mydestination
+          value: $myhostname, {{ cluster_host['name'] }}, localhost.{{ cluster_host['extension'] }}, localhost
+        - name: smtp_generic_maps
+          value: hash:/etc/postfix/generic
+        - name: smtp_sasl_auth_enable
+          value: 'yes'
+        - name: smtp_sasl_password_maps
+          value: hash:/etc/postfix/sasl/password
+        - name: smtp_sasl_security_options
+          value: noanonymous
+        - name: smtp_tls_CAfile
+          value: /etc/ssl/certs/ca-certificates.crt
+        - name: smtp_tls_security_level
+          value: encrypt
+
+- name: Kubernetes Configuration
+  when: cluster_vars.hardware.product == 'Raspberry Pi'
+  block:
+    - name: Enable cpuset and memory cgroups
+      ansible.builtin.lineinfile:
+        path: /boot/firmware/cmdline.txt
+        regexp: ^((?!.+\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).+)$
+        line: \g<1> cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
+        backrefs: true
+
+    - name: Install extra modules package
+      ansible.builtin.apt:
+        name: linux-modules-extra-raspi
+        autoremove: true
+        update_cache: true

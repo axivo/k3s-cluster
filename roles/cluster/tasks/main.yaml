@@ -1,0 +1,22 @@
+---
+- name: Import validation tasks
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
+- name: Import user tasks
+  ansible.builtin.import_tasks:
+    file: user.yaml
+
+- name: Cluster Provisioning
+  when: valid_hardware_product | default(false)
+  block:
+    - name: Cluster Configuration
+      ansible.builtin.import_tasks:
+        file: configuration.yaml
+
+    - name: Cluster Upgrade
+      ansible.builtin.import_tasks:
+        file: upgrade.yaml
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

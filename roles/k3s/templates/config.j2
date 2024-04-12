@@ -1,0 +1,34 @@
+{% if k3s_service_type == 'server' %}
+bind-address: {{ k3s_server_default_ip }}
+cluster-dns: {{ k3s_vars.cluster.dns }}
+cluster-domain: {{ k3s_vars.cluster.domain }}
+{% if k3s_ha_cluster and ansible_host == k3s_server_default_host %}
+cluster-init: true
+{% endif %}
+disable:
+  - local-storage
+  - servicelb
+  - traefik
+disable-cloud-controller: true
+disable-kube-proxy: true
+disable-network-policy: true
+embedded-registry: true
+etcd-expose-metrics: true
+flannel-backend: none
+{% if k3s_ha_cluster and k3s_vars.loadbalancer.enabled %}
+tls-san: {{ k3s_vars.api.host }}
+{% endif %}
+{% endif %}
+node-taint:
+  - node.cilium.io/agent-not-ready:NoExecute
+{% if k3s_vars.controlplane.tainted and k3s_service_type == 'server' %}
+  - node-role.kubernetes.io/master=true:NoSchedule
+{% endif %}
+{% if k3s_ha_cluster and ansible_host != k3s_server_default_host and k3s_token | length > 0 %}
+{% if k3s_vars.loadbalancer.enabled and k3s_service_type == 'agent' %}
+server: https://{{ k3s_vars.api.host }}:{{ k3s_vars.api.port }}
+{% else %}
+server: https://{{ k3s_server_default_host }}:{{ k3s_vars.api.port }}
+{% endif %}
+token: {{ k3s_token }}
+{% endif %}
