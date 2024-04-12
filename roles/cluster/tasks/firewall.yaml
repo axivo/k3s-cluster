@@ -1,0 +1,20 @@
+---
+- name: Set service facts
+  ansible.builtin.service_facts:
+
+- name: Disable Firewall
+  when:
+    - ansible_facts.services['ufw'] is defined
+    - ansible_facts.services['ufw'].state == 'running'
+  block:
+    - name: Get firewall status
+      ansible.builtin.command:
+        cmd: ufw status
+      changed_when: false
+      register: firewall_status
+
+    - name: Disable firewall
+      ansible.builtin.command:
+        cmd: ufw disable
+      changed_when: true
+      when: firewall_status.stdout.find('Status":" active') != -1

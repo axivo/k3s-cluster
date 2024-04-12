@@ -1,0 +1,145 @@
+---
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Service Setup
+  notify: Start service
+  block:
+    - name: Install k3s binary
+      ansible.builtin.get_url:
+        url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_vars.k3s.version }}/k3s-arm64
+        checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_vars.k3s.version }}/sha256sum-arm64.txt
+        dest: /usr/local/bin/k3s
+        owner: root
+        group: root
+        mode: '0755'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+
+    - name: Create configuration directory
+      ansible.builtin.file:
+        path: '{{ k3s_vars.directory.config }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Create configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Create registries file
+      ansible.builtin.template:
+        src: registries.j2
+        dest: '{{ k3s_vars.directory.config }}/registries.yaml'
+        owner: root
+        group: root
+        mode: '0600'
+      when: (k3s_vars.controlplane.tainted and ansible_host not in k3s_server_hosts) or not k3s_vars.controlplane.tainted
+
+    - name: Create service file
+      ansible.builtin.template:
+        src: service.j2
+        dest: /etc/systemd/system/{{ k3s_service_name }}.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create service environment file
+      ansible.builtin.file:
+        path: /etc/systemd/system/{{ k3s_service_name }}.service.env
+        access_time: preserve
+        modification_time: preserve
+        state: touch
+        owner: root
+        group: root
+        mode: '0600'
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Server Setup
+  when: ansible_host in k3s_server_hosts
+  block:
+    - name: Add variable to environment
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
+        regexp: ^KUBECONFIG
+
+    - name: Create symlinks
+      ansible.builtin.file:
+        src: /usr/local/bin/k3s
+        dest: /usr/local/bin/{{ item }}
+        state: link
+      loop:
+        - crictl
+        - ctr
+        - kubectl
+
+    - name: Wait for drained port
+      ansible.builtin.wait_for:
+        port: '{{ k3s_vars.api.port }}'
+        state: drained
+
+    - name: Set Token
+      when: k3s_token | length == 0
+      block:
+        - name: Wait for token creation
+          ansible.builtin.wait_for:
+            path: '{{ k3s_vars.directory.lib }}/server/node-token'
+
+        - name: Read token
+          ansible.builtin.slurp:
+            path: '{{ k3s_vars.directory.lib }}/server/node-token'
+          register: node_token
+
+        - name: Set token fact
+          ansible.builtin.set_fact:
+            token: "{{ node_token.content | b64decode | trim }}"
+          run_once: true
+
+    - name: Get user info
+      ansible.builtin.user:
+        name: '{{ ansible_user }}'
+      register: user_info
+
+    - name: Create kubeconfig directory
+      ansible.builtin.file:
+        path: '{{ user_info.home }}/.kube'
+        owner: '{{ user_info.name }}'
+        group: '{{ user_info.name }}'
+        mode: '0755'
+        state: directory
+
+    - name: Copy kubeconfig file
+      ansible.builtin.copy:
+        src: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        dest: '{{ user_info.home }}/.kube/config'
+        owner: '{{ user_info.name }}'
+        group: '{{ user_info.name }}'
+        mode: '0600'
+        remote_src: true
+
+    - name: Set kubeconfig host
+      ansible.builtin.command:
+        cmd: kubectl config set-cluster default
+              --kubeconfig={{ user_info.home }}/.kube/config
+              --server=https://{{ k3s_vars.api.host if k3s_vars.loadbalancer.enabled else ansible_host }}:{{ k3s_vars.api.port }}
+      changed_when: true
+
+    - name: Copy kubeconfig file locally
+      ansible.builtin.fetch:
+        src: '{{ user_info.home }}/.kube/config'
+        dest: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
+        flat: true
+      when:
+        - ansible_host == k3s_server_default_host
+        - k3s_vars.kubeconfig.local | default(false)

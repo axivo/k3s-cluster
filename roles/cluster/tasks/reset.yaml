@@ -1,0 +1,6 @@
+---
+- name: Clean root mail
+  ansible.builtin.lineinfile:
+    path: /var/mail/root
+    regexp: ^.*
+    state: absent

@@ -1,0 +1,62 @@
+---
+- name: Cluster Upgrade
+  hosts: cluster
+  become: true
+  gather_facts: true
+  serial: 1
+  tags:
+    - cluster
+    - never
+  tasks:
+    - name: Upgrade distribution
+      ansible.builtin.import_role:
+        name: cluster
+        tasks_from: upgrade
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+- name: Kubernetes Upgrade
+  hosts: server
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Upgrade argocd chart
+      ansible.builtin.include_role:
+        name: argocd
+      tags: argocd
+
+    - name: Upgrade cert-manager chart
+      ansible.builtin.import_role:
+        name: certmanager
+      tags: certmanager
+
+    - name: Upgrade cilium chart
+      ansible.builtin.import_role:
+        name: cilium
+      tags: cilium
+
+    - name: Update cloudflare settings
+      ansible.builtin.import_role:
+        name: cloudflare
+      tags: cloudflare
+
+    - name: Upgrade longhorn chart
+      ansible.builtin.import_role:
+        name: longhorn
+      tags: longhorn
+
+    - name: Upgrade prometheus chart
+      ansible.builtin.import_role:
+        name: prometheus
+      tags: prometheus
+
+    - name: Upgrade sealed-secrets chart
+      ansible.builtin.import_role:
+        name: sealedsecrets
+      tags: sealedsecrets
+
+    - name: Upgrade helm
+      ansible.builtin.import_role:
+        name: helm
+      tags: helm

@@ -1,0 +1,37 @@
+---
+- name: Import facts
+  ansible.builtin.include_role:
+    name: '{{ item }}'
+    tasks_from: facts
+  loop:
+    - k3s
+    - prometheus
+
+- name: Add repository
+  kubernetes.core.helm_repository:
+    name: '{{ certmanager_vars.kubernetes.helm.repository.name }}'
+    repo_url: '{{ certmanager_vars.kubernetes.helm.repository.url }}'
+  when: ansible_host in k3s_server_hosts
+
+- name: Install chart
+  kubernetes.core.helm:
+    chart_ref: '{{ certmanager_vars.kubernetes.helm.repository.name }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
+    chart_version: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
+    kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+    name: '{{ certmanager_vars.kubernetes.helm.chart.name }}'
+    namespace: '{{ certmanager_vars.kubernetes.namespace }}'
+    update_repo_cache: true
+    values:
+      extraArgs:
+        - --feature-gates=ExperimentalGatewayAPISupport=true
+      installCRDs: true
+      prometheus:
+        serviceMonitor:
+          enabled: true
+          namespace: '{{ prometheus_vars.kubernetes.namespace }}'
+    wait: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed
+  when: ansible_host == k3s_server_default_host

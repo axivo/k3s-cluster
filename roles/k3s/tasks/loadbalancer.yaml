@@ -1,0 +1,51 @@
+---
+- name: Set facts
+  ansible.builtin.include_role:
+    name: '{{ item }}'
+    tasks_from: facts
+  loop:
+    - cluster
+    - k3s
+
+- name: Loadbalancer Setup
+  notify: Restart loadbalancer services
+  when:
+    - k3s_ha_cluster
+    - k3s_vars.loadbalancer.enabled
+    - k3s_loadbalancer_hosts | length == 2
+    - ansible_host in k3s_loadbalancer_hosts
+  block:
+    - name: Set sysctl token value
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_nonlocal_bind
+        value: '1'
+        sysctl_file: /etc/sysctl.d/90-ip-nonlocal-bind.conf
+        sysctl_set: true
+
+    - name: Install loadbalancer packages
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        autoremove: true
+        update_cache: true
+      loop:
+        - haproxy
+        - keepalived
+
+    - name: Update haproxy configuration file
+      ansible.builtin.blockinfile:
+        block: "{{ lookup('ansible.builtin.template', 'haproxy.j2') }}"
+        dest: /etc/haproxy/haproxy.cfg
+        insertafter: ^\terrorfile\s504\s\/etc\/haproxy\/errors\/504\.http$
+        marker: '# {mark} K3S Settings'
+        prepend_newline: true
+
+    - name: Update keepalived configuration file
+      ansible.builtin.template:
+        src: keepalived.j2
+        dest: /etc/keepalived/keepalived.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

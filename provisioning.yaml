@@ -1,0 +1,58 @@
+---
+- name: Cluster Provisioning
+  hosts: cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: cluster
+  tags: cluster
+  vars_prompt:
+    - name: prompt_trim_device
+      prompt: Trim cluster disks? [Y/n]
+      default: 'n'
+      private: false
+
+- name: Kubernetes Pre-Provisioning
+  hosts: cluster
+  become: true
+  gather_facts: true
+  tags:
+    - cluster
+    - kubernetes
+  tasks:
+    - name: Setup loadbalancer
+      ansible.builtin.import_role:
+        name: k3s
+        tasks_from: loadbalancer
+
+- name: Kubernetes Provisioning
+  hosts: cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: helm
+    - role: k3s
+  serial:
+    - 1
+    - 2
+    - 5
+  tags: kubernetes
+
+- name: Charts Provisioning
+  hosts: server
+  become: true
+  gather_facts: true
+  post_tasks:
+    - name: Update chart settings
+      ansible.builtin.import_role:
+        name: cilium
+        tasks_from: update
+  roles:
+    - role: cilium
+    - role: certmanager
+    - role: cloudflare
+    - role: argocd
+    - role: longhorn
+    - role: prometheus
+    - role: sealedsecrets
+  tags: charts

@@ -1,0 +1,61 @@
+---
+- name: Set server hosts fact
+  ansible.builtin.set_fact:
+    k3s_server_hosts: "{{ groups['server'] }}"
+  run_once: true
+
+- name: Set server ips fact
+  ansible.builtin.set_fact:
+    k3s_server_ips: "{{ k3s_server_hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
+  when: ansible_host in k3s_server_hosts
+
+- name: Set server default host fact
+  ansible.builtin.set_fact:
+    k3s_server_default_host: "{{ hostvars[k3s_server_hosts[0]]['ansible_hostname'] | default(k3s_server_hosts[0]) }}"
+  run_once: true
+
+- name: Set server default ip fact
+  ansible.builtin.set_fact:
+    k3s_server_default_ip: "{{ ansible_default_ipv4.address }}"
+  when: ansible_host in k3s_server_hosts
+
+- name: Set high-availability cluster fact
+  ansible.builtin.set_fact:
+    k3s_ha_cluster: '{{ (k3s_server_hosts | length > 2) | default(false) }}'
+  run_once: true
+
+- name: Set loadbalancer hosts fact
+  ansible.builtin.set_fact:
+    k3s_loadbalancer_hosts: "{{ k3s_server_hosts[-2:] }}"
+  run_once: true
+
+- name: Set loadbalancer ips fact
+  ansible.builtin.set_fact:
+    k3s_loadbalancer_ips: "{{ k3s_loadbalancer_hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
+  when: ansible_host in k3s_loadbalancer_hosts
+
+- name: Set loadbalancer password fact
+  ansible.builtin.set_fact:
+    k3s_loadbalancer_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
+  no_log: true
+  run_once: true
+
+- name: Set service name fact
+  ansible.builtin.set_fact:
+    k3s_service_name: "k3s{{ '-agent' if ansible_host not in k3s_server_hosts }}"
+  run_once: true
+
+- name: Set service type fact
+  ansible.builtin.set_fact:
+    k3s_service_type: "{{ 'agent' if ansible_host not in k3s_server_hosts else 'server' }}"
+  run_once: true
+
+- name: Set token fact
+  ansible.builtin.set_fact:
+    k3s_token: "{{ hostvars[k3s_server_default_host]['token'] | default('') }}"
+  run_once: true
+
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    k3s_vars: '{{ k3s_vars }}'
+  run_once: true

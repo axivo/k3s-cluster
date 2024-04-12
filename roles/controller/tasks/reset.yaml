@@ -1,0 +1,69 @@
+---
+- name: Import facts
+  ansible.builtin.import_role:
+    name: k3s
+    tasks_from: facts
+
+- name: Upgrade Reset
+  when:
+    - ansible_host == k3s_server_default_host
+    - "'python3-kubernetes' in ansible_facts.packages"
+  block:
+    - name: Delete agent plan
+      kubernetes.core.k8s:
+        api_version: upgrade.cattle.io/v1
+        kind: Plan
+        name: k3s-agent
+        namespace: upgrade-system
+        state: absent
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete server plan
+      kubernetes.core.k8s:
+        api_version: upgrade.cattle.io/v1
+        kind: Plan
+        name: k3s-server
+        namespace: upgrade-system
+        state: absent
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete deployment
+      kubernetes.core.k8s:
+        api_version: apps/v1
+        kind: Deployment
+        name: upgrade-system-controller
+        namespace: upgrade-system
+        state: absent
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete config map
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: ConfigMap
+        name: default-controller-env
+        namespace: upgrade-system
+        state: absent
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete cluster role binding
+      kubernetes.core.k8s:
+        api_version: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        name: upgrade-system
+        state: absent
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete service account
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: ServiceAccount
+        name: upgrade-system
+        namespace: upgrade-system
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+
+    - name: Delete namespace
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: upgrade-system
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'

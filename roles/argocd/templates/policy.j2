@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+data:
+  policy.csv: |
+    g, {{ server['user']['name'] }}, role:admin
+  policy.default: role:readonly
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-rbac-cm
+  namespace: {{ argocd_vars.kubernetes.namespace }}

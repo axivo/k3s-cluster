@@ -1,0 +1,15 @@
+---
+- name: Set acme server fact
+  ansible.builtin.set_fact:
+    cloudflare_acme_server: "{{ '-staging' if cloudflare_vars.kubernetes.acme.server == 'staging' | default('') }}"
+  run_once: true
+
+- name: Set cluster issuer fact
+  ansible.builtin.set_fact:
+    cloudflare_cluster_issuer: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.name }}{{ cloudflare_acme_server }}'
+  run_once: true
+
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    cloudflare_vars: '{{ cloudflare_vars }}'
+  run_once: true

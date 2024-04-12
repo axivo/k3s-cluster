@@ -1,0 +1,50 @@
+---
+- name: Import facts
+  ansible.builtin.include_role:
+    name: '{{ item }}'
+    tasks_from: facts
+  loop:
+    - cloudflare
+    - cluster
+    - k3s
+
+- name: Cloudflare Setup
+  when:
+    - ansible_host == k3s_server_default_host
+    - cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+  block:
+    - name: Create secret
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloudflare-api-token
+            namespace: '{{ cloudflare_vars.kubernetes.namespace }}'
+          stringData:
+            token: '{{ cloudflare_vars.kubernetes.api.token }}'
+          type: Opaque
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        wait: true
+
+    - name: Create cluster issuer
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: cert-manager.io/v1
+          kind: ClusterIssuer
+          metadata:
+            name: '{{ cloudflare_cluster_issuer }}'
+          spec:
+            acme:
+              email: '{{ cluster_vars.mail.user.alias }}'
+              privateKeySecretRef:
+                name: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}-key'
+              server: https://acme{{ '-staging' if cloudflare_vars.kubernetes.acme.server == 'staging' }}-v02.api.letsencrypt.org/directory
+              solvers:
+                - dns01:
+                    cloudflare:
+                      apiTokenSecretRef:
+                        key: token
+                        name: cloudflare-api-token
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        wait: true

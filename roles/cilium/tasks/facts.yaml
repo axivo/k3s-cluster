@@ -1,0 +1,5 @@
+---
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    cilium_vars: '{{ cilium_vars }}'
+  run_once: true

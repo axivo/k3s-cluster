@@ -1,0 +1,202 @@
+---
+- name: Import facts
+  ansible.builtin.include_role:
+    name: '{{ item }}'
+    tasks_from: facts
+  loop:
+    - cloudflare
+    - k3s
+
+- name: Chart Update
+  when: ansible_host == k3s_server_default_host
+  block:
+    - name: Gateway Setup
+      when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+      block:
+        - name: Set hostname fact
+          ansible.builtin.set_fact:
+            hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+          run_once: true
+
+        - name: Create hubble ui gateway
+          kubernetes.core.k8s:
+            definition:
+              apiVersion: gateway.networking.k8s.io/v1
+              kind: Gateway
+              metadata:
+                annotations:
+                  cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+                name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+                namespace: '{{ cilium_vars.kubernetes.namespace }}'
+              spec:
+                gatewayClassName: cilium
+                infrastructure:
+                  annotations:
+                    io.cilium/lb-ipam-ips: '{{ cilium_vars.kubernetes.hubble.ui.loadbalancer.ip }}'
+                listeners:
+                  - allowedRoutes:
+                      kinds:
+                        - kind: HTTPRoute
+                      namespaces:
+                        from: Same
+                    hostname: '{{ hostname }}'
+                    name: http
+                    port: 80
+                    protocol: HTTP
+                  - allowedRoutes:
+                      kinds:
+                        - kind: HTTPRoute
+                      namespaces:
+                        from: Same
+                    hostname: '{{ hostname }}'
+                    name: https
+                    port: 443
+                    protocol: HTTPS
+                    tls:
+                      certificateRefs:
+                        - kind: Secret
+                          name: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
+
+        - name: Create http route
+          kubernetes.core.k8s:
+            definition:
+              apiVersion: gateway.networking.k8s.io/v1beta1
+              kind: HTTPRoute
+              metadata:
+                name: http-route-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+                namespace: '{{ cilium_vars.kubernetes.namespace }}'
+              spec:
+                hostnames:
+                  - '{{ hostname }}'
+                parentRefs:
+                  - kind: Gateway
+                    name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+                    namespace: '{{ cilium_vars.kubernetes.namespace }}'
+                    sectionName: http
+                rules:
+                  - filters:
+                      - requestRedirect:
+                          scheme: https
+                          statusCode: 301
+                        type: RequestRedirect
+                    matches:
+                      - path:
+                          type: PathPrefix
+                          value: /
+
+        - name: Create https route
+          kubernetes.core.k8s:
+            definition:
+              apiVersion: gateway.networking.k8s.io/v1beta1
+              kind: HTTPRoute
+              metadata:
+                name: https-route-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+                namespace: '{{ cilium_vars.kubernetes.namespace }}'
+              spec:
+                hostnames:
+                  - '{{ hostname }}'
+                parentRefs:
+                  - kind: Gateway
+                    name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+                    namespace: '{{ cilium_vars.kubernetes.namespace }}'
+                    sectionName: https
+                rules:
+                  - backendRefs:
+                      - kind: Service
+                        name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+                        port: 80
+                    matches:
+                      - path:
+                          type: PathPrefix
+                          value: /
+
+        - name: Set hubble tls
+          kubernetes.core.helm:
+            chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+            chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            reset_values: false
+            reuse_values: true
+            values:
+              hubble:
+                tls:
+                  auto:
+                    certManagerIssuerRef:
+                      group: cert-manager.io
+                      kind: ClusterIssuer
+                      name: '{{ cloudflare_cluster_issuer }}'
+                    method: '{{ cilium_vars.kubernetes.hubble.tls.method }}'
+            wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+          when: cilium_vars.kubernetes.hubble.tls.method == 'certmanager'
+
+    - name: Set hubble ui loadbalancer ip
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            annotations:
+              io.cilium/lb-ipam-ips: '{{ cilium_vars.kubernetes.hubble.ui.loadbalancer.ip }}'
+            name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+          spec:
+            type: LoadBalancer
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+      when: cloudflare_vars.kubernetes.gateway.domain == 'disabled'
+
+    - name: Enable metrics
+      kubernetes.core.helm:
+        chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+        chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
+        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
+        namespace: '{{ cilium_vars.kubernetes.namespace }}'
+        reset_values: false
+        reuse_values: true
+        values:
+          dashboards:
+            enabled: true
+          envoy:
+            prometheus:
+              serviceMonitor:
+                enabled: true
+          hubble:
+            metrics:
+              dashboards:
+                enabled: true
+              enabled:
+                - dns:query;ignoreAAAA
+                - drop
+                - flow
+                - httpV2
+                - icmp
+                - port-distribution
+                - tcp
+              serviceMonitor:
+                enabled: true
+            relay:
+              prometheus:
+                serviceMonitor:
+                  enabled: true
+          operator:
+            prometheus:
+              enabled: true
+              serviceMonitor:
+                enabled: true
+          prometheus:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        wait: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed

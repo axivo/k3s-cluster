@@ -1,0 +1,55 @@
+---
+prometheus_vars:
+  kubernetes:
+    alertmanager:
+      gateway:
+        service: monitoring-kube-prometheus-alertmanager
+        subdomain: alertmanager
+      loadbalancer:
+        ip: 192.168.4.22
+      replicas: 2
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      storage: 5Gi
+    helm:
+      chart:
+        name: kube-prometheus-stack
+        version: v57.2.0
+      repository:
+        name: prometheus
+        url: https://prometheus-community.github.io/helm-charts
+    grafana:
+      gateway:
+        service: monitoring-grafana
+        subdomain: grafana
+      loadbalancer:
+        ip: 192.168.4.21
+      user:
+        name: admin
+        password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64373766356138653633346638343234336132383737616530303636366262313534656163616435
+          3363396663333933306431363038316239373164386332660a616136666438313933353762373063
+          38323135393830336132393239363236373961336464623432363338616266626334393233366263
+          6164623332633535310a626532356161363563303036353838306234306562303333333231643432
+          38383463653931373134663230383033666264646364316563663636303736326630
+    namespace: kube-system
+    prometheus:
+      gateway:
+        service: monitoring-kube-prometheus-prometheus
+        subdomain: prometheus
+      loadbalancer:
+        ip: 192.168.4.23
+      resources:
+        limits:
+          cpu: 1
+          memory: 4Gi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      storage: 50Gi
