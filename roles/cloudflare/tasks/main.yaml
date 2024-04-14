@@ -36,7 +36,7 @@
             name: '{{ cloudflare_cluster_issuer }}'
           spec:
             acme:
-              email: '{{ cluster_vars.mail.user.alias }}'
+              email: '{{ cluster_vars.service.postfix.user.alias }}'
               privateKeySecretRef:
                 name: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}-key'
               server: https://acme{{ '-staging' if cloudflare_vars.kubernetes.acme.server == 'staging' }}-v02.api.letsencrypt.org/directory
