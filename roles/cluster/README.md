@@ -1,6 +1,6 @@
 # Cluster
 
-Install k3s cluster dependencies and optimize Ubuntu OS.
+Install k3s cluster dependencies and optimize Ubuntu OS. FOr detailed instructions, visit the [Wiki](../../../k3s-cluster.wiki/Cluster.md).
 
 ## Provisioning
 
@@ -29,18 +29,11 @@ systemctl list-dependencies snapd
 systemctl list-dependencies --reverse snapd.socket
 ```
 
-## Mail
+## Postfix
 
-- Apple app-specific [password setup](https://support.apple.com/en-us/102654)
 - `postfix` configuration: `/etc/postfix/main.cf`
 - `debconf` database: `/var/cache/debconf/config.dat`
 - `postfix` `dpkg` confguration: `/var/lib/dpkg/info/postfix.config`
-
-Set iCloud user password:
-
-```shell
-ansible-vault encrypt_string '<yourpassword>' --name 'cluster_vars.mail.user.password'
-```
 
 Show `debconf` configuration settings:
 

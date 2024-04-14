@@ -155,7 +155,7 @@
         group: root
         mode: '0644'
       notify: Reboot
-      when: not cluster_vars.service.cloudinit.enabled | default(false)
+      when: not cluster_vars.service.cloud_init.enabled | default(false)
 
     - name: Disable firewall service
       ansible.builtin.systemd_service:
@@ -198,7 +198,7 @@
 
     - name: Unattended Upgrades
       notify: Restart unattended upgrades service
-      when: cluster_vars.unattended_upgrades.enabled | default(false)
+      when: cluster_vars.service.unattended_upgrades.enabled | default(false)
       block:
         - name: Install history notification package
           ansible.builtin.apt:
@@ -208,7 +208,7 @@
 
         - name: Set unattended upgrades time-lapse fact
           ansible.builtin.set_fact:
-            timelapse: '{{ cluster_vars.unattended_upgrades.reboot.timelapse * period }}'
+            timelapse: '{{ cluster_vars.service.unattended_upgrades.reboot.timelapse * period }}'
           delegate_facts: true
           delegate_to: '{{ item }}'
           loop: '{{ ansible_play_hosts }}'
@@ -217,7 +217,7 @@
 
         - name: Set unattended upgrades reboot time
           ansible.builtin.command:
-            cmd: date -d '{{ cluster_vars.unattended_upgrades.reboot.time }} {{ timelapse }}min' +'%H:%M'
+            cmd: date -d '{{ cluster_vars.service.unattended_upgrades.reboot.time }} {{ timelapse }}min' +'%H:%M'
           changed_when: false
           register: reboot_time
 
@@ -230,7 +230,7 @@
             - regexp: ^\/\/(\s+\"\${distro_id}:\${distro_codename}-updates\";)$
               replace: '  \g<1>'
             - regexp: ^(?:.*)(Unattended-Upgrade::Mail)\s.*;$
-              replace: '\g<1> "{{ cluster_vars.mail.user.alias }}";'
+              replace: '\g<1> "{{ cluster_vars.service.postfix.user.alias }}";'
             - regexp: ^\/\/(Unattended-Upgrade::Remove-Unused-Dependencies) "false";$
               replace: '\g<1> "true";'
             - regexp: ^\/\/(Unattended-Upgrade::Automatic-Reboot) "false";$
@@ -240,7 +240,7 @@
 
 - name: Mail Configuration
   notify: Reload mail service
-  when: cluster_vars.mail.enabled | default(false)
+  when: cluster_vars.service.postfix.enabled | default(false)
   block:
     - name: Set mail configuration
       ansible.builtin.debconf:
@@ -262,7 +262,7 @@
           enabled: true
         # SMTP relay host
         - question: relayhost
-          value: '[{{ cluster_vars.mail.relay.host }}]:{{ cluster_vars.mail.relay.port }}'
+          value: '[{{ cluster_vars.service.postfix.relay.host }}]:{{ cluster_vars.service.postfix.relay.port }}'
           vtype: string
           enabled: true
         # Recipient for root and postmaster mail
@@ -299,7 +299,7 @@
           enabled: true
         # Internet protocols to use
         - question: protocols
-          value: '{{ cluster_vars.mail.protocols }}'
+          value: '{{ cluster_vars.service.postfix.protocols }}'
           vtype: select
           enabled: true
 
@@ -313,7 +313,7 @@
 
     - name: Create generic map
       ansible.builtin.copy:
-        content: "root@{{ cluster_host['fqdn'] }} {{ cluster_vars.mail.user.alias }}\n"
+        content: "root@{{ cluster_host['fqdn'] }} {{ cluster_vars.service.postfix.user.alias }}\n"
         dest: /etc/postfix/generic
         owner: root
         group: root
@@ -322,9 +322,9 @@
     - name: Set sasl password fact
       ansible.builtin.set_fact:
         sasl_password:
-          - '[{{ cluster_vars.mail.relay.host }}]'
-          - '{{ cluster_vars.mail.relay.port }} {{ cluster_vars.mail.user.name }}'
-          - '{{ cluster_vars.mail.user.password }}'
+          - '[{{ cluster_vars.service.postfix.relay.host }}]'
+          - '{{ cluster_vars.service.postfix.relay.port }} {{ cluster_vars.service.postfix.user.name }}'
+          - '{{ cluster_vars.service.postfix.user.password }}'
       no_log: true
 
     - name: Create sasl password map
