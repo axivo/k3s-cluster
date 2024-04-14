@@ -2,8 +2,10 @@
 cluster_vars:
   device:
     id: '2:2'
-    name: ASMedia
+    name: 'ASMedia Technology'
+    transport: usb
   hardware:
+    architecture: aarch64
     product: 'Raspberry Pi'
   mail:
     enabled: true
@@ -35,6 +37,10 @@ cluster_vars:
           61313538623030313638626534386636393063613231343734386137356134353961
   service:
     bluetooth:
+      enabled: false
+    cloudinit:
+      enabled: false
+    snapd:
       enabled: false
     wifi:
       enabled: false

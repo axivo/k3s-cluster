@@ -1,9 +1,9 @@
 ---
-- name: Import validation tasks
+- name: Cluster Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Import user tasks
+- name: User Configuration
   ansible.builtin.import_tasks:
     file: user.yaml
 
