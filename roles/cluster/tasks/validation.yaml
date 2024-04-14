@@ -5,6 +5,17 @@
     fail_msg: 'Valid entries: n, N, y, Y'
     quiet: true
 
+- name: Check device info
+  ansible.builtin.shell: |
+    set -eo pipefail
+    lsusb -s {{ cluster_vars.device.id }} | grep {{ cluster_vars.device.name | quote }}
+  args:
+    executable: /bin/bash
+  any_errors_fatal: true
+  changed_when: false
+  register: device_info
+  when: cluster_vars.device.transport == 'usb'
+
 - name: Get hardware product
   ansible.builtin.shell: |
     set -eo pipefail
@@ -20,7 +31,7 @@
   when:
     - ansible_facts.lsb.id == 'Ubuntu'
     - ansible_facts.lsb.release is version('22.04', '>=')
-    - ansible_facts.machine == 'aarch64'
+    - ansible_facts.machine == cluster_vars.hardware.architecture
     - hardware_product.rc == 0
 
 - name: Check internet connectivity

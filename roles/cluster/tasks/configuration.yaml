@@ -42,6 +42,7 @@
             enabled: false
 
     - name: Device Configuration
+      when: cluster_vars.device.transport == 'usb'
       block:
         - name: Set device id
           ansible.builtin.command:
@@ -154,6 +155,7 @@
         group: root
         mode: '0644'
       notify: Reboot
+      when: not cluster_vars.service.cloudinit.enabled | default(false)
 
     - name: Disable firewall service
       ansible.builtin.systemd_service:
@@ -168,6 +170,7 @@
       when:
         - ansible_facts.services['snapd.service'] is defined
         - ansible_facts.services['snapd.service'].state == 'running'
+        - not cluster_vars.service.snapd.enabled | default(false)
       block:
         - name: Get snap packages
           ansible.builtin.command:
@@ -191,6 +194,7 @@
         - snapd.service
         - snapd.seeded.service
         - snapd.socket
+      when: not cluster_vars.service.snapd.enabled | default(false)
 
     - name: Unattended Upgrades
       notify: Restart unattended upgrades service
