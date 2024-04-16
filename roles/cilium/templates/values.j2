@@ -16,8 +16,6 @@ externalIPs:
   enabled: true
 gatewayAPI:
   enabled: true
-  secretsNamespace:
-    sync: '{{ cilium_vars.kubernetes.gateway_api.secrets_namespace.sync }}'
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: '{{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}'

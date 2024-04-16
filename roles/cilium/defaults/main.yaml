@@ -20,8 +20,6 @@ cilium_vars:
           cpu: 100m
           memory: 64Mi
     gateway_api:
-      secrets_namespace:
-        sync: false
       version: v1.0.0
     helm:
       chart:
