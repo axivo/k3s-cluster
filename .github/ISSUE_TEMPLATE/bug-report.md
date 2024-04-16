@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-description: Report an encountered bug
+about: Report an encountered bug
 ---
 body:
   - type: markdown
