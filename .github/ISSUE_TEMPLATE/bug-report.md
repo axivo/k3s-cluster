@@ -1,6 +1,7 @@
+---
 name: Bug Report
-about: Create a bug report to help us improve
-labels: ["kind/community-report", "kind/bug", "needs/triage"]
+description: Report an encountered bug
+---
 body:
   - type: markdown
     attributes:
