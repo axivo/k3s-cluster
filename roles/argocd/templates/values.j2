@@ -1,0 +1,42 @@
+applicationSet:
+  resources:
+    limits:
+      cpu: '{{ argocd_vars.kubernetes.application_set.resources.limits.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.application_set.resources.limits.memory }}'
+    requests:
+      cpu: '{{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.application_set.resources.requests.memory }}'
+configs:
+  cm:
+    exec.enabled: true
+  params:
+    application.namespaces: "{{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}"
+    server.insecure: true
+  secret:
+    argocdServerAdminPassword: "{{ server['admin']['password'] }}"
+{% if cloudflare_vars.kubernetes.gateway.domain != 'disabled' %}
+global:
+  domain: '{{ hostname }}'
+{% endif %}
+redis-ha:
+  enabled: true
+repoServer:
+  autoscaling:
+    enabled: true
+  resources:
+    limits:
+      cpu: '{{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.repo_server.resources.limits.memory }}'
+    requests:
+      cpu: '{{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}'
+server:
+  autoscaling:
+    enabled: true
+  resources:
+    limits:
+      cpu: '{{ argocd_vars.kubernetes.server.resources.limits.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.server.resources.limits.memory }}'
+    requests:
+      cpu: '{{ argocd_vars.kubernetes.server.resources.requests.cpu }}'
+      memory: '{{ argocd_vars.kubernetes.server.resources.requests.memory }}'

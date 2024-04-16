@@ -75,6 +75,7 @@
     name: '{{ sealedsecrets_vars.kubernetes.helm.chart.name }}'
     namespace: '{{ sealedsecrets_vars.kubernetes.namespace }}'
     update_repo_cache: true
+    values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
     wait: true
   register: result
   delay: 1

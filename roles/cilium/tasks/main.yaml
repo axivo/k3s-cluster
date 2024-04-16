@@ -65,6 +65,16 @@
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         src: https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ cilium_vars.kubernetes.gateway_api.version }}/experimental-install.yaml
 
+    - name: Set chart setup fact
+      ansible.builtin.set_fact:
+        chart_setup: true
+      run_once: true
+
+    - name: Set chart update fact
+      ansible.builtin.set_fact:
+        chart_update: false
+      run_once: true
+
     - name: Install chart
       kubernetes.core.helm:
         chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
@@ -73,61 +83,7 @@
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ cilium_vars.kubernetes.namespace }}'
         update_repo_cache: true
-        values:
-          bandwidthManager:
-            enabled: true
-          enableCiliumEndpointSlice: true
-          envoy:
-            enabled: true
-            resources:
-              limits:
-                cpu: '{{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}'
-                memory: '{{ cilium_vars.kubernetes.envoy.resources.limits.memory }}'
-              requests:
-                cpu: '{{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}'
-                memory: '{{ cilium_vars.kubernetes.envoy.resources.requests.memory }}'
-            rollOutPods: true
-          externalIPs:
-            enabled: true
-          gatewayAPI:
-            enabled: true
-          ipam:
-            operator:
-              clusterPoolIPv4PodCIDRList: '{{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}'
-          hubble:
-            peerService:
-              clusterDomain: '{{ k3s_vars.cluster.domain }}'
-            relay:
-              enabled: true
-              replicas: '{{ cilium_vars.kubernetes.hubble.relay.replicas }}'
-              resources:
-                limits:
-                  cpu: '{{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}'
-                  memory: '{{ cilium_vars.kubernetes.hubble.relay.resources.limits.memory }}'
-                requests:
-                  cpu: '{{ cilium_vars.kubernetes.hubble.relay.resources.requests.cpu }}'
-                  memory: '{{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}'
-              retryTimeout: '{{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}'
-              rollOutPods: true
-            ui:
-              enabled: true
-              rollOutPods: true
-          k8sClientRateLimit:
-            burst: '{{ cilium_vars.kubernetes.client.rate_limit.burst }}'
-            qps: '{{ cilium_vars.kubernetes.client.rate_limit.qps }}'
-          k8sServiceHost: '{{ k3s_vars.loadbalancer.server.host }}'
-          k8sServicePort: '{{ k3s_vars.loadbalancer.server.port }}'
-          kubeProxyReplacement: true
-          operator:
-            resources:
-              limits:
-                cpu: '{{ cilium_vars.kubernetes.operator.resources.limits.cpu }}'
-                memory: '{{ cilium_vars.kubernetes.operator.resources.limits.memory }}'
-              requests:
-                cpu: '{{ cilium_vars.kubernetes.operator.resources.requests.cpu }}'
-                memory: '{{ cilium_vars.kubernetes.operator.resources.requests.memory }}'
-            rollOutPods: true
-          rollOutCiliumPods: true
+        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         wait: true
       register: result
       delay: 1
@@ -136,97 +92,34 @@
 
     - name: Create l2 announcement policy
       kubernetes.core.k8s:
-        definition:
-          apiVersion: cilium.io/v2alpha1
-          kind: CiliumL2AnnouncementPolicy
-          metadata:
-            name: default-l2-announcement-policy
-            namespace: '{{ cilium_vars.kubernetes.namespace }}'
-          spec:
-            externalIPs: true
-            interfaces:
-              - '{{ k3s_vars.network.interface }}'
-            loadBalancerIPs: true
+        definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
 
     - name: Create loadbalancer ip pool
       kubernetes.core.k8s:
-        definition:
-          apiVersion: cilium.io/v2alpha1
-          kind: CiliumLoadBalancerIPPool
-          metadata:
-            name: default-pool
-            namespace: '{{ cilium_vars.kubernetes.namespace }}'
-          spec:
-            cidrs:
-              - cidr: '{{ cilium_vars.kubernetes.loadbalancer.ip.pool }}'
+        definition: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
 
-    - name: Set ingress controller
+    - name: Set chart setup fact
+      ansible.builtin.set_fact:
+        chart_setup: false
+      run_once: true
+
+    - name: Update chart values
       kubernetes.core.helm:
         chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ cilium_vars.kubernetes.namespace }}'
+        update_repo_cache: true
         reset_values: false
         reuse_values: true
-        values:
-          ingressController:
-            enabled: true
-            service:
-              loadBalancerIP: '{{ cilium_vars.kubernetes.ingress.controller.service.loadbalancer.ip }}'
+        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         wait: true
       register: result
       delay: 1
       retries: 3
       until: result is not failed
-
-    - name: Set loadbalancer algorithm
-      kubernetes.core.helm:
-        chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
-        chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cilium_vars.kubernetes.namespace }}'
-        reset_values: false
-        reuse_values: true
-        values:
-          loadBalancer:
-            algorithm: '{{ cilium_vars.kubernetes.loadbalancer.algorithm }}'
-          maglev:
-            hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12) }}"
-            tableSize: '{{ cilium_vars.kubernetes.loadbalancer.table_size }}'
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
-      when: cilium_vars.kubernetes.loadbalancer.algorithm == 'maglev'
-
-    - name: Set routing mode
-      kubernetes.core.helm:
-        chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
-        chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cilium_vars.kubernetes.namespace }}'
-        reset_values: false
-        reuse_values: true
-        values:
-          autoDirectNodeRoutes: true
-          ipv4NativeRoutingCIDR: '{{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}'
-          l2announcements:
-            enabled: true
-          l2podAnnouncements:
-            enabled: true
-            interface: '{{ k3s_vars.network.interface }}'
-          routingMode: '{{ cilium_vars.kubernetes.routing_mode }}'
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
-      when: cilium_vars.kubernetes.routing_mode == 'native'

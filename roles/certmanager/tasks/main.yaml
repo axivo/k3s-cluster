@@ -21,14 +21,7 @@
     name: '{{ certmanager_vars.kubernetes.helm.chart.name }}'
     namespace: '{{ certmanager_vars.kubernetes.namespace }}'
     update_repo_cache: true
-    values:
-      extraArgs:
-        - --feature-gates=ExperimentalGatewayAPISupport=true
-      installCRDs: true
-      prometheus:
-        serviceMonitor:
-          enabled: true
-          namespace: '{{ prometheus_vars.kubernetes.namespace }}'
+    values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
     wait: true
   register: result
   delay: 1

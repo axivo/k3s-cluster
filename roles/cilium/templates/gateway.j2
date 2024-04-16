@@ -1,0 +1,35 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+  name: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
+  namespace: '{{ cilium_vars.kubernetes.namespace }}'
+spec:
+  gatewayClassName: cilium
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: '{{ cilium_vars.kubernetes.hubble.ui.loadbalancer.ip }}'
+  listeners:
+    - allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: Same
+      hostname: '{{ hostname }}'
+      name: http
+      port: 80
+      protocol: HTTP
+    - allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: Same
+      hostname: '{{ hostname }}'
+      name: https
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}'
