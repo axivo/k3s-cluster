@@ -20,11 +20,13 @@ cilium_vars:
           cpu: 100m
           memory: 64Mi
     gateway_api:
+      secrets_namespace:
+        sync: false
       version: v1.0.0
     helm:
       chart:
         name: cilium
-        version: v1.15.3
+        version: v1.15.4
       repository:
         name: cilium
         url: https://helm.cilium.io
