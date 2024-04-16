@@ -2,7 +2,7 @@
 argocd_vars:
   argocd:
     name: argocd-linux-arm64
-    version: v2.10.6
+    version: v2.10.7
   kubernetes:
     application_set:
       resources:
@@ -15,7 +15,7 @@ argocd_vars:
     helm:
       chart:
         name: argo-cd
-        version: 6.7.10
+        version: 6.7.12
       repository:
         name: argoproj
         url: https://argoproj.github.io/argo-helm

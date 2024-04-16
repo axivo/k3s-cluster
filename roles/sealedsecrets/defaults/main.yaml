@@ -4,7 +4,7 @@ sealedsecrets_vars:
     helm:
       chart:
         name: sealed-secrets
-        version: v2.15.0
+        version: v2.15.3
       repository:
         name: sealed-secrets
         url: https://bitnami-labs.github.io/sealed-secrets
