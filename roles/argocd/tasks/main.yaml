@@ -126,6 +126,7 @@
         definition: "{{ lookup('ansible.builtin.template', 'password.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
+      no_log: true
 
     - name: Set server rbac policy
       kubernetes.core.k8s:

@@ -20,6 +20,7 @@
         definition: "{{ lookup('ansible.builtin.template', 'grafana_credentials.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
+      no_log: true
 
     - name: Install chart
       kubernetes.core.helm:
