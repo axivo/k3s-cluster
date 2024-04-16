@@ -1,6 +1,9 @@
 ---
 certmanager_vars:
   kubernetes:
+    cluster:
+      issuer:
+        name: certmanager-cluster-issuer
     helm:
       chart:
         name: cert-manager

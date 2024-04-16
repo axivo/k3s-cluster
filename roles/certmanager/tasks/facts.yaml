@@ -1,0 +1,5 @@
+---
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    certmanager_vars: '{{ certmanager_vars }}'
+  run_once: true

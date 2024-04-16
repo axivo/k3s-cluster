@@ -78,14 +78,14 @@ hubble:
     prometheus:
       serviceMonitor:
         enabled: true
-{% if cilium_vars.kubernetes.hubble.tls.method == 'certmanager' %}
+{% if cilium_vars.kubernetes.hubble.tls.auto.method == 'certmanager' %}
   tls:
     auto:
       certManagerIssuerRef:
         group: cert-manager.io
         kind: ClusterIssuer
-        name: '{{ cloudflare_cluster_issuer }}'
-      method: '{{ cilium_vars.kubernetes.hubble.tls.method }}'
+        name: '{{ cilium_vars.kubernetes.hubble.tls.cluster.issuer.name }}'
+      method: '{{ cilium_vars.kubernetes.hubble.tls.auto.method }}'
 {% endif %}
 operator:
   prometheus:
@@ -101,11 +101,6 @@ ingressController:
   enabled: true
   service:
     loadBalancerIP: '{{ cilium_vars.kubernetes.ingress.controller.service.loadbalancer.ip }}'
-{% if cilium_vars.kubernetes.hubble.tls.method == 'certmanager' %}
-hubble:
-  tls:
-    enabled: false
-{% endif %}
 {% if cilium_vars.kubernetes.loadbalancer.algorithm == 'maglev' %}
 loadBalancer:
   algorithm: '{{ cilium_vars.kubernetes.loadbalancer.algorithm }}'

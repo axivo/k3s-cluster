@@ -46,7 +46,16 @@ cilium_vars:
         loadbalancer:
           ip: 192.168.4.19
       tls:
-        method: helm
+        auto:
+          method: certmanager
+        certificate:
+          common:
+            name: hubble-tls-certificate
+          root:
+            name: hubble-tls-root-certificate
+        cluster:
+          issuer:
+            name: hubble-cluster-issuer
     ingress:
       controller:
         service:
