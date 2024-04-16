@@ -1,9 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a feature for this project
-title: ''
-labels: 'kind/feature'
-assignees: ''
+description: Suggest a feature for this project
 ---
 
 ## Feature Request
