@@ -10,7 +10,7 @@
 <!--
 ### ISSUES
 
-- List related issues here
+- Fixes <issue link here>
 -->
 
 ## WHAT
