@@ -1,6 +1,10 @@
 ---
 longhorn_vars:
   kubernetes:
+    default_settings:
+      data_locality: strict-local
+      pod_deletion_policy: delete-both-statefulset-and-deployment-pod
+      replica_count: 3
     frontend:
       loadbalancer:
         ip: 192.168.4.20
@@ -15,5 +19,7 @@ longhorn_vars:
       service: longhorn-frontend
       subdomain: longhorn
     namespace: kube-system
-    pod:
-      deletion_policy: delete-both-statefulset-and-deployment-pod
+    persistence:
+      data_locality: best-effort
+      migratable: true
+      replica_count: 3

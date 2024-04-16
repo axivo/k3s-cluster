@@ -9,6 +9,13 @@ sealedsecrets_vars:
         name: sealed-secrets
         url: https://bitnami-labs.github.io/sealed-secrets
     namespace: kube-system
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
   kubeseal:
     name: kubeseal-0.26.0-linux-arm64.tar.gz
     version: v0.26.0
