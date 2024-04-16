@@ -51,8 +51,8 @@
     - role: cilium
     - role: certmanager
     - role: cloudflare
-    - role: argocd
     - role: longhorn
     - role: prometheus
     - role: sealedsecrets
+    - role: argocd
   tags: charts

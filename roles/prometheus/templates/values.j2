@@ -1,0 +1,83 @@
+alertmanager:
+  alertmanagerSpec:
+    replicas: '{{ prometheus_vars.kubernetes.alertmanager.replicas }}'
+    resources:
+      limits:
+        cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.cpu }}'
+        memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.memory }}'
+      requests:
+        cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}'
+        memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}'
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: '{{ prometheus_vars.kubernetes.alertmanager.storage }}'
+{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+  service:
+    annotations:
+      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.alertmanager.loadbalancer.ip }}'
+    type: LoadBalancer
+{% endif %}
+grafana:
+  admin:
+    existingSecret: grafana-credentials
+    passwordKey: password
+    userKey: username
+{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+  service:
+    annotations:
+      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.grafana.loadbalancer.ip }}'
+    type: LoadBalancer
+{% endif %}
+kubeControllerManager:
+  endpoints:
+{% for ip in k3s_server_ips %}
+    - {{ ip }}
+{% endfor %}
+kubeEtcd:
+  endpoints:
+{% for ip in k3s_server_ips %}
+    - {{ ip }}
+{% endfor %}
+kubeProxy:
+  endpoints:
+{% for ip in k3s_server_ips %}
+    - {{ ip }}
+{% endfor %}
+kubeScheduler:
+  endpoints:
+{% for ip in k3s_server_ips %}
+    - {{ ip }}
+{% endfor %}
+prometheus:
+  prometheusSpec:
+    enableAdminAPI: true
+    replicaExternalLabelName: replica
+    resources:
+      limits:
+        cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}'
+        memory: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.memory }}'
+      requests:
+        cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}'
+        memory: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}'
+    serviceMonitorSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: '{{ prometheus_vars.kubernetes.prometheus.storage }}'
+{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+  service:
+    annotations:
+      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.prometheus.loadbalancer.ip }}'
+    type: LoadBalancer
+{% endif %}

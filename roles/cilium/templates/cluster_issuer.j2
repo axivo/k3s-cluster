@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: '{{ cilium_vars.kubernetes.hubble.tls.cluster.issuer.name }}'
+spec:
+  ca:
+    secretName: '{{ cilium_vars.kubernetes.hubble.tls.certificate.root.name }}'

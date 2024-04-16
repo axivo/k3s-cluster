@@ -1,0 +1,7 @@
+extraArgs:
+  - --feature-gates=ExperimentalGatewayAPISupport=true
+installCRDs: true
+prometheus:
+  serviceMonitor:
+    enabled: true
+    namespace: '{{ certmanager_vars.kubernetes.namespace }}'

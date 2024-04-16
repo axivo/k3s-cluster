@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token
+  namespace: '{{ cloudflare_vars.kubernetes.namespace }}'
+stringData:
+  token: '{{ cloudflare_vars.kubernetes.api.token }}'
+type: Opaque

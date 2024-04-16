@@ -1,0 +1,121 @@
+{% if chart_setup %}
+bandwidthManager:
+  enabled: true
+enableCiliumEndpointSlice: true
+envoy:
+  enabled: true
+  resources:
+    limits:
+      cpu: '{{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}'
+      memory: '{{ cilium_vars.kubernetes.envoy.resources.limits.memory }}'
+    requests:
+      cpu: '{{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}'
+      memory: '{{ cilium_vars.kubernetes.envoy.resources.requests.memory }}'
+  rollOutPods: true
+externalIPs:
+  enabled: true
+gatewayAPI:
+  enabled: true
+ipam:
+  operator:
+    clusterPoolIPv4PodCIDRList: '{{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}'
+hubble:
+  peerService:
+    clusterDomain: '{{ k3s_vars.cluster.domain }}'
+  relay:
+    enabled: true
+    replicas: '{{ cilium_vars.kubernetes.hubble.relay.replicas }}'
+    resources:
+      limits:
+        cpu: '{{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}'
+        memory: '{{ cilium_vars.kubernetes.hubble.relay.resources.limits.memory }}'
+      requests:
+        cpu: '{{ cilium_vars.kubernetes.hubble.relay.resources.requests.cpu }}'
+        memory: '{{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}'
+    retryTimeout: '{{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}'
+    rollOutPods: true
+  ui:
+    enabled: true
+    rollOutPods: true
+k8sClientRateLimit:
+  burst: '{{ cilium_vars.kubernetes.client.rate_limit.burst }}'
+  qps: '{{ cilium_vars.kubernetes.client.rate_limit.qps }}'
+k8sServiceHost: '{{ k3s_vars.loadbalancer.server.host }}'
+k8sServicePort: '{{ k3s_vars.loadbalancer.server.port }}'
+kubeProxyReplacement: true
+operator:
+  resources:
+    limits:
+      cpu: '{{ cilium_vars.kubernetes.operator.resources.limits.cpu }}'
+      memory: '{{ cilium_vars.kubernetes.operator.resources.limits.memory }}'
+    requests:
+      cpu: '{{ cilium_vars.kubernetes.operator.resources.requests.cpu }}'
+      memory: '{{ cilium_vars.kubernetes.operator.resources.requests.memory }}'
+  rollOutPods: true
+rollOutCiliumPods: true
+{% elif chart_update %}
+dashboards:
+  enabled: true
+envoy:
+  prometheus:
+    serviceMonitor:
+      enabled: true
+hubble:
+  metrics:
+    dashboards:
+      enabled: true
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - flow
+      - httpV2
+      - icmp
+      - port-distribution
+      - tcp
+    serviceMonitor:
+      enabled: true
+  relay:
+    prometheus:
+      serviceMonitor:
+        enabled: true
+{% if cilium_vars.kubernetes.hubble.tls.auto.method == 'certmanager' %}
+  tls:
+    auto:
+      certManagerIssuerRef:
+        group: cert-manager.io
+        kind: ClusterIssuer
+        name: '{{ cilium_vars.kubernetes.hubble.tls.cluster.issuer.name }}'
+      method: '{{ cilium_vars.kubernetes.hubble.tls.auto.method }}'
+{% endif %}
+operator:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+{% else %}
+ingressController:
+  enabled: true
+  service:
+    loadBalancerIP: '{{ cilium_vars.kubernetes.ingress.controller.service.loadbalancer.ip }}'
+{% if cilium_vars.kubernetes.loadbalancer.algorithm == 'maglev' %}
+loadBalancer:
+  algorithm: '{{ cilium_vars.kubernetes.loadbalancer.algorithm }}'
+maglev:
+  hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12) }}"
+  tableSize: '{{ cilium_vars.kubernetes.loadbalancer.table_size }}'
+{% endif %}
+{% if cilium_vars.kubernetes.routing_mode == 'native' %}
+autoDirectNodeRoutes: true
+ipv4NativeRoutingCIDR: '{{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}'
+l2announcements:
+  enabled: true
+l2podAnnouncements:
+  enabled: true
+  interface: '{{ k3s_vars.network.interface }}'
+routingMode: '{{ cilium_vars.kubernetes.routing_mode }}'
+{% endif %}
+{% endif %}

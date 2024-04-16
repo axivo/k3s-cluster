@@ -19,7 +19,8 @@ prometheus_vars:
     helm:
       chart:
         name: kube-prometheus-stack
-        version: v57.2.0
+        name_override: monitoring
+        version: v58.1.2
       repository:
         name: prometheus
         url: https://prometheus-community.github.io/helm-charts

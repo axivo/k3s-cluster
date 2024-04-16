@@ -15,83 +15,22 @@
 - name: Chart Setup
   when: ansible_host == k3s_server_default_host
   block:
-    - name: Create secret
+    - name: Create grafana credentials
       kubernetes.core.k8s:
-        definition:
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: grafana-credentials
-            namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-          stringData:
-            password: '{{ prometheus_vars.kubernetes.grafana.user.password }}'
-            username: '{{ prometheus_vars.kubernetes.grafana.user.name }}'
-          type: Opaque
+        definition: "{{ lookup('ansible.builtin.template', 'grafana_credentials.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
+      no_log: true
 
     - name: Install chart
       kubernetes.core.helm:
         chart_ref: '{{ prometheus_vars.kubernetes.helm.repository.name }}/{{ prometheus_vars.kubernetes.helm.chart.name }}'
         chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: monitoring
+        name: '{{ prometheus_vars.kubernetes.helm.chart.name_override }}'
         namespace: '{{ prometheus_vars.kubernetes.namespace }}'
         update_repo_cache: true
-        values:
-          alertmanager:
-            alertmanagerSpec:
-              replicas: '{{ prometheus_vars.kubernetes.alertmanager.replicas }}'
-              resources:
-                limits:
-                  cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.cpu }}'
-                  memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.memory }}'
-                requests:
-                  cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}'
-                  memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}'
-              storage:
-                volumeClaimTemplate:
-                  spec:
-                    storageClassName: longhorn
-                    accessModes:
-                      - ReadWriteOnce
-                    resources:
-                      requests:
-                        storage: '{{ prometheus_vars.kubernetes.alertmanager.storage }}'
-          grafana:
-            admin:
-              existingSecret: grafana-credentials
-              passwordKey: password
-              userKey: username
-          kubeControllerManager:
-            endpoints: '{{ k3s_server_ips }}'
-          kubeEtcd:
-            endpoints: '{{ k3s_server_ips }}'
-          kubeProxy:
-            endpoints: '{{ k3s_server_ips }}'
-          kubeScheduler:
-            endpoints: '{{ k3s_server_ips }}'
-          prometheus:
-            prometheusSpec:
-              enableAdminAPI: true
-              replicaExternalLabelName: replica
-              resources:
-                limits:
-                  cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}'
-                  memory: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.memory }}'
-                requests:
-                  cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}'
-                  memory: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}'
-              serviceMonitorSelectorNilUsesHelmValues: false
-              storageSpec:
-                volumeClaimTemplate:
-                  spec:
-                    storageClassName: longhorn
-                    accessModes:
-                      - ReadWriteOnce
-                    resources:
-                      requests:
-                        storage: '{{ prometheus_vars.kubernetes.prometheus.storage }}'
+        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         wait: true
       register: result
       delay: 1
@@ -116,314 +55,54 @@
 
         - name: Create alertmanager gateway
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1
-              kind: Gateway
-              metadata:
-                annotations:
-                  cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
-                name: '{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}'
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                gatewayClassName: cilium
-                infrastructure:
-                  annotations:
-                    io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.alertmanager.loadbalancer.ip }}'
-                listeners:
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['alertmanager'] }}"
-                    name: http
-                    port: 80
-                    protocol: HTTP
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['alertmanager'] }}"
-                    name: https
-                    port: 443
-                    protocol: HTTPS
-                    tls:
-                      certificateRefs:
-                        - kind: Secret
-                          name: '{{ tls_key_prefix }}-{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}'
+            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_gateway.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
         - name: Create alertmanager http route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: http-route-{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['alertmanager'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: http
-                rules:
-                  - filters:
-                      - requestRedirect:
-                          scheme: https
-                          statusCode: 301
-                        type: RequestRedirect
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
+            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_http_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
         - name: Create alertmanager https route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: https-route-{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['alertmanager'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: https
-                rules:
-                  - backendRefs:
-                      - kind: Service
-                        name: '{{ prometheus_vars.kubernetes.alertmanager.gateway.service }}'
-                        port: 9093
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
+            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_https_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
         - name: Create grafana gateway
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1
-              kind: Gateway
-              metadata:
-                annotations:
-                  cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
-                name: '{{ prometheus_vars.kubernetes.grafana.gateway.service }}'
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                gatewayClassName: cilium
-                infrastructure:
-                  annotations:
-                    io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.grafana.loadbalancer.ip }}'
-                listeners:
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['grafana'] }}"
-                    name: http
-                    port: 80
-                    protocol: HTTP
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['grafana'] }}"
-                    name: https
-                    port: 443
-                    protocol: HTTPS
-                    tls:
-                      certificateRefs:
-                        - kind: Secret
-                          name: '{{ tls_key_prefix }}-{{ prometheus_vars.kubernetes.grafana.gateway.service }}'
+            definition: "{{ lookup('ansible.builtin.template', 'grafana_gateway.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
         - name: Create grafana http route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: http-route-{{ prometheus_vars.kubernetes.grafana.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['grafana'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.grafana.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: http
-                rules:
-                  - filters:
-                      - requestRedirect:
-                          scheme: https
-                          statusCode: 301
-                        type: RequestRedirect
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
+            definition: "{{ lookup('ansible.builtin.template', 'grafana_http_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
         - name: Create grafana https route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: https-route-{{ prometheus_vars.kubernetes.grafana.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['grafana'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.grafana.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: https
-                rules:
-                  - backendRefs:
-                      - kind: Service
-                        name: '{{ prometheus_vars.kubernetes.grafana.gateway.service }}'
-                        port: 80
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
+            definition: "{{ lookup('ansible.builtin.template', 'grafana_https_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
         - name: Create prometheus gateway
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1
-              kind: Gateway
-              metadata:
-                annotations:
-                  cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
-                name: '{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                gatewayClassName: cilium
-                infrastructure:
-                  annotations:
-                    io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.prometheus.loadbalancer.ip }}'
-                listeners:
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['prometheus'] }}"
-                    name: http
-                    port: 80
-                    protocol: HTTP
-                  - allowedRoutes:
-                      kinds:
-                        - kind: HTTPRoute
-                      namespaces:
-                        from: Same
-                    hostname: "{{ hostname['prometheus'] }}"
-                    name: https
-                    port: 443
-                    protocol: HTTPS
-                    tls:
-                      certificateRefs:
-                        - kind: Secret
-                          name: '{{ tls_key_prefix }}-{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
+            definition: "{{ lookup('ansible.builtin.template', 'prometheus_gateway.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
         - name: Create prometheus http route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: http-route-{{ prometheus_vars.kubernetes.prometheus.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['prometheus'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: http
-                rules:
-                  - filters:
-                      - requestRedirect:
-                          scheme: https
-                          statusCode: 301
-                        type: RequestRedirect
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
+            definition: "{{ lookup('ansible.builtin.template', 'prometheus_http_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
         - name: Create prometheus https route
           kubernetes.core.k8s:
-            definition:
-              apiVersion: gateway.networking.k8s.io/v1beta1
-              kind: HTTPRoute
-              metadata:
-                name: https-route-{{ prometheus_vars.kubernetes.prometheus.gateway.service }}
-                namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-              spec:
-                hostnames:
-                  - "{{ hostname['prometheus'] }}"
-                parentRefs:
-                  - kind: Gateway
-                    name: '{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
-                    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-                    sectionName: https
-                rules:
-                  - backendRefs:
-                      - kind: Service
-                        name: '{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
-                        port: 9090
-                    matches:
-                      - path:
-                          type: PathPrefix
-                          value: /
-
-    - name: Set service loadbalancer ip
-      kubernetes.core.helm:
-        chart_ref: '{{ prometheus_vars.kubernetes.helm.repository.name }}/{{ prometheus_vars.kubernetes.helm.chart.name }}'
-        chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: monitoring
-        namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-        reset_values: false
-        reuse_values: true
-        values:
-          alertmanager:
-            service:
-              annotations:
-                io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.alertmanager.loadbalancer.ip }}'
-              type: LoadBalancer
-          grafana:
-            service:
-              annotations:
-                io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.grafana.loadbalancer.ip }}'
-              type: LoadBalancer
-          prometheus:
-            service:
-              annotations:
-                io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.prometheus.loadbalancer.ip }}'
-              type: LoadBalancer
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
-      when: cloudflare_vars.kubernetes.gateway.domain == 'disabled'
+            definition: "{{ lookup('ansible.builtin.template', 'prometheus_https_route.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true

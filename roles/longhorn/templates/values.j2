@@ -1,0 +1,23 @@
+defaultSettings:
+  defaultDataLocality: '{{ longhorn_vars.kubernetes.default_settings.data_locality }}'
+  defaultReplicaCount: '{{ longhorn_vars.kubernetes.default_settings.replica_count }}'
+  nodeDownPodDeletionPolicy: '{{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}'
+{% if k3s_vars.controlplane.tainted %}
+  taintToleration: node-role.kubernetes.io/master=true:NoSchedule
+longhornDriver:
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Equal
+      value: 'true'
+      effect: NoSchedule
+longhornManager:
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Equal
+      value: 'true'
+      effect: NoSchedule
+{% endif %}
+persistence:
+  defaultClassReplicaCount: '{{ longhorn_vars.kubernetes.persistence.replica_count }}'
+  defaultDataLocality: '{{ longhorn_vars.kubernetes.persistence.data_locality }}'
+  migratable: '{{ longhorn_vars.kubernetes.persistence.migratable }}'
