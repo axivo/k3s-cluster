@@ -2,13 +2,13 @@
 
 <!-- Please include a summary of the changes and any related issues. -->
 
-### Changes
+### CHANGES
 
 - First change
 - Second change
 
 <!--
-### Related Issues
+### ISSUES
 
 - Fixes <issue link here>
 -->
