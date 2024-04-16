@@ -2,7 +2,7 @@
 cloudflare_vars:
   kubernetes:
     acme:
-      server: staging
+      server: production
     api:
       token: !vault |
           $ANSIBLE_VAULT;1.1;AES256
