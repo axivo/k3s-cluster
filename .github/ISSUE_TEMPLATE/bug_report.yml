@@ -43,9 +43,12 @@ body:
     id: logs
     attributes:
       label: Relevant Logs
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      description: |
+        Please copy and paste any relevant log output.
+        Tip: This will be automatically formatted into code, there is no need to insert backticks.
       render: shell
   - type: textarea
+    id: anything-else
     attributes:
       label: Anything Else
       description: |
