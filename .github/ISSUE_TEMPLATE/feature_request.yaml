@@ -4,9 +4,7 @@ labels: ["enhancement", "triage"]
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to fill out this feature request!
-        If you have usage questions, please use the [Community Discussions](https://github.com/axivo/k3s-cluster/discussions).
+      value: Thanks for taking the time to fill out this feature request! If you have usage questions, please use the [Community Discussions](https://github.com/axivo/k3s-cluster/discussions).
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
