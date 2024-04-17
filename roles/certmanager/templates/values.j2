@@ -4,4 +4,4 @@ installCRDs: true
 prometheus:
   serviceMonitor:
     enabled: true
-    namespace: '{{ certmanager_vars.kubernetes.namespace }}'
+    namespace: '{{ prometheus_vars.kubernetes.namespace }}'
