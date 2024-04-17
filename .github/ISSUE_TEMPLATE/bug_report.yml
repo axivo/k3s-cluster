@@ -24,14 +24,20 @@ body:
     id: kernel-version
     attributes:
       label: Kernel Version
-      description: Which kernel version is the cluster running on? (run `uname -a`)
+      description: |
+        Which kernel version is the cluster running on? (run `uname -a`)
+        Tip: This will be automatically formatted into code, there is no need to insert backticks.
+      render: shell
     validations:
       required: true
   - type: textarea
     id: k8s-version
     attributes:
       label: Kubernetes Version
-      description: Which Kubernetes version is the cluster running on? (run `kubectl version`)
+      description: |
+        Which Kubernetes version is the cluster running on? (run `kubectl version`)
+        Tip: This will be automatically formatted into code, there is no need to insert backticks.
+      render: shell
     validations:
       required: true
   - type: textarea
