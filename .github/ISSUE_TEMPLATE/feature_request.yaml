@@ -4,14 +4,16 @@ labels: ["enhancement", "triage"]
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to fill out this feature request! If you have usage questions, please use the [Community Discussions](https://github.com/axivo/k3s-cluster/discussions).
+      value: |
+        Thanks for taking the time to fill out this feature request!
+        If you have usage questions, please use the [Community Discussions](https://github.com/axivo/k3s-cluster/discussions).
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
       description: Please search to see if an issue already exists for the feature request.
       options:
-      - label: I have searched the existing issues
-        required: true
+        - label: I have searched the existing issues
+          required: true
   - type: textarea
     id: related-problem
     attributes:
