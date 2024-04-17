@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for this project
+description: Suggest an idea for this project.
 labels: ["enhancement", "triage"]
 body:
   - type: markdown
@@ -17,11 +17,6 @@ body:
     attributes:
       label: Related Problem
       description: Is your feature request related to a problem?
-      placeholder: |
-        1. In this environment...
-        2. With this config...
-        3. Run '...'
-        4. See error...
       value: "Please describe the related problem."
     validations:
       required: true
