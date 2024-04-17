@@ -16,7 +16,7 @@ body:
     id: what-happened
     attributes:
       label: What Happened
-      description: Also tell us, what did you expect to happen?
+      description: What did you expect to happen?
       placeholder: |
         1. In this environment...
         2. With this config...
