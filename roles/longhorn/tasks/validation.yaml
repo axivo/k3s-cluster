@@ -1,0 +1,14 @@
+---
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Validate release tag url
+  ansible.builtin.uri:
+    url: '{{ longhorn_project_url_tag }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed

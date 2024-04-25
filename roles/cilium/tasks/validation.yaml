@@ -1,0 +1,44 @@
+---
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Validate cli release file url
+  ansible.builtin.uri:
+    url: '{{ cilium_cli_release_url_file }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed
+
+- name: Validate hubble release file url
+  ansible.builtin.uri:
+    url: '{{ cilium_hubble_release_url_file }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed
+
+- name: Validate gateway api release file url
+  ansible.builtin.uri:
+    url: '{{ cilium_gateway_api_release_url_file }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed
+
+- name: Validate project tag url
+  ansible.builtin.uri:
+    url: '{{ cilium_project_url_tag }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed

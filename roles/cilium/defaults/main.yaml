@@ -1,11 +1,5 @@
 ---
 cilium_vars:
-  cli:
-    name: cilium-linux-arm64.tar.gz
-    version: v0.16.4
-  hubble:
-    name: hubble-linux-arm64.tar.gz
-    version: v0.13.2
   kubernetes:
     client:
       rate_limit:
@@ -19,14 +13,13 @@ cilium_vars:
         requests:
           cpu: 100m
           memory: 64Mi
-    gateway_api:
-      version: v1.0.0
     helm:
       chart:
         name: cilium
         version: v1.15.4
       repository:
         name: cilium
+        org: cilium
         url: https://helm.cilium.io
     hubble:
       relay:
@@ -80,3 +73,22 @@ cilium_vars:
           cpu: 100m
           memory: 64Mi
     routing_mode: native
+  release:
+    cli:
+      file: cilium-linux-arm64.tar.gz
+      repository:
+        name: cilium-cli
+        org: cilium
+      version: v0.16.4
+    gateway_api:
+      file: experimental-install.yaml
+      repository:
+        name: gateway-api
+        org: kubernetes-sigs
+      version: v1.0.0
+    hubble:
+      file: hubble-linux-arm64.tar.gz
+      repository:
+        name: hubble
+        org: cilium
+      version: v0.13.2

@@ -7,9 +7,13 @@
     - cloudflare
     - k3s
 
+- name: Chart Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
 - name: Add repository
   kubernetes.core.helm_repository:
-    name: '{{ longhorn_vars.kubernetes.helm.repository.name }}'
+    name: '{{ longhorn_vars.kubernetes.helm.repository.org }}'
     repo_url: '{{ longhorn_vars.kubernetes.helm.repository.url }}'
   when: ansible_host in k3s_server_hosts
 
@@ -18,7 +22,7 @@
   block:
     - name: Install chart
       kubernetes.core.helm:
-        chart_ref: '{{ longhorn_vars.kubernetes.helm.repository.name }}/{{ longhorn_vars.kubernetes.helm.chart.name }}'
+        chart_ref: '{{ longhorn_project_chart }}'
         chart_version: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'

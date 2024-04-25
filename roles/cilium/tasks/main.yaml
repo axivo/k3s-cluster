@@ -4,32 +4,32 @@
     name: k3s
     tasks_from: facts
 
-- name: Install Dependencies
+- name: Chart Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
+- name: Chart Dependencies
   tags: deps
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Set binary fact
+    - name: Set release fact
       ansible.builtin.set_fact:
-        binary:
-          - org: cilium
-            repo: cilium-cli
-            version: '{{ cilium_vars.cli.version }}'
-            name: '{{ cilium_vars.cli.name }}'
-          - org: cilium
-            repo: hubble
-            version: '{{ cilium_vars.hubble.version }}'
-            name: '{{ cilium_vars.hubble.name }}'
+        release:
+          - file: '{{ cilium_vars.release.cli.file }}'
+            url: '{{ cilium_cli_release_url_file }}'
+          - file: '{{ cilium_vars.release.hubble.file }}'
+            url: '{{ cilium_hubble_release_url_file }}'
       run_once: true
 
     - name: Download archive
       ansible.builtin.get_url:
-        url: https://github.com/{{ item.org }}/{{ item.repo }}/releases/download/{{ item.version }}/{{ item.name }}
-        checksum: sha256:https://github.com/{{ item.org }}/{{ item.repo }}/releases/download/{{ item.version }}/{{ item.name }}.sha256sum
+        url: '{{ item.url }}'
+        checksum: sha256:{{ item.url }}.sha256sum
         dest: /tmp
         owner: root
         group: root
         mode: '0644'
-      loop: '{{ binary }}'
+      loop: '{{ release }}'
       register: result
       delay: 1
       retries: 3
@@ -37,23 +37,23 @@
 
     - name: Install binary
       ansible.builtin.unarchive:
-        src: /tmp/{{ item.name }}
+        src: /tmp/{{ item.file }}
         dest: /usr/local/bin
         owner: root
         group: root
         mode: '0755'
         remote_src: true
-      loop: '{{ binary }}'
+      loop: '{{ release }}'
 
     - name: Delete archive
       ansible.builtin.file:
-        path: /tmp/{{ item.name }}
+        path: /tmp/{{ item.file }}
         state: absent
-      loop: '{{ binary }}'
+      loop: '{{ release }}'
 
     - name: Add repository
       kubernetes.core.helm_repository:
-        name: '{{ cilium_vars.kubernetes.helm.repository.name }}'
+        name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
 
 - name: Chart Setup
@@ -63,7 +63,7 @@
     - name: Apply gateway api crds manifest
       kubernetes.core.k8s:
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        src: https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ cilium_vars.kubernetes.gateway_api.version }}/experimental-install.yaml
+        src: '{{ cilium_gateway_api_release_url_file }}'
 
     - name: Set chart setup fact
       ansible.builtin.set_fact:
@@ -77,7 +77,7 @@
 
     - name: Install chart
       kubernetes.core.helm:
-        chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+        chart_ref: '{{ cilium_project_chart }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
@@ -109,7 +109,7 @@
 
     - name: Update chart values
       kubernetes.core.helm:
-        chart_ref: '{{ cilium_vars.kubernetes.helm.repository.name }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+        chart_ref: '{{ cilium_project_chart }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'

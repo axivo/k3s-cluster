@@ -7,8 +7,10 @@ certmanager_vars:
     helm:
       chart:
         name: cert-manager
+        org: cert-manager
         version: v1.14.4
       repository:
-        name: jetstack
+        name: cert-manager
+        org: jetstack
         url: https://charts.jetstack.io
     namespace: kube-system

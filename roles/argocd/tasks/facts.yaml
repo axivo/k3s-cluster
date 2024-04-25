@@ -1,0 +1,40 @@
+---
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    argocd_project_chart: '{{ argocd_vars.kubernetes.helm.chart.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set project release fact
+  ansible.builtin.set_fact:
+    argocd_project_release: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    argocd_project_url: https://github.com/{{ argocd_project_release }}/releases
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    argocd_project_url_tag: '{{ argocd_project_url }}/tag/{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_vars.kubernetes.helm.chart.version }}'
+  run_once: true
+
+- name: Set release fact
+  ansible.builtin.set_fact:
+    argocd_release: '{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}'
+  run_once: true
+
+- name: Set release url fact
+  ansible.builtin.set_fact:
+    argocd_release_url: https://github.com/{{ argocd_release }}/releases
+  run_once: true
+
+- name: Set release checksums url fact
+  ansible.builtin.set_fact:
+    argocd_release_url_checksums: '{{ argocd_release_url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksums }}'
+  run_once: true
+
+- name: Set release file url fact
+  ansible.builtin.set_fact:
+    argocd_release_url_file: '{{ argocd_release_url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+  run_once: true

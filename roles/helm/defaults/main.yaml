@@ -1,0 +1,12 @@
+---
+helm_vars:
+  plugin:
+    diff:
+      url: https://github.com/databus23/helm-diff
+      version: v3.9.5
+  release:
+    key: helm-archive-keyring.gpg
+    repository:
+      channel: stable
+      key: signing.asc
+      url: https://baltocdn.com/helm

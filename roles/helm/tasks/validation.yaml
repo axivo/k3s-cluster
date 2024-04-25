@@ -1,0 +1,20 @@
+---
+- name: Validate diff plugin url
+  ansible.builtin.uri:
+    url: '{{ helm_vars.plugin.diff.url }}/releases/tag/{{ helm_vars.plugin.diff.version }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed
+
+- name: Validate release key url
+  ansible.builtin.uri:
+    url: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
+    timeout: 5
+  run_once: true
+  register: result
+  delay: 1
+  retries: 3
+  until: result is not failed

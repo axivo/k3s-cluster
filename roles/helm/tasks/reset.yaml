@@ -36,5 +36,5 @@
             name: '{{ item }}'
             state: absent
           loop:
-            - /etc/apt/sources.list.d/helm-stable.sources
-            - /usr/share/keyrings/helm-archive-keyring.gpg
+            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
+            - /usr/share/keyrings/{{ helm_vars.release.key }}

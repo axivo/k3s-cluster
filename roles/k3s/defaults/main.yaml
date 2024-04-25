@@ -13,8 +13,6 @@ k3s_vars:
   directory:
     config: /etc/rancher/k3s
     lib: /var/lib/rancher/k3s
-  k3s:
-    version: v1.29.3+k3s1
   kubeconfig:
     local: true
   kubectl:
@@ -26,6 +24,13 @@ k3s_vars:
       port: 6444
   network:
     interface: eth0
+  release:
+    checksum: sha256sum-arm64.txt
+    file: k3s-arm64
+    repository:
+      name: k3s
+      org: k3s-io
+    version: v1.29.3+k3s1
   service:
     agent_args: ''
     server_args: ''

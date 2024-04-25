@@ -7,7 +7,8 @@ sealedsecrets_vars:
         version: v2.15.3
       repository:
         name: sealed-secrets
-        url: https://bitnami-labs.github.io/sealed-secrets
+        org: bitnami-labs
+        url: https://bitnami-labs.github.io
     namespace: kube-system
     resources:
       limits:
@@ -16,6 +17,10 @@ sealedsecrets_vars:
       requests:
         cpu: 100m
         memory: 64Mi
-  kubeseal:
-    name: kubeseal-0.26.0-linux-arm64.tar.gz
+  release:
+    checksums: sealed-secrets_0.26.0_checksums.txt
+    file: kubeseal-0.26.0-linux-arm64.tar.gz
+    repository:
+      name: sealed-secrets
+      org: bitnami-labs
     version: v0.26.0

@@ -4,22 +4,16 @@
     name: k3s
     tasks_from: facts
 
+- name: Chart Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
 - name: Install Dependencies
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Set binary fact
-      ansible.builtin.set_fact:
-        binary:
-          org: bitnami-labs
-          repo: sealed-secrets
-          version: '{{ sealedsecrets_vars.kubeseal.version }}'
-          checksums: 'sealed-secrets_{{ sealedsecrets_vars.kubeseal.version[1:] }}_checksums.txt'
-          name: '{{ sealedsecrets_vars.kubeseal.name }}'
-      run_once: true
-
     - name: Set checksums fact
       ansible.builtin.uri:
-        url: https://github.com/{{ binary['org'] }}/{{ binary['repo'] }}/releases/download/{{ binary['version'] }}/{{ binary['checksums'] }}
+        url: '{{ sealedsecrets_release_url_checksums }}'
         return_content: true
       register: checksums
       run_once: true
@@ -28,12 +22,12 @@
       ansible.builtin.set_fact:
         sha256_checksum: "{{ item.split(' ')[0] }}"
       loop: "{{ checksums.content.split('\n') }}"
-      when: sealedsecrets_vars.kubeseal.name in item
+      when: sealedsecrets_vars.release.file in item
       run_once: true
 
     - name: Download archive
       ansible.builtin.get_url:
-        url: https://github.com/{{ binary['org'] }}/{{ binary['repo'] }}/releases/download/{{ binary['version'] }}/{{ binary['name'] }}
+        url: '{{ sealedsecrets_release_url_file }}'
         checksum: sha256:{{ sha256_checksum }}
         dest: /tmp
         owner: root
@@ -46,7 +40,7 @@
 
     - name: Install binary
       ansible.builtin.unarchive:
-        src: /tmp/{{ binary['name'] }}
+        src: /tmp/{{ sealedsecrets_vars.release.file }}
         dest: /usr/local/bin
         owner: root
         group: root
@@ -58,18 +52,18 @@
         path: '{{ item }}'
         state: absent
       loop:
-        - /tmp/{{ binary['name'] }}
+        - /tmp/{{ sealedsecrets_vars.release.file }}
         - /usr/local/bin/LICENSE
         - /usr/local/bin/README.md
 
     - name: Add repository
       kubernetes.core.helm_repository:
-        name: '{{ sealedsecrets_vars.kubernetes.helm.repository.name }}'
-        repo_url: '{{ sealedsecrets_vars.kubernetes.helm.repository.url }}'
+        name: '{{ sealedsecrets_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ sealedsecrets_vars.kubernetes.helm.repository.url }}/{{ sealedsecrets_vars.kubernetes.helm.repository.name }}'
 
 - name: Install chart
   kubernetes.core.helm:
-    chart_ref: '{{ sealedsecrets_vars.kubernetes.helm.repository.name }}/{{ sealedsecrets_vars.kubernetes.helm.chart.name }}'
+    chart_ref: '{{ sealedsecrets_project_chart }}'
     chart_version: '{{ sealedsecrets_vars.kubernetes.helm.chart.version }}'
     kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
     name: '{{ sealedsecrets_vars.kubernetes.helm.chart.name }}'

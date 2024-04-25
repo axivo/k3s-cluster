@@ -1,4 +1,24 @@
 ---
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    certmanager_project_chart: '{{ certmanager_vars.kubernetes.helm.repository.org }}/{{ certmanager_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project release fact
+  ansible.builtin.set_fact:
+    certmanager_project_release: '{{ certmanager_vars.kubernetes.helm.chart.org }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    certmanager_project_url: https://github.com/{{ certmanager_project_release }}/releases
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    certmanager_project_url_tag: '{{ certmanager_project_url }}/tag/{{ certmanager_vars.kubernetes.helm.chart.version }}'
+  run_once: true
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     certmanager_vars: '{{ certmanager_vars }}'
