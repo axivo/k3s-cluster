@@ -1,4 +1,29 @@
 ---
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    prometheus_project_chart: '{{ prometheus_vars.kubernetes.helm.repository.org }}/{{ prometheus_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set project release fact
+  ansible.builtin.set_fact:
+    prometheus_project_release: '{{ prometheus_vars.kubernetes.helm.repository.org }}/{{ prometheus_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project tag fact
+  ansible.builtin.set_fact:
+    prometheus_project_tag: '{{ prometheus_vars.kubernetes.helm.chart.name }}-{{ prometheus_vars.kubernetes.helm.chart.version[1:] }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    prometheus_project_url: https://github.com/{{ prometheus_project_release }}/releases
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    prometheus_project_url_tag: '{{ prometheus_project_url }}/tag/{{ prometheus_project_tag }}'
+  run_once: true
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     prometheus_vars: '{{ prometheus_vars }}'

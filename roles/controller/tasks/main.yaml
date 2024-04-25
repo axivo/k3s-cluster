@@ -172,7 +172,7 @@
             namespace: upgrade-system
           spec:
             concurrency: 1
-            version: '{{ k3s_vars.k3s.version }}'
+            version: '{{ k3s_vars.release.version }}'
             nodeSelector:
               matchExpressions:
                 - { key: k3s-upgrade, operator: Exists }
@@ -197,7 +197,7 @@
             namespace: upgrade-system
           spec:
             concurrency: 2
-            version: '{{ k3s_vars.k3s.version }}'
+            version: '{{ k3s_vars.release.version }}'
             nodeSelector:
               matchExpressions:
                 - { key: k3s-upgrade, operator: Exists }

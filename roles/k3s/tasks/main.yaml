@@ -3,13 +3,17 @@
   ansible.builtin.import_tasks:
     file: facts.yaml
 
+- name: Service Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
 - name: Service Setup
   notify: Start service
   block:
     - name: Install k3s binary
       ansible.builtin.get_url:
-        url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_vars.k3s.version }}/k3s-arm64
-        checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_vars.k3s.version }}/sha256sum-arm64.txt
+        url: '{{ k3s_release_url_file }}'
+        checksum: sha256:{{ k3s_release_url_checksum }}
         dest: /usr/local/bin/k3s
         owner: root
         group: root

@@ -7,10 +7,14 @@
     - cloudflare
     - k3s
 
+- name: Chart Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
 - name: Add repository
   kubernetes.core.helm_repository:
-    name: '{{ prometheus_vars.kubernetes.helm.repository.name }}'
-    repo_url: '{{ prometheus_vars.kubernetes.helm.repository.url }}'
+    name: '{{ prometheus_vars.kubernetes.helm.repository.org }}'
+    repo_url: '{{ prometheus_vars.kubernetes.helm.repository.url }}/{{ prometheus_vars.kubernetes.helm.repository.name }}'
 
 - name: Chart Setup
   when: ansible_host == k3s_server_default_host
@@ -24,10 +28,10 @@
 
     - name: Install chart
       kubernetes.core.helm:
-        chart_ref: '{{ prometheus_vars.kubernetes.helm.repository.name }}/{{ prometheus_vars.kubernetes.helm.chart.name }}'
+        chart_ref: '{{ prometheus_project_chart }}'
         chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ prometheus_vars.kubernetes.helm.chart.name_override }}'
+        name: '{{ prometheus_vars.kubernetes.helm.chart.prefix }}'
         namespace: '{{ prometheus_vars.kubernetes.namespace }}'
         update_repo_cache: true
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

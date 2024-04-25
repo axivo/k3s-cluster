@@ -14,6 +14,7 @@ longhorn_vars:
         version: v1.6.1
       repository:
         name: longhorn
+        org: longhorn
         url: https://charts.longhorn.io
     gateway:
       service: longhorn-frontend

@@ -7,22 +7,16 @@
     - cloudflare
     - k3s
 
-- name: Install Dependencies
+- name: Chart Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
+- name: Chart Dependencies
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Set binary fact
-      ansible.builtin.set_fact:
-        binary:
-          org: argoproj
-          repo: argo-cd
-          version: '{{ argocd_vars.argocd.version }}'
-          checksums: cli_checksums.txt
-          name: '{{ argocd_vars.argocd.name }}'
-      run_once: true
-
     - name: Set checksums fact
       ansible.builtin.uri:
-        url: https://github.com/{{ binary['org'] }}/{{ binary['repo'] }}/releases/download/{{ binary['version'] }}/{{ binary['checksums'] }}
+        url: '{{ argocd_release_url_checksums }}'
         return_content: true
       register: checksums
       run_once: true
@@ -31,12 +25,12 @@
       ansible.builtin.set_fact:
         sha256_checksum: "{{ item.split(' ')[0] }}"
       loop: "{{ checksums.content.split('\n') }}"
-      when: argocd_vars.argocd.name in item
+      when: argocd_vars.release.file in item
       run_once: true
 
     - name: Install binary
       ansible.builtin.get_url:
-        url: https://github.com/{{ binary['org'] }}/{{ binary['repo'] }}/releases/download/{{ binary['version'] }}/{{ binary['name'] }}
+        url: '{{ argocd_release_url_file }}'
         checksum: sha256:{{ sha256_checksum }}
         dest: /usr/local/bin/argocd
         owner: root
@@ -49,8 +43,8 @@
 
     - name: Add repository
       kubernetes.core.helm_repository:
-        name: '{{ argocd_vars.kubernetes.helm.repository.name }}'
-        repo_url: '{{ argocd_vars.kubernetes.helm.repository.url }}'
+        name: '{{ argocd_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
 
 - name: Chart Setup
   when: ansible_host == k3s_server_default_host
@@ -74,7 +68,7 @@
 
     - name: Install chart
       kubernetes.core.helm:
-        chart_ref: '{{ argocd_vars.kubernetes.helm.repository.name }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
+        chart_ref: '{{ argocd_project_chart }}'
         chart_version: '{{ argocd_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ argocd_vars.kubernetes.helm.chart.name }}'

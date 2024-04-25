@@ -1,4 +1,69 @@
 ---
+- name: Set cli release fact
+  ansible.builtin.set_fact:
+    cilium_cli_release: '{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}'
+  run_once: true
+
+- name: Set cli release url fact
+  ansible.builtin.set_fact:
+    cilium_cli_release_url: https://github.com/{{ cilium_cli_release }}/releases
+  run_once: true
+
+- name: Set cli release file url fact
+  ansible.builtin.set_fact:
+    cilium_cli_release_url_file: '{{ cilium_cli_release_url }}/download/{{ cilium_vars.release.cli.version }}/{{ cilium_vars.release.cli.file }}'
+  run_once: true
+
+- name: Set gateway api release fact
+  ansible.builtin.set_fact:
+    cilium_gateway_api_release: '{{ cilium_vars.release.gateway_api.repository.org }}/{{ cilium_vars.release.gateway_api.repository.name }}'
+  run_once: true
+
+- name: Set gateway api release file fact
+  ansible.builtin.set_fact:
+    cilium_gateway_api_release_file: '{{ cilium_vars.release.gateway_api.version }}/{{ cilium_vars.release.gateway_api.file }}'
+  run_once: true
+
+- name: Set gateway api release url fact
+  ansible.builtin.set_fact:
+    cilium_gateway_api_release_url: https://github.com/{{ cilium_gateway_api_release }}/releases
+  run_once: true
+
+- name: Set gateway api release file fact
+  ansible.builtin.set_fact:
+    cilium_gateway_api_release_url_file: '{{ cilium_gateway_api_release_url }}/download/{{ cilium_gateway_api_release_file }}'
+  run_once: true
+
+- name: Set hubble release fact
+  ansible.builtin.set_fact:
+    cilium_hubble_release: '{{ cilium_vars.release.hubble.repository.org }}/{{ cilium_vars.release.hubble.repository.name }}'
+  run_once: true
+
+- name: Set hubble release url fact
+  ansible.builtin.set_fact:
+    cilium_hubble_release_url: https://github.com/{{ cilium_hubble_release }}/releases
+  run_once: true
+
+- name: Set hubble release file url fact
+  ansible.builtin.set_fact:
+    cilium_hubble_release_url_file: '{{ cilium_hubble_release_url }}/download/{{ cilium_vars.release.hubble.version }}/{{ cilium_vars.release.hubble.file }}'
+  run_once: true
+
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    cilium_project_chart: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    cilium_project_url: https://github.com/{{ cilium_project_chart }}/releases
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    cilium_project_url_tag: '{{ cilium_project_url }}/tag/{{ cilium_vars.kubernetes.helm.chart.version }}'
+  run_once: true
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     cilium_vars: '{{ cilium_vars }}'

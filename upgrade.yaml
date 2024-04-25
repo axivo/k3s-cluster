@@ -22,7 +22,7 @@
   gather_facts: true
   tasks:
     - name: Upgrade argocd chart
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: argocd
       tags: argocd
 
@@ -34,6 +34,12 @@
     - name: Upgrade cilium chart
       ansible.builtin.import_role:
         name: cilium
+      tags: cilium
+
+    - name: Update cilium chart settings
+      ansible.builtin.import_role:
+        name: cilium
+        tasks_from: update
       tags: cilium
 
     - name: Update cloudflare settings

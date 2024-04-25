@@ -1,8 +1,5 @@
 ---
 argocd_vars:
-  argocd:
-    name: argocd-linux-arm64
-    version: v2.10.7
   kubernetes:
     application_set:
       resources:
@@ -15,10 +12,12 @@ argocd_vars:
     helm:
       chart:
         name: argo-cd
+        org: argoproj
         version: 6.7.12
       repository:
-        name: argoproj
-        url: https://argoproj.github.io/argo-helm
+        name: argo-helm
+        org: argoproj
+        url: https://argoproj.github.io
     namespace: kube-system
     repo_server:
       resources:
@@ -61,3 +60,10 @@ argocd_vars:
           32393830626564653166386564383936653862376261343063316437636365333537663166633664
           6163323837383863660a393936386633336336376539306235373364643430323930633261386130
           63333630323765663465326438643862373831656437616262323739376634663037
+  release:
+    checksums: cli_checksums.txt
+    file: argocd-linux-arm64
+    repository:
+      name: argo-cd
+      org: argoproj
+    version: v2.10.7

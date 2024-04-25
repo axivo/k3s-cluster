@@ -1,0 +1,20 @@
+---
+- name: Cluster Validation
+  hosts: cluster
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Validate global settings
+      ansible.builtin.include_role:
+        name: '{{ item }}'
+        tasks_from: validation
+      loop:
+        - cluster
+        - helm
+        - k3s
+        - argocd
+        - certmanager
+        - cilium
+        - longhorn
+        - prometheus
+        - sealedsecrets

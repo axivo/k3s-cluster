@@ -19,11 +19,12 @@ prometheus_vars:
     helm:
       chart:
         name: kube-prometheus-stack
-        name_override: monitoring
+        prefix: monitoring
         version: v58.1.2
       repository:
-        name: prometheus
-        url: https://prometheus-community.github.io/helm-charts
+        name: helm-charts
+        org: prometheus-community
+        url: https://prometheus-community.github.io
     grafana:
       gateway:
         service: monitoring-grafana
