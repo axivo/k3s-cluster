@@ -25,8 +25,8 @@ argocd_vars:
           cpu: 400m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 200m
+          memory: 128Mi
     server:
       admin:
         password: !vault |
@@ -49,8 +49,8 @@ argocd_vars:
           cpu: 400m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 200m
+          memory: 128Mi
       user:
         name: floren
         password: !vault |
