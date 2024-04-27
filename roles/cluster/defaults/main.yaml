@@ -45,6 +45,7 @@ cluster_vars:
     unattended_upgrades:
       enabled: true
       reboot:
+        automatic: false
         time: '02:00'
         timelapse: 10
     wifi:
