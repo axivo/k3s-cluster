@@ -53,6 +53,7 @@
     - role: cloudflare
     - role: longhorn
     - role: prometheus
+    - role: kured
     - role: sealedsecrets
     - role: argocd
   tags: charts

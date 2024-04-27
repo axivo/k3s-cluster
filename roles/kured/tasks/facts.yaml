@@ -1,0 +1,20 @@
+---
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    kured_project_chart: '{{ kured_vars.kubernetes.helm.chart.org }}/{{ kured_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set project release fact
+  ansible.builtin.set_fact:
+    kured_project_release: '{{ kured_vars.kubernetes.helm.repository.org }}/{{ kured_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    kured_project_url: https://github.com/{{ kured_project_release }}/releases
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    kured_project_url_tag: '{{ kured_project_url }}/tag/{{ kured_vars.kubernetes.helm.chart.name }}-{{ kured_vars.kubernetes.helm.chart.version }}'
+  run_once: true

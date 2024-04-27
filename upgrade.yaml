@@ -47,6 +47,11 @@
         name: cloudflare
       tags: cloudflare
 
+    - name: Upgrade kured chart
+      ansible.builtin.import_role:
+        name: kured
+      tags: kured
+
     - name: Upgrade longhorn chart
       ansible.builtin.import_role:
         name: longhorn

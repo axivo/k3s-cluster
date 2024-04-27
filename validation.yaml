@@ -12,6 +12,7 @@
         - cluster
         - helm
         - k3s
+        - kured
         - argocd
         - certmanager
         - cilium
