@@ -3,18 +3,16 @@ defaultSettings:
   defaultReplicaCount: '{{ longhorn_vars.kubernetes.default_settings.replica_count }}'
   nodeDownPodDeletionPolicy: '{{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}'
 {% if k3s_vars.controlplane.tainted %}
-  taintToleration: node-role.kubernetes.io/master=true:NoSchedule
+  taintToleration: node-role.kubernetes.io/control-plane:NoSchedule
 longhornDriver:
   tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Equal
-      value: 'true'
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
       effect: NoSchedule
 longhornManager:
   tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Equal
-      value: 'true'
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
       effect: NoSchedule
 {% endif %}
 persistence:
