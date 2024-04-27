@@ -32,40 +32,6 @@ K3S high-availability cluster, deployed with Ansible.
 - Update Renovate configuration, for automated version upgrades
 - Finalize documentation
 
-## Ansible
-
-### Cluster Setup
-
-Install dependencies in MacOS:
-
-```shell
-brew install ansible ansible-lint
-brew tap esolitos/ipa
-brew install esolitos/ipa/sshpass
-```
-
-Upgrade [kubernetes.core](https://github.com/ansible-collections/kubernetes.core/blob/main/docs/kubernetes.core.helm_module.rst) [collection](https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html):
-
-```shell
-ansible-galaxy collection install -U kubernetes.core
-```
-
-Deploy cluster:
-
-```shell
-ansible-playbook --ask-vault-pass provisioning.yaml
-```
-
-Reset cluster:
-
-```shell
-ansible-playbook --ask-vault-pass reset.yaml
-```
-
-### Roles
-
-Each role has their own dedicated README, for additional details and required settings.
-
 ## Wiki
 
 Visit the [Wiki](../../wiki), for detailed configuration instructions.
