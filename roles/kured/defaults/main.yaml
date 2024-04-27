@@ -1,0 +1,13 @@
+---
+kured_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: kured
+        org: kubereboot
+        version: 5.4.5
+      repository:
+        name: charts
+        org: kubereboot
+        url: https://kubereboot.github.io
+    namespace: kube-system

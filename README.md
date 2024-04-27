@@ -19,6 +19,7 @@ K3S high-availability cluster, deployed with Ansible.
 - [Cloudflare](https://www.cloudflare.com) Let's Encrypt certificates deployed with [cert-manager](https://cert-manager.io)
 - [HAProxy](https://www.haproxy.org) load balancer for controlplanes
 - [K3S](https://k3s.io) production ready deployment
+- [Kured](https://kured.dev)
 - [Longhorn](https://longhorn.io)
 - [Prometheus Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
 - [Renovate](https://github.com/renovatebot/renovate)
@@ -64,3 +65,7 @@ ansible-playbook --ask-vault-pass reset.yaml
 ### Roles
 
 Each role has their own dedicated README, for additional details and required settings.
+
+## Wiki
+
+Visit the [Wiki](wiki), for detailed configuration instructions.
