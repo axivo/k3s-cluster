@@ -107,7 +107,7 @@
 
         - name: Set token fact
           ansible.builtin.set_fact:
-            token: "{{ node_token.content | b64decode | trim }}"
+            token: '{{ node_token.content | b64decode | trim }}'
           run_once: true
 
     - name: Get user info
