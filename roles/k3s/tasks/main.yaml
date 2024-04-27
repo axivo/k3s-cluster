@@ -103,11 +103,13 @@
         - name: Read token
           ansible.builtin.slurp:
             path: '{{ k3s_vars.directory.lib }}/server/node-token'
+          no_log: true
           register: node_token
 
         - name: Set token fact
           ansible.builtin.set_fact:
             token: '{{ node_token.content | b64decode | trim }}'
+          no_log: true
           run_once: true
 
     - name: Get user info
