@@ -2,8 +2,7 @@ configuration:
   rebootDelay: 30s
 {% if k3s_vars.controlplane.tainted %}
 tolerations:
-  - key: node-role.kubernetes.io/master
-    operator: Equal
-    value: 'true'
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
     effect: NoSchedule
 {% endif %}
