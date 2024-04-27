@@ -22,7 +22,7 @@ tls-san: {{ k3s_vars.api.host }}
 node-taint:
   - node.cilium.io/agent-not-ready:NoExecute
 {% if k3s_vars.controlplane.tainted and k3s_service_type == 'server' %}
-  - node-role.kubernetes.io/master=true:NoSchedule
+  - node-role.kubernetes.io/control-plane:NoSchedule
 {% endif %}
 {% if k3s_ha_cluster and ansible_host != k3s_server_default_host and k3s_token | length > 0 %}
 {% if k3s_vars.loadbalancer.enabled and k3s_service_type == 'agent' %}
