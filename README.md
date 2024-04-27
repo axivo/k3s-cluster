@@ -68,4 +68,4 @@ Each role has their own dedicated README, for additional details and required se
 
 ## Wiki
 
-Visit the [Wiki](wiki), for detailed configuration instructions.
+Visit the [Wiki](../../wiki), for detailed configuration instructions.
