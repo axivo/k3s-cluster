@@ -25,6 +25,7 @@
         - argocd
         - certmanager
         - cilium
+        - kured
         - longhorn
         - prometheus
         - sealedsecrets
