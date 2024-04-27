@@ -51,4 +51,4 @@ cluster_vars:
     wifi:
       enabled: false
   ssh:
-    authorized_key: "{{ lookup('ansible.builtin.file', lookup('ansible.builtin.env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
+    authorized_key: "{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh/id_ed25519.pub' }}"
