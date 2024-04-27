@@ -45,10 +45,11 @@ cluster_vars:
     unattended_upgrades:
       enabled: true
       reboot:
-        automatic: false
+        automatic: 'false'
         time: '02:00'
         timelapse: 10
     wifi:
       enabled: false
   ssh:
     authorized_key: "{{ lookup('ansible.builtin.file', lookup('ansible.builtin.env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
+    private_key: "{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh/id_ed25519' }}"
