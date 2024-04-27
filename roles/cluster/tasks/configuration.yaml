@@ -233,8 +233,8 @@
               replace: '\g<1> "{{ cluster_vars.service.postfix.user.alias }}";'
             - regexp: ^\/\/(Unattended-Upgrade::Remove-Unused-Dependencies) "false";$
               replace: '\g<1> "true";'
-            - regexp: ^\/\/(Unattended-Upgrade::Automatic-Reboot) "false";$
-              replace: '\g<1> "true";'
+            - regexp: ^(?:.*)(Unattended-Upgrade::Automatic-Reboot)\s.*;$
+              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.reboot.automatic }}";'
             - regexp: ^(?:.*)(Unattended-Upgrade::Automatic-Reboot-Time)\s.*;$
               replace: '\g<1> "{{ reboot_time.stdout }}";'
 

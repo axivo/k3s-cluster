@@ -103,11 +103,13 @@
         - name: Read token
           ansible.builtin.slurp:
             path: '{{ k3s_vars.directory.lib }}/server/node-token'
+          no_log: true
           register: node_token
 
         - name: Set token fact
           ansible.builtin.set_fact:
-            token: "{{ node_token.content | b64decode | trim }}"
+            token: '{{ node_token.content | b64decode | trim }}'
+          no_log: true
           run_once: true
 
     - name: Get user info
@@ -119,7 +121,7 @@
       ansible.builtin.file:
         path: '{{ user_info.home }}/.kube'
         owner: '{{ user_info.name }}'
-        group: '{{ user_info.name }}'
+        group: '{{ user_info.group }}'
         mode: '0755'
         state: directory
 
@@ -128,13 +130,13 @@
         src: '{{ k3s_vars.directory.config }}/k3s.yaml'
         dest: '{{ user_info.home }}/.kube/config'
         owner: '{{ user_info.name }}'
-        group: '{{ user_info.name }}'
+        group: '{{ user_info.group }}'
         mode: '0600'
         remote_src: true
 
     - name: Set kubeconfig host
       ansible.builtin.command:
-        cmd: kubectl config set-cluster default
+        cmd: /usr/local/bin/kubectl config set-cluster default
               --kubeconfig={{ user_info.home }}/.kube/config
               --server=https://{{ k3s_vars.api.host if k3s_vars.loadbalancer.enabled else ansible_host }}:{{ k3s_vars.api.port }}
       changed_when: true
@@ -142,7 +144,7 @@
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:
         src: '{{ user_info.home }}/.kube/config'
-        dest: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
+        dest: "{{ k3s_vars.kubeconfig.directory }}"
         flat: true
       when:
         - ansible_host == k3s_server_default_host

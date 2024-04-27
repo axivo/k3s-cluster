@@ -1,7 +1,7 @@
 ---
 - name: Set authorized key
   ansible.posix.authorized_key:
-    key: '{{ cluster_vars.ssh.authorized_key }}'
+    key: "{{ lookup('ansible.builtin.file', cluster_vars.ssh.authorized_key) }}"
     user: '{{ ansible_user }}'
 
 - name: Create sudoers file
