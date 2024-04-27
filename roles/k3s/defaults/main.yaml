@@ -14,6 +14,7 @@ k3s_vars:
     config: /etc/rancher/k3s
     lib: /var/lib/rancher/k3s
   kubeconfig:
+    directory: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
     local: true
   kubectl:
     version: v1.29.3
