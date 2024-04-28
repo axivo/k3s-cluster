@@ -1,6 +1,14 @@
 ---
 kured_vars:
   kubernetes:
+    configuration:
+      concurrency: 1
+      period: 10m
+      reboot_delay: 30s
+      time:
+        start: '04:00'
+        end: '08:00'
+        zone: UTC
     helm:
       chart:
         name: kured
@@ -10,4 +18,23 @@ kured_vars:
         name: charts
         org: kubereboot
         url: https://kubereboot.github.io
+    metrics:
+      create: 'true'
     namespace: kube-system
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    service:
+      annotations:
+        - key: prometheus.io/path
+          value: /metrics
+        - key: prometheus.io/port
+          value: 8080
+        - key: prometheus.io/scrape
+          value: 'true'
+      create: 'true'
+      name: kured
