@@ -36,24 +36,16 @@ grafana:
 {% endif %}
 kubeControllerManager:
   endpoints:
-{% for ip in k3s_server_ips %}
-    - {{ ip }}
-{% endfor %}
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 kubeEtcd:
   endpoints:
-{% for ip in k3s_server_ips %}
-    - {{ ip }}
-{% endfor %}
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 kubeProxy:
   endpoints:
-{% for ip in k3s_server_ips %}
-    - {{ ip }}
-{% endfor %}
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 kubeScheduler:
   endpoints:
-{% for ip in k3s_server_ips %}
-    - {{ ip }}
-{% endfor %}
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 prometheus:
   prometheusSpec:
     enableAdminAPI: true
