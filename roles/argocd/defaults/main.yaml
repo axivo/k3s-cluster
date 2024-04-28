@@ -2,31 +2,40 @@
 argocd_vars:
   kubernetes:
     application_set:
+      replicas: 2
       resources:
         limits:
           cpu: 400m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 200m
+          memory: 128Mi
     helm:
       chart:
         name: argo-cd
         org: argoproj
-        version: 6.7.12
+        version: 6.7.17
       repository:
         name: argo-helm
         org: argoproj
         url: https://argoproj.github.io
     namespace: kube-system
+    redis_ha:
+      enabled: true
     repo_server:
+      autoscaling:
+        enabled: true
+        min_replicas: 2
+        target:
+          cpu_percentage: 60
+          memory_percentage: 80
       resources:
         limits:
           cpu: 400m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 200m
+          memory: 128Mi
     server:
       admin:
         password: !vault |
@@ -39,6 +48,12 @@ argocd_vars:
       application:
         namespaces:
           - kube-system
+      autoscaling:
+        enabled: true
+        min_replicas: 2
+        target:
+          cpu_percentage: 60
+          memory_percentage: 80
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
@@ -49,8 +64,8 @@ argocd_vars:
           cpu: 400m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 200m
+          memory: 128Mi
       user:
         name: floren
         password: !vault |
@@ -66,4 +81,4 @@ argocd_vars:
     repository:
       name: argo-cd
       org: argoproj
-    version: v2.10.7
+    version: v2.10.8
