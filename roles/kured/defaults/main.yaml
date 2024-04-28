@@ -34,11 +34,8 @@ kured_vars:
         memory: 64Mi
     service:
       annotations:
-        - key: prometheus.io/path
-          value: /metrics
-        - key: prometheus.io/port
-          value: 8080
-        - key: prometheus.io/scrape
-          value: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: 8080
+        prometheus.io/scrape: 'true'
       create: 'true'
       name: kured

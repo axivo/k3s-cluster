@@ -22,8 +22,8 @@ resources:
     memory: '{{ kured_vars.kubernetes.resources.requests.memory }}'
 service:
   annotations:
-{% for annotation in kured_vars.kubernetes.service.annotations %}
-    {{- annotation.key | indent(4, True) }}: {{ annotation.value }}
+{% for key, value in kured_vars.kubernetes.service.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
 {% endfor %}
   create: '{{ kured_vars.kubernetes.service.create }}'
   name: '{{ kured_vars.kubernetes.service.name }}'
