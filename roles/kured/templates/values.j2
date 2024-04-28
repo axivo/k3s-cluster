@@ -1,5 +1,8 @@
 configuration:
   concurrency: '{{ kured_vars.kubernetes.configuration.concurrency }}'
+  lockReleaseDelay: '{{ kured_vars.kubernetes.configuration.lock.release_delay }}'
+  lockTtl: '{{ kured_vars.kubernetes.configuration.lock.ttl }}'
+  logFormat: '{{ kured_vars.kubernetes.configuration.log_format }}'
   period: '{{ kured_vars.kubernetes.configuration.period }}'
   rebootDelay: '{{ kured_vars.kubernetes.configuration.reboot_delay }}'
   startTime: '{{ kured_vars.kubernetes.configuration.time.start }}'
@@ -20,7 +23,7 @@ resources:
 service:
   annotations:
 {% for annotation in kured_vars.kubernetes.service.annotations %}
-    {{ annotation.key }}: {{ annotation.value }}
+    {{- annotation.key | indent(4, True) }}: {{ annotation.value }}
 {% endfor %}
   create: '{{ kured_vars.kubernetes.service.create }}'
   name: '{{ kured_vars.kubernetes.service.name }}'

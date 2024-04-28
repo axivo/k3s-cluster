@@ -3,7 +3,11 @@ kured_vars:
   kubernetes:
     configuration:
       concurrency: 1
-      period: 10m
+      lock:
+        release_delay: 1m
+        ttl: 5m
+      log_format: text
+      period: 15m
       reboot_delay: 30s
       time:
         start: '04:00'
