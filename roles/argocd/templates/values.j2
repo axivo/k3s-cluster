@@ -19,10 +19,13 @@ global:
   domain: '{{ hostname }}'
 {% endif %}
 redis-ha:
-  enabled: true
+  enabled: '{{ argocd_vars.kubernetes.redis_ha.enabled }}'
 repoServer:
   autoscaling:
-    enabled: true
+    enabled: '{{ argocd_vars.kubernetes.repo_server.autoscaling.enabled }}'
+    minReplicas: '{{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}'
+    targetCPUUtilizationPercentage: '{{ argocd_vars.kubernetes.repo_server.autoscaling.target.cpu_percentage }}'
+    targetMemoryUtilizationPercentage: '{{ argocd_vars.kubernetes.repo_server.autoscaling.target.memory_percentage }}'
   resources:
     limits:
       cpu: '{{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}'
@@ -32,7 +35,10 @@ repoServer:
       memory: '{{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}'
 server:
   autoscaling:
-    enabled: true
+    enabled: '{{ argocd_vars.kubernetes.server.autoscaling.enabled }}'
+    minReplicas: '{{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}'
+    targetCPUUtilizationPercentage: '{{ argocd_vars.kubernetes.server.autoscaling.target.cpu_percentage }}'
+    targetMemoryUtilizationPercentage: '{{ argocd_vars.kubernetes.server.autoscaling.target.memory_percentage }}'
   resources:
     limits:
       cpu: '{{ argocd_vars.kubernetes.server.resources.limits.cpu }}'
