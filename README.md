@@ -17,7 +17,8 @@ K3S high-availability cluster, deployed with Ansible.
 - [ArgoCD](https://argoproj.github.io/cd/)
 - [Cilium](https://cilium.io)
 - [Cloudflare](https://www.cloudflare.com) Let's Encrypt certificates deployed with [cert-manager](https://cert-manager.io)
-- [HAProxy](https://www.haproxy.org) load balancer for controlplanes
+- [External DNS](https://kubernetes-sigs.github.io/external-dns)
+- [HAProxy](https://www.haproxy.org) load balancer for control-planes
 - [K3S](https://k3s.io) production ready deployment
 - [Kured](https://kured.dev)
 - [Longhorn](https://longhorn.io)

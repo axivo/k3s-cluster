@@ -1,0 +1,17 @@
+env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        key: {{ cloudflare_vars.kubernetes.secret.key }}
+        name: {{ cloudflare_vars.kubernetes.secret.name }}
+provider:
+  name: cloudflare
+resources:
+  limits:
+    cpu: '{{ cloudflare_vars.kubernetes.resources.limits.cpu }}'
+    memory: '{{ cloudflare_vars.kubernetes.resources.limits.memory }}'
+  requests:
+    cpu: '{{ cloudflare_vars.kubernetes.resources.requests.cpu }}'
+    memory: '{{ cloudflare_vars.kubernetes.resources.requests.memory }}'
+sources:
+  - gateway-httproute
