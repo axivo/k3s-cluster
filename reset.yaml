@@ -25,6 +25,7 @@
         - argocd
         - certmanager
         - cilium
+        - cloudflare
         - kured
         - longhorn
         - prometheus

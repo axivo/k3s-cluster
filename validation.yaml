@@ -10,12 +10,13 @@
         tasks_from: validation
       loop:
         - cluster
-        - helm
         - k3s
-        - kured
         - argocd
         - certmanager
         - cilium
+        - cloudflare
+        - helm
+        - kured
         - longhorn
         - prometheus
         - sealedsecrets
