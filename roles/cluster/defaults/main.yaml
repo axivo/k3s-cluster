@@ -44,10 +44,8 @@ cluster_vars:
       enabled: false
     unattended_upgrades:
       enabled: true
-      reboot:
-        automatic: 'false'
-        time: '02:00'
-        timelapse: 10
+      mail_report: on-change
+      remove_unused_dependencies: 'true'
     wifi:
       enabled: false
   ssh:

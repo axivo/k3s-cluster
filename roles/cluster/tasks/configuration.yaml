@@ -2,46 +2,55 @@
 - name: Hardware Configuration
   notify: Reboot
   block:
-    - name: Bluetooth Configuration
-      when:
-        - cluster_vars.hardware.product == 'Raspberry Pi'
-        - not cluster_vars.service.bluetooth.enabled | default(false)
+    - name: Raspberry Pi Configuration
+      when: cluster_vars.hardware.product == 'Raspberry Pi'
       block:
-        - name: Disable bluetooth firmware
+        - name: Set service facts
+          ansible.builtin.service_facts:
+
+        - name: Bluetooth Configuration
+          when: not cluster_vars.service.bluetooth.enabled | default(false)
+          block:
+            - name: Disable bluetooth service
+              ansible.builtin.systemd_service:
+                name: bluetooth.service
+                state: stopped
+                enabled: false
+              when: ansible_facts.services['bluetooth.service'] is defined
+
+            - name: Disable hciuart service
+              ansible.builtin.systemd_service:
+                name: hciuart.service
+                state: stopped
+                enabled: false
+              when: ansible_facts.services['hciuart.service'] is defined
+
+        - name: WiFi Configuration
+          when: not cluster_vars.service.wifi.enabled | default(false)
+          block:
+            - name: Disable wifi service
+              ansible.builtin.systemd_service:
+                name: wpa_supplicant.service
+                state: stopped
+                enabled: false
+              when: ansible_facts.services['wpa_supplicant.service'] is defined
+
+        - name: Create firmware purge configuration
+          ansible.builtin.copy:
+            content: "DPkg::Post-Invoke {\"/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true\";};\n"
+            dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: Enable cpuset and memory cgroups
           ansible.builtin.lineinfile:
-            dest: /boot/firmware/config.txt
-            insertafter: '[all]'
-            line: dtoverlay=disable-bt
-            regexp: ^dtoverlay=disable-bt
+            path: /boot/firmware/cmdline.txt
+            regexp: ^((?!.+\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).+)$
+            line: \g<1> cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
+            backrefs: true
 
-        - name: Disable bluetooth services
-          ansible.builtin.systemd_service:
-            name: '{{ item }}'
-            state: stopped
-            enabled: false
-          loop:
-            - bluetooth.service
-            - hciuart.service
-
-    - name: WiFi Configuration
-      when:
-        - cluster_vars.hardware.product == 'Raspberry Pi'
-        - not cluster_vars.service.wifi.enabled | default(false)
-      block:
-        - name: Disable wifi firmware
-          ansible.builtin.lineinfile:
-            dest: /boot/firmware/config.txt
-            insertafter: '[all]'
-            line: dtoverlay=disable-wifi
-            regexp: ^dtoverlay=disable-wifi
-
-        - name: Disable wifi service
-          ansible.builtin.systemd_service:
-            name: wpa_supplicant.service
-            state: stopped
-            enabled: false
-
-    - name: Device Configuration
+    - name: USB Device Configuration
       when: cluster_vars.device.transport == 'usb'
       block:
         - name: Set device id
@@ -129,20 +138,11 @@
         cmd: chfn -f "{{ cluster_host['name'] }}" root
       changed_when: false
 
-    - name: Create firmware purge configuration
-      ansible.builtin.copy:
-        content: "DPkg::Post-Invoke {\"/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true\";};\n"
-        dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
-        owner: root
-        group: root
-        mode: '0644'
-      when: cluster_vars.hardware.product == 'Raspberry Pi'
-
     - name: Disable access time updates
       ansible.builtin.replace:
         path: /etc/fstab
-        regexp: discard,errors
-        replace: discard,noatime,errors
+        regexp: defaults\t0
+        replace: defaults,noatime\t0
       notify: Reboot
 
     - name: Disable cloud-init service
@@ -163,34 +163,13 @@
         state: stopped
         enabled: false
 
-    - name: Set service facts
-      ansible.builtin.service_facts:
-
-    - name: Remove Snap Packages
-      when:
-        - ansible_facts.services['snapd.service'] is defined
-        - ansible_facts.services['snapd.service'].state == 'running'
-        - not cluster_vars.service.snapd.enabled | default(false)
-      block:
-        - name: Get snap packages
-          ansible.builtin.command:
-            cmd: snap list
-          changed_when: false
-          register: snap_packages
-
-        - name: Remove snap packages
-          community.general.snap:
-            name: '{{ item | split | first }}'
-            state: absent
-          loop: '{{ snap_packages.stdout_lines[1:] }}'
-          when: snap_packages.stdout_lines[1:] is iterable
-
     - name: Disable snapd services
       ansible.builtin.systemd_service:
         name: '{{ item }}'
         state: stopped
         enabled: false
       loop:
+        - snapd.apparmor.service
         - snapd.service
         - snapd.seeded.service
         - snapd.socket
@@ -206,37 +185,20 @@
             autoremove: true
             update_cache: true
 
-        - name: Set unattended upgrades time-lapse fact
-          ansible.builtin.set_fact:
-            timelapse: '{{ cluster_vars.service.unattended_upgrades.reboot.timelapse * period }}'
-          delegate_facts: true
-          delegate_to: '{{ item }}'
-          loop: '{{ ansible_play_hosts }}'
-          loop_control:
-            index_var: period
-
-        - name: Set unattended upgrades reboot time
-          ansible.builtin.command:
-            cmd: date -d '{{ cluster_vars.service.unattended_upgrades.reboot.time }} {{ timelapse }}min' +'%H:%M'
-          changed_when: false
-          register: reboot_time
-
         - name: Update unattended upgrades configuration
           ansible.builtin.replace:
             path: /etc/apt/apt.conf.d/50unattended-upgrades
             regexp: '{{ item.regexp }}'
             replace: '{{ item.replace }}'
           loop:
-            - regexp: ^\/\/(\s+\"\${distro_id}:\${distro_codename}-updates\";)$
-              replace: '  \g<1>'
+            - regexp: ^(?:.*)(\"\${distro_id}:\${distro_codename}-updates\";)$
+              replace: \t\g<1>
             - regexp: ^(?:.*)(Unattended-Upgrade::Mail)\s.*;$
               replace: '\g<1> "{{ cluster_vars.service.postfix.user.alias }}";'
-            - regexp: ^\/\/(Unattended-Upgrade::Remove-Unused-Dependencies) "false";$
-              replace: '\g<1> "true";'
-            - regexp: ^(?:.*)(Unattended-Upgrade::Automatic-Reboot)\s.*;$
-              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.reboot.automatic }}";'
-            - regexp: ^(?:.*)(Unattended-Upgrade::Automatic-Reboot-Time)\s.*;$
-              replace: '\g<1> "{{ reboot_time.stdout }}";'
+            - regexp: ^(?:.*)(Unattended-Upgrade::MailReport)\s.*;$
+              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.mail_report }}";'
+            - regexp: ^(?:.*)(Unattended-Upgrade::Remove-Unused-Dependencies)\s.*;$
+              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.remove_unused_dependencies }}";'
 
 - name: Mail Configuration
   notify: Reload mail service
@@ -325,7 +287,6 @@
           - '[{{ cluster_vars.service.postfix.relay.host }}]'
           - '{{ cluster_vars.service.postfix.relay.port }} {{ cluster_vars.service.postfix.user.name }}'
           - '{{ cluster_vars.service.postfix.user.password }}'
-      no_log: true
 
     - name: Create sasl password map
       ansible.builtin.copy:
@@ -372,19 +333,3 @@
           value: /etc/ssl/certs/ca-certificates.crt
         - name: smtp_tls_security_level
           value: encrypt
-
-- name: Kubernetes Configuration
-  when: cluster_vars.hardware.product == 'Raspberry Pi'
-  block:
-    - name: Enable cpuset and memory cgroups
-      ansible.builtin.lineinfile:
-        path: /boot/firmware/cmdline.txt
-        regexp: ^((?!.+\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).+)$
-        line: \g<1> cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
-        backrefs: true
-
-    - name: Install extra modules package
-      ansible.builtin.apt:
-        name: linux-modules-extra-raspi
-        autoremove: true
-        update_cache: true
