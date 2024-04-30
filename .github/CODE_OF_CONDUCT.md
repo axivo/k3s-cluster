@@ -1,4 +1,4 @@
-## Community Code of Conduct v1.0
+## Community Code of Conduct
 
 This is Code of Conduct is based on the [CNCF Code of
 Conduct](https://github.com/cncf/foundation/blob/main/code-of-conduct.md).
@@ -36,6 +36,8 @@ the project team.
 This code of conduct applies both within project spaces and in public spaces
 when an individual is representing the project or its community.
 
+### Acknowledgements
+
 This Code of Conduct is adapted from the Contributor Covenant
-(http://contributor-covenant.org), version 1.2.0, available at
-http://contributor-covenant.org/version/1/2/0/
+(http://contributor-covenant.org), version 2.0 available at
+http://contributor-covenant.org/version/2/0/code_of_conduct/.
