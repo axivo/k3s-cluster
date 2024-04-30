@@ -79,7 +79,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.4
+      version: v0.16.5
     gateway_api:
       file: experimental-install.yaml
       repository:
@@ -91,4 +91,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v0.13.2
+      version: v0.13.3
