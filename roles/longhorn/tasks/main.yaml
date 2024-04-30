@@ -7,7 +7,7 @@
     - cloudflare
     - k3s
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 

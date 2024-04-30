@@ -4,7 +4,10 @@ cloudflare_vars:
     acme:
       server: staging
     api:
-      token: !vault |
+      token:
+        key: token
+        name: cloudflare-api-token
+        value: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           31393030336132653638356333626264653665653336613361356265366164333539393665386131
           3738666437636130363866346430343431643436663237360a326431363463643539663839613966
@@ -21,11 +24,6 @@ cloudflare_vars:
         org: kubernetes-sigs
         url: https://kubernetes-sigs.github.io
     gateway:
-      cluster:
-        issuer:
-          key:
-            prefix: cloudflare-tls
-          name: cloudflare-cluster-issuer
       domain: noty.cc
     namespace: kube-system
     resources:
@@ -38,3 +36,7 @@ cloudflare_vars:
     secret:
       key: token
       name: cloudflare-api-token
+    tls:
+      cluster_issuer:
+        name: cloudflare-cluster-issuer
+      key_prefix: cloudflare-tls

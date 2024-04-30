@@ -1,9 +1,22 @@
 ---
 certmanager_vars:
   kubernetes:
-    cluster:
-      issuer:
-        name: certmanager-cluster-issuer
+    cainjector:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+    controller:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
     helm:
       chart:
         name: cert-manager
@@ -14,3 +27,14 @@ certmanager_vars:
         org: jetstack
         url: https://charts.jetstack.io
     namespace: kube-system
+    tls:
+      cluster_issuer:
+        name: certmanager-cluster-issuer
+    webhook:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi

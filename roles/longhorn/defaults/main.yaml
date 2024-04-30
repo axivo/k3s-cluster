@@ -5,9 +5,6 @@ longhorn_vars:
       data_locality: strict-local
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       replica_count: 3
-    frontend:
-      loadbalancer:
-        ip: 192.168.4.20
     helm:
       chart:
         name: longhorn
@@ -19,6 +16,9 @@ longhorn_vars:
     gateway:
       service: longhorn-frontend
       subdomain: longhorn
+    infrastructure:
+      annotations:
+        io.cilium/lb-ipam-ips: 192.168.4.20
     namespace: kube-system
     persistence:
       data_locality: best-effort

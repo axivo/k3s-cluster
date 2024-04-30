@@ -2,8 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    io.cilium/lb-ipam-ips: '{{ argocd_vars.kubernetes.server.loadbalancer.ip }}'
-  name: '{{ argocd_vars.kubernetes.server.gateway.service }}'
-  namespace: '{{ argocd_vars.kubernetes.namespace }}'
+{% for key, value in argocd_vars.kubernetes.server.infrastructure.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
+{% endfor %}
+  name: {{ argocd_vars.kubernetes.server.gateway.service }}
+  namespace: {{ argocd_vars.kubernetes.namespace }}
 spec:
   type: LoadBalancer

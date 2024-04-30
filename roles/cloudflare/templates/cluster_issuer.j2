@@ -6,11 +6,11 @@ spec:
   acme:
     email: {{ cluster_vars.service.postfix.user.alias }}
     privateKeySecretRef:
-      name: {{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}-key
+      name: {{ cloudflare_tls_key_prefix }}-key
     server: {{ cloudflare_acme_server_url }}
     solvers:
       - dns01:
           cloudflare:
             apiTokenSecretRef:
-              key: {{ cloudflare_vars.kubernetes.secret.key }}
-              name: {{ cloudflare_vars.kubernetes.secret.name }}
+              key: {{ cloudflare_vars.kubernetes.api.token.key }}
+              name: {{ cloudflare_vars.kubernetes.api.token.name }}

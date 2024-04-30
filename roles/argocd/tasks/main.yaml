@@ -7,7 +7,7 @@
     - cloudflare
     - k3s
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
@@ -63,7 +63,6 @@
           user:
             name: '{{ argocd_vars.kubernetes.server.user.name }}'
             password: "{{ argocd_vars.kubernetes.server.user.password | string | ansible.builtin.password_hash('blowfish') }}"
-      no_log: true
       run_once: true
 
     - name: Install chart
@@ -120,7 +119,6 @@
         definition: "{{ lookup('ansible.builtin.template', 'password.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
-      no_log: true
 
     - name: Set server rbac policy
       kubernetes.core.k8s:

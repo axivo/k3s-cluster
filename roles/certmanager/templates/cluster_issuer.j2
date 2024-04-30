@@ -1,6 +1,6 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: '{{ certmanager_vars.kubernetes.cluster.issuer.name }}'
+  name: {{ certmanager_vars.kubernetes.tls.cluster_issuer.name }}
 spec:
   selfSigned: {}

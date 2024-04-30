@@ -2,9 +2,9 @@ apiVersion: cilium.io/v2alpha1
 kind: CiliumL2AnnouncementPolicy
 metadata:
   name: default-l2-announcement-policy
-  namespace: '{{ cilium_vars.kubernetes.namespace }}'
+  namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   externalIPs: true
   interfaces:
-    - '{{ k3s_vars.network.interface }}'
+    - {{ k3s_vars.network.interface }}
   loadBalancerIPs: true

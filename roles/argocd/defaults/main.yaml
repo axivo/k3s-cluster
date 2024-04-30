@@ -8,8 +8,31 @@ argocd_vars:
           cpu: 400m
           memory: 256Mi
         requests:
+          cpu: 100m
+          memory: 64Mi
+    configs:
+      cm:
+        exec:
+          enabled: true
+      params:
+        server:
+          insecure: true
+    controller:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
           cpu: 200m
           memory: 128Mi
+    dex:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
     helm:
       chart:
         name: argo-cd
@@ -20,8 +43,24 @@ argocd_vars:
         org: argoproj
         url: https://argoproj.github.io
     namespace: kube-system
-    redis_ha:
-      enabled: true
+    notifications:
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+    redis:
+      high_availability:
+        enabled: true
+      resources:
+        limits:
+          cpu: 400m
+          memory: 256Mi
+        requests:
+          cpu: 200m
+          memory: 128Mi
     repo_server:
       autoscaling:
         enabled: true
@@ -57,8 +96,9 @@ argocd_vars:
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
-      loadbalancer:
-        ip: 192.168.4.18
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.18
       resources:
         limits:
           cpu: 400m

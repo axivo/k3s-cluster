@@ -4,7 +4,7 @@
     name: k3s
     tasks_from: facts
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
