@@ -10,7 +10,13 @@
 Set Grafana password:
 
 ```shell
-ansible-vault encrypt_string '<yourpassword>' --name 'prometheus_vars.grafana.user.password'
+ansible-vault encrypt_string '<yourpassword>' --name 'prometheus_vars.kubernetes.grafana.user.password'
+```
+
+Upgrade chart:
+
+```shell
+ansible-playbook --ask-vault-pass --tags prometheus upgrade.yaml
 ```
 
 Uninstall chart:

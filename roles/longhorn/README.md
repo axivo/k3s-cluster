@@ -1,17 +1,14 @@
 # Longhorn
 
+Cloud native distributed block storage for Kubernetes.
+
 ## Releases
 
 - [ArtifactHUB](https://artifacthub.io/packages/helm/longhorn/longhorn)
 - [GitHub](https://github.com/longhorn/longhorn/releases)
 
-## Setup
-
-Uninstall chart:
+## Chart Upgrade
 
 ```shell
-kubectl patch lhs deleting-confirmation-flag -n kube-system \
-    -p '{"value": "true"}' --type=merge 
-helm uninstall longhorn -n kube-system --wait
-kubectl delete namespace kube-system
+ansible-playbook --ask-vault-pass --tags longhorn upgrade.yaml
 ```
