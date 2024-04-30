@@ -29,7 +29,6 @@
         - kured
         - longhorn
         - prometheus
-        - sealedsecrets
         - helm
       loop_control:
         loop_var: cluster_item

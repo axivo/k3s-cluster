@@ -2,7 +2,7 @@ apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: default-pool
-  namespace: '{{ cilium_vars.kubernetes.namespace }}'
+  namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   cidrs:
-    - cidr: '{{ cilium_vars.kubernetes.loadbalancer.ip.pool }}'
+    - cidr: {{ cilium_vars.kubernetes.loadbalancer.ip.pool }}

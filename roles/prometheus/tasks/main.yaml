@@ -7,7 +7,7 @@
     - cloudflare
     - k3s
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
@@ -19,12 +19,11 @@
 - name: Chart Setup
   when: ansible_host == k3s_server_default_host
   block:
-    - name: Create grafana credentials
+    - name: Create grafana credentials secret
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'grafana_credentials.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
-      no_log: true
 
     - name: Install chart
       kubernetes.core.helm:
@@ -50,11 +49,6 @@
               alertmanager: '{{ prometheus_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
               grafana: '{{ prometheus_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
               prometheus: '{{ prometheus_vars.kubernetes.prometheus.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          run_once: true
-
-        - name: Set tls prefix fact
-          ansible.builtin.set_fact:
-            tls_key_prefix: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.key.prefix }}'
           run_once: true
 
         - name: Create alertmanager gateway

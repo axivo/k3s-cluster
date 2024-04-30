@@ -1,13 +1,13 @@
 alertmanager:
   alertmanagerSpec:
-    replicas: '{{ prometheus_vars.kubernetes.alertmanager.replicas }}'
+    replicas: {{ prometheus_vars.kubernetes.alertmanager.replicas }}
     resources:
       limits:
-        cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.cpu }}'
-        memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.limits.memory }}'
+        cpu: {{ prometheus_vars.kubernetes.alertmanager.resources.limits.cpu }}
+        memory: {{ prometheus_vars.kubernetes.alertmanager.resources.limits.memory }}
       requests:
-        cpu: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}'
-        memory: '{{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}'
+        cpu: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}
+        memory: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}
     storage:
       volumeClaimTemplate:
         spec:
@@ -16,22 +16,26 @@ alertmanager:
             - ReadWriteOnce
           resources:
             requests:
-              storage: '{{ prometheus_vars.kubernetes.alertmanager.storage }}'
+              storage: {{ prometheus_vars.kubernetes.alertmanager.storage }}
 {% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
   service:
     annotations:
-      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.alertmanager.loadbalancer.ip }}'
+{% for key, value in prometheus_vars.kubernetes.alertmanager.infrastructure.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
     type: LoadBalancer
 {% endif %}
 grafana:
   admin:
-    existingSecret: grafana-credentials
+    existingSecret: {{ prometheus_vars.kubernetes.grafana.secret.name }}
     passwordKey: password
     userKey: username
 {% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
   service:
     annotations:
-      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.grafana.loadbalancer.ip }}'
+{% for key, value in prometheus_vars.kubernetes.grafana.infrastructure.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
     type: LoadBalancer
 {% endif %}
 kubeControllerManager:
@@ -52,11 +56,11 @@ prometheus:
     replicaExternalLabelName: replica
     resources:
       limits:
-        cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}'
-        memory: '{{ prometheus_vars.kubernetes.prometheus.resources.limits.memory }}'
+        cpu: {{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}
+        memory: {{ prometheus_vars.kubernetes.prometheus.resources.limits.memory }}
       requests:
-        cpu: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}'
-        memory: '{{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}'
+        cpu: {{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}
+        memory: {{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}
     serviceMonitorSelectorNilUsesHelmValues: false
     storageSpec:
       volumeClaimTemplate:
@@ -66,10 +70,12 @@ prometheus:
             - ReadWriteOnce
           resources:
             requests:
-              storage: '{{ prometheus_vars.kubernetes.prometheus.storage }}'
+              storage: {{ prometheus_vars.kubernetes.prometheus.storage }}
 {% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
   service:
     annotations:
-      io.cilium/lb-ipam-ips: '{{ prometheus_vars.kubernetes.prometheus.loadbalancer.ip }}'
+{% for key, value in prometheus_vars.kubernetes.prometheus.infrastructure.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
     type: LoadBalancer
 {% endif %}

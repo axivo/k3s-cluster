@@ -5,8 +5,9 @@ prometheus_vars:
       gateway:
         service: monitoring-kube-prometheus-alertmanager
         subdomain: alertmanager
-      loadbalancer:
-        ip: 192.168.4.22
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.21
       replicas: 2
       resources:
         limits:
@@ -29,8 +30,11 @@ prometheus_vars:
       gateway:
         service: monitoring-grafana
         subdomain: grafana
-      loadbalancer:
-        ip: 192.168.4.21
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.22
+      secret:
+        name: grafana-credentials
       user:
         name: admin
         password: !vault |
@@ -45,8 +49,9 @@ prometheus_vars:
       gateway:
         service: monitoring-kube-prometheus-prometheus
         subdomain: prometheus
-      loadbalancer:
-        ip: 192.168.4.23
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.23
       resources:
         limits:
           cpu: 1

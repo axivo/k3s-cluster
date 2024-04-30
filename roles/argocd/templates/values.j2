@@ -1,48 +1,83 @@
 applicationSet:
   resources:
     limits:
-      cpu: '{{ argocd_vars.kubernetes.application_set.resources.limits.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.application_set.resources.limits.memory }}'
+      cpu: {{ argocd_vars.kubernetes.application_set.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.application_set.resources.limits.memory }}
     requests:
-      cpu: '{{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.application_set.resources.requests.memory }}'
+      cpu: {{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.application_set.resources.requests.memory }}
 configs:
   cm:
-    exec.enabled: true
+    exec:
+      enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
   params:
-    application.namespaces: "{{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}"
-    server.insecure: true
+    application:
+      namespaces: {{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}
+    server:
+      insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
   secret:
-    argocdServerAdminPassword: "{{ server['admin']['password'] }}"
+    argocdServerAdminPassword: {{ server['admin']['password'] }}
+controller:
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.controller.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.controller.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.controller.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.controller.resources.requests.memory }}
+dex:
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.dex.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.dex.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.dex.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.dex.resources.requests.memory }}
 {% if cloudflare_vars.kubernetes.gateway.domain != 'disabled' %}
 global:
-  domain: '{{ hostname }}'
+  domain: {{ hostname }}
 {% endif %}
+notifications:
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.notifications.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.notifications.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.notifications.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.notifications.resources.requests.memory }}
+redis:
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
 redis-ha:
-  enabled: '{{ argocd_vars.kubernetes.redis_ha.enabled }}'
+  enabled: {{ argocd_vars.kubernetes.redis.high_availability.enabled }}
 repoServer:
   autoscaling:
-    enabled: '{{ argocd_vars.kubernetes.repo_server.autoscaling.enabled }}'
-    minReplicas: '{{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}'
-    targetCPUUtilizationPercentage: '{{ argocd_vars.kubernetes.repo_server.autoscaling.target.cpu_percentage }}'
-    targetMemoryUtilizationPercentage: '{{ argocd_vars.kubernetes.repo_server.autoscaling.target.memory_percentage }}'
+    enabled: {{ argocd_vars.kubernetes.repo_server.autoscaling.enabled }}
+    minReplicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}
+    targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.cpu_percentage }}
+    targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.memory_percentage }}
   resources:
     limits:
-      cpu: '{{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.repo_server.resources.limits.memory }}'
+      cpu: {{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.repo_server.resources.limits.memory }}
     requests:
-      cpu: '{{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}'
+      cpu: {{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}
 server:
   autoscaling:
-    enabled: '{{ argocd_vars.kubernetes.server.autoscaling.enabled }}'
-    minReplicas: '{{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}'
-    targetCPUUtilizationPercentage: '{{ argocd_vars.kubernetes.server.autoscaling.target.cpu_percentage }}'
-    targetMemoryUtilizationPercentage: '{{ argocd_vars.kubernetes.server.autoscaling.target.memory_percentage }}'
+    enabled: {{ argocd_vars.kubernetes.server.autoscaling.enabled }}
+    minReplicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
+    targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.cpu_percentage }}
+    targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.memory_percentage }}
   resources:
     limits:
-      cpu: '{{ argocd_vars.kubernetes.server.resources.limits.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.server.resources.limits.memory }}'
+      cpu: {{ argocd_vars.kubernetes.server.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.server.resources.limits.memory }}
     requests:
-      cpu: '{{ argocd_vars.kubernetes.server.resources.requests.cpu }}'
-      memory: '{{ argocd_vars.kubernetes.server.resources.requests.memory }}'
+      cpu: {{ argocd_vars.kubernetes.server.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.server.resources.requests.memory }}

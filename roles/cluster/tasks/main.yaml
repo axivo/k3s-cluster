@@ -5,7 +5,7 @@
     fail_msg: 'Valid entries: n, N, y, Y'
     quiet: true
 
-- name: Cluster Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 

@@ -1,32 +1,32 @@
 configuration:
-  concurrency: '{{ kured_vars.kubernetes.configuration.concurrency }}'
-  lockReleaseDelay: '{{ kured_vars.kubernetes.configuration.lock.release_delay }}'
-  lockTtl: '{{ kured_vars.kubernetes.configuration.lock.ttl }}'
-  logFormat: '{{ kured_vars.kubernetes.configuration.log_format }}'
-  period: '{{ kured_vars.kubernetes.configuration.period }}'
-  rebootDelay: '{{ kured_vars.kubernetes.configuration.reboot_delay }}'
-  startTime: '{{ kured_vars.kubernetes.configuration.time.start }}'
-  endTime: '{{ kured_vars.kubernetes.configuration.time.end }}'
-  timeZone: '{{ kured_vars.kubernetes.configuration.time.zone }}'
+  concurrency: {{ kured_vars.kubernetes.configuration.concurrency }}
+  lockReleaseDelay: {{ kured_vars.kubernetes.configuration.lock.release_delay }}
+  lockTtl: {{ kured_vars.kubernetes.configuration.lock.ttl }}
+  logFormat: {{ kured_vars.kubernetes.configuration.log_format }}
+  period: {{ kured_vars.kubernetes.configuration.period }}
+  rebootDelay: {{ kured_vars.kubernetes.configuration.reboot_delay }}
+  startTime: {{ kured_vars.kubernetes.configuration.time.start }}
+  endTime: {{ kured_vars.kubernetes.configuration.time.end }}
+  timeZone: {{ kured_vars.kubernetes.configuration.time.zone }}
 metrics:
-  create: '{{ kured_vars.kubernetes.metrics.create }}'
+  create: {{ kured_vars.kubernetes.metrics.create }}
   labels:
-    release: '{{ prometheus_vars.kubernetes.helm.chart.name }}'
-  namespace: '{{ prometheus_vars.kubernetes.namespace }}'
+    release: {{ prometheus_vars.kubernetes.helm.chart.name }}
+  namespace: {{ prometheus_vars.kubernetes.namespace }}
 resources:
   limits:
-    cpu: '{{ kured_vars.kubernetes.resources.limits.cpu }}'
-    memory: '{{ kured_vars.kubernetes.resources.limits.memory }}'
+    cpu: {{ kured_vars.kubernetes.resources.limits.cpu }}
+    memory: {{ kured_vars.kubernetes.resources.limits.memory }}
   requests:
-    cpu: '{{ kured_vars.kubernetes.resources.requests.cpu }}'
-    memory: '{{ kured_vars.kubernetes.resources.requests.memory }}'
+    cpu: {{ kured_vars.kubernetes.resources.requests.cpu }}
+    memory: {{ kured_vars.kubernetes.resources.requests.memory }}
 service:
   annotations:
 {% for key, value in kured_vars.kubernetes.service.annotations.items() %}
     {{ key | indent(4) }}: {{ value }}
 {% endfor %}
-  create: '{{ kured_vars.kubernetes.service.create }}'
-  name: '{{ kured_vars.kubernetes.service.name }}'
+  create: {{ kured_vars.kubernetes.service.create }}
+  name: {{ kured_vars.kubernetes.service.name }}
 {% if k3s_vars.controlplane.tainted %}
 tolerations:
   - key: node-role.kubernetes.io/control-plane

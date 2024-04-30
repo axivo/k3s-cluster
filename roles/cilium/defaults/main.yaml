@@ -36,8 +36,9 @@ cilium_vars:
         gateway:
           service: hubble-ui
           subdomain: hubble
-        loadbalancer:
-          ip: 192.168.4.19
+        infrastructure:
+          annotations:
+            io.cilium/lb-ipam-ips: 192.168.4.19
       tls:
         auto:
           method: certmanager
@@ -46,9 +47,8 @@ cilium_vars:
             name: hubble-tls-certificate
           root:
             name: hubble-tls-root-certificate
-        cluster:
-          issuer:
-            name: hubble-cluster-issuer
+        cluster_issuer:
+          name: hubble-cluster-issuer
     ingress:
       controller:
         service:

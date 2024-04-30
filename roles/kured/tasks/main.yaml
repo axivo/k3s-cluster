@@ -7,7 +7,7 @@
     - k3s
     - prometheus
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 

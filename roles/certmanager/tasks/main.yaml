@@ -7,7 +7,7 @@
     - k3s
     - prometheus
 
-- name: Chart Validation
+- name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
@@ -35,7 +35,7 @@
       retries: 3
       until: result is not failed
 
-    - name: Create selfsigned cluster issuer
+    - name: Create self-signed cluster issuer
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'

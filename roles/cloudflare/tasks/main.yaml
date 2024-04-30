@@ -29,7 +29,6 @@
         definition: "{{ lookup('ansible.builtin.template', 'api_token.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         wait: true
-      no_log: true
 
     - name: Install external dns chart
       kubernetes.core.helm:

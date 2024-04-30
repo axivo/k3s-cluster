@@ -11,7 +11,7 @@
 
 - name: Set cluster issuer fact
   ansible.builtin.set_fact:
-    cloudflare_cluster_issuer: '{{ cloudflare_vars.kubernetes.gateway.cluster.issuer.name }}{{ cloudflare_acme_server }}'
+    cloudflare_cluster_issuer: '{{ cloudflare_vars.kubernetes.tls.cluster_issuer.name }}{{ cloudflare_acme_server }}'
   run_once: true
 
 - name: Set project chart fact
@@ -34,8 +34,12 @@
     cloudflare_project_url_tag: '{{ cloudflare_project_url }}/tag/{{ cloudflare_project_tag }}'
   run_once: true
 
+- name: Set tls prefix fact
+  ansible.builtin.set_fact:
+    cloudflare_tls_key_prefix: '{{ cloudflare_vars.kubernetes.tls.key_prefix }}'
+  run_once: true
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     cloudflare_vars: '{{ cloudflare_vars }}'
-  no_log: true
   run_once: true
