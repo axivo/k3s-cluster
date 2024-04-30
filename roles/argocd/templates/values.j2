@@ -8,13 +8,10 @@ applicationSet:
       memory: {{ argocd_vars.kubernetes.application_set.resources.requests.memory }}
 configs:
   cm:
-    exec:
-      enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
+    exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
   params:
-    application:
-      namespaces: {{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}
-    server:
-      insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
+    application.namespaces: {{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}
+    server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
   secret:
     argocdServerAdminPassword: {{ server['admin']['password'] }}
 controller:
