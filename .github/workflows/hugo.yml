@@ -42,7 +42,7 @@ jobs:
           HUGO_ENV: production
           HUGO_ENVIRONMENT: production
           TZ: America/New_York
-        run: hugo --gc --minify -s docs -b "${{ steps.pages.outputs.base_url }}/"
+        run: hugo --gc --minify -s ./docs -b "${{ steps.pages.outputs.base_url }}/"
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
