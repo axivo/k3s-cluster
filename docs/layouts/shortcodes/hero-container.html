@@ -1,13 +1,16 @@
-{{- $class := .Get "class" | default "" -}}
+{{- $class := .Get "class" -}}
 {{- $cols := .Get "cols" | default 2 -}}
-{{- $image := .Get "image" | default "" -}}
-{{- $imageClass := .Get "imageClass" | default "" -}}
-{{- $imageTitle := .Get "imageTitle" | default "" -}}
+{{- $image := .Get "image" -}}
+{{- $imageClass := .Get "imageClass" -}}
+{{- $imageLink := .Get "imageLink" -}}
+{{- $imageLinkExternal := hasPrefix $imageLink "http" -}}
+{{- $imageTitle := .Get "imageTitle" -}}
 {{- $imageWidth := .Get "imageWidth" | default 350 -}}
 {{- $imageHeight := .Get "imageHeight" | default 350 -}}
-{{- $style := .Get "style" | default "" -}}
+{{- $style := .Get "style" -}}
 
 {{- $css := printf "--hextra-feature-grid-cols: %v; %s" $cols $style -}}
+{{- $href := cond (hasPrefix $imageLink "/") ($imageLink | relURL) $imageLink -}}
 
 
 <div
@@ -18,12 +21,13 @@
     {{ .Inner }}
   </div>
   {{ if $image }}
-  <div class="hx-px-6">
-    <img
-      class="hx-mx-auto {{ $imageClass }}"
-      src="{{ $image }}" width="{{ $imageWidth }}" heigth="{{ $imageHeight }}"
-      {{ if $imageTitle }}alt="{{ $imageTitle }}"{{ end }}
-    />
+  <div class="hx-mx-auto hx-px-6">
+    {{ if $href }}<a href="{{ $href }}" {{ if $imageLinkExternal }}target="_blank" rel="noreferrer"{{ end -}}>{{ end }}
+      <img
+        {{ if $imageClass }}class="{{ $imageClass }}"{{ end }} src="{{ $image }}" 
+        width="{{ $imageWidth }}" height="{{ $imageHeight }}" alt="{{ $imageTitle }}"
+      />
+    {{ if $href }}</a>{{ end }}
   </div>
   {{ end -}}
 </div>
