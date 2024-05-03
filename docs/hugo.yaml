@@ -89,7 +89,7 @@ params:
   footer:
     enable: true
     displayCopyright: true
-    displayPoweredBy: true
+    displayPoweredBy: false
     width: normal
   navbar:
     displayTitle: true
@@ -102,10 +102,8 @@ params:
     #   height: 10
     # width: wide
   page:
-    # full (100%), wide (90rem), normal (1280px)
     width: normal
   theme:
-    # light | dark | system
     default: system
     displayToggle: true
   variables:

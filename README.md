@@ -6,7 +6,7 @@ K3S high-availability cluster, deployed with Ansible.
 
 ## Wiki
 
-Visit the [Wiki](https://axivo.github.io/k3s-cluster), for detailed configuration instructions.
+Visit the [Wiki](https://axivo.github.io/k3s-cluster) (powered by [Hextra](https://github.com/imfing/hextra)), for detailed configuration instructions.
 
 ## TODO
 
