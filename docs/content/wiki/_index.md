@@ -7,7 +7,7 @@ cascade:
 
 👋 Hello! Welcome to the `k3s-cluster` documentation!
 
-This documentation is presented as a learning tool, allowing you to understand all configuration and deployment aspects of your bare-metal based K3S cluster.
+The documentation is presented as a learning tool, allowing the end-user to understand all configuration and deployment aspects of the bare-metal based K3S cluster.
 
 <!--more-->
 

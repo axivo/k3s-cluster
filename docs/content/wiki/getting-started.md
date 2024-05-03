@@ -1,7 +1,5 @@
 ---
 title: Getting Started
-next: /wiki/guide
-prev: /wiki
 ---
 
 All required local environment settings, installation commands and deployment instructions are performed from a MacOS based computer.
@@ -48,5 +46,5 @@ ansible-galaxy collection install -U kubernetes.core
 Dive right into the following section:
 
 {{< cards >}}
-  {{< card icon="adjustments" link="../guide/configuration" title="Configuration" subtitle="Configure the cluster for deployments." >}}
+  {{< card icon="adjustments" link="../guide" title="Guide" subtitle="Configure the cluster for deployments." >}}
 {{< /cards >}}

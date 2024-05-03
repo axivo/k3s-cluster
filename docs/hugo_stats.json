@@ -34,6 +34,7 @@
       "strong",
       "style",
       "svg",
+      "time",
       "title",
       "ul"
     ],
@@ -286,6 +287,7 @@
       "hx-min-w-[24px]",
       "hx-ml-4",
       "hx-mt-1.5",
+      "hx-mt-12",
       "hx-mt-16",
       "hx-mt-2",
       "hx-mt-4",

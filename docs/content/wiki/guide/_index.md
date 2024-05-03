@@ -1,7 +1,5 @@
 ---
 title: Guide
-prev: /wiki/getting-started
-next: /wiki/guide/configuration
 sidebar:
   open: true
 ---
@@ -19,6 +17,6 @@ The cluster inventory, user, role configuration settings and provisioning playbo
 Dive right into the following sections:
 
 {{< cards >}}
-  {{< card icon="adjustments" link="configuration" title="Configuration" subtitle="Configure the cluster for deployments." >}}
-  {{< card icon="server" link="playbooks" title="Playbooks" subtitle="Configure Ansible playbooks." >}}
+  {{< card icon="adjustments" link="configuration" title="Configuration" subtitle="Configure the cluster for deployment." >}}
+  {{< card icon="folder" link="playbooks" title="Playbooks" subtitle="Configure the Ansible playbooks." >}}
 {{< /cards >}}

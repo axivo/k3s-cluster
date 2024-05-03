@@ -1,6 +1,6 @@
 ---
 title: Playbooks
-prev: /wiki/guide/configuration
+prev: /wiki/guide
 next: /wiki/guide/playbooks/provisioning
 ---
 

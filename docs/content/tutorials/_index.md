@@ -16,3 +16,11 @@ The tutorials are presented as a learning tool, allowing the end-user to further
 {{< callout emoji="❓" >}}
   Deployment problems? Feel free to [open an issue](https://github.com/axivo/k3s-cluster/issues). For general questions or feedback, please use the [discussions](https://github.com/axivo/k3s-cluster/discussions).
 {{< /callout >}}
+
+## Next
+
+Dive right into the following section, to get started:
+
+{{< cards >}}
+  {{< card icon="book-open" link="handbook" title="Handbook" subtitle="Browse the available tutorials." >}}
+{{< /cards >}}

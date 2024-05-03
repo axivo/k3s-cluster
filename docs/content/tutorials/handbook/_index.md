@@ -1,6 +1,5 @@
 ---
 title: Handbook
-next: /tutorials/handbook/server
 sidebar:
   open: true
 ---
