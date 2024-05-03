@@ -4,6 +4,8 @@ title: Getting Started
 
 All required local environment settings, installation commands and deployment instructions are performed from a MacOS based computer.
 
+<!--more-->
+
 {{< callout type="info" >}}
   [Homebrew](https://brew.sh) is used to install all deployment dependencies.
 {{< /callout >}}

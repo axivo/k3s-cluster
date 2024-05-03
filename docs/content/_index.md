@@ -3,7 +3,11 @@ title: Home
 layout: hextra-home
 ---
 
-{{< hero-container image="images/logo-services.svg" imageTitle="Kubernetes Services" >}}
+{{< hero-container
+  image="images/logo-services.svg"
+  imageLink="https://github.com/axivo/k3s-cluster"
+  imageTitle="Kubernetes Services"
+>}}
 {{< hextra/hero-badge link="https://github.com/axivo/k3s-cluster">}}
   <div class="hx-w-2 hx-h-2 hx-rounded-full hx-bg-primary-400"></div>
   <span>Contribute</span>

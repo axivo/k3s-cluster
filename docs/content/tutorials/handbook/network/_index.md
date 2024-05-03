@@ -2,8 +2,6 @@
 title: Network
 prev: /tutorials/handbook
 next: /tutorials/handbook/cilium
-sidebar:
-  open: true
 weight: 2
 ---
 

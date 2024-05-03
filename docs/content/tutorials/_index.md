@@ -5,8 +5,6 @@ cascade:
   type: docs
 ---
 
-👋 Hello! Welcome to the `k3s-cluster` tutorials!
-
 The tutorials are presented as a learning tool, allowing the end-user to further understand in-depth configuration and optimization aspects of the bare-metal based K3S cluster.
 
 <!--more-->

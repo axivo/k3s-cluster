@@ -2,8 +2,6 @@
 title: Ubuntu Server
 prev: /tutorials/handbook
 next: /tutorials/handbook/network
-sidebar:
-  open: true
 weight: 1
 ---
 
@@ -29,7 +27,7 @@ brew install --cask raspberry-pi-imager
 
 On each cluster node, under `OS Customisation: General` section, set **only** the `hostname`, `username` and `password`, as well the `locale` values:
 
-![OS Installation: Imager General](ubuntu-imager-general.webp)
+![OS General Settings: Imager General](server-imager-general.webp)
 
 {{< callout type="info" >}}
   Use the `username` defined above to set the [`ansible_username`](/k3s-cluster/wiki/guide/configuration/user) variable.
@@ -39,7 +37,7 @@ On each cluster node, under `OS Customisation: General` section, set **only** th
 
 On each cluster node, under `OS Customisation: Services` section, enable SSH with password authentication:
 
-![OS Installation: Imager Services](ubuntu-imager-services.webp)
+![OS General Settings: Imager Services](server-imager-services.webp)
 
 {{% /steps %}}
 

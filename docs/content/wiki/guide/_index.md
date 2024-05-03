@@ -6,11 +6,11 @@ sidebar:
 
 The cluster inventory, user, role configuration settings and provisioning playbooks allow you to deploy the K3S cluster, matching your hardware and software requirements.
 
+<!--more-->
+
 {{< callout type="info" >}}
   Prior adjusting any settings, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`k3s-cluster`]({{< param variables.github.url >}}) repository.
 {{< /callout >}}
-
-<!--more-->
 
 ## Next
 
