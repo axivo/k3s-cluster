@@ -2,7 +2,7 @@
 
 K3S high-availability cluster, deployed with Ansible.
 
-![K3S high-availability cluster deployed with Ansible](./docs/static/images/logo-services.svg)
+<img src="docs/static/images/logo-services.svg" width="400" height="400" alt="K3S high-availability cluster, deployed with Ansible." />
 
 Visit the [Wiki](https://axivo.github.io/k3s-cluster), for detailed configuration instructions.
 
