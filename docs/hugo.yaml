@@ -1,0 +1,115 @@
+baseURL: https://axivo.github.io/k3s-cluster/
+build:
+  buildStats:
+    enable: true
+    disableIDs: true
+defaultContentLanguage: en
+enableInlineShortcodes: true
+enableGitInfo: true
+enableRobotsTXT: true
+hasCJKLanguage: true
+languages:
+  en:
+    languageName: English
+    weight: 1
+    title: K3S Cluster Wiki
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+menu:
+  main:
+    - name: Documentation
+      identifier: wiki
+      pageRef: /wiki
+      weight: 1
+    - name: Tutorials
+      identifier: tutorials
+      pageRef: /tutorials
+      weight: 2
+    - name: Search
+      params:
+        type: search
+      weight: 3
+    - name: GitHub
+      params:
+        icon: github
+      url: https://github.com/axivo/k3s-cluster
+      weight: 4
+  sidebar:
+    - identifier: more
+      name: More
+      params:
+        type: separator
+      weight: 1
+    - identifier: discussions
+      name: "🌐 Discussions ↗"
+      url: "https://github.com/axivo/k3s-cluster/discussions"
+      weight: 2
+    - identifier: issues
+      name: "🌐 Issues ↗"
+      url: "https://github.com/axivo/k3s-cluster/issues"
+      weight: 3
+module:
+  hugoVersion:
+    extended: true
+    min: 0.125.0
+  imports:
+    - path: github.com/imfing/hextra
+outputs:
+  home: [HTML]
+  page: [HTML]
+  section: [HTML, RSS]
+params:
+  blog:
+    list:
+      displayTags: true
+  comments:
+    enable: false
+    type: giscus
+    giscus:
+      repo: axivo/k3s-cluster
+      repoId: R_kgDOLteJAQ
+      category: General
+      categoryId: DIC_kwDOLteJAc4Ceu8_
+      mapping: pathname
+      strict: 0
+      reactionsEnabled: 1
+      emitMetadata: 0
+      inputPosition: top
+      lang: en
+  dateFormat: 'January 2, 2006'
+  description: K3S cluster deployed with Ansible
+  displayUpdatedDate: true
+  editURL:
+    enable: true
+    base: https://github.com/axivo/k3s-cluster/edit/main
+  footer:
+    enable: true
+    displayCopyright: true
+    displayPoweredBy: true
+    width: normal
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    # logo:
+    #   path: /logo.svg
+    #   dark: /logo.svg
+    #   link: /
+    #   width: 20
+    #   height: 10
+    # width: wide
+  page:
+    # full (100%), wide (90rem), normal (1280px)
+    width: normal
+  theme:
+    # light | dark | system
+    default: system
+    displayToggle: true
+  variables:
+    github:
+      url: https://github.com/axivo/k3s-cluster
+    os:
+      version: 24.04

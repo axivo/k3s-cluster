@@ -1,0 +1,29 @@
+{{- $class := .Get "class" | default "" -}}
+{{- $cols := .Get "cols" | default 2 -}}
+{{- $image := .Get "image" | default "" -}}
+{{- $imageClass := .Get "imageClass" | default "" -}}
+{{- $imageTitle := .Get "imageTitle" | default "" -}}
+{{- $imageWidth := .Get "imageWidth" | default 350 -}}
+{{- $imageHeight := .Get "imageHeight" | default 350 -}}
+{{- $style := .Get "style" | default "" -}}
+
+{{- $css := printf "--hextra-feature-grid-cols: %v; %s" $cols $style -}}
+
+
+<div
+  class="{{ $class }} hextra-feature-grid hx-grid sm:max-lg:hx-grid-cols-2 max-sm:hx-grid-cols-1 hx-gap-4 hx-w-max not-prose"
+  {{ with $css }}style="{{ . | safeCSS }}"{{ end }}
+>
+  <div class="grid-col-span-1">
+    {{ .Inner }}
+  </div>
+  {{ if $image }}
+  <div class="hx-px-6">
+    <img
+      class="hx-mx-auto {{ $imageClass }}"
+      src="{{ $image }}" width="{{ $imageWidth }}" heigth="{{ $imageHeight }}"
+      {{ if $imageTitle }}alt="{{ $imageTitle }}"{{ end }}
+    />
+  </div>
+  {{ end -}}
+</div>
