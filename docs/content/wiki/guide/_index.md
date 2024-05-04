@@ -4,7 +4,7 @@ sidebar:
   open: true
 ---
 
-The cluster inventory, user, role configuration settings and provisioning playbooks allow you to deploy the K3S cluster, matching your hardware and software requirements.
+The cluster inventory, user, role configuration settings and provisioning playbooks allow you to deploy the K3s cluster, matching your hardware and software requirements.
 
 <!--more-->
 

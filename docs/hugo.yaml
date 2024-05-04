@@ -12,7 +12,7 @@ languages:
   en:
     languageName: English
     weight: 1
-    title: K3S Cluster Wiki
+    title: K3s Cluster Wiki
 markup:
   goldmark:
     renderer:
@@ -81,7 +81,7 @@ params:
       inputPosition: top
       lang: en
   dateFormat: 'January 2, 2006'
-  description: K3S cluster deployed with Ansible
+  description: K3s cluster deployed with Ansible
   displayUpdatedDate: true
   editURL:
     enable: true

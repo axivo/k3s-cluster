@@ -21,7 +21,7 @@ Dive right into the following sections:
   {{< card icon="adjustments" link="cilium" title="Cilium" subtitle="Configure the Ansible *Cilium* role." >}}
   {{< card icon="adjustments" link="cloudflare" title="Cloudflare" subtitle="Configure the Ansible *Cloudflare* role." >}}
   {{< card icon="adjustments" link="helm" title="Helm" subtitle="Configure the Ansible *Helm* role." >}}
-  {{< card icon="adjustments" link="k3s" title="K3S" subtitle="Configure the Ansible *K3S* role." >}}
+  {{< card icon="adjustments" link="k3s" title="K3s" subtitle="Configure the Ansible *K3s* role." >}}
   {{< card icon="adjustments" link="kured" title="Kured" subtitle="Configure the Ansible *Kured* role." >}}
   {{< card icon="adjustments" link="longhorn" title="Longhorn" subtitle="Configure the Ansible *Longhorn* role." >}}
   {{< card icon="adjustments" link="prometheus" title="Prometheus" subtitle="Configure the Ansible *Prometheus* role." >}}

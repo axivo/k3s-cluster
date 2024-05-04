@@ -5,7 +5,7 @@ cascade:
   type: docs
 ---
 
-The tutorials are presented as a learning tool, allowing the end-user to further understand in-depth configuration and optimization aspects of the bare-metal based K3S cluster.
+The tutorials are presented as a learning tool, allowing the end-user to further understand in-depth configuration and optimization aspects of the bare-metal based K3s cluster.
 
 <!--more-->
 

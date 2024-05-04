@@ -6,7 +6,7 @@ sidebar:
   open: true
 ---
 
-The configuration guides present in this section allow you to configure the K3S cluster, matching your hardware and software requirements.
+The configuration guides present in this section allow you to configure the K3s cluster, matching your hardware and software requirements.
 
 <!--more-->
 

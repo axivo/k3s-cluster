@@ -17,9 +17,9 @@ layout: hextra-home
 <div class="hx-mt-6 hx-mb-6">
 {{< hextra/hero-headline >}}
   <span class="hx-whitespace-nowrap">
-    K3S high-availability cluster
+    High Availability K3s Cluster
   </span><br class="sm:hx-block hx-hidden" />
-  deployed with Ansible
+  Deployed with Ansible
 {{< /hextra/hero-headline >}}
 </div>
 
@@ -45,7 +45,7 @@ layout: hextra-home
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
-    title="K3S"
+    title="K3s"
     subtitle="Certified Kubernetes distribution built for IoT and Edge computing, running on Ubuntu Server LTS."
     class="hx-aspect-auto md:hx-aspect-[1.1/1] max-md:hx-min-h-[340px]"
     image="images/card-k3s.webp"
@@ -88,7 +88,7 @@ layout: hextra-home
   >}}
   {{< hextra/feature-card
     title="HAProxy"
-    subtitle="Reliable, high-performance TCP/HTTP load balancer and proxy, used for K3S control-planes."
+    subtitle="Reliable, high-performance TCP/HTTP load balancer and proxy, used for K3s control-planes."
     link="https://www.haproxy.org"
   >}}
   {{< hextra/feature-card

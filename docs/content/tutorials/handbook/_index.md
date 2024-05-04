@@ -4,7 +4,7 @@ sidebar:
   open: true
 ---
 
-The handbook contains a collection of tutorials, allowing the end-user to further understand the K3S cluster configuration, as well the various deployment procedures and optimizations applied during the Ansible playbooks execution.
+The handbook contains a collection of tutorials, allowing the end-user to further understand the K3s cluster configuration, as well the various deployment procedures and optimizations applied during the Ansible playbooks execution.
 
 <!--more-->
 
