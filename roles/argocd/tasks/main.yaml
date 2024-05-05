@@ -52,8 +52,8 @@
     - name: Set hostname fact
       ansible.builtin.set_fact:
         hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-      run_once: true
       when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+      run_once: true
 
     - name: Set server user settings fact
       ansible.builtin.set_fact:
