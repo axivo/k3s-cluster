@@ -9,7 +9,7 @@
           ansible.builtin.service_facts:
 
         - name: Bluetooth Configuration
-          when: not cluster_vars.service.bluetooth.enabled | default(false)
+          when: not cluster_vars.service.bluetooth.enabled
           block:
             - name: Disable bluetooth service
               ansible.builtin.systemd_service:
@@ -26,7 +26,7 @@
               when: ansible_facts.services['hciuart.service'] is defined
 
         - name: WiFi Configuration
-          when: not cluster_vars.service.wifi.enabled | default(false)
+          when: not cluster_vars.service.wifi.enabled
           block:
             - name: Disable wifi service
               ansible.builtin.systemd_service:
@@ -155,7 +155,7 @@
         group: root
         mode: '0644'
       notify: Reboot
-      when: not cluster_vars.service.cloud_init.enabled | default(false)
+      when: not cluster_vars.service.cloud_init.enabled
 
     - name: Disable firewall service
       ansible.builtin.systemd_service:
@@ -173,11 +173,11 @@
         - snapd.service
         - snapd.seeded.service
         - snapd.socket
-      when: not cluster_vars.service.snapd.enabled | default(false)
+      when: not cluster_vars.service.snapd.enabled
 
     - name: Unattended Upgrades
       notify: Restart unattended upgrades service
-      when: cluster_vars.service.unattended_upgrades.enabled | default(false)
+      when: cluster_vars.service.unattended_upgrades.enabled
       block:
         - name: Install history notification package
           ansible.builtin.apt:
@@ -202,7 +202,7 @@
 
 - name: Mail Configuration
   notify: Reload mail service
-  when: cluster_vars.service.postfix.enabled | default(false)
+  when: cluster_vars.service.postfix.enabled
   block:
     - name: Set mail configuration
       ansible.builtin.debconf:
@@ -210,7 +210,7 @@
         question: postfix/{{ item.question }}
         value: '{{ item.value }}'
         vtype: '{{ item.vtype }}'
-      when: item.enabled | default(false)
+      when: item.enabled
       loop:
         # General mail configuration type
         - question: main_mailer_type

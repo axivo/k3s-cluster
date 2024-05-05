@@ -10,9 +10,7 @@
 - name: Loadbalancer Setup
   notify: Restart loadbalancer services
   when:
-    - k3s_ha_cluster
-    - k3s_vars.loadbalancer.enabled
-    - k3s_loadbalancer_hosts | length == 2
+    - k3s_loadbalancer_enabled
     - ansible_host in k3s_loadbalancer_hosts
   block:
     - name: Set sysctl token value
@@ -36,7 +34,7 @@
         block: "{{ lookup('ansible.builtin.template', 'haproxy.j2') }}"
         dest: /etc/haproxy/haproxy.cfg
         insertafter: ^\terrorfile\s504\s\/etc\/haproxy\/errors\/504\.http$
-        marker: '# {mark} K3S Settings'
+        marker: '# {mark} K3s Settings'
         prepend_newline: true
 
     - name: Update keepalived configuration file

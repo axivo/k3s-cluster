@@ -1,0 +1,18 @@
+server:
+  hosts:
+    apollo:
+    boreas:
+    cerus:
+
+agent:
+  hosts:
+    chaos:
+    crios:
+    helios:
+    hermes:
+    hypnos:
+
+cluster:
+  children:
+    server:
+    agent:
