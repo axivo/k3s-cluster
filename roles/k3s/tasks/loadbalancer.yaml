@@ -34,7 +34,7 @@
         block: "{{ lookup('ansible.builtin.template', 'haproxy.j2') }}"
         dest: /etc/haproxy/haproxy.cfg
         insertafter: ^\terrorfile\s504\s\/etc\/haproxy\/errors\/504\.http$
-        marker: '# {mark} K3S Settings'
+        marker: '# {mark} K3s Settings'
         prepend_newline: true
 
     - name: Update keepalived configuration file
