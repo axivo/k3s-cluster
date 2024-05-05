@@ -14,7 +14,7 @@
     file: user.yaml
 
 - name: Cluster Provisioning
-  when: valid_hardware_product | default(false)
+  when: valid_hardware_product
   block:
     - name: Cluster Configuration
       ansible.builtin.import_tasks:
