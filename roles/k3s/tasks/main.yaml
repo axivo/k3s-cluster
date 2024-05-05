@@ -136,7 +136,7 @@
       ansible.builtin.command:
         cmd: /usr/local/bin/kubectl config set-cluster default
               --kubeconfig={{ user_info.home }}/.kube/config
-              --server=https://{{ k3s_vars.api.host if k3s_vars.loadbalancer.enabled else ansible_host }}:{{ k3s_vars.api.port }}
+              --server=https://{{ k3s_vars.api.host if k3s_loadbalancer_enabled else ansible_host }}:{{ k3s_vars.api.port }}
       changed_when: true
 
     - name: Copy kubeconfig file locally
@@ -146,4 +146,4 @@
         flat: true
       when:
         - ansible_host == k3s_server_default_host
-        - k3s_vars.kubeconfig.local | default(false)
+        - k3s_vars.kubeconfig.local
