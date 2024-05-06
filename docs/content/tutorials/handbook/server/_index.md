@@ -43,7 +43,7 @@ On each cluster node, under `OS Customisation: Services` section, enable SSH wit
 
 ## Hostname Validation
 
-Depending on what router you use, the `hostname` my not resolve correctly in Ubuntu. Prior cluster deployment, verify the `hostname` FQDN is correctly set.
+Depending on what router you use, the `hostname` might not resolve correctly in Ubuntu. Prior cluster deployment, verify the `hostname` FQDN is correctly set.
 
 {{% steps %}}
 

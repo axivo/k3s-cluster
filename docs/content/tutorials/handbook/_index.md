@@ -13,7 +13,7 @@ The handbook contains a collection of tutorials, allowing the end-user to furthe
 Dive right into the following sections:
 
 {{< cards >}}
-  {{< card icon="book-open" link="ubuntu" title="Ubuntu Server" subtitle="Ubuntu OS related tutorials." >}}
+  {{< card icon="book-open" link="server" title="Ubuntu Server" subtitle="Ubuntu OS related tutorials." >}}
   {{< card icon="book-open" link="network" title="Network" subtitle="Network infrastructure related tutorials." >}}
   {{< card icon="book-open" link="cilium" title="Cilium" subtitle="Cilium related tutorials." >}}
   {{< card icon="book-open" link="cloudflare" title="Cloudflare" subtitle="Cloudflare related tutorials." >}}

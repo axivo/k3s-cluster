@@ -16,7 +16,7 @@ The Ansible user is used to remotely execute various deployment tasks into clust
 Set the `ansible_user` [variable](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html), into [`all.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/group_vars/all.yaml) configuration file.
 
 {{< callout type="info" >}}
-  Use the `username` value you defined into [OS General Settings](/k3s-cluster/tutorials/handbook/ubuntu/#os-general-settings), to set the `ansible_user` variable.
+  Use the `username` value you defined into [OS General Settings](/k3s-cluster/tutorials/handbook/server/#os-general-settings), to set the `ansible_user` variable.
 {{< /callout >}}
 
 ### User Password

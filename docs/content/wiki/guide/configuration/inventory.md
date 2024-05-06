@@ -5,11 +5,31 @@ next: /wiki/guide/configuration/user
 weight: 1
 ---
 
-Ansible automates tasks on managed nodes or *hosts* in cluster infrastructure, using a list or group of lists known as [inventory](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html). 
+Ansible automates tasks on managed nodes (also named *hosts*) in cluster infrastructure, using a list or group of lists, known as [inventory](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html). 
 
 <!--more-->
 
-## Inventory Configuration
+## Important Settings
+
+There are two important configuration settings, influencing how the cluster will be deployed.
+
+{{% steps %}}
+
+### `k3s_vars.controlplane.tainted`
+
+The setting allows the end-user to control where the Kubernetes pods will be deployed. In a scenario where there is only a single or no `agent` type nodes deployed, setting the value to `false` will allow pods to be deployed into any cluster node type.
+
+### `k3s_vars.loadbalancer.enabled`
+
+The setting allows the end-user to control the HAProxy load balancer feature, which requires a minium of 2 `server` type nodes to be deployed. The setting is also indirectly related to K3s `tls-san` feature, which requires a minimum of 3 `server` type nodes to be deployed.
+
+{{% /steps %}}
+
+{{< callout type="info" >}}
+  Update the settings into [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) file.
+{{< /callout >}}
+
+## Configuration
 
 The [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file contains the list of `server` and `agent` cluster node types.
 
@@ -24,6 +44,8 @@ The minimum combined total of nodes for a [High Availability](https://kubernetes
 {{< /callout >}}
 
 Example of a HA cluster inventory with 4 nodes:
+
+{{% details title="Inventory Details" closed="true" %}}
 
 ```yaml
 server:
@@ -42,25 +64,79 @@ cluster:
     agent:
 ```
 
-### Non High Availability
+{{< callout type="info" >}}
+  Update the [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file, with the above detailed configuration.
+{{< /callout >}}
 
-If the targeted cluster has less than 3 `server` type nodes, the [Provisioning](/k3s-cluster/wiki/guide/playbooks/provisioning) playbook will automatically disable all related HA features, like the HAProxy load balancer and K3s `tls-san`.
+{{% /details %}}
 
-Example of a Non HA cluster inventory with 2 nodes:
+{{< callout type="warning" >}}
+  The above detailed configuration will introduce a SPOF (single point of failure), since Kubernetes pods are deployed to a single `agent` type node.
+{{< /callout >}}
+
+To address this issue, disable the `k3s_vars.controlplane.tainted` feature, allowing Kubernetes pods to be deployed into all cluster nodes.
+
+Example of a HA cluster inventory with 3 nodes:
+
+{{% details title="Inventory Details" closed="true" %}}
 
 ```yaml
 server:
   hosts:
     apollo:
+    boreas:
+    cerus:
 
 agent:
   hosts:
-    chaos:
 
 cluster:
   children:
     server:
     agent:
 ```
+
+{{< callout type="info" >}}
+  Update the [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file, with the above detailed configuration.
+{{< /callout >}}
+
+{{% /details %}}
+
+{{< callout type="warning" >}}
+  The above detailed configuration will enable the HAProxy load balancer and K3s `tls-san` HA features, since there are 3 `server` type nodes deployed.
+{{< /callout >}}
+
+### Non High Availability
+
+If the targeted cluster has less than 3 `server` type nodes, the [Provisioning](/k3s-cluster/wiki/guide/playbooks/provisioning) playbook will automatically disable all related HA features.
+
+Example of a Non HA cluster inventory with 2 nodes:
+
+{{% details title="Inventory Details" closed="true" %}}
+
+```yaml
+server:
+  hosts:
+    apollo:
+    boreas:
+
+agent:
+  hosts:
+
+cluster:
+  children:
+    server:
+    agent:
+```
+
+{{< callout type="info" >}}
+  Update the [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file, with the above detailed configuration.
+{{< /callout >}}
+
+{{% /details %}}
+
+{{< callout type="warning" >}}
+  The above detailed configuration will enable the HAProxy load balancer, since there are 2 `server` type nodes deployed.
+{{< /callout >}}
 
 {{% /steps %}}
