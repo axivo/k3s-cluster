@@ -27,7 +27,7 @@ service:
 {% endfor %}
   create: {{ kured_vars.kubernetes.service.create }}
   name: {{ kured_vars.kubernetes.service.name }}
-{% if k3s_vars.controlplane.tainted %}
+{% if k3s_vars.server.controlplane.tainted %}
 tolerations:
   - key: node-role.kubernetes.io/control-plane
     operator: Exists

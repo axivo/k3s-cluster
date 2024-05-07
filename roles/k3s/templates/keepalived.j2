@@ -42,6 +42,6 @@ vrrp_instance haproxy-vip {
     }
     virtual_router_id 10
     virtual_ipaddress {
-        {{ k3s_vars.api.host }}
+        {{ k3s_vars.server.api.host }}
     }
 }

@@ -13,7 +13,7 @@
         repo_state: absent
       when: "'helm' in ansible_facts.packages"
 
-    - name: Remove files
+    - name: Remove binary files
       ansible.builtin.file:
         name: '{{ item }}'
         state: absent

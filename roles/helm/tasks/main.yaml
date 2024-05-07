@@ -22,7 +22,7 @@
 
     - name: Get file status
       ansible.builtin.stat:
-        path: /usr/share/keyrings/{{ helm_vars.release.key }}
+        path: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
       changed_when: not gpg_key.stat.exists
       register: gpg_key
 
@@ -31,8 +31,8 @@
       block:
         - name: Download key
           ansible.builtin.get_url:
-            url: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
-            dest: /tmp/{{ helm_vars.release.repository.key }}
+            url: '{{ helm_release_key }}'
+            dest: /tmp/{{ helm_vars.release.helm.repository.key }}
             owner: root
             group: root
             mode: '0644'
@@ -43,12 +43,12 @@
 
         - name: Dearmor key
           ansible.builtin.command:
-            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.key }} /tmp/{{ helm_vars.release.repository.key }}
+            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.helm.key }} /tmp/{{ helm_vars.release.helm.repository.key }}
           changed_when: true
 
         - name: Delete key
           ansible.builtin.file:
-            path: /tmp/{{ helm_vars.release.repository.key }}
+            path: /tmp/{{ helm_vars.release.helm.repository.key }}
             state: absent
 
         - name: Get architecture
@@ -61,16 +61,16 @@
           ansible.builtin.deb822_repository:
             architectures: '{{ architecture.stdout }}'
             components: main
-            name: helm-{{ helm_vars.release.repository.channel }}
-            signed_by: /usr/share/keyrings/{{ helm_vars.release.key }}
+            name: helm-{{ helm_vars.release.helm.repository.channel }}
+            signed_by: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
             suites: all
-            uris: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.channel }}/debian/'
+            uris: '{{ helm_release_channel }}/{{ helm_vars.release.helm.distro }}/'
             enabled: true
             trusted: true
 
     - name: Helm Plugins
       block:
-        - name: Install packages
+        - name: Install plugin packages
           ansible.builtin.apt:
             name: '{{ item }}'
             autoremove: true
@@ -79,10 +79,10 @@
             - helm
             - python3-jsonpatch
 
-        - name: Install diff plugin
+        - name: Install plugin
           kubernetes.core.helm_plugin:
-            plugin_path: '{{ helm_vars.plugin.diff.url }}'
-            plugin_version: '{{ helm_vars.plugin.diff.version }}'
+            plugin_path: '{{ helm_plugin_release_url }}'
+            plugin_version: '{{ helm_vars.release.plugin.version }}'
           register: result
           delay: 1
           retries: 3

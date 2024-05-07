@@ -1,0 +1,20 @@
+---
+- name: Set plugin release fact
+  ansible.builtin.set_fact:
+    helm_plugin_release: '{{ helm_vars.release.plugin.repository.org }}/{{ helm_vars.release.plugin.repository.name }}'
+  run_once: true
+
+- name: Set plugin release url fact
+  ansible.builtin.set_fact:
+    helm_plugin_release_url: https://github.com/{{ helm_plugin_release }}
+  run_once: true
+
+- name: Set release channel fact
+  ansible.builtin.set_fact:
+    helm_release_channel: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.channel }}'
+  run_once: true
+
+- name: Set release key fact
+  ansible.builtin.set_fact:
+    helm_release_key: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.key }}'
+  run_once: true
