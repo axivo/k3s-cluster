@@ -2,7 +2,7 @@ defaultSettings:
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
   defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replica_count }}
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
-{% if k3s_vars.controlplane.tainted %}
+{% if k3s_vars.server.controlplane.tainted %}
   taintToleration: node-role.kubernetes.io/control-plane:NoSchedule
 longhornDriver:
   tolerations:

@@ -21,7 +21,7 @@ ipam:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}
 hubble:
   peerService:
-    clusterDomain: {{ k3s_vars.cluster.domain }}
+    clusterDomain: {{ k3s_vars.server.cluster.domain }}
   relay:
     enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
@@ -40,8 +40,8 @@ hubble:
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
   qps: {{ cilium_vars.kubernetes.client.rate_limit.qps }}
-k8sServiceHost: {{ k3s_vars.loadbalancer.server.host }}
-k8sServicePort: {{ k3s_vars.loadbalancer.server.port }}
+k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
+k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
 kubeProxyReplacement: true
 operator:
   resources:

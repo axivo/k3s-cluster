@@ -4,4 +4,8 @@ Helm is the best way to find, share, and use software built for Kubernetes.
 
 ## Releases
 
-- [GitHub](https://github.com/helm/helm/releases)
+- [Balto](https://helm.baltorepo.com/stable/debian/packages/helm)
+
+## Plugin Releases
+
+- [Github](https://github.com/databus23/helm-diff/releases)

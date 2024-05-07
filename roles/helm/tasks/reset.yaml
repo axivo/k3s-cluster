@@ -9,7 +9,7 @@
   block:
     - name: Remove plugin
       kubernetes.core.helm_plugin:
-        plugin_name: diff
+        plugin_name: '{{ helm_vars.release.plugin.name }}'
         state: absent
       when:
         - "'helm' in ansible_facts.packages"
@@ -31,10 +31,10 @@
             - python3-jsonpatch
             - python3-kubernetes
 
-        - name: Remove files
+        - name: Remove configuration files
           ansible.builtin.file:
             name: '{{ item }}'
             state: absent
           loop:
-            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
-            - /usr/share/keyrings/{{ helm_vars.release.key }}
+            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.helm.repository.channel }}.sources
+            - /usr/share/keyrings/{{ helm_vars.release.helm.key }}
