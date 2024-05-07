@@ -7,7 +7,8 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Service Setup
+- name: Role Provisioning
+  tags: provisioning
   notify: Start service
   block:
     - name: Install k3s binary
@@ -70,9 +71,10 @@
   ansible.builtin.meta: flush_handlers
 
 - name: Server Setup
+  tags: setup
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Add variable to environment
+    - name: Add variable to environment file
       ansible.builtin.lineinfile:
         path: /etc/environment
         line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
@@ -136,7 +138,7 @@
       ansible.builtin.command:
         cmd: /usr/local/bin/kubectl config set-cluster default
               --kubeconfig={{ user_info.home }}/.kube/config
-              --server=https://{{ k3s_vars.server.api.host if k3s_loadbalancer_enabled else ansible_host }}:{{ k3s_vars.server.api.port }}
+              --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else ansible_host }}:{{ k3s_vars.server.api.port }}
       changed_when: true
 
     - name: Copy kubeconfig file locally
@@ -144,6 +146,5 @@
         src: '{{ user_info.home }}/.kube/config'
         dest: "{{ k3s_vars.directory.kubeconfig }}"
         flat: true
-      when:
-        - ansible_host == k3s_server_default_host
-        - k3s_vars.server.kubeconfig.local
+      when: k3s_vars.server.kubeconfig.local
+      run_once: true

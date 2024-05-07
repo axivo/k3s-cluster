@@ -8,8 +8,8 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Chart Dependencies
-  tags: deps
+- name: Role Provisioning
+  tags: provisioning
   when: ansible_host in k3s_server_hosts
   block:
     - name: Set release fact
@@ -56,70 +56,67 @@
         name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
 
-- name: Chart Setup
-  tags: chart
-  when: ansible_host == k3s_server_default_host
-  block:
-    - name: Apply gateway api crds manifest
-      kubernetes.core.k8s:
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        src: '{{ cilium_gateway_api_release_url_file }}'
-
-    - name: Set chart setup fact
-      ansible.builtin.set_fact:
-        chart_setup: true
+    - name: Chart Setup
+      tags: setup
       run_once: true
+      block:
+        - name: Apply gateway api crds manifest
+          kubernetes.core.k8s:
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            src: '{{ cilium_gateway_api_release_url_file }}'
 
-    - name: Set chart update fact
-      ansible.builtin.set_fact:
-        chart_update: false
-      run_once: true
+        - name: Set chart setup fact
+          ansible.builtin.set_fact:
+            chart_setup: true
 
-    - name: Install chart
-      kubernetes.core.helm:
-        chart_ref: '{{ cilium_project_chart }}'
-        chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cilium_vars.kubernetes.namespace }}'
-        update_repo_cache: true
-        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
+        - name: Set chart update fact
+          ansible.builtin.set_fact:
+            chart_update: false
 
-    - name: Create l2 announcement policy
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        wait: true
+        - name: Install chart
+          kubernetes.core.helm:
+            chart_ref: '{{ cilium_project_chart }}'
+            chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            update_repo_cache: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
 
-    - name: Create loadbalancer ip pool
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        wait: true
+        - name: Create l2 announcement policy
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
-    - name: Set chart setup fact
-      ansible.builtin.set_fact:
-        chart_setup: false
-      run_once: true
+        - name: Create loadbalancer ip pool
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
-    - name: Update chart values
-      kubernetes.core.helm:
-        chart_ref: '{{ cilium_project_chart }}'
-        chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cilium_vars.kubernetes.namespace }}'
-        update_repo_cache: true
-        reset_values: false
-        reuse_values: true
-        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
+        - name: Set chart setup fact
+          ansible.builtin.set_fact:
+            chart_setup: false
+
+        - name: Update chart values
+          kubernetes.core.helm:
+            chart_ref: '{{ cilium_project_chart }}'
+            chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            update_repo_cache: true
+            reset_values: false
+            reuse_values: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
