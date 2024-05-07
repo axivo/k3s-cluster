@@ -9,7 +9,9 @@
     - k3s
 
 - name: Chart Update
-  when: ansible_host == k3s_server_default_host
+  tags: update
+  when: ansible_host in k3s_server_hosts
+  run_once: true
   block:
     - name: Gateway Setup
       when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
@@ -17,7 +19,6 @@
         - name: Set hostname fact
           ansible.builtin.set_fact:
             hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          run_once: true
 
         - name: Create hubble ui gateway
           kubernetes.core.k8s:
@@ -61,12 +62,10 @@
     - name: Set chart setup fact
       ansible.builtin.set_fact:
         chart_setup: false
-      run_once: true
 
     - name: Set chart update fact
       ansible.builtin.set_fact:
         chart_update: true
-      run_once: true
 
     - name: Update chart values
       kubernetes.core.helm:

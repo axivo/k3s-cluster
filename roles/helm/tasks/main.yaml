@@ -8,7 +8,8 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Helm Dependencies
+- name: Role Provisioning
+  tags: provisioning
   when: ansible_host in k3s_server_hosts
   block:
     - name: Install packages
@@ -68,7 +69,8 @@
             enabled: true
             trusted: true
 
-    - name: Helm Plugins
+    - name: Helm Plugin
+      tags: plugin
       block:
         - name: Install plugin packages
           ansible.builtin.apt:

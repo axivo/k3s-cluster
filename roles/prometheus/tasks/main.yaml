@@ -11,96 +11,100 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Add repository
-  kubernetes.core.helm_repository:
-    name: '{{ prometheus_vars.kubernetes.helm.repository.org }}'
-    repo_url: '{{ prometheus_vars.kubernetes.helm.repository.url }}/{{ prometheus_vars.kubernetes.helm.repository.name }}'
-
-- name: Chart Setup
-  when: ansible_host == k3s_server_default_host
+- name: Role Provisioning
+  tags: provisioning
+  when: ansible_host in k3s_server_hosts
   block:
-    - name: Create grafana credentials secret
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'grafana_credentials.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        wait: true
+    - name: Add repository
+      kubernetes.core.helm_repository:
+        name: '{{ prometheus_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ prometheus_vars.kubernetes.helm.repository.url }}/{{ prometheus_vars.kubernetes.helm.repository.name }}'
 
-    - name: Install chart
-      kubernetes.core.helm:
-        chart_ref: '{{ prometheus_project_chart }}'
-        chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ prometheus_vars.kubernetes.helm.chart.prefix }}'
-        namespace: '{{ prometheus_vars.kubernetes.namespace }}'
-        update_repo_cache: true
-        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
-
-    - name: Gateway Setup
-      when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+    - name: Chart Setup
+      tags: setup
+      run_once: true
       block:
-        - name: Set hostname fact
-          ansible.builtin.set_fact:
-            hostname:
-              alertmanager: '{{ prometheus_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-              grafana: '{{ prometheus_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-              prometheus: '{{ prometheus_vars.kubernetes.prometheus.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          run_once: true
-
-        - name: Create alertmanager gateway
+        - name: Create grafana credentials secret
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_gateway.j2') | from_yaml }}"
+            definition: "{{ lookup('ansible.builtin.template', 'grafana_credentials.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
-        - name: Create alertmanager http route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_http_route.j2') | from_yaml }}"
+        - name: Install chart
+          kubernetes.core.helm:
+            chart_ref: '{{ prometheus_project_chart }}'
+            chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ prometheus_vars.kubernetes.helm.chart.prefix }}'
+            namespace: '{{ prometheus_vars.kubernetes.namespace }}'
+            update_repo_cache: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
 
-        - name: Create alertmanager https route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'alertmanager_https_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+        - name: Gateway Setup
+          when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+          block:
+            - name: Set hostname fact
+              ansible.builtin.set_fact:
+                hostname:
+                  alertmanager: '{{ prometheus_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+                  grafana: '{{ prometheus_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+                  prometheus: '{{ prometheus_vars.kubernetes.prometheus.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
 
-        - name: Create grafana gateway
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'grafana_gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create alertmanager gateway
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_gateway.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
 
-        - name: Create grafana http route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'grafana_http_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create alertmanager http route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_http_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
 
-        - name: Create grafana https route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'grafana_https_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create alertmanager https route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_https_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
 
-        - name: Create prometheus gateway
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'prometheus_gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create grafana gateway
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'grafana_gateway.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
 
-        - name: Create prometheus http route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'prometheus_http_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create grafana http route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'grafana_http_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
 
-        - name: Create prometheus https route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'prometheus_https_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
+            - name: Create grafana https route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'grafana_https_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
+
+            - name: Create prometheus gateway
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'prometheus_gateway.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
+
+            - name: Create prometheus http route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'prometheus_http_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true
+
+            - name: Create prometheus https route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'prometheus_https_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                wait: true

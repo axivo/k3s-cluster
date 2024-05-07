@@ -11,42 +11,44 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Add external dns repository
-  kubernetes.core.helm_repository:
-    name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}'
-    repo_url: '{{ cloudflare_vars.kubernetes.helm.repository.url }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
+- name: Role Provisioning
+  tags: provisioning
   when:
     - ansible_host in k3s_server_hosts
     - cloudflare_vars.kubernetes.gateway.domain != 'disabled'
-
-- name: Cloudflare Setup
-  when:
-    - ansible_host == k3s_server_default_host
-    - cloudflare_vars.kubernetes.gateway.domain != 'disabled'
   block:
-    - name: Create api token secret
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'api_token.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        wait: true
+    - name: Add repository
+      kubernetes.core.helm_repository:
+        name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ cloudflare_vars.kubernetes.helm.repository.url }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
 
-    - name: Install external dns chart
-      kubernetes.core.helm:
-        chart_ref: '{{ cloudflare_project_chart }}'
-        chart_version: '{{ cloudflare_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ cloudflare_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cloudflare_vars.kubernetes.namespace }}'
-        update_repo_cache: true
-        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
-        wait: true
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
+    - name: Chart Setup
+      tags: setup
+      run_once: true
+      block:
+        - name: Create api token secret
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'api_token.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
 
-    - name: Create cluster issuer
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        wait: true
+        - name: Install chart
+          kubernetes.core.helm:
+            chart_ref: '{{ cloudflare_project_chart }}'
+            chart_version: '{{ cloudflare_vars.kubernetes.helm.chart.version }}'
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ cloudflare_vars.kubernetes.helm.chart.name }}'
+            namespace: '{{ cloudflare_vars.kubernetes.namespace }}'
+            update_repo_cache: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+
+        - name: Create cluster issuer
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
