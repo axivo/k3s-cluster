@@ -1,7 +1,11 @@
 ---
-- name: Validate diff plugin url
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Validate plugin release url
   ansible.builtin.uri:
-    url: '{{ helm_vars.plugin.diff.url }}/releases/tag/{{ helm_vars.plugin.diff.version }}'
+    url: '{{ helm_plugin_release_url }}/releases/tag/{{ helm_vars.release.plugin.version }}'
     timeout: 5
   run_once: true
   register: result
@@ -11,7 +15,7 @@
 
 - name: Validate release key url
   ansible.builtin.uri:
-    url: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
+    url: '{{ helm_release_key }}'
     timeout: 5
   run_once: true
   register: result

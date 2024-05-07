@@ -26,7 +26,7 @@
 
 - name: Set loadbalancer enabled fact
   ansible.builtin.set_fact:
-    k3s_loadbalancer_enabled: '{{ k3s_vars.loadbalancer.enabled and k3s_loadbalancer_hosts | length == 2 }}'
+    k3s_loadbalancer_enabled: '{{ k3s_vars.server.loadbalancer.enabled and k3s_loadbalancer_hosts | length == 2 }}'
   run_once: true
 
 - name: Set loadbalancer ips fact
@@ -41,7 +41,7 @@
 
 - name: Set release fact
   ansible.builtin.set_fact:
-    k3s_release: '{{ k3s_vars.release.repository.org }}/{{ k3s_vars.release.repository.name }}'
+    k3s_release: '{{ k3s_vars.release.k3s.repository.org }}/{{ k3s_vars.release.k3s.repository.name }}'
   run_once: true
 
 - name: Set release url fact
@@ -51,12 +51,12 @@
 
 - name: Set release checksum url fact
   ansible.builtin.set_fact:
-    k3s_release_url_checksum: '{{ k3s_release_url }}/download/{{ k3s_vars.release.version }}/{{ k3s_vars.release.checksum }}'
+    k3s_release_url_checksum: '{{ k3s_release_url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.checksum }}'
   run_once: true
 
 - name: Set release file url fact
   ansible.builtin.set_fact:
-    k3s_release_url_file: '{{ k3s_release_url }}/download/{{ k3s_vars.release.version }}/{{ k3s_vars.release.file }}'
+    k3s_release_url_file: '{{ k3s_release_url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
   run_once: true
 
 - name: Set service name fact

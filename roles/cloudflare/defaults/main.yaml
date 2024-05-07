@@ -26,6 +26,7 @@ cloudflare_vars:
     gateway:
       domain: noty.cc
     namespace: kube-system
+    policy: sync
     resources:
       limits:
         cpu: 400m

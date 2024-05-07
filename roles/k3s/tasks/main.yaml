@@ -46,7 +46,7 @@
         owner: root
         group: root
         mode: '0600'
-      when: (k3s_vars.controlplane.tainted and ansible_host not in k3s_server_hosts) or not k3s_vars.controlplane.tainted
+      when: (k3s_vars.server.controlplane.tainted and ansible_host not in k3s_server_hosts) or not k3s_vars.server.controlplane.tainted
 
     - name: Create service file
       ansible.builtin.template:
@@ -90,7 +90,7 @@
 
     - name: Wait for drained port
       ansible.builtin.wait_for:
-        port: '{{ k3s_vars.api.port }}'
+        port: '{{ k3s_vars.server.api.port }}'
         state: drained
 
     - name: Set Token
@@ -136,14 +136,14 @@
       ansible.builtin.command:
         cmd: /usr/local/bin/kubectl config set-cluster default
               --kubeconfig={{ user_info.home }}/.kube/config
-              --server=https://{{ k3s_vars.api.host if k3s_loadbalancer_enabled else ansible_host }}:{{ k3s_vars.api.port }}
+              --server=https://{{ k3s_vars.server.api.host if k3s_loadbalancer_enabled else ansible_host }}:{{ k3s_vars.server.api.port }}
       changed_when: true
 
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:
         src: '{{ user_info.home }}/.kube/config'
-        dest: "{{ k3s_vars.kubeconfig.directory }}"
+        dest: "{{ k3s_vars.directory.kubeconfig }}"
         flat: true
       when:
         - ansible_host == k3s_server_default_host
-        - k3s_vars.kubeconfig.local
+        - k3s_vars.server.kubeconfig.local

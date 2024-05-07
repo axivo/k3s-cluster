@@ -1,37 +1,41 @@
 ---
 k3s_vars:
-  api:
-    host: 192.168.4.10
-    port: 6443
-  cluster:
-    dns: 10.43.0.10
-    domain: cluster.local
-  controller:
-    version: v0.13.2
-  controlplane:
-    tainted: true
+  agent:
+    service:
+      args: ''
   directory:
     config: /etc/rancher/k3s
+    kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
     lib: /var/lib/rancher/k3s
-  kubeconfig:
-    directory: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
-    local: true
-  kubectl:
-    version: v1.29.3
-  loadbalancer:
-    enabled: true
-    server:
-      host: 127.0.0.1
-      port: 6444
   network:
     interface: eth0
   release:
-    checksum: sha256sum-arm64.txt
-    file: k3s-arm64
-    repository:
-      name: k3s
-      org: k3s-io
-    version: v1.29.4+k3s1
-  service:
-    agent_args: ''
-    server_args: ''
+    k3s:
+      checksum: sha256sum-arm64.txt
+      file: k3s-arm64
+      repository:
+        name: k3s
+        org: k3s-io
+      version: v1.29.4+k3s1
+    rancher:
+      controller:
+        version: v0.13.2
+      kubectl:
+        version: v1.29.3
+  server:
+    api:
+      host: 192.168.4.10
+      port: 6443
+    cluster:
+      dns: 10.43.0.10
+      domain: cluster.local
+    controlplane:
+      tainted: true
+    loadbalancer:
+      enabled: true
+      host: 127.0.0.1
+      port: 6444
+    kubeconfig:
+      local: true
+    service:
+      args: ''

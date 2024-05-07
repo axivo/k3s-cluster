@@ -13,7 +13,7 @@
         repo_state: absent
       when: "'helm' in ansible_facts.packages"
 
-    - name: Remove file
+    - name: Remove binary file
       ansible.builtin.file:
         name: /usr/local/bin/argocd
         state: absent
