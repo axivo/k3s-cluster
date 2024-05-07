@@ -15,33 +15,37 @@ There are two important configuration settings, influencing how the cluster will
 
 {{% steps %}}
 
-### `k3s_vars.controlplane.tainted`
+### `k3s_vars.server.controlplane.tainted`
 
 The setting allows the end-user to control where the Kubernetes pods will be deployed. In a scenario where there is only a single or no `agent` type nodes deployed, setting the value to `false` will allow pods to be deployed into any cluster node type.
 
-### `k3s_vars.loadbalancer.enabled`
+### `k3s_vars.server.loadbalancer.enabled`
 
 The setting allows the end-user to control the HAProxy load balancer feature, which requires a minium of 2 `server` type nodes to be deployed. The setting is also indirectly related to K3s `tls-san` feature, which requires a minimum of 3 `server` type nodes to be deployed.
+
+{{< callout type="warning" >}}
+  A validation is implemented, disabling the HAProxy load balancer feature, if the minimum number of `server` type nodes is less than 2.
+{{< /callout >}}
 
 {{% /steps %}}
 
 {{< callout type="info" >}}
-  Update the settings into [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) file.
+  Update the settings into K3s role [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/k3s/defaults/main.yaml) variables file.
 {{< /callout >}}
 
 ## Configuration
 
 The [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file contains the list of `server` and `agent` cluster node types.
 
+{{< callout type="info" >}}
+  Please review the [K3s Architecture](https://docs.k3s.io/architecture), for further details.
+{{< /callout >}}
+
 {{% steps %}}
 
 ### High Availability
 
 The minimum combined total of nodes for a [High Availability](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/) cluster is 3. Ideally, a cluster should have a starting point of 6 nodes, 3 tainted `server` type nodes (running control-plane and datastore components) and 3 `agent` type nodes (where Kubernetes pods are deployed).
-
-{{< callout type="info" >}}
-  Please review the [K3s Architecture](https://docs.k3s.io/architecture), for further details.
-{{< /callout >}}
 
 Example of a HA cluster inventory with 4 nodes:
 
@@ -74,7 +78,7 @@ cluster:
   The above detailed configuration will introduce a SPOF (single point of failure), since Kubernetes pods are deployed to a single `agent` type node.
 {{< /callout >}}
 
-To address this issue, disable the `k3s_vars.controlplane.tainted` feature, allowing Kubernetes pods to be deployed into all cluster nodes.
+To address this issue, set the `k3s_vars.server.controlplane.tainted` option to `false`, allowing Kubernetes pods to be deployed into all cluster nodes.
 
 Example of a HA cluster inventory with 3 nodes:
 
@@ -118,10 +122,10 @@ Example of a Non HA cluster inventory with 2 nodes:
 server:
   hosts:
     apollo:
-    boreas:
 
 agent:
   hosts:
+    chaos:
 
 cluster:
   children:
