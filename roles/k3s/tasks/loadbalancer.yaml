@@ -10,7 +10,7 @@
 - name: Loadbalancer Setup
   notify: Restart loadbalancer services
   when:
-    - k3s_loadbalancer_enabled
+    - k3s_loadbalancer_hosts | length == 2
     - ansible_host in k3s_loadbalancer_hosts
   block:
     - name: Set sysctl token value
