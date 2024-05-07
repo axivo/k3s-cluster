@@ -8,7 +8,7 @@
   tags: cluster
   vars_prompt:
     - name: prompt_trim_device
-      prompt: Trim cluster disks? [Y/n]
+      prompt: Trim USB mounted disks? [Y/n]
       default: 'n'
       private: false
 
