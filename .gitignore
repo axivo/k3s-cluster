@@ -1,2 +1,4 @@
 .DS_Store
-**/network/files/
+**/docs/.hugo_build.lock
+**/docs/archetypes
+**/docs/public
