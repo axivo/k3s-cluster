@@ -40,8 +40,8 @@ hubble:
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
   qps: {{ cilium_vars.kubernetes.client.rate_limit.qps }}
-k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
-k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
+k8sServiceHost: {{ k3s_vars.server.service.host }}
+k8sServicePort: {{ k3s_vars.server.service.port }}
 kubeProxyReplacement: true
 operator:
   resources:
