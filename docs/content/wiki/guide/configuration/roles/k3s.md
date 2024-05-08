@@ -5,6 +5,6 @@ next: /wiki/guide/configuration/roles/argocd
 weight: 2
 ---
 
-K3s role.
+The K3s role performs various tasks related to K3s cluster validation, deployment, or reset.
 
 <!--more-->

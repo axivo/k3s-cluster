@@ -3,6 +3,6 @@ title: Reset
 prev: /wiki/guide/playbooks
 ---
 
-Reset role.
+Reset playbook.
 
 <!--more-->

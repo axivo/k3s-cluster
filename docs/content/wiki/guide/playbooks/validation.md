@@ -3,6 +3,6 @@ title: Validation
 prev: /wiki/guide/playbooks
 ---
 
-Validation role.
+Validation playbook.
 
 <!--more-->

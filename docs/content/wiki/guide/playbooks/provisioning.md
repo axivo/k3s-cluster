@@ -3,6 +3,6 @@ title: Provisioning
 prev: /wiki/guide/playbooks
 ---
 
-Provisioning role.
+Provisioning playbook.
 
 <!--more-->

@@ -5,7 +5,7 @@ next: /wiki/guide/configuration/roles/helm
 weight: 1
 ---
 
-The Cluster role performs various tasks, preparing the OS for K3s cluster deployment.
+The Cluster role performs various tasks related to OS validation, configuration, networking, unattended upgrades, and reset.
 
 <!--more-->
 
