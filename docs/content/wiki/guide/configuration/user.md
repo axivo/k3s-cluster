@@ -13,10 +13,10 @@ The Ansible user is used to remotely execute various deployment tasks into clust
 
 ### User Name
 
-Set the `ansible_user` [variable](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html), into [`all.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/group_vars/all.yaml) configuration file.
+Set the [`ansible_user`](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html) variable into [`all.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
 
-{{< callout type="info" >}}
-  Use the `username` value you defined into [OS General Settings](/k3s-cluster/tutorials/handbook/server/#os-general-settings), to set the `ansible_user` variable.
+{{< callout type="warning" >}}
+  Use the `username` value defined into [OS General Settings](/k3s-cluster/tutorials/handbook/server/#os-general-settings) server installation, to set the `ansible_user` variable.
 {{< /callout >}}
 
 ### User Password
@@ -42,13 +42,11 @@ ansible_password: !vault |
           37666462383031663964366561666630393535373661636335323963383034623763
 ```
 
+Set the encrypted `ansible_password` value, into [`all.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
+
 {{< callout type="warning" >}}
   Use the above `my-Gl0bal-Passw0rd` password example for all encrypted settings, into your configuration files.
 {{< /callout >}}
-
-### Setting Value
-
-Set the encrypted `ansible_password` value, into [`all.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/group_vars/all.yaml) configuration file.
 
 ### SSH Key
 
@@ -62,12 +60,12 @@ ssh-keygen -t ed25519 -C 'your_email@example.com'
   The [Provisioning](../../playbooks/provisioning) playbook will look for the generated SSH key, into default `/Users/username/.ssh` location.
 {{< /callout >}}
 
-If you choose to use a different storage location, update the `cluster_vars.ssh.authorized_key` value into [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file:
+For a different storage location, update the `cluster_vars.ssh.authorized_key` value into Cluster role [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file:
 
 ```yaml
 cluster_vars:
   ssh:
-    authorized_key: /Users/username/Downloads/keys/id_ed25519.pub
+    authorized_key: /Users/otherusername/keys/id_ed25519.pub
 ```
 
 {{% /steps %}}
