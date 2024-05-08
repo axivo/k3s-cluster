@@ -45,7 +45,7 @@ cluster_vars:
     unattended_upgrades:
       enabled: true
       mail_report: on-change
-      remove_unused_dependencies: 'true'
+      remove_deps: 'true'
     wifi:
       enabled: false
   ssh:
