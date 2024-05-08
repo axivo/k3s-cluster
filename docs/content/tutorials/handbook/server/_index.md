@@ -2,10 +2,10 @@
 title: Ubuntu Server
 prev: /tutorials/handbook
 next: /tutorials/handbook/network
-weight: 1
+weight: 2
 ---
 
-Each cluster node must have Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS installed, which is a requirement for [Cilium](https://cilium.io). The required `apt` package dependencies changed also, compared to previous Ubuntu Server LTS release.
+Each cluster node must have Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS installed, which is a requirement for [Cilium](https://cilium.io). The `apt` package dependencies changed, compared to previous `{{< param variables.os.previous_version >}}` release, therefore, `{{< param variables.os.version >}}+` release is enforced as minimal requirement.
 
 <!--more-->
 

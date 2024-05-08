@@ -2,7 +2,7 @@
 title: Network
 prev: /tutorials/handbook
 next: /tutorials/handbook/cilium
-weight: 2
+weight: 3
 ---
 
 Networking is a central part of [Kubernetes](https://kubernetes.io/docs/concepts/cluster-administration/networking). The Kubernetes network model is implemented by the container runtime on each server node.
