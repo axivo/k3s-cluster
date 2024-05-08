@@ -198,7 +198,7 @@
             - regexp: ^(?:.*)(Unattended-Upgrade::MailReport)\s.*;$
               replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.mail_report }}";'
             - regexp: ^(?:.*)(Unattended-Upgrade::Remove-Unused-Dependencies)\s.*;$
-              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.remove_unused_dependencies }}";'
+              replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.remove_deps }}";'
 
 - name: Mail Configuration
   notify: Reload mail service

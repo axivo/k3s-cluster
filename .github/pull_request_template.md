@@ -2,17 +2,6 @@
 
 <!-- Please include a summary of the changes and any related issues. -->
 
-### CHANGES
-
-- First change
-- Second change
-
-<!--
-### ISSUES
-
-- Fixes <issue link here>
--->
-
 ## WHAT
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
@@ -26,5 +15,3 @@
 - [ ] I have performed a self-review of my code
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new issues or warnings
-
-<!-- Please describe the performed tests to verify your changes. -->
