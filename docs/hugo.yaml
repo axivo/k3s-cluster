@@ -1,8 +1,8 @@
 baseURL: https://axivo.github.io/k3s-cluster/
 build:
   buildStats:
-    enable: true
     disableIDs: true
+    enable: true
 defaultContentLanguage: en
 enableInlineShortcodes: true
 enableGitInfo: true
@@ -11,8 +11,8 @@ hasCJKLanguage: true
 languages:
   en:
     languageName: English
-    weight: 1
     title: K3s Cluster Wiki
+    weight: 1
 markup:
   goldmark:
     renderer:
@@ -68,28 +68,28 @@ params:
       displayTags: true
   comments:
     enable: false
-    type: giscus
     giscus:
-      repo: axivo/k3s-cluster
-      repoId: R_kgDOLteJAQ
       category: General
       categoryId: DIC_kwDOLteJAc4Ceu8_
-      mapping: pathname
-      strict: 0
-      reactionsEnabled: 1
       emitMetadata: 0
       inputPosition: top
       lang: en
+      mapping: pathname
+      reactionsEnabled: 1
+      repo: axivo/k3s-cluster
+      repoId: R_kgDOLteJAQ
+      strict: 0
+    type: giscus
   dateFormat: 'January 2, 2006'
   description: K3s cluster deployed with Ansible
   displayUpdatedDate: true
   editURL:
-    enable: true
     base: https://github.com/axivo/k3s-cluster/edit/main
-  footer:
     enable: true
+  footer:
     displayCopyright: true
     displayPoweredBy: false
+    enable: true
     width: normal
   navbar:
     displayTitle: true
