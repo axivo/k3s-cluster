@@ -5,49 +5,9 @@ next: /wiki/guide/configuration/roles/helm
 weight: 1
 ---
 
-The Cluster role performs various tasks related to OS validation, configuration, networking, unattended upgrades, and reset.
+The role performs various tasks related to OS configuration, reset and validation.
 
 <!--more-->
-
-## Role Tasks
-
-See the role tasks, listed below.
-
-{{% steps %}}
-
-### Configuration
-
-OS configuration related tasks, see [`configuration.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/configuration.yaml) tasks file, for details.
-
-### Facts
-
-Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/facts.yaml) tasks file, for details.
-
-### Firewall
-
-Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/firewall.yaml) tasks file, for details.
-
-### Main
-
-Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/main.yaml) tasks file, for details.
-
-### Reset
-
-Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/reset.yaml) tasks file, for details.
-
-### Upgrade
-
-OS upgrade related tasks, see [`upgrade.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/upgrade.yaml) tasks file, for details.
-
-### User
-
-User related tasks, see [`user.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/user.yaml) tasks file, for details.
-
-### Validation
-
-Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/validation.yaml) tasks file, for details.
-
-{{% /steps %}}
 
 ## Role Settings
 
@@ -59,7 +19,7 @@ See the role settings listed below, defined into [`main.yaml`]({{< param variabl
 
 - Default value: `null`
 
-If a SSD device is attached to hardware through USB, there is a validation step making sure the same device id and name (cable adapter chipset, impacting SSD device performance) is present into all cluster nodes. You can determine the correct USB storage device values attached to nodes by running the `lsusb` command:
+If a SSD device is attached to hardware through USB cable, there is a validation step making sure the same device id and name related to cable adapter chipset is present into all cluster nodes. Validate the USB storage device values attached to nodes, by running the `lsusb` command:
 
 ```shell
 lsusb
@@ -75,15 +35,15 @@ Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
 
-{{< callout type="warning" >}}
-  Make sure the command output result is identical, into all cluster nodes.
-{{< /callout >}}
+For example, connecting the SSD device with different USB cable models might result in a different `device.name`. Similarly, connecting the SSD device to a different USB port will result in a different `device.id`.
 
-For example, connecting the SSD device with different USB cable models will result in a different `device.name`. Similarly, connecting the SSD device to a different USB port will result in a different `device.id`.
+{{< callout type="info" >}}
+  Run the [Validation](/k3s-cluster/wiki/guide/playbooks/validation) playbook, to validate the USB storage device values.
+{{< /callout >}}
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `cluster_vars.device.id`
 
@@ -131,7 +91,7 @@ Setting the value to `sata` will disable any validation and configuration settin
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `cluster_vars.hardware.architecture`
 
@@ -153,7 +113,7 @@ aarch64
 
 - Default value: `string`, `Raspberry Pi`
 
-Hardware product used to identify the cluster node hardware model. To determine the hardware product, run:
+Hardware product, used to identify the cluster node hardware model. To determine the hardware product, run:
 
 ```shell
 lshw -class system -quiet | grep product
@@ -173,13 +133,13 @@ product: Raspberry Pi 4 Model B Rev 1.5
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `cluster_vars.service.bluetooth`
 
 - Default value: `null`
 
-Setup Bluetooth service, on Raspberry Pi hardware.
+Setup Bluetooth service, on Raspberry Pi hardware. By default, Ubuntu Server LTS `{{< param variables.os.version >}}` does not installs the related `apt` packages.
 
 {{% steps %}}
 
@@ -303,7 +263,7 @@ Setup Unattended Upgrades service.
 
 - Default value: `null`
 
-Setup WiFi service.
+Setup WiFi service, on Raspberry Pi hardware. By default, Ubuntu Server LTS `{{< param variables.os.version >}}` does not installs the related `apt` packages.
 
 {{% steps %}}
 
@@ -321,7 +281,7 @@ Setup WiFi service.
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `cluster_vars.ssh.authorized_key`
 
@@ -336,5 +296,45 @@ cluster_vars:
 ```
 
 {{% /steps %}}
+
+{{% /steps %}}
+
+## Role Tasks
+
+See the role tasks, listed below.
+
+{{% steps %}}
+
+### Configuration
+
+OS configuration related tasks, see [`configuration.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/configuration.yaml) for details.
+
+### Facts
+
+Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/facts.yaml) for details.
+
+### Firewall
+
+Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/firewall.yaml) for details.
+
+### Main
+
+Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
+
+### Reset
+
+Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/reset.yaml) for details.
+
+### Upgrade
+
+OS upgrade related tasks, see [`upgrade.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/upgrade.yaml) for details.
+
+### User
+
+User related tasks, see [`user.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/user.yaml) for details.
+
+### Validation
+
+Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/validation.yaml) for details.
 
 {{% /steps %}}

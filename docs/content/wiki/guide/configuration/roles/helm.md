@@ -5,33 +5,9 @@ next: /wiki/guide/configuration/roles/k3s
 weight: 2
 ---
 
-The Helm role installs [Balto](https://helm.baltorepo.com/stable/debian/packages/helm) stable Debian based repository, needed for `helm` package installation. The required [`diff`](https://github.com/databus23/helm-diff/releases) Helm plugin is also installed.
+The role performs various tasks related to OS configuration, reset and validation. It installs the [Balto](https://helm.baltorepo.com/stable/debian/packages/helm) stable Debian based repository needed for `helm` package, as well the related [`diff`](https://github.com/databus23/helm-diff/releases) Helm plugin.
 
 <!--more-->
-
-## Role Tasks
-
-See the role tasks, listed below.
-
-{{% steps %}}
-
-### Facts
-
-Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/facts.yaml) tasks file, for details.
-
-### Main
-
-Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/main.yaml) tasks file, for details.
-
-### Reset
-
-Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/reset.yaml) tasks file, for details.
-
-### Validation
-
-Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/validation.yaml) tasks file, for details.
-
-{{% /steps %}}
 
 ## Role Settings
 
@@ -45,7 +21,7 @@ See the role settings listed below, defined into [`main.yaml`]({{< param variabl
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `helm_vars.release.helm.distro`
 
@@ -83,7 +59,7 @@ See below the related child settings, for additional details.
 
 See below the related child settings, for additional details.
 
-{{% steps %}}
+{{% steps nested="true" %}}
 
 #### `helm_vars.release.plugin.name`
 
@@ -110,5 +86,29 @@ See below the related child settings, for additional details.
 - Default value: `string`
 
 {{% /steps %}}
+
+{{% /steps %}}
+
+## Role Tasks
+
+See the role tasks, listed below.
+
+{{% steps %}}
+
+### Facts
+
+Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/facts.yaml) for details.
+
+### Main
+
+Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/main.yaml) for details.
+
+### Reset
+
+Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/reset.yaml) for details.
+
+### Validation
+
+Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/validation.yaml) for details.
 
 {{% /steps %}}

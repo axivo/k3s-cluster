@@ -12,7 +12,6 @@
 {{- $css := printf "--hextra-feature-grid-cols: %v; %s" $cols $style -}}
 {{- $href := cond (hasPrefix $imageLink "/") ($imageLink | relURL) $imageLink -}}
 
-
 <div
   class="{{ $class }} hextra-feature-grid hx-grid sm:max-lg:hx-grid-cols-2 max-sm:hx-grid-cols-1 hx-gap-4 hx-w-max not-prose"
   {{ with $css }}style="{{ . | safeCSS }}"{{ end }}
@@ -20,14 +19,14 @@
   <div class="grid-col-span-1">
     {{ .Inner }}
   </div>
-  {{ if $image }}
+  {{- with $image }}
   <div class="hx-mx-auto hx-px-6">
-    {{ if $href }}<a href="{{ $href }}" {{ if $imageLinkExternal }}target="_blank" rel="noreferrer"{{ end -}}>{{ end }}
+    {{ with $href }}<a href="{{ $href }}" {{ with $imageLinkExternal }}target="_blank" rel="noreferrer"{{ end }}>{{ end }}
       <img
-        {{ if $imageClass }}class="{{ $imageClass }}"{{ end }} src="{{ $image }}" 
-        width="{{ $imageWidth }}" height="{{ $imageHeight }}" alt="{{ $imageTitle }}"
+        {{ with $imageClass }}class="{{ $imageClass }}"{{ end }} src="{{ $image }}" 
+        width="{{ $imageWidth }}" height="{{ $imageHeight }}" {{ with $imageTitle }}alt="{{ $imageTitle }}"{{ end }}
       />
-    {{ if $href }}</a>{{ end }}
+    {{ with $href }}</a>{{ end }}
   </div>
   {{ end -}}
 </div>
