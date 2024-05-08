@@ -50,7 +50,7 @@ Set the encrypted `ansible_password` value, into [`all.yaml`]({{< param variable
 
 ### SSH Key
 
-Generate the [SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent), which will be copied into each server node, while running the [Provisioning](../../playbooks/provisioning) playbook:
+Generate the [SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent), which will be copied into each cluster node, while running the [Provisioning](../../playbooks/provisioning) playbook:
 
 ```shell
 ssh-keygen -t ed25519 -C 'your_email@example.com'
