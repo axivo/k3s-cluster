@@ -11,7 +11,7 @@ The role performs various tasks related to OS configuration, reset and validatio
 
 ## Role Settings
 
-See the role settings listed below, defined into [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/defaults/main.yaml) defaults file.
+See the role settings listed below, defined into [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/defaults/main.yaml) defaults file.
 
 {{% steps %}}
 
@@ -45,11 +45,11 @@ See below the related child settings, for additional details.
 
 {{% steps nested="true" %}}
 
-#### `cluster_vars.device.id`
+#### `device.id`
 
 - Default value: `string`, `2:2`
 
-The SSD device attached with a cable adapter to hardware is identified as `Bus 002 Device 002`, which sets the `cluster_vars.device.id` to `2:2`. To test if the value is correct, run:
+The SSD device attached with a cable adapter to hardware is identified as `Bus 002 Device 002`, which sets the `device.id` to `2:2`. To test if the value is correct, run:
 
 ```shell
 lsusb -s '2:2'
@@ -61,11 +61,11 @@ Command output:
 Bus 002 Device 002: ID 174c:55aa ASMedia Technology Inc. ASM1051E SATA 6Gb/s bridge, ASM1053E SATA 6Gb/s bridge, ASM1153 SATA 3Gb/s bridge, ASM1153E SATA 6Gb/s bridge
 ```
 
-#### `cluster_vars.device.name`
+#### `device.name`
 
 - Default value: `string`, `ASMedia Technology`
 
-The SSD device cable adapter chipset is identified as `ASMedia Technology Inc. bridge`, which sets the `cluster_vars.device.name` to `ASMedia Technology`. To test if the value is correct, run:
+The SSD device cable adapter chipset is identified as `ASMedia Technology Inc. bridge`, which sets the `device.name` to `ASMedia Technology`. To test if the value is correct, run:
 
 ```shell
 lsusb -s '2:2' | grep 'ASMedia Technology'
@@ -77,7 +77,7 @@ Command output:
 Bus 002 Device 002: ID 174c:55aa ASMedia Technology Inc. ASM1051E SATA 6Gb/s bridge, ASM1053E SATA 6Gb/s bridge, ASM1153 SATA 3Gb/s bridge, ASM1153E SATA 6Gb/s bridge
 ```
 
-#### `cluster_vars.device.transport`
+#### `device.transport`
 
 - Default value: `string`, `usb`
 
@@ -93,7 +93,7 @@ See below the related child settings, for additional details.
 
 {{% steps nested="true" %}}
 
-#### `cluster_vars.hardware.architecture`
+#### `hardware.architecture`
 
 - Default value: `string`, `aarch64`
 
@@ -109,7 +109,7 @@ Command output:
 aarch64
 ```
 
-#### `cluster_vars.hardware.product`
+#### `hardware.product`
 
 - Default value: `string`, `Raspberry Pi`
 
@@ -135,7 +135,7 @@ See below the related child settings, for additional details.
 
 {{% steps nested="true" %}}
 
-#### `cluster_vars.service.bluetooth`
+#### `service.bluetooth`
 
 - Default value: `null`
 
@@ -143,13 +143,13 @@ Setup Bluetooth service, on Raspberry Pi hardware. By default, Ubuntu Server LTS
 
 {{% steps %}}
 
-##### `cluster_vars.service.bluetooth.enabled`
+##### `bluetooth.enabled`
 
 - Default value: `boolean`, `false`
 
 {{% /steps %}}
 
-#### `cluster_vars.service.cloud_init`
+#### `service.cloud_init`
 
 - Default value: `null`
 
@@ -157,13 +157,13 @@ Setup Cloud Init service.
 
 {{% steps %}}
 
-##### `cluster_vars.service.cloud_init.enabled`
+##### `cloud_init.enabled`
 
 - Default value: `boolean`, `false`
 
 {{% /steps %}}
 
-#### `cluster_vars.service.postfix`
+#### `service.postfix`
 
 - Default value: `null`
 
@@ -171,49 +171,49 @@ Setup Postfix service, with iCloud mail servers.
 
 {{% steps %}}
 
-##### `cluster_vars.service.postfix.enabled`
+##### `postfix.enabled`
 
 - Default value: `boolean`, `true`
 
-##### `cluster_vars.service.postfix.protocols`
+##### `postfix.protocols`
 
 - Default value: `string`, `ipv4`
 
-##### `cluster_vars.service.postfix.relay`
+##### `postfix.relay`
 
 - Default value: `null`
 
 {{% steps %}}
 
-###### `cluster_vars.service.postfix.relay.host`
+###### `relay.host`
 
 - Default value: `string`, `smtp.mail.me.com`
 
-###### `cluster_vars.service.postfix.relay.port`
+###### `relay.port`
 
 - Default value: `integer`, `587`
 
 {{% /steps %}}
 
-##### `cluster_vars.service.postfix.user`
+##### `postfix.user`
 
 - Default value: `null`
 
 {{% steps %}}
 
-###### `cluster_vars.service.postfix.user.alias`
+###### `user.alias`
 
 - Default value: `string`, [`alias@domain.com`](https://support.apple.com/guide/icloud/add-and-manage-email-aliases-mm6b1a490a/icloud)
 
 Mail sent by `root` user will use this email address.
 
-###### `cluster_vars.service.postfix.user.name`
+###### `user.name`
 
 - Default value: `string`, [`username@domain.com`](https://appleid.apple.com)
 
 Used for login into iCloud servers.
 
-###### `cluster_vars.service.postfix.user.password`
+###### `user.password`
 
 - Default value: `string`, [`password`](https://support.apple.com/102654)
 
@@ -223,7 +223,7 @@ Encrypt the variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansi
 
 {{% /steps %}}
 
-#### `cluster_vars.service.snapd`
+#### `service.snapd`
 
 - Default value: `null`
 
@@ -231,13 +231,13 @@ Setup Snapd service.
 
 {{% steps %}}
 
-##### `cluster_vars.service.snapd.enabled`
+##### `snapd.enabled`
 
 - Default value: `boolean`, `false`
 
 {{% /steps %}}
 
-#### `cluster_vars.service.unattended_upgrades`
+#### `service.unattended_upgrades`
 
 - Default value: `null`
 
@@ -245,21 +245,21 @@ Setup Unattended Upgrades service.
 
 {{% steps %}}
 
-##### `cluster_vars.service.unattended_upgrades.enabled`
+##### `unattended_upgrades.enabled`
 
 - Default value: `boolean`, `true`
 
-##### `cluster_vars.service.unattended_upgrades.mail_report`
+##### `unattended_upgrades.mail_report`
 
 - Default value: `string`, `on-change`
 
-##### `cluster_vars.service.unattended_upgrades.remove_deps`
+##### `unattended_upgrades.remove_deps`
 
 - Default value: `string`, `true`
 
 {{% /steps %}}
 
-#### `cluster_vars.service.wifi`
+#### `service.wifi`
 
 - Default value: `null`
 
@@ -267,7 +267,7 @@ Setup WiFi service, on Raspberry Pi hardware. By default, Ubuntu Server LTS `{{<
 
 {{% steps %}}
 
-##### `cluster_vars.service.wifi.enabled`
+##### `wifi.enabled`
 
 - Default value: `boolean`, `false`
 
@@ -283,7 +283,7 @@ See below the related child settings, for additional details.
 
 {{% steps nested="true" %}}
 
-#### `cluster_vars.ssh.authorized_key`
+#### `ssh.authorized_key`
 
 - Default value: `string`, `/Users/username/.ssh/id_ed25519.pub`
 
@@ -307,34 +307,34 @@ See the role tasks, listed below.
 
 ### Configuration
 
-OS configuration related tasks, see [`configuration.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/configuration.yaml) for details.
+OS configuration related tasks, see [`configuration.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/configuration.yaml) for details.
 
 ### Facts
 
-Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/facts.yaml) for details.
+Ansible facts, see [`facts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/facts.yaml) for details.
 
 ### Firewall
 
-Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/firewall.yaml) for details.
+Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/firewall.yaml) for details.
 
 ### Main
 
-Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
+Main role tasks, see [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
 
 ### Reset
 
-Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/reset.yaml) for details.
+Reset related tasks, see [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/reset.yaml) for details.
 
 ### Upgrade
 
-OS upgrade related tasks, see [`upgrade.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/upgrade.yaml) for details.
+OS upgrade related tasks, see [`upgrade.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/upgrade.yaml) for details.
 
 ### User
 
-User related tasks, see [`user.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/user.yaml) for details.
+User related tasks, see [`user.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/user.yaml) for details.
 
 ### Validation
 
-Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/cluster/tasks/validation.yaml) for details.
+Validation related tasks, see [`validation.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/validation.yaml) for details.
 
 {{% /steps %}}

@@ -11,11 +11,11 @@ The role performs various tasks related to OS configuration, reset and validatio
 
 ## Role Settings
 
-See the role settings listed below, defined into [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/defaults/main.yaml) defaults file.
+See the role settings listed below, defined into [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/defaults/main.yaml) defaults file.
 
 {{% steps %}}
 
-### `helm_vars.release.helm`
+### `helm_vars.release`
 
 - Default value: `null`
 
@@ -23,29 +23,35 @@ See below the related child settings, for additional details.
 
 {{% steps nested="true" %}}
 
-#### `helm_vars.release.helm.distro`
-
-- Default value: `string`, `debian`
-
-#### `helm_vars.release.helm.key`
-
-- Default value: `string`, `helm-archive-keyring.gpg`
-
-#### `helm_vars.release.helm.repository`
+#### `release.helm`
 
 - Default value: `null`
 
 {{% steps %}}
 
-##### `helm_vars.release.helm.repository.channel`
+##### `helm.distro`
+
+- Default value: `string`, `debian`
+
+##### `helm.key`
+
+- Default value: `string`, `helm-archive-keyring.gpg`
+
+##### `helm.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `repository.channel`
 
 - Default value: `string`, `stable`
 
-##### `helm_vars.release.helm.repository.key`
+###### `repository.key`
 
 - Default value: `string`, `signing.asc`
 
-##### `helm_vars.release.helm.repository.url`
+###### `repository.url`
 
 - Default value: `string`, `https://baltocdn.com/helm`
 
@@ -53,37 +59,39 @@ See below the related child settings, for additional details.
 
 {{% /steps %}}
 
-### `helm_vars.release.plugin`
-
-- Default value: `null`
-
-See below the related child settings, for additional details.
-
-{{% steps nested="true" %}}
-
-#### `helm_vars.release.plugin.name`
-
-- Default value: `string`, `diff`
-
-#### `helm_vars.release.plugin.repository`
+#### `release.plugin`
 
 - Default value: `null`
 
 {{% steps %}}
 
-##### `helm_vars.release.plugin.repository.name`
+##### `plugin.name`
+
+- Default value: `string`, `diff`
+
+##### `plugin.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `repository.name`
 
 - Default value: `string`, `helm-diff`
 
-##### `helm_vars.release.plugin.repository.org`
+###### `repository.org`
 
 - Default value: `string`, `databus23`
 
 {{% /steps %}}
 
-#### `helm_vars.release.plugin.version`
+##### `plugin.version`
 
 - Default value: `string`
+
+Visit [databus23/helm-diff](https://github.com/databus23/helm-diff/releases), for latest release version.
+
+{{% /steps %}}
 
 {{% /steps %}}
 
@@ -97,18 +105,18 @@ See the role tasks, listed below.
 
 ### Facts
 
-Ansible facts, see [`facts.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/facts.yaml) for details.
+Ansible facts, see [`facts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/facts.yaml) for details.
 
 ### Main
 
-Main role tasks, see [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/main.yaml) for details.
+Main role tasks, see [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/main.yaml) for details.
 
 ### Reset
 
-Reset related tasks, see [`reset.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/reset.yaml) for details.
+Reset related tasks, see [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/reset.yaml) for details.
 
 ### Validation
 
-Validation related tasks, see [`validation.yaml`]({{< param variables.github.url >}}/blob/main/roles/helm/tasks/validation.yaml) for details.
+Validation related tasks, see [`validation.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/validation.yaml) for details.
 
 {{% /steps %}}

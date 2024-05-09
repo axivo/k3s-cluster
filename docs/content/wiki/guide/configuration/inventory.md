@@ -41,7 +41,7 @@ The `serial` structure has the following pattern:
 {{% /details %}}
 
 {{< callout type="info" >}}
-  Update the `serial` structure into [`provisioning.yaml`]({{< param variables.github.url >}}/blob/main/provisioning.yaml) playbook file.
+  Update the `serial` structure into [`provisioning.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/provisioning.yaml) playbook file.
 {{< /callout >}}
 
 Example of `serial` structure with 3 `server` type nodes and 5 `agent` type nodes, used into [Reset](/k3s-cluster/wiki/guide/playbooks/reset) playbook:
@@ -62,7 +62,7 @@ The `serial` structure has the following pattern:
 {{% /details %}}
 
 {{< callout type="info" >}}
-  Update the `serial` structure into [`reset.yaml`]({{< param variables.github.url >}}/blob/main/reset.yaml) playbook file.
+  Update the `serial` structure into [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/reset.yaml) playbook file.
 {{< /callout >}}
 
 ### `k3s_vars.server.controlplane.tainted`
@@ -70,14 +70,14 @@ The `serial` structure has the following pattern:
 The setting allows the end-user to control where the Kubernetes pods will be deployed. In a scenario where there is only a single or no `agent` type nodes deployed, setting the value to `false` will allow pods to be deployed into any cluster node type.
 
 {{< callout type="info" >}}
-  Update the setting into K3s role [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/k3s/defaults/main.yaml) variables file.
+  Update the setting into K3s role [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/k3s/defaults/main.yaml) variables file.
 {{< /callout >}}
 
 {{% /steps %}}
 
 ## Configuration
 
-The [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file contains the list of `server` and `agent` cluster node types.
+The [`hosts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/inventory/cluster/hosts.yaml) inventory file contains the list of `server` and `agent` cluster node types.
 
 {{< callout type="info" >}}
   Please review the [K3s Architecture](https://docs.k3s.io/architecture), for further details.
@@ -93,7 +93,7 @@ Example of a HA cluster inventory with 4 nodes:
 
 {{% details title="Inventory Details" closed="true" %}}
 
-Inventory, set into [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file:
+Inventory, set into [`hosts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/inventory/cluster/hosts.yaml) inventory file:
 
 ```yaml
 server:
@@ -112,7 +112,7 @@ cluster:
     agent:
 ```
 
-Batch size, set into [`provisioning.yaml`]({{< param variables.github.url >}}/blob/main/provisioning.yaml) playbook file:
+Batch size, set into [`provisioning.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/provisioning.yaml) playbook file:
 
 ```yaml
 serial:
@@ -121,7 +121,7 @@ serial:
   - 1
 ```
 
-Batch size, set into [`reset.yaml`]({{< param variables.github.url >}}/blob/main/reset.yaml) playbook file:
+Batch size, set into [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/reset.yaml) playbook file:
 
 ```yaml
 serial:
@@ -137,7 +137,7 @@ serial:
   The above detailed configuration will introduce a SPOF, since Kubernetes pods are deployed to a single or no `agent` type nodes.
 {{< /callout >}}
 
-To address this issue, set the `k3s_vars.server.controlplane.tainted` option to `false` into K3s role [`main.yaml`]({{< param variables.github.url >}}/blob/main/roles/k3s/defaults/main.yaml) variables file.
+To address this issue, set the `k3s_vars.server.controlplane.tainted` option to `false` into K3s role [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/k3s/defaults/main.yaml) variables file.
 
 ### Non High Availability
 
@@ -151,7 +151,7 @@ Example of a Non HA cluster inventory with 2 nodes:
 
 {{% details title="Inventory Details" closed="true" %}}
 
-Inventory, set into [`hosts.yaml`]({{< param variables.github.url >}}/blob/main/inventory/cluster/hosts.yaml) inventory file:
+Inventory, set into [`hosts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/inventory/cluster/hosts.yaml) inventory file:
 
 ```yaml
 server:
@@ -168,14 +168,14 @@ cluster:
     agent:
 ```
 
-Batch size, set into [`provisioning.yaml`]({{< param variables.github.url >}}/blob/main/provisioning.yaml) playbook file:
+Batch size, set into [`provisioning.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/provisioning.yaml) playbook file:
 
 ```yaml
 serial:
   - 1
 ```
 
-Batch size, set into [`reset.yaml`]({{< param variables.github.url >}}/blob/main/reset.yaml) playbook file:
+Batch size, set into [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/reset.yaml) playbook file:
 
 ```yaml
 serial:
