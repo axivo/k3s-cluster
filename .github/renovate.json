@@ -10,25 +10,25 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "argoproj/argo-cd",
-      "fileMatch": [
-        "roles/argocd/defaults/main.yaml"
-      ],
-      "matchStrings": [
-        "^\\s+release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-    },
-    {
-      "customType": "regex",
-      "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^\\s+helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
+        "^\\s+helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)[\\s\\S]+release:$"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "argoproj/argo-cd",
+      "fileMatch": [
+        "roles/argocd/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "^\\s+release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
