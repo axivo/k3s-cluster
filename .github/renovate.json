@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "ansible": {
     "fileMatch": [
-      "(^|/)(defaults|tasks)/[^/]+\\.ya?ml$",
+      "(^|/)templates/[^/]+\\.j2$",
       "(^|/)(galaxy|requirements)(\\.ansible)?\\.ya?ml$"
     ]
   },
@@ -34,7 +34,6 @@
     }
   ],
   "extends": [
-    "config:recommended",
-    ":dependencyDashboard"
+    "config:recommended"
   ]
 }
