@@ -8,7 +8,7 @@ body:
         - 'New Idea'
         - 'Possible Bug'
         - 'Other'
-      default: 1
+      default: 0
     validations:
       required: true
   - type: textarea
