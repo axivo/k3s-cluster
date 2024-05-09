@@ -31,9 +31,10 @@ k3s_vars:
       domain: cluster.local
     controlplane:
       tainted: true
+    loadbalancer:
+      host: 127.0.0.1
+      port: 6444
     kubeconfig:
       local: true
     service:
       args: ''
-      host: 127.0.0.1
-      port: 6444
