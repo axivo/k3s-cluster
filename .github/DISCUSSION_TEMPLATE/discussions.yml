@@ -4,10 +4,10 @@ body:
     attributes:
       label: Discussion Topic
       options:
-        - 'Configuration'
-        - 'New Idea'
-        - 'Possible Bug'
-        - 'Other'
+        - Configuration
+        - New Idea or Feature
+        - Possible Bug
+        - Other
       default: 0
     validations:
       required: true
