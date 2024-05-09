@@ -1,5 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "ansible": {
+    "fileMatch": [
+      "(^|/)(defaults|tasks)/[^/]+\\.ya?ml$",
+      "(^|/)(galaxy|requirements)(\\.ansible)?\\.ya?ml$"
+    ]
+  },
   "customManagers": [
     {
       "customType": "regex",
@@ -28,14 +34,7 @@
     }
   ],
   "extends": [
-    "config:recommended"
-  ],
-  "includePaths": [
-    "**/roles/argocd/defaults/main.yaml"
-  ],
-  "kubernetes": {
-    "fileMatch": [
-      "\\.ya?ml$"
-    ]
-  }
+    "config:recommended",
+    ":dependencyDashboard"
+  ]
 }
