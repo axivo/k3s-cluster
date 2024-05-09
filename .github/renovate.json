@@ -6,10 +6,10 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-cd",
       "fileMatch": [
-        "roles/argocd/defaults/main.yaml$"
+        "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
+        "^\\s+release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     },
@@ -19,15 +19,23 @@
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/defaults/main.yaml$"
+        "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
+        "^\\s+helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "includePaths": [
+    "**/roles/argocd/defaults/main.yaml"
+  ],
+  "kubernetes": {
+    "fileMatch": [
+      "\\.ya?ml$"
+    ]
+  }
 }
