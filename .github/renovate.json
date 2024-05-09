@@ -1,15 +1,21 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "ansible": {
+    "fileMatch": [
+      "(^|/)(defaults|tasks)/[^/]+\\.ya?ml$",
+      "(^|/)(galaxy|requirements)(\\.ansible)?\\.ya?ml$"
+    ]
+  },
   "customManagers": [
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-cd",
       "fileMatch": [
-        "roles/argocd/defaults/main.yaml$"
+        "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
+        "^\\s+release:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     },
@@ -19,10 +25,10 @@
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/defaults/main.yaml$"
+        "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
+        "^\\s+helm:\\s+chart:[\\s\\S]+version:\\s+(?<currentValue>.+)$"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
