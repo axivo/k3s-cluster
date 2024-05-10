@@ -682,7 +682,7 @@ Ansible facts, see [`facts.yaml`](https://{{< param variables.repository >}}/blo
 
 ### Main
 
-Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/main.yaml) for details.
+Main role related tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/main.yaml) for details.
 
 ### Reset
 

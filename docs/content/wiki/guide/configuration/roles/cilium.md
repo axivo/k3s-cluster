@@ -358,13 +358,7 @@ Sets the `infrastructure` [annotations](https://kubernetes.io/docs/concepts/over
 
 {{% steps %}}
 
-###### `operator.cluster`
-
-- Default value: `null`
-
-{{% steps %}}
-
-###### `cluster.pool`
+###### `operator.cluster_pool`
 
 - Default value: `string`, `10.42.0.0/16`
 
@@ -372,8 +366,276 @@ Sets the `infrastructure` [annotations](https://kubernetes.io/docs/concepts/over
 
 {{% /steps %}}
 
+#### `kubernetes.loadbalancer`
+
+- Default value: `null`
+
+{{% steps %}}
+
+##### `loadbalancer.algorithm`
+
+- Default value: `string`, `disabled`
+
+##### `loadbalancer.ip_pool`
+
+- Default value: `string`, `192.168.4.16/28`
+
+##### `loadbalancer.table_size`
+
+- Default value: `integer`, `16381`
+
+{{% /steps %}}
+
+#### `kubernetes.namespace`
+
+- Default value: `string`, `kube-system`
+
+#### `kubernetes.operator`
+
+- Default value: `null`
+
+{{% steps %}}
+
+##### `operator.resources`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `resources.limits`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `limits.cpu`
+
+- Default value: `string`, `400m`
+
+###### `limits.memory`
+
+- Default value: `string`, `256Mi`
+
+{{% /steps %}}
+
+###### `resources.requests`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `requests.cpu`
+
+- Default value: `string`, `100m`
+
+###### `requests.memory`
+
+- Default value: `string`, `64Mi`
+
 {{% /steps %}}
 
 {{% /steps %}}
+
+{{% /steps %}}
+
+#### `kubernetes.routing_mode`
+
+- Default value: `string`, `native`
+
+{{% /steps %}}
+
+### `cilium_vars.release`
+
+- Default value: `null`
+
+See the related child settings, listed below.
+
+{{% steps %}}
+
+#### `release.cli`
+
+- Default value: `null`
+
+Release details for `cilium-cli` binary.
+
+{{% steps %}}
+
+##### `cli.file`
+
+- Default value: `string`, `cilium-linux-arm64.tar.gz`
+
+##### `cli.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `repository.name`
+
+- Default value: `string`, `cilium-cli`
+
+###### `repository.org`
+
+- Default value: `string`, `cilium`
+
+{{% /steps %}}
+
+##### `cli.version`
+
+- Default value: `string`
+
+Visit [`cilium/cilium-cli`](https://github.com/cilium/cilium-cli/releases), for latest release version.
+
+{{% /steps %}}
+
+#### `release.gateway_api`
+
+- Default value: `null`
+
+Release details for `gateway-api` manifest.
+
+{{% steps %}}
+
+##### `gateway_api.file`
+
+- Default value: `string`, `experimental-install.yaml`
+
+##### `gateway_api.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `repository.name`
+
+- Default value: `string`, `gateway-api`
+
+###### `repository.org`
+
+- Default value: `string`, `kubernetes-sigs`
+
+{{% /steps %}}
+
+##### `gateway_api.version`
+
+- Default value: `string`
+
+Visit [`kubernetes-sigs/gateway-api`](https://github.com/kubernetes-sigs/gateway-api/releases), for latest release version.
+
+{{% /steps %}}
+
+#### `release.hubble`
+
+- Default value: `null`
+
+Release details for `hubble` binary.
+
+{{% steps %}}
+
+##### `hubble.file`
+
+- Default value: `string`, `hubble-linux-arm64.tar.gz`
+
+##### `hubble.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `repository.name`
+
+- Default value: `string`, `hubble`
+
+###### `repository.org`
+
+- Default value: `string`, `cilium`
+
+{{% /steps %}}
+
+##### `hubble.version`
+
+- Default value: `string`
+
+Visit [`cilium/hubble`](https://github.com/cilium/hubble/releases), for latest release version.
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+## Role Tasks
+
+See the related role tasks, listed below.
+
+{{% steps %}}
+
+### Facts
+
+Ansible facts, see [`facts.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cilium/tasks/facts.yaml) for details.
+
+### Main
+
+Main role related tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cilium/tasks/main.yaml) for details.
+
+### Reset
+
+Reset related tasks, see [`reset.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cilium/tasks/reset.yaml) for details.
+
+### Update
+
+Update related tasks, see [`validation.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cilium/tasks/update.yaml) for details.
+
+### Validation
+
+Validation related tasks, see [`validation.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cilium/tasks/validation.yaml) for details.
+
+{{% /steps %}}
+
+## Role Templates
+
+See the related role templates, listed below.
+
+{{% steps %}}
+
+### Helm Chart
+
+Helm chart values template, see [`values.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/values.j2) for details.
+
+### Certificate
+
+Kubernetes `Certificate` template, see [`certificate.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/certificate.j2) for details.
+
+### Cluster Issuer
+
+Kubernetes `ClusterIssuer` template, see [`cluster_issuer.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/cluster_issuer.j2) for details.
+
+### Gateway
+
+Kubernetes `Gateway` template, see [`gateway.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/gateway.j2) for details.
+
+### HTTP Route
+
+See the related templates, listed below.
+
+#### Insecure Route
+
+Kubernetes `HTTPRoute` template, see [`http_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/http_route.j2) for details.
+
+#### Secure Route
+
+Kubernetes `HTTPRoute` template, see [`https_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/https_route.j2) for details.
+
+### L2 Announcement Policy
+
+Kubernetes `CiliumL2AnnouncementPolicy` template, see [`l2_announcement_policy.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/l2_announcement_policy.j2) for details.
+
+### Load Balancer
+
+Kubernetes `Service` template, see [`loadbalancer.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/loadbalancer.j2) for details.
+
+### Load Balancer IP Pool
+
+Kubernetes `CiliumLoadBalancerIPPool` template, see [`loadbalancer_ip_pool.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/loadbalancer_ip_pool.j2) for details.
 
 {{% /steps %}}

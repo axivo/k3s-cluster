@@ -35,6 +35,6 @@ ssh-keygen -t ed25519 -C 'your_email@example.com'
   The [Provisioning](/k3s-cluster/wiki/guide/playbooks/provisioning) playbook will look for the generated SSH key, into default `/Users/username/.ssh` location.
 {{< /callout >}}
 
-For a different storage location, update the [`cluster_vars.ssh.authorized_key`](/k3s-cluster/wiki/guide/configuration/roles/cluster/#cluster_varssshauthorized_key) value into Cluster role [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file.
+For a different storage location, update the [`cluster_vars.ssh.authorized_key`](/k3s-cluster/wiki/guide/configuration/roles/cluster/#sshauthorized_key) value into Cluster role [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file.
 
 {{% /steps %}}

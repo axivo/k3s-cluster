@@ -287,7 +287,7 @@ Load balancer related tasks, see [`loadbalancer.yaml`](https://{{< param variabl
 
 ### Main
 
-Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/k3s/tasks/main.yaml) for details.
+Main role related tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/k3s/tasks/main.yaml) for details.
 
 ### Reset
 

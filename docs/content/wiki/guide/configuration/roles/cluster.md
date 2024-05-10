@@ -319,7 +319,7 @@ Firewall related tasks, can be used to also configure specific firewall rules. S
 
 ### Main
 
-Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
+Main role related tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
 
 ### Reset
 
