@@ -110,7 +110,7 @@
 
         - name: Set server user name
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'user.j2') | from_yaml }}"
+            definition: "{{ lookup('ansible.builtin.template', 'username.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
