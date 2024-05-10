@@ -20,7 +20,6 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           submodules: recursive
       - name: Setup Go
         uses: actions/setup-go@v5
