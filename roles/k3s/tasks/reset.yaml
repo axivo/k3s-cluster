@@ -20,8 +20,7 @@
           loop:
             - haproxy
             - keepalived
-          when:
-            - item in ansible_facts.packages
+          when: item in ansible_facts.packages
 
         - name: Remove loadbalancer configuration files
           ansible.builtin.file:
