@@ -7,8 +7,8 @@ on:
       - docs/**
   workflow_dispatch:
 concurrency:
-  group: pages
   cancel-in-progress: false
+  group: pages
 defaults:
   run:
     shell: bash
