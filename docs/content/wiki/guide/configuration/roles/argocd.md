@@ -730,7 +730,7 @@ See the related templates, listed below.
 
 #### Name
 
-Kubernetes `ConfigMap` template, see [`user.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/user.j2) for details.
+Kubernetes `ConfigMap` template, see [`username.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/username.j2) for details.
 
 #### Password
 
