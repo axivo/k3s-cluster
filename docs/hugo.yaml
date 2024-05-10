@@ -107,8 +107,7 @@ params:
     default: system
     displayToggle: true
   variables:
-    github:
-      repository: axivo/k3s-cluster
     os:
       previous_version: 22.04
       version: 24.04
+    repository: github.com/axivo/k3s-cluster
