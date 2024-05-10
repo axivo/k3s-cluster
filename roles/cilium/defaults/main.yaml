@@ -56,12 +56,10 @@ cilium_vars:
             ip: 192.168.4.17
     ipam:
       operator:
-        cluster:
-          pool: 10.42.0.0/16
+        cluster_pool: 10.42.0.0/16
     loadbalancer:
       algorithm: disabled
-      ip:
-        pool: 192.168.4.16/28
+      ip_pool: 192.168.4.16/28
       table_size: 16381
     namespace: kube-system
     operator:

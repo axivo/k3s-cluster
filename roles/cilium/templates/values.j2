@@ -18,7 +18,7 @@ gatewayAPI:
   enabled: true
 ipam:
   operator:
-    clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}
+    clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 hubble:
   peerService:
     clusterDomain: {{ k3s_vars.server.cluster.domain }}
@@ -110,7 +110,7 @@ maglev:
 {% endif %}
 {% if cilium_vars.kubernetes.routing_mode == 'native' %}
 autoDirectNodeRoutes: true
-ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster.pool }}
+ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 l2announcements:
   enabled: true
 l2podAnnouncements:
