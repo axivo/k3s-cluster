@@ -11,7 +11,7 @@ The configuration guides present in this section allow you to configure the K3s 
 <!--more-->
 
 {{< callout type="info" >}}
-  Prior adjusting any settings, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`k3s-cluster`](https://github.com/{{< param variables.github.repository >}}) repository.
+  Prior adjusting any settings, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`k3s-cluster`](https://{{< param variables.repository >}}) repository.
 {{< /callout >}}
 
 ## OS Installation
@@ -27,5 +27,5 @@ Each cluster node must have Ubuntu Server LTS `{{< param variables.os.version >}
 All sensitive data stored in this public repository (passwords, emails, etc.) is safely encrypted, using [Ansible Vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html).
 
 {{< callout type="warning" >}}
-  Use the **same global password** for various encrypted settings, in your configuration files. See an [example](user/#encrypt-the-password-variable), to understand the logic behind.
+  Use the **same global password** for various encrypted settings, in your configuration files. See an [example](/k3s-cluster/tutorials/handbook/ansible/#vault), to understand the logic behind.
 {{< /callout >}}

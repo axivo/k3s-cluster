@@ -11,7 +11,7 @@ The role performs various tasks related to OS configuration, reset and validatio
 
 ## Role Settings
 
-See the role settings listed below, defined into [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/defaults/main.yaml) defaults file.
+See the related role settings listed below, defined into [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/helm/defaults/main.yaml) defaults file.
 
 {{% steps %}}
 
@@ -19,7 +19,7 @@ See the role settings listed below, defined into [`main.yaml`](https://github.co
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -89,7 +89,7 @@ See below the related child settings, for additional details.
 
 - Default value: `string`
 
-Visit [databus23/helm-diff](https://github.com/databus23/helm-diff/releases), for latest release version.
+Visit [`databus23/helm-diff`](https://github.com/databus23/helm-diff/releases), for latest release version.
 
 {{% /steps %}}
 
@@ -99,24 +99,24 @@ Visit [databus23/helm-diff](https://github.com/databus23/helm-diff/releases), fo
 
 ## Role Tasks
 
-See the role tasks, listed below.
+See the related role tasks, listed below.
 
 {{% steps %}}
 
 ### Facts
 
-Ansible facts, see [`facts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/facts.yaml) for details.
+Ansible facts, see [`facts.yaml`](https://{{< param variables.repository >}}/blob/main/roles/helm/tasks/facts.yaml) for details.
 
 ### Main
 
-Main role tasks, see [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/main.yaml) for details.
+Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/helm/tasks/main.yaml) for details.
 
 ### Reset
 
-Reset related tasks, see [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/reset.yaml) for details.
+Reset related tasks, see [`reset.yaml`](https://{{< param variables.repository >}}/blob/main/roles/helm/tasks/reset.yaml) for details.
 
 ### Validation
 
-Validation related tasks, see [`validation.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/helm/tasks/validation.yaml) for details.
+Validation related tasks, see [`validation.yaml`](https://{{< param variables.repository >}}/blob/main/roles/helm/tasks/validation.yaml) for details.
 
 {{% /steps %}}

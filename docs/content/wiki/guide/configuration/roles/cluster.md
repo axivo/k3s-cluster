@@ -11,7 +11,7 @@ The role performs various tasks related to OS configuration, reset and validatio
 
 ## Role Settings
 
-See the role settings listed below, defined into [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/defaults/main.yaml) defaults file.
+See the related role settings listed below, defined into [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/defaults/main.yaml) defaults file.
 
 {{% steps %}}
 
@@ -41,7 +41,7 @@ For example, connecting the SSD device with different USB cable models might res
   Run the [Validation](/k3s-cluster/wiki/guide/playbooks/validation) playbook, to validate the USB storage device values.
 {{< /callout >}}
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -89,7 +89,7 @@ Setting the value to `sata` will disable any validation and configuration settin
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -131,7 +131,7 @@ product: Raspberry Pi 4 Model B Rev 1.5
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -279,7 +279,7 @@ Setup WiFi service, on Raspberry Pi hardware. By default, Ubuntu Server LTS `{{<
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -301,40 +301,40 @@ cluster_vars:
 
 ## Role Tasks
 
-See the role tasks, listed below.
+See the related role tasks, listed below.
 
 {{% steps %}}
 
 ### Configuration
 
-OS configuration related tasks, see [`configuration.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/configuration.yaml) for details.
+OS configuration related tasks, see [`configuration.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/configuration.yaml) for details.
 
 ### Facts
 
-Ansible facts, see [`facts.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/facts.yaml) for details.
+Ansible facts, see [`facts.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/facts.yaml) for details.
 
 ### Firewall
 
-Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/firewall.yaml) for details.
+Firewall related tasks, can be used to also configure specific firewall rules. See [`firewall.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/firewall.yaml) for details.
 
 ### Main
 
-Main role tasks, see [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
+Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/main.yaml) for details.
 
 ### Reset
 
-Reset related tasks, see [`reset.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/reset.yaml) for details.
+Reset related tasks, see [`reset.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/reset.yaml) for details.
 
 ### Upgrade
 
-OS upgrade related tasks, see [`upgrade.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/upgrade.yaml) for details.
+OS upgrade related tasks, see [`upgrade.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/upgrade.yaml) for details.
 
 ### User
 
-User related tasks, see [`user.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/user.yaml) for details.
+User related tasks, see [`user.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/user.yaml) for details.
 
 ### Validation
 
-Validation related tasks, see [`validation.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/tasks/validation.yaml) for details.
+Validation related tasks, see [`validation.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/tasks/validation.yaml) for details.
 
 {{% /steps %}}

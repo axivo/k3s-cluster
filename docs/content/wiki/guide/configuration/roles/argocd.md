@@ -10,7 +10,7 @@ The role performs various tasks related to Helm chart deployment, reset and vali
 
 ## Role Settings
 
-See the role settings listed below, defined into [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/argocd/defaults/main.yaml) defaults file.
+See the related role settings listed below, defined into [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/defaults/main.yaml) defaults file.
 
 {{% steps %}}
 
@@ -18,7 +18,7 @@ See the role settings listed below, defined into [`main.yaml`](https://github.co
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
@@ -242,7 +242,7 @@ See below the related child settings, for additional details.
 
 - Default value: `string`
 
-Visit [argoproj/argo-helm](https://github.com/argoproj/argo-helm/releases), for latest release version.
+Visit [`argoproj/argo-helm`](https://github.com/argoproj/argo-helm/releases), for latest release version.
 
 {{% /steps %}}
 
@@ -380,12 +380,360 @@ Visit [argoproj/argo-helm](https://github.com/argoproj/argo-helm/releases), for 
 
 {{% /steps %}}
 
+#### `kubernetes.repo_server`
+
+- Default value: `null`
+
+{{% steps %}}
+
+##### `repo_server.autoscaling`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `autoscaling.enabled`
+
+- Default value: `boolean`, `true`
+
+###### `autoscaling.min_replicas`
+
+- Default value: `integer`, `2`
+
+###### `autoscaling.target`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `target.cpu_percentage`
+
+- Default value: `integer`, `60`
+
+###### `target.memory_percentage`
+
+- Default value: `integer`, `80`
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+##### `repo_server.resources`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `resources.limits`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `limits.cpu`
+
+- Default value: `string`, `400m`
+
+###### `limits.memory`
+
+- Default value: `string`, `256Mi`
+
+{{% /steps %}}
+
+###### `resources.requests`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `requests.cpu`
+
+- Default value: `string`, `200m`
+
+###### `requests.memory`
+
+- Default value: `string`, `128Mi`
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+#### `kubernetes.server`
+
+- Default value: `null`
+
+{{% steps %}}
+
+##### `server.admin`
+
+- Default value: `null`
+
+Sets the `admin` user details for ArgoCD UI.
+
+{{% steps %}}
+
+###### `admin.password`
+
+- Default value: `string`, `password`
+
+Encrypt the variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansible/#vault).
+
+{{% /steps %}}
+
+##### `server.application`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `application.namespaces`
+
+- Default value: `list`
+
+{{% /steps %}}
+
+##### `server.autoscaling`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `autoscaling.enabled`
+
+- Default value: `boolean`, `true`
+
+###### `autoscaling.min_replicas`
+
+- Default value: `integer`, `2`
+
+###### `autoscaling.min_replicas`
+
+- Default value: `integer`, `2`
+
+###### `autoscaling.target`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `target.cpu_percentage`
+
+- Default value: `integer`, `60`
+
+###### `target.memory_percentage`
+
+- Default value: `integer`, `80`
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+##### `server.gateway`
+
+- Default value: `null`
+
+Read the [Gateway API](/k3s-cluster/tutorials/handbook/cilium/gateway) tutorial, for more details.
+
+{{% steps %}}
+
+###### `gateway.service`
+
+- Default value: `string`, `argo-cd-argocd-server`
+
+###### `gateway.subdomain`
+
+- Default value: `string`, `argocd`
+
+Sets the subdomain name for ArgoCD UI.
+
+{{% /steps %}}
+
+##### `server.infrastructure`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `infrastructure.annotations`
+
+- Default value: `map`
+
+Sets the `infrastructure` [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations).
+
+{{% /steps %}}
+
+##### `server.resources`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `resources.limits`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `limits.cpu`
+
+- Default value: `string`, `400m`
+
+###### `limits.memory`
+
+- Default value: `string`, `256Mi`
+
+{{% /steps %}}
+
+###### `resources.requests`
+
+- Default value: `null`
+
+{{% steps %}}
+
+###### `requests.cpu`
+
+- Default value: `string`, `200m`
+
+###### `requests.memory`
+
+- Default value: `string`, `128Mi`
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+##### `server.user`
+
+- Default value: `null`
+
+Sets the additional user details for ArgoCD UI.
+
+{{% steps %}}
+
+##### `user.name`
+
+- Default value: `string`, `username`
+
+##### `user.password`
+
+- Default value: `string`, `password`
+
+Encrypt the variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansible/#vault).
+
+{{% /steps %}}
+
+{{% /steps %}}
+
 {{% /steps %}}
 
 ### `argocd_vars.release`
 
 - Default value: `null`
 
-See below the related child settings, for additional details.
+Release details for `argocd` binary. See the related child settings, listed below.
+
+{{% steps %}}
+
+#### `release.checksums`
+
+- Default value: `string`, `cli_checksums.txt`
+
+#### `release.file`
+
+- Default value: `string`, `argocd-linux-arm64`
+
+#### `release.repository`
+
+- Default value: `null`
+
+{{% steps %}}
+
+##### `repository.name`
+
+- Default value: `string`, `argo-cd`
+
+##### `repository.org`
+
+- Default value: `string`, `argoproj`
+
+{{% /steps %}}
+
+#### `release.version`
+
+- Default value: `string`
+
+Visit [`argoproj/argo-cd`](https://github.com/argoproj/argo-cd/releases), for latest release version.
+
+{{% /steps %}}
+
+{{% /steps %}}
+
+## Role Tasks
+
+See the related role tasks, listed below.
+
+{{% steps %}}
+
+### Facts
+
+Ansible facts, see [`facts.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/facts.yaml) for details.
+
+### Main
+
+Main role tasks, see [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/main.yaml) for details.
+
+### Reset
+
+Reset related tasks, see [`reset.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/reset.yaml) for details.
+
+### Validation
+
+Validation related tasks, see [`validation.yaml`](https://{{< param variables.repository >}}/blob/main/roles/argocd/tasks/validation.yaml) for details.
+
+{{% /steps %}}
+
+## Role Templates
+
+See the related role templates, listed below.
+
+{{% steps %}}
+
+### Helm Chart
+
+Helm chart values template, see [`values.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/values.j2) for details.
+
+### Gateway
+
+Kubernetes `Gateway` template, see [`config.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/gateway.j2) for details.
+
+### HTTP Route
+
+See the related templates, listed below.
+
+#### Insecure Route
+
+Kubernetes `HTTPRoute` template, see [`http_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/http_route.j2) for details.
+
+#### Secure Route
+
+Kubernetes `HTTPRoute` template, see [`https_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/https_route.j2) for details.
+
+### Load Balancer
+
+Kubernetes `Service` template, see [`loadbalancer.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/loadbalancer.j2) for details.
+
+### User
+
+See the related templates, listed below.
+
+#### Name
+
+Kubernetes `ConfigMap` template, see [`user.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/user.j2) for details.
+
+#### Password
+
+Kubernetes `Secret` template, see [`password.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/password.j2) for details.
 
 {{% /steps %}}

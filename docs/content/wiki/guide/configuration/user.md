@@ -13,7 +13,7 @@ The Ansible user is used to remotely execute various deployment tasks into clust
 
 ### User Name
 
-Set the [`ansible_user`](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html) variable into [`all.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
+Set the [`ansible_user`](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html) variable into [`all.yaml`](https://{{< param variables.repository >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
 
 {{< callout type="warning" >}}
   Use the `username` value defined into [OS General Settings](/k3s-cluster/tutorials/handbook/server/#os-general-settings) server installation, to set the `ansible_user` variable.
@@ -21,7 +21,7 @@ Set the [`ansible_user`](https://docs.ansible.com/ansible/latest/reference_appen
 
 ### User Password
 
-Encrypt the `ansible_password` variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansible/#vault) and set the encrypted value into [`all.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
+Encrypt the `ansible_password` variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansible/#vault) and set the encrypted value into [`all.yaml`](https://{{< param variables.repository >}}/blob/main/inventory/cluster/group_vars/all.yaml) global configuration file.
 
 ### SSH Key
 
@@ -35,6 +35,6 @@ ssh-keygen -t ed25519 -C 'your_email@example.com'
   The [Provisioning](/k3s-cluster/wiki/guide/playbooks/provisioning) playbook will look for the generated SSH key, into default `/Users/username/.ssh` location.
 {{< /callout >}}
 
-For a different storage location, update the [`cluster_vars.ssh.authorized_key`](/k3s-cluster/wiki/guide/configuration/roles/cluster/#cluster_varssshauthorized_key) value into Cluster role [`main.yaml`](https://github.com/{{< param variables.github.repository >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file.
+For a different storage location, update the [`cluster_vars.ssh.authorized_key`](/k3s-cluster/wiki/guide/configuration/roles/cluster/#cluster_varssshauthorized_key) value into Cluster role [`main.yaml`](https://{{< param variables.repository >}}/blob/main/roles/cluster/defaults/main.yaml) configuration file.
 
 {{% /steps %}}

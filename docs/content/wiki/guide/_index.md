@@ -9,7 +9,7 @@ The cluster inventory, user, role configuration settings and provisioning playbo
 <!--more-->
 
 {{< callout type="info" >}}
-  Prior adjusting any settings, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`k3s-cluster`](https://github.com/{{< param variables.github.repository >}}) repository.
+  Prior adjusting any settings, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`k3s-cluster`](https://{{< param variables.repository >}}) repository.
 {{< /callout >}}
 
 ## Next
