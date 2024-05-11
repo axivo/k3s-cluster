@@ -22,8 +22,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -34,8 +33,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -46,8 +44,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -58,8 +55,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -70,8 +66,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -82,8 +77,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -94,8 +88,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -107,8 +100,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -119,8 +111,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+plugin:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -145,8 +136,7 @@
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ],
-      "packageNameTemplate": "kubereboot/charts",
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      "packageNameTemplate": "kubereboot/charts"
     },
     {
       "customType": "regex",
@@ -157,8 +147,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      ]
     },
     {
       "customType": "regex",
@@ -171,8 +160,7 @@
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ],
-      "packageNameTemplate": "prometheus-community/helm-charts",
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      "packageNameTemplate": "prometheus-community/helm-charts"
     }
   ],
   "enabledManagers": [
