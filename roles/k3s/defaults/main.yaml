@@ -16,7 +16,7 @@ k3s_vars:
       repository:
         name: k3s
         org: k3s-io
-      version: v1.29.4+k3s1
+      version: v1.29.3+k3s1
     rancher:
       controller:
         version: v0.13.2
