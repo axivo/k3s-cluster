@@ -1,4 +1,4 @@
-{% if chart_setup %}
+{% if cilium_setup %}
 bandwidthManager:
   enabled: true
 enableCiliumEndpointSlice: true
@@ -53,7 +53,7 @@ operator:
       memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
   rollOutPods: true
 rollOutCiliumPods: true
-{% elif chart_update %}
+{% elif cilium_postinstall %}
 dashboards:
   enabled: true
 envoy:

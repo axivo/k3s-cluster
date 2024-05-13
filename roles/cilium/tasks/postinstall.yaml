@@ -8,8 +8,7 @@
     - cloudflare
     - k3s
 
-- name: Chart Update
-  tags: update
+- name: Role Post-Install
   when: ansible_host in k3s_server_hosts
   run_once: true
   block:
@@ -61,11 +60,11 @@
 
     - name: Set chart setup fact
       ansible.builtin.set_fact:
-        chart_setup: false
+        cilium_setup: false
 
-    - name: Set chart update fact
+    - name: Set chart postinstall fact
       ansible.builtin.set_fact:
-        chart_update: true
+        cilium_postinstall: true
 
     - name: Update chart values
       kubernetes.core.helm:
