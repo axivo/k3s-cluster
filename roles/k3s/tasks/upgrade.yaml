@@ -13,7 +13,14 @@
   changed_when: not k3s_binary.stat.exists
   register: k3s_binary
 
-- name: Get deployed version
+- name: Validate deployed cluster
+  ansible.builtin.assert:
+    that: k3s_binary.stat.exists
+    fail_msg: 'ERROR: K3s cluster not deployed.'
+    quiet: true
+  run_once: true
+
+- name: Get deployed cluster version
   ansible.builtin.shell: |
     set -eo pipefail
     k3s --version | grep k3s | cut -d ' ' -f 3
@@ -23,11 +30,11 @@
   register: version
   run_once: true
 
-- name: Validate targeted version
+- name: Validate targeted cluster version
   ansible.builtin.assert:
     that: version.stdout != k3s_vars.release.version
     fail_msg: |-
-      ERROR: Invalid targeted release version.
+      ERROR: Invalid targeted cluster release version.
         - Deployed version: {{ version.stdout }}
         - Targeted version: {{ k3s_vars.release.version }}
       FIXES:
