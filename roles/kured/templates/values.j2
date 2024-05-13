@@ -1,10 +1,18 @@
 configuration:
   concurrency: {{ kured_vars.kubernetes.configuration.concurrency }}
-  lockReleaseDelay: {{ kured_vars.kubernetes.configuration.lock.release_delay }}
-  lockTtl: {{ kured_vars.kubernetes.configuration.lock.ttl }}
+{% if kured_vars.kubernetes.configuration.log_format != 'text' %}
   logFormat: {{ kured_vars.kubernetes.configuration.log_format }}
+{% endif %}
   period: {{ kured_vars.kubernetes.configuration.period }}
   rebootDelay: {{ kured_vars.kubernetes.configuration.reboot_delay }}
+{% if kured_vars.kubernetes.configuration.slack.enabled %}
+{% if kured_vars.kubernetes.configuration.slack.messages.enabled %}
+  messageTemplateDrain: {{ kured_vars.kubernetes.configuration.slack.messages.drain }}
+  messageTemplateReboot: {{ kured_vars.kubernetes.configuration.slack.messages.reboot }}
+  messageTemplateUncordon: {{ kured_vars.kubernetes.configuration.slack.messages.uncordon }}
+{% endif %}
+  notifyUrl: {{ kured_vars.kubernetes.configuration.slack.notify_url }}
+{% endif %}
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}
   timeZone: {{ kured_vars.kubernetes.configuration.time.zone }}
@@ -29,7 +37,5 @@ service:
   name: {{ kured_vars.kubernetes.service.name }}
 {% if k3s_vars.server.controlplane.tainted %}
 tolerations:
-  - key: node-role.kubernetes.io/control-plane
-    operator: Exists
-    effect: NoSchedule
+  {{ k3s_vars.tolerations | to_nice_yaml | indent(2) }}
 {% endif %}

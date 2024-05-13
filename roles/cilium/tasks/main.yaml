@@ -9,9 +9,15 @@
     file: validation.yaml
 
 - name: Role Provisioning
-  tags: provisioning
   when: ansible_host in k3s_server_hosts
   block:
+    - name: Validate service state
+      ansible.builtin.wait_for:
+        port: '{{ k3s_vars.server.api.port }}'
+        state: drained
+        timeout: 30
+      any_errors_fatal: true
+
     - name: Set release fact
       ansible.builtin.set_fact:
         release:
@@ -38,7 +44,7 @@
     - name: Install binary
       ansible.builtin.unarchive:
         src: /tmp/{{ item.file }}
-        dest: /usr/local/bin
+        dest: '{{ k3s_vars.directory.bin }}'
         owner: root
         group: root
         mode: '0755'
@@ -57,7 +63,6 @@
         repo_url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
 
     - name: Chart Setup
-      tags: setup
       run_once: true
       block:
         - name: Apply gateway api crds manifest
@@ -67,11 +72,11 @@
 
         - name: Set chart setup fact
           ansible.builtin.set_fact:
-            chart_setup: true
+            cilium_setup: true
 
-        - name: Set chart update fact
+        - name: Set chart postinstall fact
           ansible.builtin.set_fact:
-            chart_update: false
+            cilium_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:
@@ -102,7 +107,7 @@
 
         - name: Set chart setup fact
           ansible.builtin.set_fact:
-            chart_setup: false
+            cilium_setup: false
 
         - name: Update chart values
           kubernetes.core.helm:

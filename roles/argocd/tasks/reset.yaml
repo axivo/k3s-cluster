@@ -15,5 +15,5 @@
 
     - name: Remove binary file
       ansible.builtin.file:
-        name: /usr/local/bin/argocd
+        name: '{{ k3s_vars.directory.bin }}/argocd'
         state: absent

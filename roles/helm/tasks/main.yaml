@@ -9,7 +9,6 @@
     file: validation.yaml
 
 - name: Role Provisioning
-  tags: provisioning
   when: ansible_host in k3s_server_hosts
   block:
     - name: Install packages
@@ -45,7 +44,8 @@
         - name: Dearmor key
           ansible.builtin.command:
             cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.helm.key }} /tmp/{{ helm_vars.release.helm.repository.key }}
-          changed_when: true
+          changed_when: dearmor_key.rc == 0
+          register: dearmor_key
 
         - name: Delete key
           ansible.builtin.file:
@@ -70,7 +70,6 @@
             trusted: true
 
     - name: Helm Plugin
-      tags: plugin
       block:
         - name: Install plugin packages
           ansible.builtin.apt:

@@ -5,8 +5,7 @@
     lsusb -s {{ cluster_vars.device.id }} | grep {{ cluster_vars.device.name | quote }}
   args:
     executable: /bin/bash
-  any_errors_fatal: true
-  changed_when: false
+  changed_when: device_info.rc == 0
   register: device_info
   when: cluster_vars.device.transport == 'usb'
 

@@ -23,20 +23,3 @@
         path: '{{ item }}'
         state: absent
       loop: "{{ backup_files.files | map(attribute='path') | list }}"
-
-- name: Reboot Required
-  notify: Reboot
-  block:
-    - name: Update bootloader firmware
-      ansible.builtin.command:
-        cmd: rpi-eeprom-update -ad
-      changed_when: bootloader.stdout.find('updates pending') != -1
-      register: bootloader
-      when: cluster_vars.hardware.product == 'Raspberry Pi'
-
-    - name: Get file status
-      ansible.builtin.stat:
-        path: /var/run/reboot-required
-        get_checksum: false
-      changed_when: reboot.stat.exists
-      register: reboot
