@@ -26,9 +26,9 @@ etcd-expose-metrics: true
 flannel-backend: none
 {% endif %}
 node-taint:
-  - {{ k3s_node_agent_taint }}
+  {{ k3s_node_agent_taint | to_nice_yaml | indent(2) }}
 {% if k3s_vars.server.controlplane.tainted and k3s_service_type == 'server' %}
-  - {{ k3s_node_default_taint }}
+  {{ k3s_node_default_taint | to_nice_yaml | indent(2) }}
 {% endif %}
 {% if k3s_ha_cluster and (k3s_postinstall or k3s_service_type == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}

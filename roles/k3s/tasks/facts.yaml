@@ -52,12 +52,12 @@
 
 - name: Set node agent taint fact
   ansible.builtin.set_fact:
-    k3s_node_agent_taint: "{{ k3s_node_taints | select('search', 'agent-not-ready') | join }}"
+    k3s_node_agent_taint: "{{ k3s_node_taints | select('search', 'agent-not-ready') }}"
   run_once: true
 
 - name: Set node default taint fact
   ansible.builtin.set_fact:
-    k3s_node_default_taint: "{{ k3s_node_taints | select('search', 'control-plane') | join }}"
+    k3s_node_default_taint: "{{ k3s_node_taints | select('search', 'control-plane') }}"
   run_once: true
 
 - name: Set release fact

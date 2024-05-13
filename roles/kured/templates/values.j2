@@ -37,7 +37,5 @@ service:
   name: {{ kured_vars.kubernetes.service.name }}
 {% if k3s_vars.server.controlplane.tainted %}
 tolerations:
-{% for toleration in k3s_vars.tolerations %}
-  - {{ toleration }}
-{% endfor %}
+  {{ k3s_vars.tolerations | to_nice_yaml | indent(2) }}
 {% endif %}
