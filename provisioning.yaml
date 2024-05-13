@@ -12,7 +12,7 @@
       default: 'n'
       private: false
 
-- name: Kubernetes Pre-Provisioning
+- name: LoadBalancer Provisioning
   hosts: cluster
   become: true
   gather_facts: true
@@ -29,6 +29,11 @@
   hosts: cluster
   become: true
   gather_facts: true
+  post_tasks:
+    - name: Perform post-install tasks
+      ansible.builtin.import_role:
+        name: k3s
+        tasks_from: postinstall
   roles:
     - role: helm
     - role: k3s
@@ -43,10 +48,10 @@
   become: true
   gather_facts: true
   post_tasks:
-    - name: Update chart settings
+    - name: Perform post-install tasks
       ansible.builtin.import_role:
         name: cilium
-        tasks_from: update
+        tasks_from: postinstall
   roles:
     - role: cilium
     - role: certmanager
