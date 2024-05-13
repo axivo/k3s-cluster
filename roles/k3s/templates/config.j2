@@ -11,7 +11,7 @@ advertise-port: {{ k3s_vars.server.api.port }}
 bind-address: {{ k3s_server_default_ip }}
 cluster-dns: {{ k3s_vars.server.cluster.dns }}
 cluster-domain: {{ k3s_vars.server.cluster.domain }}
-{% if k3s_ha_cluster and ansible_host == k3s_server_default_host %}
+{% if k3s_ha_cluster and not k3s_postinstall and ansible_host == k3s_server_default_host %}
 cluster-init: true
 {% endif %}
 disable:
@@ -26,15 +26,18 @@ etcd-expose-metrics: true
 flannel-backend: none
 {% endif %}
 node-taint:
-  - node.cilium.io/agent-not-ready:NoExecute
+  - {{ k3s_node_agent_taint }}
 {% if k3s_vars.server.controlplane.tainted and k3s_service_type == 'server' %}
-  - node-role.kubernetes.io/control-plane:NoSchedule
+  - {{ k3s_node_default_taint }}
 {% endif %}
-{% if ansible_host != k3s_server_default_host and k3s_token | length > 0 %}
-{% if k3s_ha_cluster %}
+{% if k3s_ha_cluster and (k3s_postinstall or k3s_service_type == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
-{% else %}
+{% elif
+  (ansible_host != k3s_server_default_host and k3s_service_type == 'server') or
+  (k3s_non_ha_cluster and k3s_service_type == 'agent')
+%}
 server: https://{{ k3s_server_default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
+{% if k3s_token | length > 0 %}
 token: {{ k3s_token }}
 {% endif %}

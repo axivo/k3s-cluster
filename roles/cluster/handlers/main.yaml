@@ -1,8 +1,4 @@
 ---
-- name: Reboot
-  ansible.builtin.reboot:
-  register: reboot
-
 - name: Restart loadbalancer services
   ansible.builtin.systemd_service:
     name: '{{ item }}.service'

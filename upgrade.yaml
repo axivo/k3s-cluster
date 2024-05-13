@@ -3,7 +3,6 @@
   hosts: cluster
   become: true
   gather_facts: true
-  serial: 1
   tags:
     - cluster
     - never
@@ -17,52 +16,28 @@
       ansible.builtin.meta: flush_handlers
 
 - name: Kubernetes Upgrade
-  hosts: server
+  hosts: cluster
   become: true
   gather_facts: true
   tasks:
-    - name: Upgrade argocd chart
-      ansible.builtin.import_role:
-        name: argocd
-      tags: argocd
-
-    - name: Upgrade cert-manager chart
-      ansible.builtin.import_role:
-        name: certmanager
-      tags: certmanager
-
-    - name: Upgrade cilium chart
-      ansible.builtin.import_role:
-        name: cilium
-      tags: cilium
-
-    - name: Update cilium chart settings
-      ansible.builtin.import_role:
-        name: cilium
-        tasks_from: update
-      tags: cilium
-
-    - name: Update cloudflare settings
-      ansible.builtin.import_role:
-        name: cloudflare
-      tags: cloudflare
-
-    - name: Upgrade kured chart
-      ansible.builtin.import_role:
-        name: kured
-      tags: kured
-
-    - name: Upgrade longhorn chart
-      ansible.builtin.import_role:
-        name: longhorn
-      tags: longhorn
-
-    - name: Upgrade prometheus chart
-      ansible.builtin.import_role:
-        name: prometheus
-      tags: prometheus
-
-    - name: Upgrade helm
-      ansible.builtin.import_role:
-        name: helm
-      tags: helm
+    - name: Roles Upgrade
+      ansible.builtin.include_role:
+        apply:
+          tags: '{{ cluster.role }}'
+        name: '{{ cluster.role }}'
+        tasks_from: '{{ cluster.tasks }}'
+      loop:
+        - {role: argocd, tasks: main}
+        - {role: certmanager, tasks: main}
+        - {role: cilium, tasks: main}
+        - {role: cilium, tasks: postinstall}
+        - {role: cloudflare, tasks: main}
+        - {role: helm, tasks: main}
+        - {role: k3s, tasks: upgrade}
+        - {role: kured, tasks: main}
+        - {role: longhorn, tasks: main}
+        - {role: prometheus, tasks: main}
+      loop_control:
+        loop_var: cluster
+      tags: always
+      when: cluster.role in ansible_run_tags
