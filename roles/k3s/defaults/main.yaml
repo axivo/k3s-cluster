@@ -1,27 +1,19 @@
 ---
 k3s_vars:
-  agent:
-    service:
-      args: ''
   directory:
+    bin: /usr/local/bin
     config: /etc/rancher/k3s
     kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
     lib: /var/lib/rancher/k3s
   network:
     interface: eth0
   release:
-    k3s:
-      checksum: sha256sum-arm64.txt
-      file: k3s-arm64
-      repository:
-        name: k3s
-        org: k3s-io
-      version: v1.29.4+k3s1
-    rancher:
-      controller:
-        version: v0.13.2
-      kubectl:
-        version: v1.29.3
+    checksum: sha256sum-arm64.txt
+    file: k3s-arm64
+    repository:
+      name: k3s
+      org: k3s-io
+    version: v1.29.3+k3s1
   server:
     api:
       host: 192.168.4.10
@@ -36,5 +28,10 @@ k3s_vars:
       port: 6444
     kubeconfig:
       local: true
-    service:
-      args: ''
+  tolerations:
+    - key: node.cilium.io/agent-not-ready
+      operator: Exists
+      effect: NoExecute
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule

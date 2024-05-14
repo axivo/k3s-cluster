@@ -12,9 +12,15 @@
     file: validation.yaml
 
 - name: Role Provisioning
-  tags: provisioning
   when: ansible_host in k3s_server_hosts
   block:
+    - name: Validate service state
+      ansible.builtin.wait_for:
+        port: '{{ k3s_vars.server.api.port }}'
+        state: drained
+        timeout: 30
+      any_errors_fatal: true
+
     - name: Set checksums fact
       ansible.builtin.uri:
         url: '{{ argocd_release_url_checksums }}'
@@ -33,7 +39,7 @@
       ansible.builtin.get_url:
         url: '{{ argocd_release_url_file }}'
         checksum: sha256:{{ sha256_checksum }}
-        dest: /usr/local/bin/argocd
+        dest: '{{ k3s_vars.directory.bin }}/argocd'
         owner: root
         group: root
         mode: '0755'
@@ -48,7 +54,6 @@
         repo_url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
 
     - name: Chart Setup
-      tags: setup
       run_once: true
       block:
         - name: Set hostname fact

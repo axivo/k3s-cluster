@@ -1,0 +1,69 @@
+---
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Role Validation
+  ansible.builtin.import_tasks:
+    file: validation.yaml
+
+- name: Get binary status
+  ansible.builtin.stat:
+    path: '{{ k3s_vars.directory.bin }}/k3s'
+  changed_when: not k3s_binary.stat.exists
+  register: k3s_binary
+
+- name: Validate deployed cluster
+  ansible.builtin.assert:
+    that: k3s_binary.stat.exists
+    fail_msg: 'ERROR: K3s cluster not deployed.'
+    quiet: true
+  run_once: true
+
+- name: Get deployed cluster version
+  ansible.builtin.shell: |
+    set -eo pipefail
+    k3s --version | grep k3s | cut -d ' ' -f 3
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: version
+  run_once: true
+
+- name: Validate targeted cluster version
+  ansible.builtin.assert:
+    that: version.stdout != k3s_vars.release.version
+    fail_msg: |-
+      ERROR: Invalid targeted cluster release version.
+        - Deployed version: {{ version.stdout }}
+        - Targeted version: {{ k3s_vars.release.version }}
+      FIXES:
+        - Update the 'k3s_vars.release.version' variable with the new release version.
+    quiet: true
+  run_once: true
+
+- name: Role Upgrade
+  when: version.stdout != k3s_vars.release.version
+  block:
+    - name: Install k3s binary
+      ansible.builtin.get_url:
+        url: '{{ k3s_release_url_file }}'
+        checksum: sha256:{{ k3s_release_url_checksum }}
+        dest: '{{ k3s_vars.directory.bin }}/k3s'
+        owner: root
+        group: root
+        mode: '0755'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+
+    - name: Schedule reboot
+      ansible.builtin.file:
+        path: /var/run/reboot-required
+        access_time: preserve
+        modification_time: preserve
+        state: touch
+        owner: root
+        group: root
+        mode: '0644'

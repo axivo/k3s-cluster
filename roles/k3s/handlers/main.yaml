@@ -14,6 +14,13 @@
   loop_control:
     loop_var: services_item
 
+- name: Restart service
+  ansible.builtin.systemd_service:
+    name: '{{ k3s_service_name }}.service'
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
 - name: Start service
   ansible.builtin.systemd_service:
     name: '{{ k3s_service_name }}.service'

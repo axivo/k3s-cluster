@@ -1,0 +1,178 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "assignees": [
+    "fmunteanu"
+  ],
+  "customDatasources": {
+    "k3s": {
+      "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\": \"https://github.com/k3s-io/k3s\",\"changelogUrl\": $join([\"https://github.com/k3s-io/k3s/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/k3s-io/k3s\",\"homepage\": \"https://k3s.io/\"}"
+      ]
+    }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "argoproj/argo-helm",
+      "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
+      "fileMatch": [
+        "roles/argocd/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "argoproj/argo-cd",
+      "fileMatch": [
+        "roles/argocd/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cert-manager/cert-manager",
+      "fileMatch": [
+        "roles/certmanager/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cilium/cilium",
+      "fileMatch": [
+        "roles/cilium/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cilium/cilium-cli",
+      "fileMatch": [
+        "roles/cilium/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubernetes-sigs/gateway-api",
+      "fileMatch": [
+        "roles/cilium/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cilium/hubble",
+      "fileMatch": [
+        "roles/cilium/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubernetes-sigs/external-dns",
+      "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
+      "fileMatch": [
+        "roles/cloudflare/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "databus23/helm-diff",
+      "fileMatch": [
+        "roles/helm/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+plugin:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "custom.k3s",
+      "depNameTemplate": "k3s-io/k3s",
+      "fileMatch": [
+        "roles/k3s/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ],
+      "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubereboot/kured",
+      "extractVersionTemplate": "^kured-(?<version>.+)$",
+      "fileMatch": [
+        "roles/kured/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ],
+      "packageNameTemplate": "kubereboot/charts"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "longhorn/longhorn",
+      "fileMatch": [
+        "roles/longhorn/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "prometheus-community/kube-prometheus-stack",
+      "extractVersionTemplate": "^kube-prometheus-stack-(?<version>.+)$",
+      "fileMatch": [
+        "roles/prometheus/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ],
+      "packageNameTemplate": "prometheus-community/helm-charts"
+    }
+  ],
+  "enabledManagers": [
+    "ansible-galaxy",
+    "custom.regex"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "dependency"
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0
+}

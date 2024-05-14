@@ -8,14 +8,13 @@
     file: validation.yaml
 
 - name: Role Provisioning
-  tags: provisioning
   notify: Start service
   block:
     - name: Install k3s binary
       ansible.builtin.get_url:
         url: '{{ k3s_release_url_file }}'
         checksum: sha256:{{ k3s_release_url_checksum }}
-        dest: /usr/local/bin/k3s
+        dest: '{{ k3s_vars.directory.bin }}/k3s'
         owner: root
         group: root
         mode: '0755'
@@ -31,6 +30,10 @@
         owner: root
         group: root
         mode: '0755'
+
+    - name: Set server postinstall fact
+      ansible.builtin.set_fact:
+        k3s_postinstall: false
 
     - name: Create configuration file
       ansible.builtin.template:
@@ -71,7 +74,6 @@
   ansible.builtin.meta: flush_handlers
 
 - name: Server Setup
-  tags: setup
   when: ansible_host in k3s_server_hosts
   block:
     - name: Add variable to environment file
@@ -82,18 +84,20 @@
 
     - name: Create symlinks
       ansible.builtin.file:
-        src: /usr/local/bin/k3s
-        dest: /usr/local/bin/{{ item }}
+        src: '{{ k3s_vars.directory.bin }}/k3s'
+        dest: '{{ k3s_vars.directory.bin }}/{{ item }}'
         state: link
       loop:
         - crictl
         - ctr
         - kubectl
 
-    - name: Wait for drained port
+    - name: Validate service state
       ansible.builtin.wait_for:
         port: '{{ k3s_vars.server.api.port }}'
         state: drained
+        timeout: 30
+      any_errors_fatal: true
 
     - name: Set Token
       when: k3s_token | length == 0
@@ -136,10 +140,11 @@
 
     - name: Set kubeconfig host
       ansible.builtin.command:
-        cmd: /usr/local/bin/kubectl config set-cluster default
+        cmd: kubectl config set-cluster default
               --kubeconfig={{ user_info.home }}/.kube/config
               --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else ansible_host }}:{{ k3s_vars.server.api.port }}
-      changed_when: true
+      changed_when: result.rc == 0
+      register: result
 
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:

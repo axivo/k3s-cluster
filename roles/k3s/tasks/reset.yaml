@@ -6,7 +6,9 @@
 - name: Role Reset
   block:
     - name: Remove Loadbalancer
-      when: ansible_host in k3s_loadbalancer_hosts
+      when:
+        - ansible_host in k3s_loadbalancer_hosts
+        - prompt_remove_packages in ['y', 'Y']
       block:
         - name: Remove loadbalancer packages
           ansible.builtin.apt:
@@ -18,9 +20,7 @@
           loop:
             - haproxy
             - keepalived
-          when:
-            - item in ansible_facts.packages
-            - prompt_remove_packages in ['y', 'Y']
+          when: item in ansible_facts.packages
 
         - name: Remove loadbalancer configuration files
           ansible.builtin.file:
@@ -58,12 +58,12 @@
         fi
       args:
         executable: /bin/bash
-      changed_when: script.rc == 0
+      changed_when: result.rc == 0
       loop:
         - /var/lib/cni
         - /var/lib/kubelet
         - /var/lib/rancher
-      register: script
+      register: result
 
     - name: Remove variable from environment file
       ansible.builtin.lineinfile:
@@ -84,13 +84,13 @@
         state: absent
       loop:
         - '{{ user_info.home }}/.kube'
+        - '{{ k3s_vars.directory.bin }}/crictl'
+        - '{{ k3s_vars.directory.bin }}/ctr'
+        - '{{ k3s_vars.directory.bin }}/k3s'
+        - '{{ k3s_vars.directory.bin }}/kubectl'
         - '{{ k3s_vars.directory.config }}'
         - /etc/systemd/system/{{ k3s_service_name }}.service
         - /etc/systemd/system/{{ k3s_service_name }}.service.env
-        - /usr/local/bin/crictl
-        - /usr/local/bin/ctr
-        - /usr/local/bin/k3s
-        - /usr/local/bin/kubectl
 
     - name: Reset systemd
       ansible.builtin.command:

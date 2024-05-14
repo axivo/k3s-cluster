@@ -18,5 +18,5 @@
         name: '{{ item }}'
         state: absent
       loop:
-        - /usr/local/bin/cilium
-        - /usr/local/bin/hubble
+        - '{{ k3s_vars.directory.bin }}/cilium'
+        - '{{ k3s_vars.directory.bin }}/hubble'
