@@ -30,7 +30,7 @@ Install the `sshpass` binary:
 
 ```shell
 brew tap esolitos/ipa
-brew install esolitos/ipa/sshpass
+brew install sshpass
 ```
 
 ### kubernetes.core
