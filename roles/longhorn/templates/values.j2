@@ -3,7 +3,7 @@ defaultSettings:
   defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replica_count }}
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
 {% if k3s_vars.server.controlplane.tainted %}
-  taintToleration: {{ k3s_node_default_taint | to_nice_yaml | join }}
+  taintToleration: {{ k3s_node_default_taint | join | trim }}
 longhornDriver:
   tolerations:
     {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
