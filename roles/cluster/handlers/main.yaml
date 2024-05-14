@@ -1,8 +1,6 @@
 ---
 - name: Reboot
   ansible.builtin.reboot:
-    reboot_timeout: 60
-  register: reboot
 
 - name: Restart loadbalancer services
   ansible.builtin.systemd_service:
@@ -19,11 +17,9 @@
     name: postfix.service
     state: reloaded
     enabled: true
-  when: reboot is not change
 
 - name: Restart unattended upgrades service
   ansible.builtin.systemd_service:
     name: unattended-upgrades.service
     state: restarted
     enabled: true
-  when: reboot is not change
