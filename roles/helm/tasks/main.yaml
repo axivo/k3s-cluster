@@ -92,3 +92,22 @@
           delay: 1
           retries: 3
           until: result is not failed
+
+    - name: Remove Helm Plugin
+      when: not helm_vars.release.plugin.enabled
+      block:
+        - name: Remove plugin
+          kubernetes.core.helm_plugin:
+            plugin_name: '{{ helm_vars.release.plugin.name }}'
+            state: absent
+          when:
+            - "'helm' in ansible_facts.packages"
+            - "'python3-kubernetes' in ansible_facts.packages"
+
+        - name: Remove plugin package
+          ansible.builtin.apt:
+            name: python3-jsonpatch
+            state: absent
+            autoremove: true
+            clean: true
+            purge: true
