@@ -7,7 +7,7 @@
 Install the dependencies:
 
 ```shell
-brew install hugo git golang
+brew install hugo golang
 ```
 
 Launch the server:
@@ -21,7 +21,7 @@ hugo server --buildDrafts --disableFastRender
 Run the following commands:
 
 ```shell
-hugo mod get -u
+hugo mod get -u github.com/imfing/hextra
 hugo mod tidy
 ```
 
