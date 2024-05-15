@@ -71,6 +71,18 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "devtron-labs/charts",
+      "extractVersionTemplate": "^devtron-operator-(?<version>.+)$",
+      "fileMatch": [
+        "roles/devtron/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/gateway-api",
       "fileMatch": [
         "roles/cilium/defaults/main.yaml"

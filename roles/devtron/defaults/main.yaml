@@ -1,0 +1,13 @@
+---
+devtron_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: charts
+        org: devtron-labs
+        version: v0.22.69
+      repository:
+        name: devtron-operator
+        org: devtron
+        url: https://helm.devtron.ai
+    namespace: devtroncd

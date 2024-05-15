@@ -1,0 +1,20 @@
+---
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    devtron_project_chart: '{{ devtron_vars.kubernetes.helm.repository.org }}/{{ devtron_vars.kubernetes.helm.repository.name }}'
+  run_once: true
+
+- name: Set project release fact
+  ansible.builtin.set_fact:
+    devtron_project_release: '{{ devtron_vars.kubernetes.helm.chart.org }}/{{ devtron_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set project url fact
+  ansible.builtin.set_fact:
+    devtron_project_url: https://github.com/{{ devtron_project_release }}/releases/tag
+  run_once: true
+
+- name: Set project tag url fact
+  ansible.builtin.set_fact:
+    devtron_project_url_tag: '{{ devtron_project_url }}/{{ devtron_vars.kubernetes.helm.repository.name }}-{{ devtron_vars.kubernetes.helm.chart.version[1:] }}'
+  run_once: true

@@ -1,0 +1,14 @@
+---
+- name: Import facts
+  ansible.builtin.import_role:
+    name: k3s
+    tasks_from: facts
+
+- name: Role Reset
+  when: ansible_host in k3s_server_hosts
+  block:
+    - name: Remove repository
+      kubernetes.core.helm_repository:
+        name: '{{ devtron_vars.kubernetes.helm.repository.org }}'
+        repo_state: absent
+      when: "'helm' in ansible_facts.packages"

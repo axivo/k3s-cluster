@@ -27,11 +27,11 @@
         name: '{{ cluster.role }}'
         tasks_from: '{{ cluster.tasks }}'
       loop:
-        - {role: argocd, tasks: main}
         - {role: certmanager, tasks: main}
         - {role: cilium, tasks: main}
         - {role: cilium, tasks: postinstall}
         - {role: cloudflare, tasks: main}
+        - {role: devtron, tasks: main}
         - {role: helm, tasks: main}
         - {role: k3s, tasks: upgrade}
         - {role: kured, tasks: main}
