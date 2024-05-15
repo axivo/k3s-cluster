@@ -1,17 +1,17 @@
 ---
 helm_vars:
-  release:
-    helm:
-      distro: debian
-      key: helm-archive-keyring.gpg
+  plugins:
+    - name: helm-diff
+      enabled: true
+      packages:
+        - python3-jsonpatch
       repository:
-        channel: stable
-        key: signing.asc
-        url: https://baltocdn.com/helm
-    plugin:
-      enabled: false
-      name: diff
-      repository:
-        name: helm-diff
-        org: databus23
+        url: https://github.com/databus23/helm-diff
       version: v3.9.6
+  release:
+    distro: debian
+    key: helm-archive-keyring.gpg
+    repository:
+      channel: stable
+      key: signing.asc
+      url: https://baltocdn.com/helm

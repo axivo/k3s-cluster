@@ -1,20 +1,28 @@
 ---
-- name: Set plugin release fact
+- name: Set plugin packages fact
   ansible.builtin.set_fact:
-    helm_plugin_release: '{{ helm_vars.release.plugin.repository.org }}/{{ helm_vars.release.plugin.repository.name }}'
+    helm_plugin_packages: '{{ item.packages }}'
+  loop: '{{ helm_vars.plugins }}'
   run_once: true
+  when:
+    - item.enabled
+    - item.packages is defined
 
-- name: Set plugin release url fact
+- name: Set plugin packages disabled fact
   ansible.builtin.set_fact:
-    helm_plugin_release_url: https://github.com/{{ helm_plugin_release }}
+    helm_plugin_packages_disabled: '{{ item.packages }}'
+  loop: '{{ helm_vars.plugins }}'
   run_once: true
+  when:
+    - not item.enabled
+    - item.packages is defined
 
 - name: Set release channel fact
   ansible.builtin.set_fact:
-    helm_release_channel: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.channel }}'
+    helm_release_channel: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.channel }}'
   run_once: true
 
 - name: Set release key fact
   ansible.builtin.set_fact:
-    helm_release_key: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.key }}'
+    helm_release_key: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
   run_once: true

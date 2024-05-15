@@ -11,12 +11,12 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    argocd_project_url: https://github.com/{{ argocd_project_release }}/releases
+    argocd_project_url: https://github.com/{{ argocd_project_release }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    argocd_project_url_tag: '{{ argocd_project_url }}/tag/{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
+    argocd_project_url_tag: '{{ argocd_project_url }}/{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
   run_once: true
 
 - name: Set release fact

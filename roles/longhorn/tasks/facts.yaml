@@ -6,10 +6,10 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    longhorn_project_url: https://github.com/{{ longhorn_project_chart }}/releases
+    longhorn_project_url: https://github.com/{{ longhorn_project_chart }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    longhorn_project_url_tag: '{{ longhorn_project_url }}/tag/{{ longhorn_vars.kubernetes.helm.chart.version }}'
+    longhorn_project_url_tag: '{{ longhorn_project_url }}/{{ longhorn_vars.kubernetes.helm.chart.version }}'
   run_once: true

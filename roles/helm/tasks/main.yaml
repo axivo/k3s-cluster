@@ -8,6 +8,10 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
+- name: Role Maintenaance
+  ansible.builtin.import_tasks:
+    file: maintenance.yaml
+
 - name: Role Provisioning
   when: ansible_host in k3s_server_hosts
   block:
@@ -22,7 +26,7 @@
 
     - name: Get file status
       ansible.builtin.stat:
-        path: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
+        path: /usr/share/keyrings/{{ helm_vars.release.key }}
       changed_when: not gpg_key.stat.exists
       register: gpg_key
 
@@ -32,7 +36,7 @@
         - name: Download key
           ansible.builtin.get_url:
             url: '{{ helm_release_key }}'
-            dest: /tmp/{{ helm_vars.release.helm.repository.key }}
+            dest: /tmp/{{ helm_vars.release.repository.key }}
             owner: root
             group: root
             mode: '0644'
@@ -43,13 +47,13 @@
 
         - name: Dearmor key
           ansible.builtin.command:
-            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.helm.key }} /tmp/{{ helm_vars.release.helm.repository.key }}
+            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.key }} /tmp/{{ helm_vars.release.repository.key }}
           changed_when: dearmor_key.rc == 0
           register: dearmor_key
 
         - name: Delete key
           ansible.builtin.file:
-            path: /tmp/{{ helm_vars.release.helm.repository.key }}
+            path: /tmp/{{ helm_vars.release.repository.key }}
             state: absent
 
         - name: Get architecture
@@ -62,10 +66,10 @@
           ansible.builtin.deb822_repository:
             architectures: '{{ architecture.stdout }}'
             components: main
-            name: helm-{{ helm_vars.release.helm.repository.channel }}
-            signed_by: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
+            name: helm-{{ helm_vars.release.repository.channel }}
+            signed_by: /usr/share/keyrings/{{ helm_vars.release.key }}
             suites: all
-            uris: '{{ helm_release_channel }}/{{ helm_vars.release.helm.distro }}/'
+            uris: '{{ helm_release_channel }}/{{ helm_vars.release.distro }}/'
             enabled: true
             trusted: true
 
@@ -75,42 +79,46 @@
             autoremove: true
             update_cache: true
 
-    - name: Install Helm Plugin
-      when: helm_vars.release.plugin.enabled
+    - name: Install Helm Plugins
       block:
-        - name: Install plugin package
+        - name: Install plugin packages
           ansible.builtin.apt:
-            name: python3-jsonpatch
+            name: '{{ item }}'
             autoremove: true
             update_cache: true
+          loop: '{{ helm_plugin_packages | default([]) }}'
 
-        - name: Install plugin
+        - name: Install plugins
           kubernetes.core.helm_plugin:
-            plugin_path: '{{ helm_plugin_release_url }}'
-            plugin_version: '{{ helm_vars.release.plugin.version }}'
+            plugin_path: '{{ item.repository.url }}'
+            plugin_version: '{{ item.version }}'
+          loop: '{{ helm_vars.plugins }}'
           register: result
           delay: 1
           retries: 3
           until: result is not failed
+          when: item.enabled
 
-    - name: Remove Helm Plugin
-      when: not helm_vars.release.plugin.enabled
+    - name: Remove Helm Plugins
       block:
         - name: Get packages information
           ansible.builtin.package_facts:
 
-        - name: Remove plugin
+        - name: Remove plugins
           kubernetes.core.helm_plugin:
-            plugin_name: '{{ helm_vars.release.plugin.name }}'
+            plugin_name: '{{ item.name }}'
             state: absent
+          loop: '{{ helm_vars.plugins }}'
           when:
+            - not item.enabled
             - "'helm' in ansible_facts.packages"
             - "'python3-kubernetes' in ansible_facts.packages"
 
-        - name: Remove plugin package
+        - name: Remove plugin packages
           ansible.builtin.apt:
-            name: python3-jsonpatch
+            name: '{{ item }}'
             state: absent
             autoremove: true
             clean: true
             purge: true
+          loop: '{{ helm_plugin_packages_disabled | default([]) }}'
