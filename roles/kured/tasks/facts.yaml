@@ -16,5 +16,5 @@
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    kured_project_url_tag: '{{ kured_project_url }}/tag/{{ kured_vars.kubernetes.helm.chart.name }}-{{ kured_vars.kubernetes.helm.chart.version }}'
+    kured_project_url_tag: '{{ kured_project_url }}/tag/{{ kured_vars.kubernetes.helm.chart.name }}-{{ kured_vars.kubernetes.helm.chart.version[1:] }}'
   run_once: true
