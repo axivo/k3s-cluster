@@ -56,12 +56,12 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    cilium_project_url: https://github.com/{{ cilium_project_chart }}/releases
+    cilium_project_url: https://github.com/{{ cilium_project_chart }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    cilium_project_url_tag: '{{ cilium_project_url }}/tag/{{ cilium_vars.kubernetes.helm.chart.version }}'
+    cilium_project_url_tag: '{{ cilium_project_url }}/{{ cilium_vars.kubernetes.helm.chart.version }}'
   run_once: true
 
 - name: Set variables fact
