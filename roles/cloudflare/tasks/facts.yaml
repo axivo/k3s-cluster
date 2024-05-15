@@ -26,12 +26,12 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    cloudflare_project_url: https://github.com/{{ cloudflare_project_chart }}/releases
+    cloudflare_project_url: https://github.com/{{ cloudflare_project_chart }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    cloudflare_project_url_tag: '{{ cloudflare_project_url }}/tag/{{ cloudflare_project_tag }}'
+    cloudflare_project_url_tag: '{{ cloudflare_project_url }}/{{ cloudflare_project_tag }}'
   run_once: true
 
 - name: Set tls prefix fact

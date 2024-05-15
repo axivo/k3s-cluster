@@ -16,12 +16,12 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    prometheus_project_url: https://github.com/{{ prometheus_project_release }}/releases
+    prometheus_project_url: https://github.com/{{ prometheus_project_release }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    prometheus_project_url_tag: '{{ prometheus_project_url }}/tag/{{ prometheus_project_tag }}'
+    prometheus_project_url_tag: '{{ prometheus_project_url }}/{{ prometheus_project_tag }}'
   run_once: true
 
 - name: Set variables fact

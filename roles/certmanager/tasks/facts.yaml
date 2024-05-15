@@ -11,12 +11,12 @@
 
 - name: Set project url fact
   ansible.builtin.set_fact:
-    certmanager_project_url: https://github.com/{{ certmanager_project_release }}/releases
+    certmanager_project_url: https://github.com/{{ certmanager_project_release }}/releases/tag
   run_once: true
 
 - name: Set project tag url fact
   ansible.builtin.set_fact:
-    certmanager_project_url_tag: '{{ certmanager_project_url }}/tag/{{ certmanager_vars.kubernetes.helm.chart.version }}'
+    certmanager_project_url_tag: '{{ certmanager_project_url }}/{{ certmanager_vars.kubernetes.helm.chart.version }}'
   run_once: true
 
 - name: Set variables fact
