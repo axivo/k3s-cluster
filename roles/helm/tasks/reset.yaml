@@ -7,29 +7,28 @@
 - name: Role Reset
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Remove Helm Plugin
-      when: helm_vars.release.plugin.enabled
-      block:
-        - name: Remove plugin
-          kubernetes.core.helm_plugin:
-            plugin_name: '{{ helm_vars.release.plugin.name }}'
-            state: absent
-          when:
-            - "'helm' in ansible_facts.packages"
-            - "'python3-kubernetes' in ansible_facts.packages"
+    - name: Remove plugin
+      kubernetes.core.helm_plugin:
+        plugin_name: '{{ item.name }}'
+        state: absent
+      loop: '{{ helm_vars.plugins }}'
+      when:
+        - "'helm' in ansible_facts.packages"
+        - "'python3-kubernetes' in ansible_facts.packages"
 
-        - name: Remove plugin package
+    - name: Remove Packages
+      when: prompt_remove_packages in ['y', 'Y']
+      block:
+        - name: Remove plugin packages
           ansible.builtin.apt:
-            name: python3-jsonpatch
+            name: '{{ item.packages }}'
             state: absent
             autoremove: true
             clean: true
             purge: true
-          when: prompt_remove_packages in ['y', 'Y']
+          loop: '{{ helm_vars.plugins }}'
+          when: item.packages is defined
 
-    - name: Remove Helm Packages
-      when: prompt_remove_packages in ['y', 'Y']
-      block:
         - name: Remove packages
           ansible.builtin.apt:
             name: '{{ item }}'
@@ -47,5 +46,9 @@
             name: '{{ item }}'
             state: absent
           loop:
-            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.helm.repository.channel }}.sources
-            - /usr/share/keyrings/{{ helm_vars.release.helm.key }}
+            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
+            - /usr/share/keyrings/{{ helm_vars.release.key }}
+
+- name: Role Maintenaance
+  ansible.builtin.import_tasks:
+    file: maintenance.yaml

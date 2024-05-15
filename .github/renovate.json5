@@ -110,7 +110,7 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+plugin:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "plugins:[\\s\\S]+name:\\s+helm-diff[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ]
     },
     {

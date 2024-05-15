@@ -1,0 +1,14 @@
+---
+- name: Get user info
+  ansible.builtin.user:
+    name: root
+  register: user_info
+
+- name: Remove generic files
+  ansible.builtin.file:
+    name: '{{ user_info.home }}/.{{ item }}'
+    state: absent
+  loop:
+    - cache
+    - config
+    - local
