@@ -75,7 +75,7 @@
             autoremove: true
             update_cache: true
 
-    - name: Helm Plugin
+    - name: Install Helm Plugin
       when: helm_vars.release.plugin.enabled
       block:
         - name: Install plugin package
@@ -96,6 +96,9 @@
     - name: Remove Helm Plugin
       when: not helm_vars.release.plugin.enabled
       block:
+        - name: Get packages information
+          ansible.builtin.package_facts:
+
         - name: Remove plugin
           kubernetes.core.helm_plugin:
             plugin_name: '{{ helm_vars.release.plugin.name }}'
