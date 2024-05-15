@@ -21,7 +21,7 @@
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -134,7 +134,7 @@
         "roles/kured/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "kubereboot/charts"
     },

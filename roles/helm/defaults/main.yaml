@@ -9,6 +9,7 @@ helm_vars:
         key: signing.asc
         url: https://baltocdn.com/helm
     plugin:
+      enabled: false
       name: diff
       repository:
         name: helm-diff

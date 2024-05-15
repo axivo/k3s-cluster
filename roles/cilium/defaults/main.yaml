@@ -59,7 +59,11 @@ cilium_vars:
         cluster_pool: 10.42.0.0/16
     loadbalancer:
       algorithm: disabled
-      ip_pool: 192.168.4.16/28
+      ip_pool:
+        cidr: 192.168.4.16/28
+        name: default-pool
+      l2_announcement_policy:
+        name: default-l2-announcement-policy
       table_size: 16381
     namespace: kube-system
     operator:
@@ -89,4 +93,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v0.13.3
+      version: v0.13.4

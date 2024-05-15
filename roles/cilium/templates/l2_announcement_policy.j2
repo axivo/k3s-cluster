@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2alpha1
 kind: CiliumL2AnnouncementPolicy
 metadata:
-  name: default-l2-announcement-policy
+  name: {{ cilium_vars.kubernetes.loadbalancer.l2_announcement_policy.name }}
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   externalIPs: true

@@ -69,16 +69,20 @@
             enabled: true
             trusted: true
 
-    - name: Helm Plugin
-      block:
-        - name: Install plugin packages
+        - name: Install helm package
           ansible.builtin.apt:
-            name: '{{ item }}'
+            name: helm
             autoremove: true
             update_cache: true
-          loop:
-            - helm
-            - python3-jsonpatch
+
+    - name: Install Helm Plugin
+      when: helm_vars.release.plugin.enabled
+      block:
+        - name: Install plugin package
+          ansible.builtin.apt:
+            name: python3-jsonpatch
+            autoremove: true
+            update_cache: true
 
         - name: Install plugin
           kubernetes.core.helm_plugin:
@@ -88,3 +92,25 @@
           delay: 1
           retries: 3
           until: result is not failed
+
+    - name: Remove Helm Plugin
+      when: not helm_vars.release.plugin.enabled
+      block:
+        - name: Get packages information
+          ansible.builtin.package_facts:
+
+        - name: Remove plugin
+          kubernetes.core.helm_plugin:
+            plugin_name: '{{ helm_vars.release.plugin.name }}'
+            state: absent
+          when:
+            - "'helm' in ansible_facts.packages"
+            - "'python3-kubernetes' in ansible_facts.packages"
+
+        - name: Remove plugin package
+          ansible.builtin.apt:
+            name: python3-jsonpatch
+            state: absent
+            autoremove: true
+            clean: true
+            purge: true
