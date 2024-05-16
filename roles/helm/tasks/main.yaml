@@ -8,10 +8,6 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Role Maintenaance
-  ansible.builtin.import_tasks:
-    file: maintenance.yaml
-
 - name: Role Provisioning
   when: ansible_host in k3s_server_hosts
   block:
@@ -23,6 +19,21 @@
       loop:
         - apt-transport-https
         - python3-kubernetes
+
+    - name: Add variables to environment file
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: '{{ item.key }}={{ item.value }}'
+        regexp: ^{{ item.key }}
+      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars) }}"
+
+    - name: Initialize variables
+      ansible.builtin.shell: |
+        set -eo pipefail
+        source /etc/environment
+      args:
+        executable: /bin/bash
+      changed_when: true
 
     - name: Get file status
       ansible.builtin.stat:

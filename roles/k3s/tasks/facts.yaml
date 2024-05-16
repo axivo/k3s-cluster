@@ -46,8 +46,10 @@
 
 - name: Set node taints fact
   ansible.builtin.set_fact:
-    k3s_node_taints: "{{ (k3s_node_taints | default([]) | union([':'.join((item.key, item.effect))])) }}"
-  with_items: '{{ k3s_vars.tolerations }}'
+    k3s_node_taints: "{{ (k3s_node_taints | default([]) | union([':'.join((taint.key, taint.effect))])) }}"
+  loop: '{{ k3s_vars.tolerations }}'
+  loop_control:
+    loop_var: taint
   run_once: true
 
 - name: Set node agent taint fact

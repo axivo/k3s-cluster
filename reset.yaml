@@ -14,10 +14,13 @@
   tasks:
     - name: Get packages information
       ansible.builtin.package_facts:
+      tags: always
 
     - name: Reset cluster
       ansible.builtin.include_role:
-        name: '{{ cluster_item }}'
+        apply:
+          tags: '{{ role }}'
+        name: '{{ role }}'
         tasks_from: reset
       loop:
         - cluster
@@ -31,4 +34,6 @@
         - prometheus
         - helm
       loop_control:
-        loop_var: cluster_item
+        loop_var: role
+      tags: always
+      when: (role in ansible_run_tags) or (ansible_run_tags == ['all'])
