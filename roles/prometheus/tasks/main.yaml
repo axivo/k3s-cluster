@@ -39,6 +39,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ prometheus_project_chart }}'
             chart_version: '{{ prometheus_vars.kubernetes.helm.chart.version }}'
+            create_namespace: true
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ prometheus_vars.kubernetes.helm.chart.prefix }}'
             namespace: '{{ prometheus_vars.kubernetes.namespace }}'

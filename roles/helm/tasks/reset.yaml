@@ -1,16 +1,20 @@
 ---
 - name: Import facts
-  ansible.builtin.import_role:
-    name: k3s
+  ansible.builtin.include_role:
+    name: '{{ item }}'
     tasks_from: facts
+  loop:
+    - helm
+    - k3s
 
 - name: Role Reset
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Remove plugin
+    - name: Remove plugins
       kubernetes.core.helm_plugin:
-        plugin_name: '{{ helm_vars.release.plugin.name }}'
+        plugin_name: '{{ item.name }}'
         state: absent
+      loop: '{{ helm_vars.plugins }}'
       when:
         - "'helm' in ansible_facts.packages"
         - "'python3-kubernetes' in ansible_facts.packages"
@@ -18,6 +22,16 @@
     - name: Remove Packages
       when: prompt_remove_packages in ['y', 'Y']
       block:
+        - name: Remove plugin packages
+          ansible.builtin.apt:
+            name: '{{ item.packages }}'
+            state: absent
+            autoremove: true
+            clean: true
+            purge: true
+          loop: '{{ helm_vars.plugins }}'
+          when: item.packages is defined
+
         - name: Remove packages
           ansible.builtin.apt:
             name: '{{ item }}'
@@ -28,7 +42,6 @@
           loop:
             - apt-transport-https
             - helm
-            - python3-jsonpatch
             - python3-kubernetes
 
         - name: Remove configuration files
@@ -36,5 +49,14 @@
             name: '{{ item }}'
             state: absent
           loop:
-            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.helm.repository.channel }}.sources
-            - /usr/share/keyrings/{{ helm_vars.release.helm.key }}
+            - '{{ helm_vars.directory.share }}'
+            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
+            - /usr/share/keyrings/{{ helm_vars.release.key }}
+
+    - name: Remove variables from environment file
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: '{{ item.key }}={{ item.value }}'
+        regexp: ^{{ item.key }}
+        state: absent
+      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars | combine(helm_vars.environment)) }}"

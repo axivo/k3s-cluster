@@ -3,15 +3,17 @@
   ansible.builtin.import_tasks:
     file: facts.yaml
 
-- name: Validate plugin release url
+- name: Validate plugins release url
   ansible.builtin.uri:
-    url: '{{ helm_plugin_release_url }}/releases/tag/{{ helm_vars.release.plugin.version }}'
+    url: '{{ item.repository.url }}/releases/tag/{{ item.version }}'
     timeout: 5
+  loop: '{{ helm_vars.plugins }}'
   run_once: true
   register: result
   delay: 1
   retries: 3
   until: result is not failed
+  when: item.enabled
 
 - name: Validate release key url
   ansible.builtin.uri:

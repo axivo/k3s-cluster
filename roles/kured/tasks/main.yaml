@@ -33,6 +33,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ kured_project_chart }}'
             chart_version: '{{ kured_vars.kubernetes.helm.chart.version }}'
+            create_namespace: true
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ kured_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ kured_vars.kubernetes.namespace }}'
