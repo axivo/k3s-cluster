@@ -5,7 +5,7 @@ on:
       - renovate/**
 jobs:
   validation:
-    name: Validate Source Code
+    name: Validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
