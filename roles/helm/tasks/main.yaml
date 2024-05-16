@@ -25,7 +25,7 @@
         path: /etc/environment
         line: '{{ item.key }}={{ item.value }}'
         regexp: ^{{ item.key }}
-      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars) }}"
+      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars | combine(helm_vars.environment)) | sort(attribute='key') }}"
 
     - name: Initialize variables
       ansible.builtin.shell: |

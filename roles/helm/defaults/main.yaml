@@ -2,7 +2,8 @@
 helm_vars:
   directory:
     share: /usr/local/share/helm
-  namespace: default
+  environment:
+    HELM_NAMESPACE: default
   plugins:
     - name: helm-diff
       enabled: true
