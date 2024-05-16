@@ -1,0 +1,14 @@
+name: Source Code
+on:
+  pull_request:
+    branches-ignore:
+      - renovate/**
+jobs:
+  validation:
+    name: Validate Source Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Run Ansible Lint
+        uses: ansible/ansible-lint@v6
