@@ -1,5 +1,8 @@
 ---
 helm_vars:
+  directory:
+    share: /usr/local/share/helm
+  namespace: default
   plugins:
     - name: helm-diff
       enabled: true

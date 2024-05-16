@@ -1,13 +1,16 @@
 ---
 - name: Import facts
-  ansible.builtin.import_role:
-    name: k3s
+  ansible.builtin.include_role:
+    name: '{{ item }}'
     tasks_from: facts
+  loop:
+    - helm
+    - k3s
 
 - name: Role Reset
   when: ansible_host in k3s_server_hosts
   block:
-    - name: Remove plugin
+    - name: Remove plugins
       kubernetes.core.helm_plugin:
         plugin_name: '{{ item.name }}'
         state: absent
@@ -46,9 +49,14 @@
             name: '{{ item }}'
             state: absent
           loop:
+            - '{{ helm_vars.directory.share }}'
             - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
             - /usr/share/keyrings/{{ helm_vars.release.key }}
 
-- name: Role Maintenaance
-  ansible.builtin.import_tasks:
-    file: maintenance.yaml
+        - name: Remove variables from environment file
+          ansible.builtin.lineinfile:
+            path: /etc/environment
+            line: '{{ item.key }}={{ item.value }}'
+            regexp: ^{{ item.key }}
+            state: absent
+          loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars) }}"

@@ -3,41 +3,29 @@
   hosts: cluster
   become: true
   gather_facts: true
-  tags:
-    - cluster
-    - never
-  tasks:
-    - name: Upgrade distribution
-      ansible.builtin.import_role:
-        name: cluster
-        tasks_from: upgrade
-
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
-
-- name: Kubernetes Upgrade
-  hosts: cluster
-  become: true
-  gather_facts: true
   tasks:
     - name: Roles Upgrade
       ansible.builtin.include_role:
         apply:
-          tags: '{{ cluster.role }}'
-        name: '{{ cluster.role }}'
-        tasks_from: '{{ cluster.tasks }}'
+          tags: '{{ upgrade.role }}'
+        name: '{{ upgrade.role }}'
+        tasks_from: '{{ upgrade.tasks }}'
       loop:
         - {role: certmanager, tasks: main}
         - {role: cilium, tasks: main}
         - {role: cilium, tasks: postinstall}
         - {role: cloudflare, tasks: main}
+<<<<<<< HEAD
         - {role: devtron, tasks: main}
+=======
+        - {role: cluster, tasks: upgrade}
+>>>>>>> main
         - {role: helm, tasks: main}
         - {role: k3s, tasks: upgrade}
         - {role: kured, tasks: main}
         - {role: longhorn, tasks: main}
         - {role: prometheus, tasks: main}
       loop_control:
-        loop_var: cluster
+        loop_var: upgrade
       tags: always
-      when: cluster.role in ansible_run_tags
+      when: upgrade.role in ansible_run_tags
