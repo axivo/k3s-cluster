@@ -5,7 +5,6 @@
       HELM_CACHE_HOME: /tmp/helm
       HELM_CONFIG_HOME: '{{ helm_vars.directory.share }}/config'
       HELM_DATA_HOME: '{{ helm_vars.directory.share }}'
-      HELM_NAMESPACE: '{{ helm_vars.namespace }}'
       HELM_PLUGINS: '{{ helm_vars.directory.share }}/plugins'
       HELM_REGISTRY_CONFIG: '{{ helm_vars.directory.share }}/config/registry/config.json'
       HELM_REPOSITORY_CACHE: /tmp/helm/repository
@@ -14,25 +13,25 @@
 
 - name: Set plugin packages fact
   ansible.builtin.set_fact:
-    helm_plugin_packages: '{{ alpha.packages }}'
+    helm_plugin_packages: '{{ plugin.packages }}'
   loop: '{{ helm_vars.plugins }}'
   loop_control:
-    loop_var: alpha
+    loop_var: plugin
   run_once: true
   when:
-    - alpha.enabled
-    - alpha.packages is defined
+    - plugin.enabled
+    - plugin.packages is defined
 
 - name: Set plugin packages disabled fact
   ansible.builtin.set_fact:
-    helm_plugin_packages_disabled: '{{ beta.packages }}'
+    helm_plugin_packages_disabled: '{{ plugin.packages }}'
   loop: '{{ helm_vars.plugins }}'
   loop_control:
-    loop_var: beta
+    loop_var: plugin
   run_once: true
   when:
-    - not beta.enabled
-    - beta.packages is defined
+    - not plugin.enabled
+    - plugin.packages is defined
 
 - name: Set release channel fact
   ansible.builtin.set_fact:

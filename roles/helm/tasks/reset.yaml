@@ -53,10 +53,10 @@
             - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
             - /usr/share/keyrings/{{ helm_vars.release.key }}
 
-        - name: Remove variables from environment file
-          ansible.builtin.lineinfile:
-            path: /etc/environment
-            line: '{{ item.key }}={{ item.value }}'
-            regexp: ^{{ item.key }}
-            state: absent
-          loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars) }}"
+    - name: Remove variables from environment file
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: '{{ item.key }}={{ item.value }}'
+        regexp: ^{{ item.key }}
+        state: absent
+      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars | combine(helm_vars.environment)) }}"
