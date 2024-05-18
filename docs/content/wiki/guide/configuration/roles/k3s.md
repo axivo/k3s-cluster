@@ -15,30 +15,6 @@ See the related role settings listed below, defined into [`main.yaml`](https://{
 
 {{% steps %}}
 
-### `k3s_vars.agent`
-
-- Default value: `null`
-
-See the related child settings, listed below.
-
-{{% steps nested="true" %}}
-
-#### `agent.service`
-
-- Default value: `null`
-
-{{% steps %}}
-
-##### `service.args`
-
-- Default value: `string`
-
-Sets any additional `k3s-agent` service arguments.
-
-{{% /steps %}}
-
-{{% /steps %}}
-
 ### `k3s_vars.directory`
 
 - Default value: `null`
@@ -46,6 +22,10 @@ Sets any additional `k3s-agent` service arguments.
 See the related child settings, listed below.
 
 {{% steps nested="true" %}}
+
+#### `directory.bin`
+
+- Default value: `string`, `/usr/local/bin`
 
 #### `directory.config`
 
@@ -83,79 +63,35 @@ See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
-#### `release.k3s`
-
-- Default value: `null`
-
-{{% steps %}}
-
-##### `k3s.checksum`
+#### `release.checksum`
 
 - Default value: `string`, `sha256sum-arm64.txt`
 
-##### `k3s.file`
+#### `release.file`
 
 - Default value: `string`, `k3s-arm64`
 
-##### `k3s.repository`
+#### `release.repository`
 
 - Default value: `null`
 
 {{% steps %}}
 
-###### `repository.name`
+##### `repository.name`
 
 - Default value: `string`, `k3s`
 
-###### `repository.org`
+##### `repository.org`
 
 - Default value: `string`, `k3s-io`
 
 {{% /steps %}}
 
-##### `k3s.version`
+#### `release.version`
 
 - Default value: `string`
 
 Visit [`k3s-io/k3s`](https://github.com/k3s-io/k3s/releases), for latest release version.
-
-{{% /steps %}}
-
-#### `k3s.rancher`
-
-- Default value: `null`
-
-{{% steps %}}
-
-##### `rancher.controller`
-
-- Default value: `null`
-
-{{% steps %}}
-
-###### `controller.version`
-
-- Default value: `string`
-
-Visit [`rancher/upgrade-system-controller`](https://github.com/rancher/upgrade-system-controller/releases), for latest release version.
-
-{{% /steps %}}
-
-##### `rancher.kubectl`
-
-- Default value: `null`
-
-{{% steps %}}
-
-###### `k3s.rancher.kubectl.version`
-
-- Default value: `string`
-
-Visit [`rancher/kubectl`](https://hub.docker.com/r/rancher/kubectl/tags), for latest release version.
-
-{{% /steps %}}
-
-{{% /steps %}}
 
 {{% /steps %}}
 
@@ -251,23 +187,13 @@ Port for `apiserver` client load-balancer.
 
 {{% /steps %}}
 
+{{% /steps %}}
+
 {{% steps nested="true" %}}
 
-#### `server.service`
+### `k3s_vars.tolerations`
 
-- Default value: `null`
-
-{{% steps %}}
-
-##### `service.args`
-
-- Default value: `string`
-
-Sets any additional `k3s` service arguments.
-
-{{% /steps %}}
-
-{{% /steps %}}
+- Default value: `list`
 
 {{% /steps %}}
 

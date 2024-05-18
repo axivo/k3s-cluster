@@ -8,7 +8,7 @@ layout: hextra-home
   imageLink="https://github.com/axivo/k3s-cluster"
   imageTitle="Kubernetes Services"
 >}}
-{{< hextra/hero-badge link="https://github.com/axivo/k3s-cluster">}}
+{{< hextra/hero-badge link="https://github.com/axivo/k3s-cluster" >}}
   <div class="hx-w-2 hx-h-2 hx-rounded-full hx-bg-primary-400"></div>
   <span>Contribute</span>
   {{< icon name="arrow-circle-right" attributes="height=14" >}}
