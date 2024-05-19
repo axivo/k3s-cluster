@@ -18,4 +18,6 @@ Dive right into the following sections:
   {{< card icon="book-open" link="network" title="Network" subtitle="Network infrastructure related tutorials." >}}
   {{< card icon="book-open" link="cilium" title="Cilium" subtitle="Cilium related tutorials." >}}
   {{< card icon="book-open" link="cloudflare" title="Cloudflare" subtitle="Cloudflare related tutorials." >}}
+  {{< card icon="book-open" link="kured" title="Kured" subtitle="Kured related tutorials." >}}
+  {{< card icon="book-open" link="renovate" title="Renovate" subtitle="Renovate related tutorials." >}}
 {{< /cards >}}

@@ -1,8 +1,13 @@
 ---
 title: Cloudflare
 prev: /tutorials/handbook
+next: /tutorials/handbook/kured
 ---
 
-Cloudflare tutorial.
+Cloudflare tutorials.
 
 <!--more-->
+
+## API Token
+
+API token tutorial.

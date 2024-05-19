@@ -15,6 +15,32 @@ See the related role settings listed below, defined into [`main.yaml`](https://{
 
 {{% steps %}}
 
+### `helm_vars.directory`
+
+- Default value: `null`
+
+See the related child settings, listed below.
+
+{{% steps nested="true" %}}
+
+#### `directory.share`
+
+- Default value: `string`, `/usr/local/share/helm`
+
+{{% /steps %}}
+
+### `helm_vars.environment`
+
+- Default value: `dictionary`
+
+End-user can customize any variables listed into `helm env` output.
+
+### `helm_vars.plugins`
+
+- Default value: `list`
+
+End-user can customize any plugins to be installed.
+
 ### `helm_vars.release`
 
 - Default value: `null`
@@ -23,73 +49,31 @@ See the related child settings, listed below.
 
 {{% steps nested="true" %}}
 
-#### `release.helm`
-
-- Default value: `null`
-
-{{% steps %}}
-
-##### `helm.distro`
+#### `release.distro`
 
 - Default value: `string`, `debian`
 
-##### `helm.key`
+#### `release.key`
 
 - Default value: `string`, `helm-archive-keyring.gpg`
 
-##### `helm.repository`
+#### `release.repository`
 
 - Default value: `null`
 
 {{% steps %}}
 
-###### `repository.channel`
+##### `repository.channel`
 
 - Default value: `string`, `stable`
 
-###### `repository.key`
+##### `repository.key`
 
 - Default value: `string`, `signing.asc`
 
-###### `repository.url`
+##### `repository.url`
 
 - Default value: `string`, `https://baltocdn.com/helm`
-
-{{% /steps %}}
-
-{{% /steps %}}
-
-#### `release.plugin`
-
-- Default value: `null`
-
-{{% steps %}}
-
-##### `plugin.name`
-
-- Default value: `string`, `diff`
-
-##### `plugin.repository`
-
-- Default value: `null`
-
-{{% steps %}}
-
-###### `repository.name`
-
-- Default value: `string`, `helm-diff`
-
-###### `repository.org`
-
-- Default value: `string`, `databus23`
-
-{{% /steps %}}
-
-##### `plugin.version`
-
-- Default value: `string`
-
-Visit [`databus23/helm-diff`](https://github.com/databus23/helm-diff/releases), for latest release version.
 
 {{% /steps %}}
 

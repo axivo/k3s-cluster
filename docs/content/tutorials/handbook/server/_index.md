@@ -5,13 +5,13 @@ next: /tutorials/handbook/network
 weight: 2
 ---
 
-Each cluster node must have Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS installed, which is a requirement for [Cilium](https://cilium.io). The `apt` package dependencies changed, compared to previous `{{< param variables.os.previous_version >}}` release, therefore, `{{< param variables.os.version >}}+` release is enforced as minimal requirement.
+This repository uses Raspberry Pi's as bare-metal hardware, therefore is recommended to install the latest Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS with Raspberry Pi Imager.
 
 <!--more-->
 
 ## OS Installation
 
-This repository uses Raspberry Pi's as bare-metal hardware, therefore is recommended to install the latest Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS with Raspberry Pi Imager.
+Each cluster node uses Ubuntu Server LTS `{{< param variables.os.version >}}+` (64-bits) OS installed, which is a requirement for [Cilium](https://cilium.io). The `apt` package dependencies changed, compared to previous `{{< param variables.os.previous_version >}}` release, therefore, `{{< param variables.os.version >}}+` release is enforced as minimal requirement.
 
 {{% steps %}}
 
@@ -20,7 +20,7 @@ This repository uses Raspberry Pi's as bare-metal hardware, therefore is recomme
 Run the following command to install the Raspberry Pi Imager software:
 
 ```shell
-brew install --cask raspberry-pi-imager
+brew install raspberry-pi-imager
 ```
 
 ### OS General Settings

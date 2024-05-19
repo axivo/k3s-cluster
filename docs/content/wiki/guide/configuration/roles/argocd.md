@@ -534,7 +534,7 @@ Encrypt the variable with [`ansible-vault`](/k3s-cluster/tutorials/handbook/ansi
 
 - Default value: `null`
 
-Read the [Gateway API](/k3s-cluster/tutorials/handbook/cilium/gateway) tutorial, for more details.
+Read the [Gateway API](/k3s-cluster/tutorials/handbook/cilium/#gateway-api) tutorial, for more details.
 
 {{% steps %}}
 
@@ -710,7 +710,7 @@ Kubernetes `Gateway` template, see [`config.j2`](https://{{< param variables.rep
 
 ### HTTP Route
 
-See the related templates, listed below.
+{{% steps nested="true" %}}
 
 #### Insecure Route
 
@@ -720,13 +720,15 @@ Kubernetes `HTTPRoute` template, see [`http_route.j2`](https://{{< param variabl
 
 Kubernetes `HTTPRoute` template, see [`https_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/https_route.j2) for details.
 
+{{% /steps %}}
+
 ### Load Balancer
 
 Kubernetes `Service` template, see [`loadbalancer.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/loadbalancer.j2) for details.
 
 ### User
 
-See the related templates, listed below.
+{{% steps nested="true" %}}
 
 #### Name
 
@@ -735,5 +737,7 @@ Kubernetes `ConfigMap` template, see [`username.j2`](https://{{< param variables
 #### Password
 
 Kubernetes `Secret` template, see [`password.j2`](https://{{< param variables.repository >}}/blob/main/roles/argocd/templates/password.j2) for details.
+
+{{% /steps %}}
 
 {{% /steps %}}

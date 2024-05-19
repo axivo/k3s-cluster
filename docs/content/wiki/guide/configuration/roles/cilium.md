@@ -212,7 +212,7 @@ Visit [`cilium/cilium`](https://github.com/cilium/cilium/releases), for latest r
 
 - Default value: `null`
 
-Read the [Gateway API](/k3s-cluster/tutorials/handbook/cilium/gateway) tutorial, for more details.
+Read the [Gateway API](/k3s-cluster/tutorials/handbook/cilium/#gateway-api) tutorial, for more details.
 
 {{% steps %}}
 
@@ -616,7 +616,7 @@ Kubernetes `Gateway` template, see [`gateway.j2`](https://{{< param variables.re
 
 ### HTTP Route
 
-See the related templates, listed below.
+{{% steps nested="true" %}}
 
 #### Insecure Route
 
@@ -625,6 +625,8 @@ Kubernetes `HTTPRoute` template, see [`http_route.j2`](https://{{< param variabl
 #### Secure Route
 
 Kubernetes `HTTPRoute` template, see [`https_route.j2`](https://{{< param variables.repository >}}/blob/main/roles/cilium/templates/https_route.j2) for details.
+
+{{% /steps %}}
 
 ### L2 Announcement Policy
 
