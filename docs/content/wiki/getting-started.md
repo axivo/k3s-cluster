@@ -8,7 +8,7 @@ All required local environment settings, installation commands and deployment in
 
 ## Network
 
-Prior starting the cluster configuration, the end-user must determine if the intended [network](/k3s-cluster/tutorials/handbook/network) configuration can support Kubernetes [external IP addresses](https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address) assigned from a pre-defined load balancer [IP pool](https://docs.cilium.io/en/stable/network/lb-ipam). Most retail or Internet provider routers do not offer this capability.
+Prior starting the cluster configuration, the end-user must determine if the intended [network](/k3s-cluster/tutorials/handbook/network) configuration can support **inbound load balancing**, with [external IP addresses](https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address) assigned from a load balancer [IP pool](https://docs.cilium.io/en/stable/network/lb-ipam). Most retail routers do not offer this capability.
 
 This guide uses the UniFi [UDM-SE](https://store.ui.com/us/en/collections/unifi-dream-machine/products/udm-se) cloud gateway for dedicated network management, combined with the UniFi [USW-Pro-24-POE](https://store.ui.com/us/en/collections/unifi-switching-pro-power-over-ethernet/products/usw-pro-24-poe) switch, powering the Raspberry Pi cluster nodes.
 

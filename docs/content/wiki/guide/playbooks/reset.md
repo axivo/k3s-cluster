@@ -24,3 +24,9 @@ Ansible Vault global password prompt:
 ```shell
 Vault password: my-Gl0bal-Passw0rd
 ```
+
+To faster re-deploy a cluster after reset, skip the removal of installed `apt` packages:
+
+```shell
+Remove installed apt packages? [Y/n] [n]:
+```
