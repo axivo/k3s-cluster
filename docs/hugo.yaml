@@ -1,4 +1,4 @@
-baseURL: https://www.axivo.com/k3s-cluster/
+baseURL: https://axivo.github.io/k3s-cluster/
 build:
   buildStats:
     disableIDs: true
@@ -38,11 +38,6 @@ menu:
         icon: github
       url: https://github.com/axivo/k3s-cluster
       weight: 4
-    - name: Home
-      params:
-        icon: home
-      url: https://www.axivo.com
-      weight: 5
   sidebar:
     - identifier: more
       name: More
