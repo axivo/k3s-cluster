@@ -14,7 +14,7 @@ weight: 1
 [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/vault.html) encrypts variables, in order to protect sensitive content such as passwords or keys, rather than leaving it visible as plaintext into configuration files.
 
 {{< callout type="info" >}}
-  Refer to Ansible [documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_using_encrypted_content.html) for usage of encrypted variables and files.
+  Refer to the Ansible [documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_using_encrypted_content.html), for usage of encrypted variables and files.
 {{< /callout >}}
 
 This repository uses a global password for all encrypted settings, allowing the end-user to securely input the global password during the playbook execution, which will implicitly decrypt all encrypted settings with Ansible Vault.
@@ -90,7 +90,7 @@ localhost | SUCCESS => {
 
 ### Playbook Usage
 
-Example of running a playbook, using the Ansible Vault global password:
+Example of playbook execution, using the Ansible Vault global password:
 
 ```shell
 ansible-playbook --ask-vault-pass provisioning.yaml

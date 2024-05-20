@@ -9,13 +9,9 @@ Networking is a central part of [Kubernetes](https://kubernetes.io/docs/concepts
 
 <!--more-->
 
-## Network Configuration
+## Configuration
 
 It is strongly recommended to set a dedicated VLAN and static IP addresses for each cluster node, in order to isolate your cluster. Clusters require to allocate non-overlapping IP addresses for Pods, Services and Nodes, from a range of available addresses.
-
-{{< callout type="info" >}}
-  See also the related Cilium network configuration tutorial.
-{{< /callout >}}
 
 {{% steps %}}
 
