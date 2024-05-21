@@ -16,19 +16,19 @@ layout: hextra-home
 
 <div class="hx-mt-6 hx-mb-6">
 {{< hextra/hero-headline >}}
-  <span class="hx-whitespace-nowrap">
-    High Availability K3s Cluster
-  </span><br class="sm:hx-block hx-hidden" />
-  Deployed with Ansible
+  <span>
+    <div class="hx-whitespace-nowrap">High Availability K3s Cluster</div>
+    Deployed with Ansible
+  </span>
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx-mb-12">
 {{< hextra/hero-subtitle >}}
-  <span class="hx-whitespace-nowrap">
+  <span>
     Documentation and tutorials to deploy, manage and monitor
-  </span><br class="sm:hx-block hx-hidden" />
-  your Kubernetes cluster and related components, in style.
+    your Kubernetes cluster and related components, in style.
+  </span>
 {{< /hextra/hero-subtitle >}}
 </div>
 
