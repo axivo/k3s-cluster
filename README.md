@@ -2,7 +2,7 @@
 
 High Availability K3s cluster, deployed with Ansible.
 
-<img src="docs/static/images/logo-services.svg" width="400" height="400" alt="K3s high-availability cluster, deployed with Ansible." />
+<img src="docs/images/logo-services.svg" width="400" height="400" alt="K3s high-availability cluster, deployed with Ansible." />
 
 ## Wiki
 
