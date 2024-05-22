@@ -84,7 +84,7 @@ params:
   description: K3s cluster deployed with Ansible
   displayUpdatedDate: true
   editURL:
-    base: https://github.com/axivo/k3s-cluster/edit/main
+    base: https://github.com/axivo/k3s-cluster/edit/main/docs/content
     enable: true
   footer:
     displayCopyright: true
