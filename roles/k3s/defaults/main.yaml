@@ -28,6 +28,8 @@ k3s_vars:
       port: 6444
     kubeconfig:
       local: true
+  service:
+    debug: false
   tolerations:
     - key: node.cilium.io/agent-not-ready
       operator: Exists

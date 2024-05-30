@@ -1,13 +1,4 @@
 {% if k3s_service_type == 'server' %}
-{% if k3s_ha_cluster %}
-advertise-address: {{ k3s_vars.server.api.host }}
-advertise-port: {{ k3s_vars.server.api.port }}
-tls-san:
-  - {{ k3s_vars.server.api.host }}
-{% else %}
-advertise-address: {{ k3s_server_default_ip }}
-advertise-port: {{ k3s_vars.server.api.port }}
-{% endif %}
 bind-address: {{ k3s_server_default_ip }}
 cluster-dns: {{ k3s_vars.server.cluster.dns }}
 cluster-domain: {{ k3s_vars.server.cluster.domain }}
@@ -24,6 +15,10 @@ disable-network-policy: true
 embedded-registry: true
 etcd-expose-metrics: true
 flannel-backend: none
+{% if k3s_ha_cluster %}
+tls-san:
+  {{ [k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
+{%- endif %}
 {% endif %}
 {% if
   (k3s_node_agent_taint | length > 0) or
@@ -32,10 +27,10 @@ flannel-backend: none
 node-taint:
 {% if k3s_node_agent_taint | length > 0 %}
   {{ k3s_node_agent_taint | to_nice_yaml | indent(2) }}
-{% endif %}
+{%- endif %}
 {% if k3s_vars.server.controlplane.tainted and k3s_service_type == 'server' and k3s_node_default_taint | length > 0 %}
   {{ k3s_node_default_taint | to_nice_yaml | indent(2) }}
-{% endif %}
+{%- endif %}
 {% endif %}
 {% if k3s_ha_cluster and (k3s_postinstall or k3s_service_type == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
