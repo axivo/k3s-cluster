@@ -4,6 +4,7 @@
     file: facts.yaml
 
 - name: Role Post-Install
+  notify: Restart service
   when:
     - k3s_ha_cluster
     - ansible_host in k3s_server_hosts
@@ -13,7 +14,6 @@
         k3s_postinstall: true
 
     - name: Update server configuration file
-      notify: Restart service
       ansible.builtin.template:
         src: config.j2
         dest: '{{ k3s_vars.directory.config }}/config.yaml'
