@@ -4,6 +4,18 @@
     "fmunteanu"
   ],
   "customDatasources": {
+    "cilium": {
+      "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium/main/stable.txt",
+      "format": "plain"
+    },
+    "cilium-cli": {
+      "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt",
+      "format": "plain"
+    },
+    "hubble": {
+      "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/hubble/main/stable.txt",
+      "format": "plain"
+    },
     "k3s": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
@@ -48,25 +60,27 @@
     },
     {
       "customType": "regex",
-      "datasourceTemplate": "github-releases",
+      "datasourceTemplate": "custom.cilium",
       "depNameTemplate": "cilium/cilium",
       "fileMatch": [
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "semver-coerced"
     },
     {
       "customType": "regex",
-      "datasourceTemplate": "github-releases",
+      "datasourceTemplate": "custom.cilium-cli",
       "depNameTemplate": "cilium/cilium-cli",
       "fileMatch": [
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
         "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "semver-coerced"
     },
     {
       "customType": "regex",
@@ -81,14 +95,15 @@
     },
     {
       "customType": "regex",
-      "datasourceTemplate": "github-releases",
+      "datasourceTemplate": "custom.hubble",
       "depNameTemplate": "cilium/hubble",
       "fileMatch": [
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
         "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "semver-coerced"
     },
     {
       "customType": "regex",
