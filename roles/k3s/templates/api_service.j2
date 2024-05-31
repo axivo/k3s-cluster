@@ -5,6 +5,6 @@ metadata:
   namespace: {{ k3s_vars.kubernetes.namespace }}
 spec:
   ports:
-    - name: http
-      port: 80
+    - name: https
+      port: 443
       targetPort: {{ k3s_vars.server.api.port }}
