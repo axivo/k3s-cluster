@@ -55,29 +55,26 @@
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
-    - name: Kube Configuration Setup
-      when: cloudflare_vars.kubernetes.acme.server != 'staging'
-      block:
-        - name: Get user info
-          ansible.builtin.user:
-            name: '{{ ansible_user }}'
-          register: user_info
+    - name: Get user info
+      ansible.builtin.user:
+        name: '{{ ansible_user }}'
+      register: user_info
 
-        - name: Set kube configuration host
-          ansible.builtin.command:
-            cmd: kubectl config set-cluster default
-                  --kubeconfig={{ user_info.home }}/.kube/config
-                  --server=https://{{ hostname }}
-          changed_when: result.rc == 0
-          register: result
+    - name: Set kube configuration host
+      ansible.builtin.command:
+        cmd: kubectl config set-cluster default
+              --kubeconfig={{ user_info.home }}/.kube/config
+              --server=https://{{ hostname }}
+      changed_when: result.rc == 0
+      register: result
 
-        - name: Copy kube configuration file locally
-          ansible.builtin.fetch:
-            src: '{{ user_info.home }}/.kube/config'
-            dest: "{{ k3s_vars.directory.kubeconfig }}"
-            flat: true
-          when: k3s_vars.server.kubeconfig.local
-          run_once: true
+    - name: Copy kube configuration file locally
+      ansible.builtin.fetch:
+        src: '{{ user_info.home }}/.kube/config'
+        dest: "{{ k3s_vars.directory.kubeconfig }}"
+        flat: true
+      when: k3s_vars.server.kubeconfig.local
+      run_once: true
 
 - name: Server Configuration Post-Install
   notify: Restart service
