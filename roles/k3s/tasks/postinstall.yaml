@@ -11,7 +11,7 @@
   block:
     - name: Set server postinstall fact
       ansible.builtin.set_fact:
-        k3s_postinstall: true
+        k3s_config_postinstall: true
 
     - name: Update server configuration file
       ansible.builtin.template:

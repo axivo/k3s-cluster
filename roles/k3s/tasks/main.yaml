@@ -29,7 +29,7 @@
 
     - name: Set server postinstall fact
       ansible.builtin.set_fact:
-        k3s_postinstall: false
+        k3s_config_postinstall: false
 
     - name: Create configuration file
       ansible.builtin.template:
