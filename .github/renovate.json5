@@ -174,5 +174,6 @@
     "dependency"
   ],
   "prConcurrentLimit": 0,
-  "prHourlyLimit": 0
+  "prHourlyLimit": 0,
+  "separateMajorMinor": false
 }
