@@ -2,7 +2,7 @@
 cloudflare_vars:
   kubernetes:
     acme:
-      server: staging
+      server: production
     api:
       token:
         key: token
