@@ -158,7 +158,7 @@
         "roles/prometheus/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "prometheus-community/helm-charts"
     }
