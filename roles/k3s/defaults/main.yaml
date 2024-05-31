@@ -5,6 +5,14 @@ k3s_vars:
     config: /etc/rancher/k3s
     kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
     lib: /var/lib/rancher/k3s
+  kubernetes:
+    gateway:
+      service: server-api-host
+      subdomain: api
+    infrastructure:
+      annotations:
+        io.cilium/lb-ipam-ips: 192.168.4.24
+    namespace: kube-system
   network:
     interface: eth0
   release:

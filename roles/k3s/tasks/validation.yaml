@@ -1,7 +1,11 @@
 ---
-- name: Set facts
-  ansible.builtin.import_tasks:
-    file: facts.yaml
+- name: Import facts
+  ansible.builtin.include_role:
+    name: '{{ item }}'
+    tasks_from: facts
+  loop:
+    - cloudflare
+    - k3s
 
 - name: Role Validation
   run_once: true

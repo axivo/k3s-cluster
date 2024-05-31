@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ k3s_vars.kubernetes.gateway.service }}
+  namespace: {{ k3s_vars.kubernetes.namespace }}
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{ k3s_vars.server.api.port }}

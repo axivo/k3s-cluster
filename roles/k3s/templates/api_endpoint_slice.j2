@@ -1,0 +1,16 @@
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: {{ k3s_vars.kubernetes.gateway.service }}
+  namespace: {{ k3s_vars.kubernetes.namespace }}
+  labels:
+    kubernetes.io/service-name: {{ k3s_vars.kubernetes.gateway.service }}
+addressType: IPv4
+endpoints:
+  - addresses:
+      - {{ k3s_vars.server.api.host }}
+    conditions:
+      ready: true
+ports:
+  - name: http
+    port: {{ k3s_vars.server.api.port }}

@@ -2,7 +2,7 @@
 bind-address: {{ k3s_server_default_ip }}
 cluster-dns: {{ k3s_vars.server.cluster.dns }}
 cluster-domain: {{ k3s_vars.server.cluster.domain }}
-{% if k3s_ha_cluster and not k3s_postinstall and ansible_host == k3s_server_default_host %}
+{% if k3s_ha_cluster and not k3s_config_postinstall and ansible_host == k3s_server_default_host %}
 cluster-init: true
 {% endif %}
 disable:
@@ -15,10 +15,6 @@ disable-network-policy: true
 embedded-registry: true
 etcd-expose-metrics: true
 flannel-backend: none
-{% if k3s_ha_cluster %}
-tls-san:
-  {{ [k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
-{%- endif %}
 {% endif %}
 {% if
   (k3s_node_agent_taint | length > 0) or
@@ -32,13 +28,21 @@ node-taint:
   {{ k3s_node_default_taint | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% endif %}
-{% if k3s_ha_cluster and (k3s_postinstall or k3s_service_type == 'agent') %}
+{% if k3s_ha_cluster and (k3s_config_postinstall or k3s_service_type == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
   (ansible_host != k3s_server_default_host and k3s_service_type == 'server') or
   (k3s_non_ha_cluster and k3s_service_type == 'agent')
 %}
 server: https://{{ k3s_server_default_host }}:{{ k3s_vars.server.api.port }}
+{% endif %}
+{% if k3s_ha_cluster and k3s_service_type == 'server' %}
+tls-san:
+{% if cloudflare_vars.kubernetes.gateway.domain != 'disabled' %}
+  {{ [hostname, k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
+{%- else %}
+  {{ [k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
+{%- endif %}
 {% endif %}
 {% if k3s_token | length > 0 %}
 token: {{ k3s_token }}

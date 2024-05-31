@@ -27,9 +27,13 @@
         group: root
         mode: '0755'
 
-    - name: Set server postinstall fact
+    - name: Set server configuration postinstall fact
       ansible.builtin.set_fact:
-        k3s_postinstall: false
+        k3s_config_postinstall: false
+
+    - name: Set hostname fact
+      ansible.builtin.set_fact:
+        hostname: '{{ k3s_vars.kubernetes.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
 
     - name: Create configuration file
       ansible.builtin.template:

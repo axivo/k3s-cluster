@@ -30,6 +30,10 @@
   become: true
   gather_facts: true
   post_tasks:
+    - name: Set post-install fact
+      ansible.builtin.set_fact:
+        k3s_postinstall: true
+      run_once: true
     - name: Perform post-install tasks
       ansible.builtin.import_role:
         name: k3s
@@ -48,10 +52,17 @@
   become: true
   gather_facts: true
   post_tasks:
+    - name: Set post-install fact
+      ansible.builtin.set_fact:
+        k3s_postinstall: false
+      run_once: true
     - name: Perform post-install tasks
-      ansible.builtin.import_role:
-        name: cilium
+      ansible.builtin.include_role:
+        name: '{{ item }}'
         tasks_from: postinstall
+      loop:
+        - cilium
+        - k3s
   roles:
     - role: cilium
     - role: certmanager
