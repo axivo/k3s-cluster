@@ -21,7 +21,7 @@ prometheus_vars:
       chart:
         name: kube-prometheus-stack
         prefix: monitoring
-        version: v59.0.0
+        version: v59.1.0
       repository:
         name: helm-charts
         org: prometheus-community
