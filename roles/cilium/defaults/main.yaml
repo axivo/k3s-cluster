@@ -44,9 +44,9 @@ cilium_vars:
           method: certmanager
         certificate:
           common:
-            name: hubble-tls-certificate
+            name: hubble-common-certs
           root:
-            name: hubble-tls-root-certificate
+            name: hubble-root-certs
         cluster_issuer:
           name: hubble-cluster-issuer
     ingress:
