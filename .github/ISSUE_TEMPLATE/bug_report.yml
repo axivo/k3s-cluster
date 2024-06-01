@@ -4,7 +4,7 @@ labels: ["bug", "triage"]
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to fill out this bug report! If you have usage questions, please use the [Community Discussions](https://github.com/axivo/k3s-cluster/discussions).
+      value: Thanks for taking the time to fill out this bug report! If you have usage questions, please read first the [Wiki](https://axivo.com/k3s-cluster) and use [Slack](https://slack.axivo.com) or [GitHub Discussions](https://github.com/axivo/k3s-cluster/discussions), for community support.
   - type: checkboxes
     attributes:
       label: Existing Issues

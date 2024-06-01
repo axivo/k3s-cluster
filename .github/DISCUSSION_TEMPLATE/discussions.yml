@@ -1,4 +1,7 @@
 body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to start a discussion! If you have usage questions, please read first the [Wiki](https://axivo.com/k3s-cluster). You can also use [Stack](https://slack.axivo.com), for community support.
   - type: dropdown
     id: topic
     attributes:
