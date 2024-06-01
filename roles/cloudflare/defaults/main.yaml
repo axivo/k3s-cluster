@@ -40,4 +40,4 @@ cloudflare_vars:
     tls:
       cluster_issuer:
         name: cloudflare-cluster-issuer
-      key_prefix: cloudflare-tls
+      key_prefix: cloudflare
