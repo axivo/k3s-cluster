@@ -26,3 +26,8 @@
         loop_var: upgrade
       tags: always
       when: upgrade.role in ansible_run_tags
+  vars_prompt:
+    - name: prompt_trim_filesystem
+      prompt: Discard unused blocks on mounted filesystem? [Y/n]
+      default: 'n'
+      private: false
