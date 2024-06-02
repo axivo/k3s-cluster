@@ -8,7 +8,7 @@
   tags: cluster
   vars_prompt:
     - name: prompt_trim_filesystem
-      prompt: Trim mounted filesystem? [Y/n]
+      prompt: Discard unused blocks on mounted filesystem? [Y/n]
       default: 'n'
       private: false
 
