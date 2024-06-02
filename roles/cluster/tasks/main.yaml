@@ -1,7 +1,7 @@
 ---
 - name: Validate trim disks prompt
   ansible.builtin.assert:
-    that: prompt_trim_device in ['n', 'N', 'y', 'Y']
+    that: prompt_trim_filesystem in ['n', 'N', 'y', 'Y']
     fail_msg: 'Valid entries: n, N, y, Y'
     quiet: true
 
