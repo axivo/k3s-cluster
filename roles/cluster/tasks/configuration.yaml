@@ -90,20 +90,20 @@
                     mode: '0644'
                     create: true
 
-    - name: Device Trim
+    - name: Mounted Filesystem Tirm
       block:
-        - name: Start fstrim.timer
+        - name: Start service
           ansible.builtin.systemd_service:
             name: fstrim.timer
             state: started
             enabled: true
 
-        - name: Trim device
+        - name: Discard unused blocks on mounted filesystem
           ansible.builtin.command:
-            cmd: fstrim -v /
+            cmd: fstrim -vA
           changed_when: command.stdout.find('trimmed') != -1
           register: command
-          when: prompt_trim_device in ['y', 'Y']
+          when: prompt_trim_filesystem in ['y', 'Y']
 
 - name: OS Configuration
   block:
