@@ -1,10 +1,4 @@
 ---
-- name: Validate trim disks prompt
-  ansible.builtin.assert:
-    that: prompt_trim_filesystem in ['n', 'N', 'y', 'Y']
-    fail_msg: 'Valid entries: n, N, y, Y'
-    quiet: true
-
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
