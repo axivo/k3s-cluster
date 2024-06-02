@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         > [!IMPORTANT]
-        > If you have usage questions, please read first the [Wiki](https://axivo.com/k3s-cluster) and use [Slack](https://slack.axivo.com) or [GitHub Discussions](https://github.com/axivo/k3s-cluster/discussions), for community support.
+        > If you have usage questions, please read first the [Wiki](https://axivo.com/k3s-cluster) and use [GitHub Discussions](https://github.com/axivo/k3s-cluster/discussions), for community support.
   - type: checkboxes
     attributes:
       label: Existing Issues
