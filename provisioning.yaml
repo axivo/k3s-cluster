@@ -6,11 +6,6 @@
   roles:
     - role: cluster
   tags: cluster
-  vars_prompt:
-    - name: prompt_trim_filesystem
-      prompt: Discard unused blocks on mounted filesystem? [Y/n]
-      default: 'n'
-      private: false
 
 - name: LoadBalancer Provisioning
   hosts: cluster
