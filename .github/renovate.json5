@@ -67,8 +67,7 @@
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "semver-coerced"
+      ]
     },
     {
       "customType": "regex",
@@ -79,8 +78,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "semver-coerced"
+      ]
     },
     {
       "customType": "regex",
@@ -102,8 +100,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "semver-coerced"
+      ]
     },
     {
       "customType": "regex",
