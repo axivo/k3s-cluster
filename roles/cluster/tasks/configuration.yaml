@@ -51,7 +51,7 @@
             backrefs: true
 
     - name: USB Device Configuration
-      when: cluster_vars.device.transport == 'usb'
+      when: cluster_vars.device.enabled
       block:
         - name: Set device id
           ansible.builtin.command:

@@ -7,7 +7,7 @@
     executable: /bin/bash
   changed_when: device_info.rc == 0
   register: device_info
-  when: cluster_vars.device.transport == 'usb'
+  when: cluster_vars.device.enabled
 
 - name: Get hardware product
   ansible.builtin.shell: |
