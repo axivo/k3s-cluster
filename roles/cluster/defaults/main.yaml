@@ -1,9 +1,9 @@
 ---
 cluster_vars:
   device:
+    enabled: true
     id: '2:2'
     name: 'ASMedia Technology'
-    transport: usb
   hardware:
     architecture: aarch64
     product: 'Raspberry Pi'
