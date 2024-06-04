@@ -90,6 +90,8 @@
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             update_repo_cache: true
+            reset_values: false
+            reuse_values: true
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             wait: true
           register: result
