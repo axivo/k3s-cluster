@@ -10,6 +10,7 @@ certmanager_vars:
           cpu: 100m
           memory: 64Mi
     controller:
+      replicas: 2
       resources:
         limits:
           cpu: 400m
