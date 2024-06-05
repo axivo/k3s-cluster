@@ -9,10 +9,14 @@ cainjector:
 extraArgs:
   - --feature-gates=ExperimentalGatewayAPISupport=true
 installCRDs: true
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
 prometheus:
   serviceMonitor:
     enabled: true
     namespace: {{ prometheus_vars.kubernetes.namespace }}
+replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
 resources:
   limits:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.limits.cpu }}
@@ -20,6 +24,11 @@ resources:
   requests:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.requests.cpu }}
     memory: {{ certmanager_vars.kubernetes.controller.resources.requests.memory }}
+strategy:
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+  type: RollingUpdate
 webhook:
   resources:
     limits:
