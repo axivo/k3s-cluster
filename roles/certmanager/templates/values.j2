@@ -6,9 +6,10 @@ cainjector:
     requests:
       cpu: {{ certmanager_vars.kubernetes.cainjector.resources.requests.cpu }}
       memory: {{ certmanager_vars.kubernetes.cainjector.resources.requests.memory }}
+crds:
+  enabled: true
 extraArgs:
   - --feature-gates=ExperimentalGatewayAPISupport=true
-installCRDs: true
 podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
