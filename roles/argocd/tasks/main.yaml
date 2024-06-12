@@ -32,7 +32,7 @@
       ansible.builtin.set_fact:
         sha256_checksum: "{{ item.split(' ')[0] }}"
       loop: "{{ checksums.content.split('\n') }}"
-      when: argocd_vars.release.file in item
+      when: item | regex_search(argocd_vars.release.file + '$')
       run_once: true
 
     - name: Install binary

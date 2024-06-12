@@ -14,7 +14,7 @@
         - ansible_host in k3s_server_hosts
         - "'helm' in ansible_facts.packages"
 
-    - name: Remove binary file
+    - name: Remove directory
       ansible.builtin.file:
         name: /var/lib/longhorn
         state: absent
