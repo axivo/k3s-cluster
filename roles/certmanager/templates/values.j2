@@ -8,8 +8,9 @@ cainjector:
       memory: {{ certmanager_vars.kubernetes.cainjector.resources.requests.memory }}
 crds:
   enabled: true
+  keep: false
 extraArgs:
-  - --feature-gates=ExperimentalGatewayAPISupport=true
+  - --enable-gateway-api
 podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
