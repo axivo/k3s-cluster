@@ -60,6 +60,17 @@
     },
     {
       "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cert-manager/cmctl",
+      "fileMatch": [
+        "roles/certmanager/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
       "datasourceTemplate": "custom.cilium",
       "depNameTemplate": "cilium/cilium",
       "fileMatch": [

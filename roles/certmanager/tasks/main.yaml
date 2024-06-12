@@ -21,6 +21,39 @@
         timeout: 30
       any_errors_fatal: true
 
+    - name: Set checksums fact
+      ansible.builtin.uri:
+        url: '{{ certmanager_release_url_checksums }}'
+        return_content: true
+      register: checksums
+      run_once: true
+
+    - name: Set sha256 checksum fact
+      ansible.builtin.set_fact:
+        sha256_checksum: "{{ item.split(' ')[0] }}"
+      loop: "{{ checksums.content.split('\n') }}"
+      when: item | regex_search(certmanager_vars.release.file + '$')
+      run_once: true
+
+    - name: Install binary
+      ansible.builtin.get_url:
+        url: '{{ certmanager_release_url_file }}'
+        checksum: sha256:{{ sha256_checksum }}
+        dest: '{{ k3s_vars.directory.bin }}/cmctl'
+        owner: root
+        group: root
+        mode: '0755'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+
+    - name: Create symlink
+      ansible.builtin.file:
+        src: '{{ k3s_vars.directory.bin }}/cmctl'
+        dest: '{{ k3s_vars.directory.bin }}/kubectl-cert_manager'
+        state: link
+
     - name: Add repository
       kubernetes.core.helm_repository:
         name: '{{ certmanager_vars.kubernetes.helm.repository.org }}'

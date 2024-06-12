@@ -12,3 +12,11 @@
         name: '{{ certmanager_vars.kubernetes.helm.repository.org }}'
         repo_state: absent
       when: "'helm' in ansible_facts.packages"
+
+    - name: Remove binary files
+      ansible.builtin.file:
+        name: '{{ k3s_vars.directory.bin }}/{{ item }}'
+        state: absent
+      loop:
+        - cmctl
+        - kubectl-cert_manager
