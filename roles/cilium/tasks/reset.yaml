@@ -15,8 +15,8 @@
 
     - name: Remove binary files
       ansible.builtin.file:
-        name: '{{ item }}'
+        name: '{{ k3s_vars.directory.bin }}/{{ item }}'
         state: absent
       loop:
-        - '{{ k3s_vars.directory.bin }}/cilium'
-        - '{{ k3s_vars.directory.bin }}/hubble'
+        - cilium
+        - hubble

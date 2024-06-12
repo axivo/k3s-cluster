@@ -19,6 +19,26 @@
     certmanager_project_url_tag: '{{ certmanager_project_url }}/{{ certmanager_vars.kubernetes.helm.chart.version }}'
   run_once: true
 
+- name: Set release fact
+  ansible.builtin.set_fact:
+    certmanager_release: '{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}'
+  run_once: true
+
+- name: Set release url fact
+  ansible.builtin.set_fact:
+    certmanager_release_url: https://github.com/{{ certmanager_release }}/releases
+  run_once: true
+
+- name: Set release checksums url fact
+  ansible.builtin.set_fact:
+    certmanager_release_url_checksums: '{{ certmanager_release_url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.checksums }}'
+  run_once: true
+
+- name: Set release file url fact
+  ansible.builtin.set_fact:
+    certmanager_release_url_file: '{{ certmanager_release_url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.file }}'
+  run_once: true
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     certmanager_vars: '{{ certmanager_vars }}'

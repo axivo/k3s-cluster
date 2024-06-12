@@ -3,8 +3,8 @@ kind: Gateway
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: {{ cloudflare_cluster_issuer }}
-  name: '{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
-  namespace: '{{ prometheus_vars.kubernetes.namespace }}'
+  name: {{ prometheus_vars.kubernetes.prometheus.gateway.service }}
+  namespace: {{ prometheus_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
   infrastructure:
@@ -34,4 +34,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: '{{ cloudflare_tls_key_prefix }}-{{ prometheus_vars.kubernetes.prometheus.gateway.service }}'
+            name: {{ cloudflare_tls_key_prefix }}-{{ prometheus_vars.kubernetes.prometheus.gateway.service }}

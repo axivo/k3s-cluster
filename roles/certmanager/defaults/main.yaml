@@ -39,3 +39,10 @@ certmanager_vars:
         requests:
           cpu: 100m
           memory: 64Mi
+  release:
+    checksums: checksums.txt
+    file: cmctl_linux_arm64
+    repository:
+      name: cmctl
+      org: cert-manager
+    version: v2.1.0
