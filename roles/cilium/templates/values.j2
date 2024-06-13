@@ -24,6 +24,8 @@ hubble:
     clusterDomain: {{ k3s_vars.server.cluster.domain }}
   relay:
     enabled: true
+    podDisruptionBudget:
+      enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
     resources:
       limits:
@@ -36,6 +38,16 @@ hubble:
     rollOutPods: true
   ui:
     enabled: true
+    podDisruptionBudget:
+      enabled: true
+    replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
+    resources:
+      limits:
+        cpu: {{ cilium_vars.kubernetes.hubble.ui.resources.limits.cpu }}
+        memory: {{ cilium_vars.kubernetes.hubble.ui.resources.limits.memory }}
+      requests:
+        cpu: {{ cilium_vars.kubernetes.hubble.ui.resources.requests.cpu }}
+        memory: {{ cilium_vars.kubernetes.hubble.ui.resources.requests.memory }}
     rollOutPods: true
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
