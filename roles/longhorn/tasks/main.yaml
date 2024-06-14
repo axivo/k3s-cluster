@@ -29,6 +29,15 @@
     - name: Chart Setup
       run_once: true
       block:
+        - name: Create backup secret
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'secret.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            wait: true
+          when:
+            - longhorn_vars.kubernetes.default_settings.backup.enabled
+            - longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs'
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ longhorn_project_chart }}'
@@ -74,4 +83,4 @@
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-          when: cloudflare_vars.kubernetes.gateway.domain == 'disabled'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'
