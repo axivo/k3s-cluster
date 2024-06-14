@@ -19,7 +19,7 @@
     "k3s": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\": \"https://github.com/k3s-io/k3s\",\"changelogUrl\": $join([\"https://github.com/k3s-io/k3s/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/k3s-io/k3s\",\"homepage\": \"https://k3s.io/\"}"
+        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest), \"changelogUrl\": $join([\"https://github.com/k3s-io/k3s/releases/tag/\", data[id = 'stable'].latest])}], \"homepage\": \"https://k3s.io/\", \"sourceUrl\": \"https://github.com/k3s-io/k3s\"}"
       ]
     }
   },
@@ -145,8 +145,7 @@
       ],
       "matchStrings": [
         "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
-      ],
-      "versioningTemplate": "semver-coerced"
+      ]
     },
     {
       "customType": "regex",
