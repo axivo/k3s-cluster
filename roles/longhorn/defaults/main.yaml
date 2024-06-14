@@ -2,9 +2,24 @@
 longhorn_vars:
   kubernetes:
     default_settings:
+      backup:
+        enabled: false
+        secret: longhorn-secret
+        target: nfs://192.168.1.8:/mnt/default/opt/backup/longhorn
+        user:
+          name: floren
+          password: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            39316363313963356635616531306233316639313366646238383831633731646539663830326332
+            3663343133393436396234346339623366363366616263310a363937643063343133663036333936
+            65653632373566323430363838386531336365316262363937376565653430313138303935386663
+            6133643231643063640a383531396462663633663532383630316636313034636664613632323736
+            3835
       data_locality: strict-local
+      orphan_auto_deletion: true
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
-      replica_count: 3
+      replica_auto_balance: best-effort
+      replicas: 3
     helm:
       chart:
         name: longhorn
@@ -23,4 +38,4 @@ longhorn_vars:
     persistence:
       data_locality: best-effort
       migratable: true
-      replica_count: 3
+      replicas: 3

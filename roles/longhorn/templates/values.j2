@@ -1,7 +1,15 @@
 defaultSettings:
+{% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
+  backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
+{% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs' %}
+  backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret }}
+{% endif %}
+{% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
-  defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replica_count }}
+  defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replicas }}
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
+  orphanAutoDeletion: {{ longhorn_vars.kubernetes.default_settings.orphan_auto_deletion }}
+  replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.replica_auto_balance }}
 {% if k3s_vars.server.controlplane.tainted %}
 {% if k3s_node_default_taint | length > 0 %}
   taintToleration: {{ k3s_node_default_taint | join | trim }}
@@ -14,6 +22,6 @@ longhornManager:
     {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 persistence:
-  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.persistence.replica_count }}
+  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.persistence.replicas }}
   defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
   migratable: {{ longhorn_vars.kubernetes.persistence.migratable }}

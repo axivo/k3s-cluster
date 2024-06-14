@@ -9,7 +9,7 @@
     update_cache: true
 
 - name: Firmware Files Cleanup
-  when: cluster_vars.hardware.product == 'Raspberry Pi'
+  when: cluster_vars.hardware.product | lower == 'raspberry pi'
   block:
     - name: Find firmware backup files
       ansible.builtin.find:
