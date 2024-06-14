@@ -17,7 +17,7 @@ alertmanager:
           resources:
             requests:
               storage: {{ prometheus_vars.kubernetes.alertmanager.storage }}
-{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+{% if cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled' %}
   service:
     annotations:
 {% for key, value in prometheus_vars.kubernetes.alertmanager.infrastructure.annotations.items() %}
@@ -27,10 +27,10 @@ alertmanager:
 {% endif %}
 grafana:
   admin:
-    existingSecret: {{ prometheus_vars.kubernetes.grafana.secret.name }}
+    existingSecret: {{ prometheus_vars.kubernetes.grafana.secret }}
     passwordKey: password
     userKey: username
-{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+{% if cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled' %}
   service:
     annotations:
 {% for key, value in prometheus_vars.kubernetes.grafana.infrastructure.annotations.items() %}
@@ -71,7 +71,7 @@ prometheus:
           resources:
             requests:
               storage: {{ prometheus_vars.kubernetes.prometheus.storage }}
-{% if cloudflare_vars.kubernetes.gateway.domain == 'disabled' %}
+{% if cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled' %}
   service:
     annotations:
 {% for key, value in prometheus_vars.kubernetes.prometheus.infrastructure.annotations.items() %}

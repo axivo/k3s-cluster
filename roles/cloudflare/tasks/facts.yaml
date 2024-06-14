@@ -1,7 +1,7 @@
 ---
 - name: Set acme server fact
   ansible.builtin.set_fact:
-    cloudflare_acme_server: "{{ '-staging' if cloudflare_vars.kubernetes.acme.server == 'staging' | default('') }}"
+    cloudflare_acme_server: "{{ '-staging' if cloudflare_vars.kubernetes.acme.server | lower == 'staging' | default('') }}"
   run_once: true
 
 - name: Set acme server url fact

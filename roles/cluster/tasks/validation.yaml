@@ -22,7 +22,7 @@
   ansible.builtin.set_fact:
     valid_hardware_product: true
   when:
-    - ansible_facts.lsb.id == 'Ubuntu'
+    - ansible_facts.lsb.id | lower == 'ubuntu'
     - ansible_facts.lsb.release is version('24.04', '>=')
     - ansible_facts.machine == cluster_vars.hardware.architecture
     - hardware_product.rc == 0

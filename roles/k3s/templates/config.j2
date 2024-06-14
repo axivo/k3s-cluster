@@ -1,4 +1,4 @@
-{% if k3s_service_type == 'server' %}
+{% if k3s_service_type | lower == 'server' %}
 bind-address: {{ k3s_server_default_ip }}
 cluster-dns: {{ k3s_vars.server.cluster.dns }}
 cluster-domain: {{ k3s_vars.server.cluster.domain }}
@@ -18,25 +18,25 @@ flannel-backend: none
 {% endif %}
 {% if
   (k3s_node_agent_taint | length > 0) or
-  (k3s_vars.server.controlplane.tainted and k3s_service_type == 'server' and k3s_node_default_taint | length > 0)
+  (k3s_vars.server.controlplane.tainted and k3s_service_type | lower == 'server' and k3s_node_default_taint | length > 0)
 %}
 node-taint:
 {% if k3s_node_agent_taint | length > 0 %}
   {{ k3s_node_agent_taint | to_nice_yaml | indent(2) }}
 {%- endif %}
-{% if k3s_vars.server.controlplane.tainted and k3s_service_type == 'server' and k3s_node_default_taint | length > 0 %}
+{% if k3s_vars.server.controlplane.tainted and k3s_service_type | lower == 'server' and k3s_node_default_taint | length > 0 %}
   {{ k3s_node_default_taint | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% endif %}
-{% if k3s_ha_cluster and (k3s_config_postinstall or k3s_service_type == 'agent') %}
+{% if k3s_ha_cluster and (k3s_config_postinstall or k3s_service_type | lower == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
-  (ansible_host != k3s_server_default_host and k3s_service_type == 'server') or
-  (k3s_non_ha_cluster and k3s_service_type == 'agent')
+  (ansible_host != k3s_server_default_host and k3s_service_type | lower == 'server') or
+  (k3s_non_ha_cluster and k3s_service_type | lower == 'agent')
 %}
 server: https://{{ k3s_server_default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
-{% if k3s_ha_cluster and k3s_service_type == 'server' %}
+{% if k3s_ha_cluster and k3s_service_type | lower == 'server' %}
 tls-san:
   {{ [k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
 {%- endif %}

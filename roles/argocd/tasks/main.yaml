@@ -112,7 +112,7 @@
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
-          when: cloudflare_vars.kubernetes.gateway.domain == 'disabled'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'
 
         - name: Set server user name
           kubernetes.core.k8s:

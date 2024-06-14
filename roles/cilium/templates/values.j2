@@ -90,7 +90,7 @@ hubble:
     prometheus:
       serviceMonitor:
         enabled: true
-{% if cilium_vars.kubernetes.hubble.tls.auto.method == 'certmanager' %}
+{% if cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager' %}
   tls:
     auto:
       certManagerIssuerRef:
@@ -113,14 +113,14 @@ ingressController:
   enabled: true
   service:
     loadBalancerIP: {{ cilium_vars.kubernetes.ingress.controller.service.loadbalancer.ip }}
-{% if cilium_vars.kubernetes.loadbalancer.algorithm == 'maglev' %}
+{% if cilium_vars.kubernetes.loadbalancer.algorithm | lower == 'maglev' %}
 loadBalancer:
   algorithm: {{ cilium_vars.kubernetes.loadbalancer.algorithm }}
 maglev:
   hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12) }}"
   tableSize: {{ cilium_vars.kubernetes.loadbalancer.table_size }}
 {% endif %}
-{% if cilium_vars.kubernetes.routing_mode == 'native' %}
+{% if cilium_vars.kubernetes.routing_mode | lower == 'native' %}
 autoDirectNodeRoutes: true
 ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 l2announcements:

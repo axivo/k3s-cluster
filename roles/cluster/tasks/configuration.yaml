@@ -3,7 +3,7 @@
   notify: Reboot
   block:
     - name: Raspberry Pi Configuration
-      when: cluster_vars.hardware.product == 'Raspberry Pi'
+      when: cluster_vars.hardware.product | lower == 'raspberry pi'
       block:
         - name: Set service facts
           ansible.builtin.service_facts:

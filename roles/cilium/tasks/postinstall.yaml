@@ -41,10 +41,10 @@
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-      when: cloudflare_vars.kubernetes.gateway.domain == 'disabled'
+      when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'
 
     - name: Hubble TLS
-      when: cilium_vars.kubernetes.hubble.tls.auto.method == 'certmanager'
+      when: cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager'
       block:
         - name: Create hubble certificate
           kubernetes.core.k8s:
