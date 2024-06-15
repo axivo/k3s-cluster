@@ -4,7 +4,7 @@
   become: true
   gather_facts: true
   roles:
-    - role: cluster
+    - cluster
   tags: cluster
 
 - name: LoadBalancer Provisioning
@@ -30,8 +30,8 @@
         name: k3s
         tasks_from: postinstall
   roles:
-    - role: helm
-    - role: k3s
+    - helm
+    - k3s
   serial:
     - 1
     - 2
@@ -48,11 +48,11 @@
         name: cilium
         tasks_from: postinstall
   roles:
-    - role: cilium
-    - role: certmanager
-    - role: cloudflare
-    - role: longhorn
-    - role: prometheus
-    - role: kured
-    - role: argocd
+    - cilium
+    - certmanager
+    - cloudflare
+    - longhorn
+    - prometheus
+    - kured
+    - argocd
   tags: charts

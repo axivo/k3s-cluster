@@ -11,17 +11,28 @@
         name: '{{ upgrade.role }}'
         tasks_from: '{{ upgrade.tasks }}'
       loop:
-        - {role: argocd, tasks: main}
-        - {role: certmanager, tasks: main}
-        - {role: cilium, tasks: main}
-        - {role: cilium, tasks: postinstall}
-        - {role: cloudflare, tasks: main}
-        - {role: cluster, tasks: upgrade}
-        - {role: helm, tasks: main}
-        - {role: k3s, tasks: upgrade}
-        - {role: kured, tasks: main}
-        - {role: longhorn, tasks: main}
-        - {role: prometheus, tasks: main}
+        - role: argocd
+          tasks: main
+        - role: certmanager
+          tasks: main
+        - role: cilium
+          tasks: main
+        - role: cilium
+          tasks: postinstall
+        - role: cloudflare
+          tasks: main
+        - role: cluster
+          tasks: upgrade
+        - role: helm
+          tasks: main
+        - role: k3s
+          tasks: upgrade
+        - role: kured
+          tasks: main
+        - role: longhorn
+          tasks: main
+        - role: prometheus
+          tasks: main
       loop_control:
         loop_var: upgrade
       tags: always
