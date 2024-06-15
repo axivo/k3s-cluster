@@ -1,0 +1,128 @@
+---
+- name: Ansible Vault
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ./roles/argocd/defaults/main.yaml
+    - ./roles/cloudflare/defaults/main.yaml
+    - ./roles/cluster/defaults/main.yaml
+    - ./roles/kured/defaults/main.yaml
+    - ./roles/longhorn/defaults/main.yaml
+    - ./roles/prometheus/defaults/main.yaml
+  vars_prompt:
+    - name: playbook_action
+      prompt: "Select an action to perform:\n
+        1) List encrypted role variables\n
+        2) Encrypt role variable\n
+        3) Update global password\n"
+      private: false
+  tasks:
+    - name: Encrypted Role Variables
+      when: playbook_action in ['1', '1)']
+      block:
+        - name: Set encrypted role variables fact
+          ansible.builtin.set_fact:
+            encrypted_variables:
+              - ansible_password: '{{ ansible_password }}'
+              - argocd_vars:
+                  kubernetes:
+                    server:
+                      admin:
+                        password: '{{ argocd_vars.kubernetes.server.admin.password }}'
+                      user:
+                        password: '{{ argocd_vars.kubernetes.server.user.password }}'
+              - cloudflare_vars:
+                  kubernetes:
+                    api:
+                      token:
+                        value: '{{ cloudflare_vars.kubernetes.api.token.value }}'
+              - cluster_vars:
+                  service:
+                    postfix:
+                      user:
+                        alias: '{{ cluster_vars.service.postfix.user.alias }}'
+                        name: '{{ cluster_vars.service.postfix.user.name }}'
+                        password: '{{ cluster_vars.service.postfix.user.password }}'
+              - kured_vars:
+                  kubernetes:
+                    configuration:
+                      slack:
+                        notify_url: '{{ kured_vars.kubernetes.configuration.slack.notify_url }}'
+              - longhorn_vars:
+                  kubernetes:
+                    default_settings:
+                      backup:
+                        user:
+                          password: '{{ longhorn_vars.kubernetes.default_settings.backup.user.password }}'
+              - prometheus_vars:
+                  kubernetes:
+                    grafana:
+                      user:
+                        password: '{{ prometheus_vars.kubernetes.grafana.user.password }}'
+          no_log: true
+
+        - name: List encrypted role variables
+          ansible.builtin.debug:
+            var: encrypted_variables
+
+    - name: Encrypt Role Variable
+      when: playbook_action in ['2', '2)']
+      block:
+        - name: Set role variable key and value
+          ansible.builtin.pause:
+            prompt: Set variable with a 'key:value' format
+          register: variable
+
+        - name: Encrypt role variable
+          ansible.builtin.command:
+            cmd: ansible-vault encrypt_string {{ variable.user_input | split(':') | last | quote }} -n {{ variable.user_input | split(':') | first | quote }}
+          register: encrypted_variable
+          changed_when: true
+
+        - name: List encrypted role variable
+          ansible.builtin.debug:
+            var: encrypted_variable.stdout
+
+    - name: Global Password
+      when: playbook_action in ['3', '3)']
+      block:
+        - name: Set new global password
+          ansible.builtin.pause:
+            prompt: Password
+            echo: false
+          register: password
+
+        - name: Create password file
+          ansible.builtin.lineinfile:
+            line: '{{ password.user_input }}'
+            path: ./password
+            mode: '0644'
+            create: true
+
+        - name: Update global password
+          ansible.builtin.command:
+            cmd: ansible-vault encrypt_string {{ item | quote }}  -n {{ item | quote }} --vault-pass-file ./password
+          loop:
+            - ansible_password
+            - argocd_vars.kubernetes.server.admin.password
+            - argocd_vars.kubernetes.server.user.password
+            - cloudflare_vars.kubernetes.api.token.value
+            - cluster_vars.service.postfix.user.alias
+            - cluster_vars.service.postfix.user.name
+            - cluster_vars.service.postfix.user.password
+            - kured_vars.kubernetes.configuration.slack.notify_url
+            - longhorn_vars.kubernetes.default_settings.backup.user.password
+            - prometheus_vars.kubernetes.grafana.user.password
+          register: encrypted_variables
+          changed_when: true
+          no_log: true
+
+        - name: Delete password file
+          ansible.builtin.file:
+            path: ./password
+            state: absent
+
+        - name: List encrypted role variables
+          ansible.builtin.debug:
+            var: encrypted_variables.results | map(attribute='stdout')

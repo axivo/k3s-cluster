@@ -6,20 +6,29 @@
   "customDatasources": {
     "cilium": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium/main/stable.txt",
-      "format": "plain"
+      "format": "plain",
+      "transformTemplates": [
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/cilium\"}"
+      ]
     },
     "cilium-cli": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt",
-      "format": "plain"
+      "format": "plain",
+      "transformTemplates": [
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/cilium-cli\"}"
+      ]
     },
     "hubble": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/hubble/main/stable.txt",
-      "format": "plain"
+      "format": "plain",
+      "transformTemplates": [
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/hubble\"}"
+      ]
     },
     "k3s": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest), \"changelogUrl\": $join([\"https://github.com/k3s-io/k3s/releases/tag/\", data[id = 'stable'].latest])}], \"homepage\": \"https://k3s.io/\", \"sourceUrl\": \"https://github.com/k3s-io/k3s\"}"
+        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest)}], \"homepage\": \"https://k3s.io/\", \"sourceUrl\": \"https://github.com/k3s-io/k3s\"}"
       ]
     }
   },
