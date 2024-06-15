@@ -79,6 +79,7 @@
             cmd: ansible-vault encrypt_string {{ variable.user_input | split('|') | last | quote }} -n {{ variable.user_input | split('|') | first | quote }}
           register: encrypted_variable
           changed_when: true
+          no_log: true
 
         - name: List encrypted role variable
           ansible.builtin.debug:
@@ -99,6 +100,7 @@
             path: ./password
             mode: '0644'
             create: true
+          no_log: true
 
         - name: Update global password
           ansible.builtin.command:
