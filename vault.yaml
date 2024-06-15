@@ -71,12 +71,12 @@
       block:
         - name: Set role variable key and value
           ansible.builtin.pause:
-            prompt: Set variable with a 'key:value' format
+            prompt: Set variable with a 'key|value' format
           register: variable
 
         - name: Encrypt role variable
           ansible.builtin.command:
-            cmd: ansible-vault encrypt_string {{ variable.user_input | split(':') | last | quote }} -n {{ variable.user_input | split(':') | first | quote }}
+            cmd: ansible-vault encrypt_string {{ variable.user_input | split('|') | last | quote }} -n {{ variable.user_input | split('|') | first | quote }}
           register: encrypted_variable
           changed_when: true
 
