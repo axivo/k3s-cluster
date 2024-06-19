@@ -27,7 +27,7 @@ alertmanager:
 {% endif %}
 grafana:
   admin:
-    existingSecret: {{ prometheus_vars.kubernetes.grafana.secret }}
+    existingSecret: {{ prometheus_vars.kubernetes.grafana.secret.name }}
     passwordKey: password
     userKey: username
 {% if cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled' %}

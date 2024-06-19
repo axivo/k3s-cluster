@@ -3,7 +3,7 @@ k3s_vars:
   directory:
     bin: /usr/local/bin
     config: /etc/rancher/k3s
-    kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube/' }}"
+    kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"
     lib: /var/lib/rancher/k3s
   network:
     interface: eth0
