@@ -50,8 +50,8 @@
 
     - name: Create symlink
       ansible.builtin.file:
+        path: '{{ k3s_vars.directory.bin }}/kubectl-cert_manager'
         src: '{{ k3s_vars.directory.bin }}/cmctl'
-        dest: '{{ k3s_vars.directory.bin }}/kubectl-cert_manager'
         state: link
 
     - name: Add repository

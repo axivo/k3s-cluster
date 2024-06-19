@@ -46,7 +46,7 @@
 
         - name: Remove configuration files
           ansible.builtin.file:
-            name: '{{ item }}'
+            path: '{{ item }}'
             state: absent
           loop:
             - '{{ helm_vars.directory.share }}'

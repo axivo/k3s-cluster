@@ -33,7 +33,8 @@ prometheus_vars:
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.22
-      secret: grafana-secret
+      secret:
+        name: grafana-secret
       user:
         name: admin
         password: !vault |

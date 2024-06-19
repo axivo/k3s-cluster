@@ -2,7 +2,7 @@ defaultSettings:
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
 {% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs' %}
-  backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret }}
+  backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret.name }}
 {% endif %}
 {% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}

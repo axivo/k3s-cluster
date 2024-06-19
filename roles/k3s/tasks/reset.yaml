@@ -5,7 +5,7 @@
 
 - name: Role Reset
   block:
-    - name: Remove Loadbalancer
+    - name: Loadbalancer Reset
       when:
         - ansible_host in k3s_loadbalancer_hosts
         - prompt_remove_packages in ['y', 'Y']
@@ -24,7 +24,7 @@
 
         - name: Remove loadbalancer configuration files
           ansible.builtin.file:
-            name: '{{ item }}'
+            path: '{{ item }}'
             state: absent
           loop:
             - /etc/keepalived
@@ -73,17 +73,11 @@
         state: absent
       when: ansible_host in k3s_server_hosts
 
-    - name: Get user info
-      ansible.builtin.user:
-        name: '{{ ansible_user }}'
-      register: user_info
-
     - name: Remove generic files
       ansible.builtin.file:
-        name: '{{ item }}'
+        path: '{{ item }}'
         state: absent
       loop:
-        - '{{ user_info.home }}/.kube'
         - '{{ k3s_vars.directory.bin }}/crictl'
         - '{{ k3s_vars.directory.bin }}/ctr'
         - '{{ k3s_vars.directory.bin }}/k3s'
@@ -91,6 +85,14 @@
         - '{{ k3s_vars.directory.config }}'
         - /etc/systemd/system/{{ k3s_service_name }}.service
         - /etc/systemd/system/{{ k3s_service_name }}.service.env
+
+    - name: Remove local kubeconfig file
+      ansible.builtin.file:
+        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
+        state: absent
+      delegate_to: localhost
+      when: k3s_vars.server.kubeconfig.local
+      run_once: true
 
     - name: Reset systemd
       ansible.builtin.command:

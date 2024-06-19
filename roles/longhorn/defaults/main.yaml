@@ -4,7 +4,8 @@ longhorn_vars:
     default_settings:
       backup:
         enabled: true
-        secret: longhorn-secret
+        secret:
+          name: longhorn-secret
         target: nfs://192.168.1.8:/mnt/default/opt/backup
         user:
           name: floren

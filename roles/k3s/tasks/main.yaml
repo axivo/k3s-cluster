@@ -80,8 +80,8 @@
 
     - name: Create symlinks
       ansible.builtin.file:
+        path: '{{ k3s_vars.directory.bin }}/{{ item }}'
         src: '{{ k3s_vars.directory.bin }}/k3s'
-        dest: '{{ k3s_vars.directory.bin }}/{{ item }}'
         state: link
       loop:
         - crictl
@@ -112,40 +112,41 @@
             token: '{{ node_token.content | b64decode | trim }}'
           run_once: true
 
-    - name: Get user info
-      ansible.builtin.user:
-        name: '{{ ansible_user }}'
-      register: user_info
-
-    - name: Create kubeconfig directory
-      ansible.builtin.file:
-        path: '{{ user_info.home }}/.kube'
-        owner: '{{ user_info.name }}'
-        group: '{{ user_info.group }}'
-        mode: '0755'
-        state: directory
-
+- name: Local Kubeconfig Setup
+  when:
+    - k3s_vars.server.kubeconfig.local
+    - ansible_host in ['localhost', k3s_server_default_host]
+  run_once: true
+  block:
     - name: Copy kubeconfig file
       ansible.builtin.copy:
         src: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        dest: '{{ user_info.home }}/.kube/config'
-        owner: '{{ user_info.name }}'
-        group: '{{ user_info.group }}'
+        dest: /tmp/config
         mode: '0600'
         remote_src: true
 
     - name: Set kubeconfig host
       ansible.builtin.command:
         cmd: kubectl config set-cluster default
-              --kubeconfig={{ user_info.home }}/.kube/config
-              --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else ansible_host }}:{{ k3s_vars.server.api.port }}
+              --kubeconfig=/tmp/config
+              --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else k3s_server_default_ip }}:{{ k3s_vars.server.api.port }}
       changed_when: result.rc == 0
       register: result
 
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:
-        src: '{{ user_info.home }}/.kube/config'
-        dest: "{{ k3s_vars.directory.kubeconfig }}"
+        src: /tmp/config
+        dest: "{{ k3s_vars.directory.kubeconfig + '/' }}"
         flat: true
-      when: k3s_vars.server.kubeconfig.local
-      run_once: true
+
+    - name: Remove kubeconfig file
+      ansible.builtin.file:
+        path: /tmp/config
+        state: absent
+
+    - name: Set local kubeconfig file permissions
+      ansible.builtin.file:
+        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
+        mode: '0600'
+        state: file
+      delegate_to: localhost
