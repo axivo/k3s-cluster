@@ -5,7 +5,7 @@ helm_vars:
   environment:
     HELM_NAMESPACE: default
   plugins:
-    - name: helm-diff
+    - name: diff
       enabled: true
       packages:
         - python3-jsonpatch

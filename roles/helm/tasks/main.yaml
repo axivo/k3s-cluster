@@ -90,6 +90,23 @@
             autoremove: true
             update_cache: true
 
+    - name: Remove Helm Plugins
+      block:
+        - name: Remove plugins
+          kubernetes.core.helm_plugin:
+            plugin_name: '{{ item.name }}'
+            state: absent
+          loop: '{{ helm_vars.plugins }}'
+
+        - name: Remove plugin packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: absent
+            autoremove: true
+            clean: true
+            purge: true
+          loop: '{{ helm_plugin_packages_disabled | default([]) }}'
+
     - name: Install Helm Plugins
       block:
         - name: Install plugin packages
@@ -109,27 +126,3 @@
           retries: 3
           until: result is not failed
           when: item.enabled
-
-    - name: Remove Helm Plugins
-      block:
-        - name: Get packages information
-          ansible.builtin.package_facts:
-
-        - name: Remove plugins
-          kubernetes.core.helm_plugin:
-            plugin_name: '{{ item.name }}'
-            state: absent
-          loop: '{{ helm_vars.plugins }}'
-          when:
-            - not item.enabled
-            - "'helm' in ansible_facts.packages"
-            - "'python3-kubernetes' in ansible_facts.packages"
-
-        - name: Remove plugin packages
-          ansible.builtin.apt:
-            name: '{{ item }}'
-            state: absent
-            autoremove: true
-            clean: true
-            purge: true
-          loop: '{{ helm_plugin_packages_disabled | default([]) }}'
