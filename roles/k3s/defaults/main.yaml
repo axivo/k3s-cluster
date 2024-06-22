@@ -1,5 +1,11 @@
 ---
 k3s_vars:
+  agent:
+    kubelet:
+      - arg: eviction-hard
+        value: memory.available<500Mi
+      - arg: system-reserved
+        value: cpu=500m,memory=1Gi
   directory:
     bin: /usr/local/bin
     config: /etc/rancher/k3s
@@ -28,6 +34,9 @@ k3s_vars:
       port: 6444
     kubeconfig:
       local: true
+    kubelet:
+      - arg: system-reserved
+        value: cpu=500m,memory=1Gi
   service:
     debug: false
   tolerations:

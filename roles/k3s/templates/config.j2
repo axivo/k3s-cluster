@@ -16,7 +16,9 @@ embedded-registry: true
 etcd-expose-metrics: true
 flannel-backend: none
 {% endif %}
-{% if
+kubelet-arg:
+  {{ k3s_node_kubelet_args | to_nice_yaml | indent(2) }}
+{%- if
   (k3s_node_agent_taint | length > 0) or
   (k3s_vars.server.controlplane.tainted and k3s_service_type | lower == 'server' and k3s_node_default_taint | length > 0)
 %}
