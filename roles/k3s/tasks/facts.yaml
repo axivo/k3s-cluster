@@ -44,6 +44,19 @@
     k3s_loadbalancer_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
   run_once: true
 
+- name: Set node kubelet fact
+  ansible.builtin.set_fact:
+    k3s_node_kubelet: '{{ k3s_vars.agent.kubelet if ansible_host not in k3s_server_hosts else k3s_vars.server.kubelet }}'
+  run_once: true
+
+- name: Set node kubelet arguments fact
+  ansible.builtin.set_fact:
+    k3s_node_kubelet_args: "{{ (k3s_node_kubelet_args | default([]) | union(['='.join((kubelet.arg, kubelet.value))])) }}"
+  loop: '{{ k3s_node_kubelet }}'
+  loop_control:
+    loop_var: kubelet
+  run_once: true
+
 - name: Set node taints fact
   ansible.builtin.set_fact:
     k3s_node_taints: "{{ (k3s_node_taints | default([]) | union([':'.join((taint.key, taint.effect))])) }}"
