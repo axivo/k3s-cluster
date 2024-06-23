@@ -31,20 +31,34 @@
       changed_when: false
       register: k3s_version
 
-    - name: Validate targeted cluster version
-      ansible.builtin.assert:
-        that: k3s_version.stdout != k3s_vars.release.version
-        fail_msg: |-
-          ERROR: Invalid targeted cluster release version.
-            - Deployed version: {{ k3s_version.stdout }}
-            - Targeted version: {{ k3s_vars.release.version }}
-          FIXES:
-            - Update the 'k3s_vars.release.version' variable with the new release version.
-        quiet: true
-
 - name: Role Upgrade
-  when: k3s_version.stdout != k3s_vars.release.version
   block:
+    - name: Set Token
+      when: ansible_host in k3s_server_hosts
+      run_once: true
+      block:
+        - name: Read token
+          ansible.builtin.slurp:
+            path: '{{ k3s_vars.directory.lib }}/server/node-token'
+          register: node_token
+
+        - name: Set token fact
+          ansible.builtin.set_fact:
+            k3s_token: '{{ node_token.content | b64decode | trim }}'
+
+    - name: Set configuration postinstall fact
+      ansible.builtin.set_fact:
+        k3s_config_postinstall: true
+
+    - name: Update configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        owner: root
+        group: root
+        mode: '0600'
+      register: k3s_config
+
     - name: Install k3s binary
       ansible.builtin.get_url:
         url: '{{ k3s_release_url_file }}'
@@ -57,6 +71,7 @@
       delay: 1
       retries: 3
       until: result is not failed
+      when: k3s_version.stdout != k3s_vars.release.version
 
     - name: Schedule reboot
       ansible.builtin.file:
@@ -67,3 +82,4 @@
         owner: root
         group: root
         mode: '0644'
+      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.version
