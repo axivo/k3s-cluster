@@ -26,12 +26,12 @@
 
 - name: Set server default ip fact
   ansible.builtin.set_fact:
-    k3s_server_default_ip: "{{ ansible_default_ipv4.address }}"
+    k3s_server_default_ip: '{{ ansible_default_ipv4.address }}'
   when: ansible_host in k3s_server_hosts
 
 - name: Set loadbalancer hosts fact
   ansible.builtin.set_fact:
-    k3s_loadbalancer_hosts: "{{ k3s_server_hosts[-2:] }}"
+    k3s_loadbalancer_hosts: '{{ k3s_server_hosts[-2:] }}'
   run_once: true
 
 - name: Set loadbalancer ips fact
@@ -44,22 +44,17 @@
     k3s_loadbalancer_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
   run_once: true
 
-- name: Set node kubelet fact
-  ansible.builtin.set_fact:
-    k3s_node_kubelet: '{{ k3s_vars.agent.kubelet if ansible_host not in k3s_server_hosts else k3s_vars.server.kubelet }}'
-  run_once: true
-
 - name: Set node kubelet arguments fact
   ansible.builtin.set_fact:
-    k3s_node_kubelet_args: "{{ (k3s_node_kubelet_args | default([]) | union(['='.join((kubelet.arg, kubelet.value))])) }}"
-  loop: '{{ k3s_node_kubelet }}'
+    k3s_node_kubelet_args: "{{ k3s_node_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) }}"
+  loop: '{{ k3s_vars.kubelet }}'
   loop_control:
     loop_var: kubelet
   run_once: true
 
 - name: Set node taints fact
   ansible.builtin.set_fact:
-    k3s_node_taints: "{{ (k3s_node_taints | default([]) | union([':'.join((taint.key, taint.effect))])) }}"
+    k3s_node_taints: "{{ k3s_node_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) }}"
   loop: '{{ k3s_vars.tolerations }}'
   loop_control:
     loop_var: taint
@@ -103,7 +98,6 @@
 - name: Set service type fact
   ansible.builtin.set_fact:
     k3s_service_type: "{{ 'agent' if ansible_host not in k3s_server_hosts else 'server' }}"
-  run_once: true
 
 - name: Set token fact
   ansible.builtin.set_fact:

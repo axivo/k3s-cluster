@@ -1,16 +1,19 @@
 ---
 k3s_vars:
-  agent:
-    kubelet:
-      - arg: eviction-hard
-        value: memory.available<500Mi
-      - arg: system-reserved
-        value: cpu=500m,memory=1Gi
   directory:
     bin: /usr/local/bin
     config: /etc/rancher/k3s
     kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"
     lib: /var/lib/rancher/k3s
+  kubelet:
+    - arg: eviction-max-pod-grace-period
+      value: 60
+    - arg: eviction-soft
+      value: memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<15%
+    - arg: eviction-soft-grace-period
+      value: memory.available=30s,nodefs.available=30s,nodefs.inodesFree=30s
+    - arg: system-reserved
+      value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
   network:
     interface: eth0
   release:
@@ -34,9 +37,6 @@ k3s_vars:
       port: 6444
     kubeconfig:
       local: true
-    kubelet:
-      - arg: system-reserved
-        value: cpu=500m,memory=1Gi
   service:
     debug: false
   tolerations:
