@@ -6,12 +6,16 @@ k3s_vars:
     kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"
     lib: /var/lib/rancher/k3s
   kubelet:
+    - arg: eviction-hard
+      value: imagefs.available<10%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
     - arg: eviction-max-pod-grace-period
       value: 60
+    - arg: eviction-minimum-reclaim
+      value: imagefs.available=10%,imagefs.inodesFree=5%,memory.available=500Mi,nodefs.available=10%,nodefs.inodesFree=5%
     - arg: eviction-soft
-      value: memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<15%
+      value: imagefs.available<30%,imagefs.inodesFree<10%,memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<10%
     - arg: eviction-soft-grace-period
-      value: memory.available=30s,nodefs.available=30s,nodefs.inodesFree=30s
+      value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
     - arg: system-reserved
       value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
   network:
@@ -37,6 +41,8 @@ k3s_vars:
       port: 6444
     kubeconfig:
       local: true
+    tls_san:
+      - 192.168.4.10
   service:
     debug: false
   tolerations:

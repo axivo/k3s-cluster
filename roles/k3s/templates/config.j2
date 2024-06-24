@@ -40,7 +40,7 @@ server: https://{{ k3s_server_default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
 {% if k3s_ha_cluster and k3s_service_type | lower == 'server' %}
 tls-san:
-  {{ [k3s_vars.server.api.host] | to_nice_yaml | indent(2) }}
+  {{ k3s_vars.server.tls_san | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% if k3s_token | length > 0 %}
 token: {{ k3s_token }}

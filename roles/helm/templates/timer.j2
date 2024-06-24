@@ -1,0 +1,12 @@
+[Unit]
+Description=Discard Helm cache files once a week
+Documentation=https://helm.sh
+
+[Timer]
+AccuracySec=1h
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=100m
+
+[Install]
+WantedBy=multi-user.target
