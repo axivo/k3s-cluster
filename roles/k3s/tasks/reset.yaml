@@ -96,7 +96,7 @@
 
     - name: Reset systemd
       ansible.builtin.command:
-        cmd: systemctl reset-failed # noqa command-instead-of-module
+        cmd: systemctl '{{ item }}' # noqa command-instead-of-module
       changed_when: true
       loop:
         - daemon-reload
