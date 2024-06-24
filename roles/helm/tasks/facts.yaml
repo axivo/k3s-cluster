@@ -2,12 +2,12 @@
 - name: Set environment variables fact
   ansible.builtin.set_fact:
     helm_environment_vars:
-      HELM_CACHE_HOME: /tmp/helm
+      HELM_CACHE_HOME: '{{ helm_vars.directory.share }}/cache'
       HELM_CONFIG_HOME: '{{ helm_vars.directory.share }}/config'
       HELM_DATA_HOME: '{{ helm_vars.directory.share }}'
       HELM_PLUGINS: '{{ helm_vars.directory.share }}/plugins'
       HELM_REGISTRY_CONFIG: '{{ helm_vars.directory.share }}/config/registry/config.json'
-      HELM_REPOSITORY_CACHE: /tmp/helm/repository
+      HELM_REPOSITORY_CACHE: '{{ helm_vars.directory.share }}/cache/repository'
       HELM_REPOSITORY_CONFIG: '{{ helm_vars.directory.share }}/config/repositories.yaml'
   run_once: true
 

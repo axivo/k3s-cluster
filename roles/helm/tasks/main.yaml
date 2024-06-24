@@ -90,7 +90,27 @@
             autoremove: true
             update_cache: true
 
+    - name: Helm Cache
+      notify: Start service
+      block:
+        - name: Create service file
+          ansible.builtin.template:
+            src: service.j2
+            dest: /etc/systemd/system/helm-cache.service
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: Create service timer file
+          ansible.builtin.template:
+            src: timer.j2
+            dest: /etc/systemd/system/helm-cache.timer
+            owner: root
+            group: root
+            mode: '0644'
+
     - name: Remove Helm Plugins
+      notify: Restart service
       block:
         - name: Remove plugins
           kubernetes.core.helm_plugin:

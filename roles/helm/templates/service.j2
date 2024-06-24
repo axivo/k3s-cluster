@@ -1,0 +1,12 @@
+[Unit]
+Description=Discard Helm cache files
+Documentation=https://helm.sh
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/environment
+ExecStart=/usr/bin/rm -rf $HELM_CACHE_HOME
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
