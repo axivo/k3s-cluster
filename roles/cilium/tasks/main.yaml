@@ -54,7 +54,7 @@
         remote_src: true
       loop: '{{ release }}'
 
-    - name: Delete archive
+    - name: Remove archive
       ansible.builtin.file:
         path: /tmp/{{ item.file }}
         state: absent
