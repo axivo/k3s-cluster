@@ -6,11 +6,11 @@
   serial:
     - 3
     - 5
-  vars_prompt:
-    - name: prompt_remove_packages
-      prompt: Remove installed apt packages? [Y/n]
-      default: 'n'
-      private: false
+  post_tasks:
+    - name: Remove archived journal files
+      ansible.builtin.command:
+        cmd: journalctl --rotate --vacuum-time=1s
+      changed_when: true
   tasks:
     - name: Get packages information
       ansible.builtin.package_facts:
@@ -37,3 +37,8 @@
         loop_var: role
       tags: always
       when: (role in ansible_run_tags) or (ansible_run_tags == ['all'])
+  vars_prompt:
+    - name: prompt_remove_packages
+      prompt: Remove installed apt packages? [Y/n]
+      default: 'n'
+      private: false
