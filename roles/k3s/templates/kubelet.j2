@@ -1,0 +1,31 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+evictionHard:
+  imagefs.available: "10%"
+  imagefs.inodesFree: "5%"
+  memory.available: "500Mi"
+  nodefs.available: "10%"
+  nodefs.inodesFree: "5%"
+evictionMaxPodGracePeriod: 60
+evictionMinimumReclaim:
+  imagefs.available: "10%"
+  imagefs.inodesFree: "5%"
+  memory.available: "500Mi"
+  nodefs.available: "10%"
+  nodefs.inodesFree: "5%"
+evictionSoft:
+  imagefs.available: "30%"
+  imagefs.inodesFree: "15%"
+  memory.available: "1Gi"
+  nodefs.available: "30%"
+  nodefs.inodesFree: "15%"
+evictionSoftGracePeriod:
+  imagefs.available: "2m"
+  imagefs.inodesFree: "2m"
+  memory.available: "1m30s"
+  nodefs.available: "2m"
+  nodefs.inodesFree: "2m"
+systemReserved:
+  cpu: "1"
+  ephemeral-storage: "5Gi"
+  memory: "1Gi"

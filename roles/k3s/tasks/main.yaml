@@ -39,6 +39,14 @@
         group: root
         mode: '0600'
 
+    - name: Create kubelet configuration file
+      ansible.builtin.template:
+        src: kubelet.j2
+        dest: '{{ k3s_vars.directory.config }}/kubelet.yaml'
+        owner: root
+        group: root
+        mode: '0600'
+
     - name: Create registries file
       ansible.builtin.template:
         src: registries.j2

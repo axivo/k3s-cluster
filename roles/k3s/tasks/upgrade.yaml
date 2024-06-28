@@ -59,6 +59,15 @@
         mode: '0600'
       register: k3s_config
 
+    - name: Update kubelet configuration file
+      ansible.builtin.template:
+        src: kubelet.j2
+        dest: '{{ k3s_vars.directory.config }}/kubelet.yaml'
+        owner: root
+        group: root
+        mode: '0600'
+      register: k3s_kubelet_config
+
     - name: Install k3s binary
       ansible.builtin.get_url:
         url: '{{ k3s_release_url_file }}'
@@ -82,4 +91,4 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.version
+      when: k3s_config.changed or k3s_kubelet_config.changed or k3s_version.stdout != k3s_vars.release.version
