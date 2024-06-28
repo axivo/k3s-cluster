@@ -120,7 +120,7 @@
           changed_when: true
           no_log: true
 
-        - name: Delete password file
+        - name: Remove password file
           ansible.builtin.file:
             path: ./password
             state: absent

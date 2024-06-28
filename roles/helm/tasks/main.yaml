@@ -62,7 +62,7 @@
           changed_when: dearmor_key.rc == 0
           register: dearmor_key
 
-        - name: Delete key
+        - name: Remove key
           ansible.builtin.file:
             path: /tmp/{{ helm_vars.release.repository.key }}
             state: absent
