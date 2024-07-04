@@ -59,7 +59,7 @@
         - name: Set hostname fact
           ansible.builtin.set_fact:
             hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
 
         - name: Set server user settings fact
           ansible.builtin.set_fact:
@@ -87,7 +87,7 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
           block:
             - name: Create server gateway
               kubernetes.core.k8s:

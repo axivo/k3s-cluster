@@ -52,7 +52,7 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
           block:
             - name: Set hostname fact
               ansible.builtin.set_fact:

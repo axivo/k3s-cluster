@@ -14,7 +14,7 @@
 - name: Role Provisioning
   when:
     - ansible_host in k3s_server_hosts
-    - cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+    - cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
   block:
     - name: Validate service state
       ansible.builtin.wait_for:
