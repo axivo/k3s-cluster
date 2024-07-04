@@ -13,7 +13,7 @@
   run_once: true
   block:
     - name: Gateway Setup
-      when: cloudflare_vars.kubernetes.gateway.domain != 'disabled'
+      when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
       block:
         - name: Set hostname fact
           ansible.builtin.set_fact:
