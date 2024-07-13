@@ -1,11 +1,10 @@
 backend k3s-backend
 	balance		roundrobin
-	default-server	check
 	mode		tcp
 	option		tcplog
 	option		tcp-check
 {% for host, ip in k3s_server_hosts | zip(k3s_server_ips) %}
-	server {{ host }}	{{ ip }}:{{ k3s_vars.server.api.port }}
+	server {{ host }}	{{ ip }}:{{ k3s_vars.server.api.port }} check
 {% endfor %}
 
 frontend k3s-frontend
