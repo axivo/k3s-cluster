@@ -37,7 +37,7 @@ argocd_vars:
       chart:
         name: argo-cd
         org: argoproj
-        version: v7.3.6
+        version: v7.5.2
       repository:
         name: argo-helm
         org: argoproj
