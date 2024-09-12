@@ -16,7 +16,7 @@ cilium_vars:
     helm:
       chart:
         name: cilium
-        version: v1.15.7
+        version: v1.16.1
       repository:
         name: cilium
         org: cilium
@@ -66,7 +66,7 @@ cilium_vars:
       operator:
         cluster_pool: 10.42.0.0/16
     loadbalancer:
-      algorithm: disabled
+      algorithm: maglev
       ip_pool:
         cidr: 192.168.4.16/28
         name: default-pool
@@ -89,7 +89,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.13
+      version: v0.16.15
     gateway_api:
       file: experimental-install.yaml
       repository:
@@ -101,4 +101,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v0.13.4
+      version: v1.16.0
