@@ -66,7 +66,7 @@
       ansible.builtin.set_fact:
         cilium_postinstall: true
 
-    - name: Update chart values
+    - name: Update chart postinstall values
       kubernetes.core.helm:
         chart_ref: '{{ cilium_project_chart }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
