@@ -16,6 +16,7 @@ externalIPs:
   enabled: true
 gatewayAPI:
   enabled: true
+  enableAlpn: true
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
@@ -117,11 +118,12 @@ ingressController:
 loadBalancer:
   algorithm: {{ cilium_vars.kubernetes.loadbalancer.algorithm }}
 maglev:
-  hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12) }}"
+  hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=16) }}"
   tableSize: {{ cilium_vars.kubernetes.loadbalancer.table_size }}
 {% endif %}
 {% if cilium_vars.kubernetes.routing_mode | lower == 'native' %}
 autoDirectNodeRoutes: true
+directRoutingSkipUnreachable: true
 ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 l2announcements:
   enabled: true

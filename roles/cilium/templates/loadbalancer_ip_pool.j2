@@ -4,5 +4,5 @@ metadata:
   name: {{ cilium_vars.kubernetes.loadbalancer.ip_pool.name }}
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
-  cidrs:
+  blocks:
     - cidr: {{ cilium_vars.kubernetes.loadbalancer.ip_pool.cidr }}
