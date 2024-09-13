@@ -44,7 +44,7 @@ cluster_vars:
       enabled: false
     unattended_upgrades:
       enabled: true
-      mail_report: on-change
+      mail_report: only-on-error
       remove_deps: 'true'
     wifi:
       enabled: false
