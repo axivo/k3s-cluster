@@ -89,7 +89,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.15
+      version: v0.16.17
     gateway_api:
       file: experimental-install.yaml
       repository:
