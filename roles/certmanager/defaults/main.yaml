@@ -4,7 +4,7 @@ certmanager_vars:
     cainjector:
       resources:
         limits:
-          cpu: 400m
+          cpu: 200m
           memory: 256Mi
         requests:
           cpu: 100m
@@ -13,7 +13,7 @@ certmanager_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 400m
+          cpu: 200m
           memory: 256Mi
         requests:
           cpu: 100m
@@ -34,7 +34,7 @@ certmanager_vars:
     webhook:
       resources:
         limits:
-          cpu: 400m
+          cpu: 200m
           memory: 256Mi
         requests:
           cpu: 100m

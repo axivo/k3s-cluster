@@ -11,7 +11,7 @@ prometheus_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 400m
+          cpu: 200m
           memory: 256Mi
         requests:
           cpu: 100m
