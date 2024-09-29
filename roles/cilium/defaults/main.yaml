@@ -68,7 +68,9 @@ cilium_vars:
     loadbalancer:
       algorithm: maglev
       ip_pool:
-        cidr: 192.168.4.16/28
+        blocks:
+          start: 192.168.4.16
+          stop: 192.168.4.50
         name: default-pool
       l2_announcement_policy:
         name: default-l2-announcement-policy
