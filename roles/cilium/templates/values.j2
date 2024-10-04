@@ -65,6 +65,13 @@ operator:
       cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
       memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
   rollOutPods: true
+resources:
+  limits:
+    cpu: {{ cilium_vars.kubernetes.resources.limits.cpu }}
+    memory: {{ cilium_vars.kubernetes.resources.limits.memory }}
+  requests:
+    cpu: {{ cilium_vars.kubernetes.resources.requests.cpu }}
+    memory: {{ cilium_vars.kubernetes.resources.requests.memory }}
 rollOutCiliumPods: true
 {% elif cilium_postinstall %}
 dashboards:

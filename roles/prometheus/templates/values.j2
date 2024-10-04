@@ -1,5 +1,6 @@
 alertmanager:
   alertmanagerSpec:
+    logLevel: {{ prometheus_vars.kubernetes.alertmanager.log_level }}
     replicas: {{ prometheus_vars.kubernetes.alertmanager.replicas }}
     resources:
       limits:
@@ -8,6 +9,7 @@ alertmanager:
       requests:
         cpu: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}
         memory: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}
+    retention: {{ prometheus_vars.kubernetes.alertmanager.retention }}
     storage:
       volumeClaimTemplate:
         spec:
@@ -52,8 +54,10 @@ kubeScheduler:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 prometheus:
   prometheusSpec:
+    logLevel: {{ prometheus_vars.kubernetes.prometheus.log_level }}
     enableAdminAPI: true
     replicaExternalLabelName: replica
+    replicas: {{ prometheus_vars.kubernetes.prometheus.replicas }}
     resources:
       limits:
         cpu: {{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}
@@ -61,6 +65,7 @@ prometheus:
       requests:
         cpu: {{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}
         memory: {{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}
+    retention: {{ prometheus_vars.kubernetes.prometheus.retention }}
     serviceMonitorSelectorNilUsesHelmValues: false
     storageSpec:
       volumeClaimTemplate:

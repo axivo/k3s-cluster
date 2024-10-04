@@ -29,11 +29,11 @@ cloudflare_vars:
     policy: sync
     resources:
       limits:
-        cpu: 200m
-        memory: 256Mi
-      requests:
         cpu: 100m
-        memory: 64Mi
+        memory: 128Mi
+      requests:
+        cpu: 20m
+        memory: 32Mi
     secret:
       key: token
       name: cloudflare-api-token

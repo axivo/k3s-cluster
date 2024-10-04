@@ -8,11 +8,11 @@ cilium_vars:
     envoy:
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     helm:
       chart:
         name: cilium
@@ -26,11 +26,11 @@ cilium_vars:
         replicas: 2
         resources:
           limits:
-            cpu: 200m
-            memory: 256Mi
-          requests:
             cpu: 100m
-            memory: 64Mi
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
         retry_timeout: 10s
       ui:
         gateway:
@@ -42,11 +42,11 @@ cilium_vars:
         replicas: 1
         resources:
           limits:
-            cpu: 200m
-            memory: 256Mi
-          requests:
             cpu: 100m
-            memory: 64Mi
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
       tls:
         auto:
           method: certmanager
@@ -79,11 +79,18 @@ cilium_vars:
     operator:
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
     routing_mode: native
   release:
     cli:

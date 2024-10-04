@@ -5,11 +5,11 @@ argocd_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     configs:
       cm:
         exec:
@@ -20,19 +20,19 @@ argocd_vars:
     controller:
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
-          cpu: 200m
+          cpu: 100m
           memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     dex:
       resources:
         limits:
-          cpu: 200m
+          cpu: 100m
           memory: 256Mi
         requests:
-          cpu: 100m
-          memory: 64Mi
+          cpu: 20m
+          memory: 32Mi
     helm:
       chart:
         name: argo-cd
@@ -46,21 +46,21 @@ argocd_vars:
     notifications:
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     redis:
       high_availability:
         enabled: true
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
-          cpu: 200m
+          cpu: 100m
           memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     repo_server:
       autoscaling:
         enabled: true
@@ -70,11 +70,11 @@ argocd_vars:
           memory_percentage: 80
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
-          cpu: 200m
+          cpu: 100m
           memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     server:
       admin:
         password: !vault |
@@ -104,8 +104,8 @@ argocd_vars:
           cpu: 200m
           memory: 256Mi
         requests:
-          cpu: 200m
-          memory: 128Mi
+          cpu: 20m
+          memory: 32Mi
       user:
         name: floren
         password: !vault |
