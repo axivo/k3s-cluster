@@ -8,11 +8,11 @@ cilium_vars:
     envoy:
       resources:
         limits:
-          cpu: 400m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
     helm:
       chart:
         name: cilium
@@ -26,11 +26,11 @@ cilium_vars:
         replicas: 2
         resources:
           limits:
-            cpu: 400m
-            memory: 256Mi
-          requests:
             cpu: 100m
-            memory: 64Mi
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
         retry_timeout: 10s
       ui:
         gateway:
@@ -42,11 +42,11 @@ cilium_vars:
         replicas: 1
         resources:
           limits:
-            cpu: 400m
-            memory: 256Mi
-          requests:
             cpu: 100m
-            memory: 64Mi
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
       tls:
         auto:
           method: certmanager
@@ -68,7 +68,9 @@ cilium_vars:
     loadbalancer:
       algorithm: maglev
       ip_pool:
-        cidr: 192.168.4.16/28
+        blocks:
+          start: 192.168.4.16
+          stop: 192.168.4.50
         name: default-pool
       l2_announcement_policy:
         name: default-l2-announcement-policy
@@ -77,11 +79,18 @@ cilium_vars:
     operator:
       resources:
         limits:
-          cpu: 400m
-          memory: 256Mi
-        requests:
           cpu: 100m
-          memory: 64Mi
+          memory: 128Mi
+        requests:
+          cpu: 20m
+          memory: 32Mi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
     routing_mode: native
   release:
     cli:
