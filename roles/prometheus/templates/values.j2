@@ -54,8 +54,13 @@ kubeScheduler:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 prometheus:
   prometheusSpec:
+{% if not prometheus_vars.kubernetes.prometheus.compaction.enabled %}
+    disableCompaction: true
+{% endif %}
     logLevel: {{ prometheus_vars.kubernetes.prometheus.log_level }}
     enableAdminAPI: true
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
     replicaExternalLabelName: replica
     replicas: {{ prometheus_vars.kubernetes.prometheus.replicas }}
     resources:
@@ -66,6 +71,8 @@ prometheus:
         cpu: {{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}
         memory: {{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}
     retention: {{ prometheus_vars.kubernetes.prometheus.retention }}
+    retentionSize: {{ prometheus_vars.kubernetes.prometheus.retention_size }}
+    ruleSelectorNilUsesHelmValues: false
     serviceMonitorSelectorNilUsesHelmValues: false
     storageSpec:
       volumeClaimTemplate:

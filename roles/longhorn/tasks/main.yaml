@@ -42,12 +42,12 @@
           kubernetes.core.helm:
             chart_ref: '{{ longhorn_project_chart }}'
             chart_version: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
-            create_namespace: true
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ longhorn_vars.kubernetes.namespace }}'
-            update_repo_cache: true
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            create_namespace: true
+            update_repo_cache: true
             wait: true
           register: result
           delay: 1

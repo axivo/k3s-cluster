@@ -23,7 +23,7 @@ prometheus_vars:
       chart:
         name: kube-prometheus-stack
         prefix: monitoring
-        version: v63.1.0
+        version: v65.1.0
       repository:
         name: helm-charts
         org: prometheus-community
@@ -48,6 +48,8 @@ prometheus_vars:
           38383463653931373134663230383033666264646364316563663636303736326630
     namespace: kube-system
     prometheus:
+      compaction:
+        enabled: true
       gateway:
         service: monitoring-kube-prometheus-prometheus
         subdomain: prometheus
@@ -64,4 +66,5 @@ prometheus_vars:
           cpu: 100m
           memory: 256Mi
       retention: 5d
+      retention_size: 30GB
       storage: 50Gi

@@ -85,14 +85,14 @@
           kubernetes.core.helm:
             chart_ref: '{{ cilium_project_chart }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-            create_namespace: true
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
-            update_repo_cache: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            create_namespace: true
             reset_values: false
             reuse_values: true
-            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            update_repo_cache: true
             wait: true
           register: result
           delay: 1
@@ -122,10 +122,10 @@
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
-            update_repo_cache: true
+            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             reset_values: false
             reuse_values: true
-            values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+            update_repo_cache: true
             wait: true
           register: result
           delay: 1
