@@ -44,9 +44,14 @@
   gather_facts: true
   post_tasks:
     - name: Perform post-install tasks
-      ansible.builtin.import_role:
-        name: cilium
+      ansible.builtin.include_role:
+        name: '{{ role }}'
         tasks_from: postinstall
+      loop:
+        - certmanager
+        - cilium
+      loop_control:
+        loop_var: role
   roles:
     - cilium
     - certmanager
