@@ -15,7 +15,7 @@ podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
 prometheus:
-  serviceMonitor:
+  servicemonitor:
     enabled: true
     namespace: {{ prometheus_vars.kubernetes.namespace }}
 replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
