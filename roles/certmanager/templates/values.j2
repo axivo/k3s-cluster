@@ -14,10 +14,12 @@ extraArgs:
 podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
+{% if certmanager_postinstall %}
 prometheus:
   servicemonitor:
     enabled: true
     namespace: {{ prometheus_vars.kubernetes.namespace }}
+{% endif %}
 replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
 resources:
   limits:

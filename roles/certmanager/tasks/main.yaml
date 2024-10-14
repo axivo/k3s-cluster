@@ -62,6 +62,10 @@
     - name: Chart Setup
       run_once: true
       block:
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            certmanager_postinstall: false
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ certmanager_project_chart }}'

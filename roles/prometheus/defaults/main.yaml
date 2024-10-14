@@ -17,7 +17,7 @@ prometheus_vars:
         requests:
           cpu: 20m
           memory: 32Mi
-      retention: 3d
+      retention: 72h
       storage: 5Gi
     helm:
       chart:
@@ -61,7 +61,7 @@ prometheus_vars:
       resources:
         limits:
           cpu: 1
-          memory: 3Gi
+          memory: 2Gi
         requests:
           cpu: 100m
           memory: 256Mi

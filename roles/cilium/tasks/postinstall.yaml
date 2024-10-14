@@ -73,9 +73,9 @@
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ cilium_vars.kubernetes.namespace }}'
+        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         reset_values: false
         reuse_values: true
-        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         wait: true
       register: result
       delay: 1
