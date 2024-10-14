@@ -17,13 +17,13 @@ prometheus_vars:
         requests:
           cpu: 20m
           memory: 32Mi
-      retention: 96h
+      retention: 3d
       storage: 5Gi
     helm:
       chart:
         name: kube-prometheus-stack
         prefix: monitoring
-        version: v65.1.0
+        version: v65.2.0
       repository:
         name: helm-charts
         org: prometheus-community
@@ -60,11 +60,11 @@ prometheus_vars:
       replicas: 1
       resources:
         limits:
-          cpu: 500m
-          memory: 2Gi
+          cpu: 1
+          memory: 3Gi
         requests:
           cpu: 100m
           memory: 256Mi
-      retention: 5d
-      retention_size: 30GB
+      retention: 3d
+      retention_size: 20GB
       storage: 50Gi
