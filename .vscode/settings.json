@@ -1,5 +1,5 @@
 {
-    "ansible.python.interpreterPath": "/opt/homebrew/bin/python3",
+    "ansible.python.interpreterPath": "/opt/homebrew/bin/python3.12",
     "files.associations": {
         "*.json5": "json",
         "*.yaml": "ansible"
