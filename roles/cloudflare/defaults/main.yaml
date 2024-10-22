@@ -29,7 +29,7 @@ cloudflare_vars:
     policy: sync
     resources:
       limits:
-        cpu: 100m
+        cpu: null
         memory: 128Mi
       requests:
         cpu: 20m
