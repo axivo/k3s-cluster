@@ -12,7 +12,7 @@ prometheus_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -60,7 +60,7 @@ prometheus_vars:
       replicas: 1
       resources:
         limits:
-          cpu: 1
+          cpu: null
           memory: 2Gi
         requests:
           cpu: 100m

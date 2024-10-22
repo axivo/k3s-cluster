@@ -8,7 +8,7 @@ cilium_vars:
     envoy:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -26,7 +26,7 @@ cilium_vars:
         replicas: 2
         resources:
           limits:
-            cpu: 100m
+            cpu: null
             memory: 128Mi
           requests:
             cpu: 20m
@@ -42,7 +42,7 @@ cilium_vars:
         replicas: 1
         resources:
           limits:
-            cpu: 100m
+            cpu: null
             memory: 128Mi
           requests:
             cpu: 20m
@@ -79,14 +79,14 @@ cilium_vars:
     operator:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
           memory: 32Mi
     resources:
       limits:
-        cpu: 500m
+        cpu: null
         memory: 512Mi
       requests:
         cpu: 50m

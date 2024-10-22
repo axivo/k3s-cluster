@@ -5,7 +5,7 @@ argocd_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -20,7 +20,7 @@ argocd_vars:
     controller:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -28,7 +28,7 @@ argocd_vars:
     dex:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 256Mi
         requests:
           cpu: 20m
@@ -37,7 +37,7 @@ argocd_vars:
       chart:
         name: argo-cd
         org: argoproj
-        version: v7.6.8
+        version: v7.6.12
       repository:
         name: argo-helm
         org: argoproj
@@ -46,7 +46,7 @@ argocd_vars:
     notifications:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -56,7 +56,7 @@ argocd_vars:
         enabled: true
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -70,7 +70,7 @@ argocd_vars:
           memory_percentage: 80
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 20m
@@ -101,7 +101,7 @@ argocd_vars:
           io.cilium/lb-ipam-ips: 192.168.4.18
       resources:
         limits:
-          cpu: 200m
+          cpu: null
           memory: 256Mi
         requests:
           cpu: 20m
@@ -121,4 +121,4 @@ argocd_vars:
     repository:
       name: argo-cd
       org: argoproj
-    version: v2.12.4
+    version: v2.12.6
