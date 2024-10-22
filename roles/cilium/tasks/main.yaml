@@ -96,7 +96,7 @@
             definition:
               metadata:
                 annotations:
-                  meta.helm.sh/release-name: cilium
+                  meta.helm.sh/release-name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
                   meta.helm.sh/release-namespace: '{{ cilium_vars.kubernetes.namespace }}'
                 labels:
                   app.kubernetes.io/managed-by: Helm
