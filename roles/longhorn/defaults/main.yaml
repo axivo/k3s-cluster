@@ -21,6 +21,7 @@ longhorn_vars:
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       replica_auto_balance: best-effort
       replicas: 3
+      usage_metrics: false
     helm:
       chart:
         name: longhorn

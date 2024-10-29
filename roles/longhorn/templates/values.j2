@@ -1,4 +1,5 @@
 defaultSettings:
+  allowCollectingLonghornUsageMetrics: {{ longhorn_vars.kubernetes.default_settings.usage_metrics }}
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
 {% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs' %}
