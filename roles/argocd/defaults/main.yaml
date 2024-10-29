@@ -8,8 +8,8 @@ argocd_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     configs:
       cm:
         exec:
@@ -23,16 +23,16 @@ argocd_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     dex:
       resources:
         limits:
           cpu: null
-          memory: 256Mi
+          memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: argo-cd
@@ -49,8 +49,8 @@ argocd_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     redis:
       high_availability:
         enabled: true
@@ -59,22 +59,22 @@ argocd_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     repo_server:
       autoscaling:
         enabled: true
         min_replicas: 2
         target:
-          cpu_percentage: 60
-          memory_percentage: 80
+          cpu_percentage: 90
+          memory_percentage: 90
       resources:
         limits:
           cpu: null
-          memory: 128Mi
+          memory: 100Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 100Mi
     server:
       admin:
         password: !vault |
@@ -91,8 +91,8 @@ argocd_vars:
         enabled: true
         min_replicas: 2
         target:
-          cpu_percentage: 60
-          memory_percentage: 80
+          cpu_percentage: 90
+          memory_percentage: 90
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
@@ -102,10 +102,10 @@ argocd_vars:
       resources:
         limits:
           cpu: null
-          memory: 256Mi
+          memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
       user:
         name: floren
         password: !vault |

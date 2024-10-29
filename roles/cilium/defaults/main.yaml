@@ -1,6 +1,14 @@
 ---
 cilium_vars:
   kubernetes:
+    agent:
+      resources:
+        limits:
+          cpu: null
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 256Mi
     client:
       rate_limit:
         burst: 100
@@ -11,8 +19,8 @@ cilium_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: cilium
@@ -29,10 +37,26 @@ cilium_vars:
             cpu: null
             memory: 128Mi
           requests:
-            cpu: 20m
-            memory: 32Mi
+            cpu: 10m
+            memory: 128Mi
         retry_timeout: 10s
       ui:
+        backend:
+          resources:
+            limits:
+              cpu: null
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+        frontend:
+          resources:
+            limits:
+              cpu: null
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
         gateway:
           service: hubble-ui
           subdomain: hubble
@@ -40,13 +64,6 @@ cilium_vars:
           annotations:
             io.cilium/lb-ipam-ips: 192.168.4.19
         replicas: 1
-        resources:
-          limits:
-            cpu: null
-            memory: 128Mi
-          requests:
-            cpu: 20m
-            memory: 32Mi
       tls:
         auto:
           method: certmanager
@@ -82,15 +99,8 @@ cilium_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
-    resources:
-      limits:
-        cpu: null
-        memory: 512Mi
-      requests:
-        cpu: 50m
-        memory: 64Mi
+          cpu: 10m
+          memory: 128Mi
     routing_mode: native
   release:
     cli:
@@ -110,4 +120,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.16.2
+      version: v1.16.3

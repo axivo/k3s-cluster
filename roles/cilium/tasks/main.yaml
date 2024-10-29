@@ -43,6 +43,7 @@
       delay: 1
       retries: 3
       until: result is not failed
+      check_mode: false
 
     - name: Install binary
       ansible.builtin.unarchive:
@@ -59,6 +60,7 @@
         path: /tmp/{{ item.file }}
         state: absent
       loop: '{{ release }}'
+      check_mode: false
 
     - name: Add repository
       kubernetes.core.helm_repository:

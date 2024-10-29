@@ -7,8 +7,8 @@ certmanager_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     controller:
       replicas: 2
       resources:
@@ -16,8 +16,8 @@ certmanager_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: cert-manager
@@ -37,8 +37,8 @@ certmanager_vars:
           cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
   release:
     checksums: checksums.txt
     file: cmctl_linux_arm64

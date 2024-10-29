@@ -39,16 +39,25 @@ hubble:
     rollOutPods: true
   ui:
     enabled: true
+    backend:
+      resources:
+        limits:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory }}
+        requests:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.memory }}
+    frontend:
+      resources:
+        limits:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory }}
+        requests:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.memory }}
     podDisruptionBudget:
       enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
-    resources:
-      limits:
-        cpu: {{ cilium_vars.kubernetes.hubble.ui.resources.limits.cpu }}
-        memory: {{ cilium_vars.kubernetes.hubble.ui.resources.limits.memory }}
-      requests:
-        cpu: {{ cilium_vars.kubernetes.hubble.ui.resources.requests.cpu }}
-        memory: {{ cilium_vars.kubernetes.hubble.ui.resources.requests.memory }}
     rollOutPods: true
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
@@ -67,11 +76,11 @@ operator:
   rollOutPods: true
 resources:
   limits:
-    cpu: {{ cilium_vars.kubernetes.resources.limits.cpu }}
-    memory: {{ cilium_vars.kubernetes.resources.limits.memory }}
+    cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
+    memory: {{ cilium_vars.kubernetes.agent.resources.limits.memory }}
   requests:
-    cpu: {{ cilium_vars.kubernetes.resources.requests.cpu }}
-    memory: {{ cilium_vars.kubernetes.resources.requests.memory }}
+    cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
+    memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 rollOutCiliumPods: true
 {% elif cilium_postinstall %}
 dashboards:

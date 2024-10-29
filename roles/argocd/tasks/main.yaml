@@ -26,6 +26,7 @@
         url: '{{ argocd_release_url_checksums }}'
         return_content: true
       register: checksums
+      check_mode: false
       run_once: true
 
     - name: Set sha256 checksum fact
