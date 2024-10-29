@@ -5,11 +5,11 @@ argocd_vars:
       replicas: 2
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     configs:
       cm:
         exec:
@@ -20,19 +20,19 @@ argocd_vars:
     controller:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     dex:
       resources:
         limits:
-          cpu: 100m
-          memory: 256Mi
+          cpu: null
+          memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: argo-cd
@@ -46,35 +46,35 @@ argocd_vars:
     notifications:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     redis:
       high_availability:
         enabled: true
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     repo_server:
       autoscaling:
         enabled: true
         min_replicas: 2
         target:
-          cpu_percentage: 60
-          memory_percentage: 80
+          cpu_percentage: 90
+          memory_percentage: 90
       resources:
         limits:
-          cpu: 100m
-          memory: 128Mi
+          cpu: null
+          memory: 100Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 100Mi
     server:
       admin:
         password: !vault |
@@ -91,8 +91,8 @@ argocd_vars:
         enabled: true
         min_replicas: 2
         target:
-          cpu_percentage: 60
-          memory_percentage: 80
+          cpu_percentage: 90
+          memory_percentage: 90
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
@@ -101,11 +101,11 @@ argocd_vars:
           io.cilium/lb-ipam-ips: 192.168.4.18
       resources:
         limits:
-          cpu: 200m
-          memory: 256Mi
+          cpu: null
+          memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
       user:
         name: floren
         password: !vault |

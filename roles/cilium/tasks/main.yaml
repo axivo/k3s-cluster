@@ -43,6 +43,7 @@
       delay: 1
       retries: 3
       until: result is not failed
+      check_mode: false
 
     - name: Install binary
       ansible.builtin.unarchive:
@@ -59,6 +60,7 @@
         path: /tmp/{{ item.file }}
         state: absent
       loop: '{{ release }}'
+      check_mode: false
 
     - name: Add repository
       kubernetes.core.helm_repository:
@@ -81,6 +83,37 @@
           ansible.builtin.set_fact:
             cilium_postinstall: false
 
+        - name: Get secret info
+          kubernetes.core.k8s_info:
+            kind: Secret
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: hubble-server-certs
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            wait: true
+          register: secret
+          no_log: true
+
+        - name: Set secret metadata
+          kubernetes.core.k8s:
+            definition:
+              metadata:
+                annotations:
+                  meta.helm.sh/release-name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
+                  meta.helm.sh/release-namespace: '{{ cilium_vars.kubernetes.namespace }}'
+                labels:
+                  app.kubernetes.io/managed-by: Helm
+            kind: Secret
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ item }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            wait: true
+          loop:
+            - hubble-relay-client-certs
+            - hubble-server-certs
+          when:
+            - secret.resources is iterable
+            - secret.resources | length > 0
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ cilium_project_chart }}'
@@ -90,14 +123,33 @@
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
-            reset_values: false
-            reuse_values: true
             update_repo_cache: true
             wait: true
           register: result
           delay: 1
           retries: 3
           until: result is not failed
+
+        - name: Reset secret metadata
+          kubernetes.core.k8s:
+            definition:
+              metadata:
+                annotations:
+                  meta.helm.sh/release-name: null
+                  meta.helm.sh/release-namespace: null
+                labels:
+                  app.kubernetes.io/managed-by: null
+            kind: Secret
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            name: '{{ item }}'
+            namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            wait: true
+          loop:
+            - hubble-relay-client-certs
+            - hubble-server-certs
+          when:
+            - secret.resources is iterable
+            - secret.resources | length > 0
 
         - name: Create l2 announcement policy
           kubernetes.core.k8s:

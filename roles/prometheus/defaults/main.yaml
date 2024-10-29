@@ -8,15 +8,15 @@ prometheus_vars:
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.21
-      log_level: info
+      log_level: warn
       replicas: 2
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
       retention: 72h
       storage: 5Gi
     helm:
@@ -56,15 +56,15 @@ prometheus_vars:
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.23
-      log_level: info
+      log_level: warn
       replicas: 1
       resources:
         limits:
-          cpu: 1
-          memory: 2Gi
+          cpu: null
+          memory: 2.5Gi
         requests:
-          cpu: 100m
-          memory: 256Mi
+          cpu: 10m
+          memory: 2.5Gi
       retention: 3d
-      retention_size: 20GB
+      retention_size: 10GB
       storage: 50Gi

@@ -1,6 +1,14 @@
 ---
 cilium_vars:
   kubernetes:
+    agent:
+      resources:
+        limits:
+          cpu: null
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 256Mi
     client:
       rate_limit:
         burst: 100
@@ -8,11 +16,11 @@ cilium_vars:
     envoy:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: cilium
@@ -26,13 +34,29 @@ cilium_vars:
         replicas: 2
         resources:
           limits:
-            cpu: 100m
+            cpu: null
             memory: 128Mi
           requests:
-            cpu: 20m
-            memory: 32Mi
+            cpu: 10m
+            memory: 128Mi
         retry_timeout: 10s
       ui:
+        backend:
+          resources:
+            limits:
+              cpu: null
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+        frontend:
+          resources:
+            limits:
+              cpu: null
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
         gateway:
           service: hubble-ui
           subdomain: hubble
@@ -40,13 +64,6 @@ cilium_vars:
           annotations:
             io.cilium/lb-ipam-ips: 192.168.4.19
         replicas: 1
-        resources:
-          limits:
-            cpu: 100m
-            memory: 128Mi
-          requests:
-            cpu: 20m
-            memory: 32Mi
       tls:
         auto:
           method: certmanager
@@ -79,18 +96,11 @@ cilium_vars:
     operator:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 50m
-        memory: 64Mi
+          cpu: 10m
+          memory: 128Mi
     routing_mode: native
   release:
     cli:

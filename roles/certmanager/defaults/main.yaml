@@ -4,20 +4,20 @@ certmanager_vars:
     cainjector:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     controller:
       replicas: 2
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: cert-manager
@@ -34,11 +34,11 @@ certmanager_vars:
     webhook:
       resources:
         limits:
-          cpu: 100m
+          cpu: null
           memory: 128Mi
         requests:
-          cpu: 20m
-          memory: 32Mi
+          cpu: 10m
+          memory: 128Mi
   release:
     checksums: checksums.txt
     file: cmctl_linux_arm64
