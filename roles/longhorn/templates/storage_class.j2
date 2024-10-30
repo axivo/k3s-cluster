@@ -1,6 +1,8 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: 'false'
   name: longhorn-rwx
 provisioner: driver.longhorn.io
 parameters:

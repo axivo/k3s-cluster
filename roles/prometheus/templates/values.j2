@@ -1,6 +1,7 @@
 alertmanager:
   alertmanagerSpec:
     logLevel: {{ prometheus_vars.kubernetes.alertmanager.log_level }}
+    podAntiAffinity: {{ prometheus_vars.kubernetes.alertmanager.pod_anti_affinity }}
     replicas: {{ prometheus_vars.kubernetes.alertmanager.replicas }}
 {% if prometheus_postinstall %}
     resources:
@@ -59,8 +60,9 @@ prometheus:
 {% if not prometheus_vars.kubernetes.prometheus.compaction.enabled %}
     disableCompaction: true
 {% endif %}
-    logLevel: {{ prometheus_vars.kubernetes.prometheus.log_level }}
     enableAdminAPI: true
+    logLevel: {{ prometheus_vars.kubernetes.prometheus.log_level }}
+    podAntiAffinity: {{ prometheus_vars.kubernetes.prometheus.pod_anti_affinity }}
     podMonitorSelectorNilUsesHelmValues: false
     probeSelectorNilUsesHelmValues: false
     replicaExternalLabelName: replica
@@ -81,9 +83,9 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: longhorn
+          storageClassName: longhorn-rwx
           accessModes:
-            - ReadWriteOnce
+            - ReadWriteMany
           resources:
             requests:
               storage: {{ prometheus_vars.kubernetes.prometheus.storage }}

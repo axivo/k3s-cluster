@@ -9,6 +9,7 @@ prometheus_vars:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.21
       log_level: warn
+      pod_anti_affinity: hard
       replicas: 2
       resources:
         limits:
@@ -57,6 +58,7 @@ prometheus_vars:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.23
       log_level: warn
+      pod_anti_affinity: hard
       replicas: 1
       resources:
         limits:
