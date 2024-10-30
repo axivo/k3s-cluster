@@ -29,6 +29,10 @@
     - name: Chart Setup
       run_once: true
       block:
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            kured_postinstall: false
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ kured_project_chart }}'

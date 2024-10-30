@@ -1,3 +1,8 @@
+{% if cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled' %}
+global:
+  domain: {{ hostname }}
+{% endif %}
+{% if argocd_postinstall %}
 applicationSet:
   resources:
     limits:
@@ -6,6 +11,7 @@ applicationSet:
     requests:
       cpu: {{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.application_set.resources.requests.memory }}
+{% endif %}
 configs:
   cm:
     exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
@@ -14,6 +20,7 @@ configs:
     server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
   secret:
     argocdServerAdminPassword: {{ server['admin']['password'] }}
+{% if argocd_postinstall %}
 controller:
   resources:
     limits:
@@ -30,10 +37,6 @@ dex:
     requests:
       cpu: {{ argocd_vars.kubernetes.dex.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.dex.resources.requests.memory }}
-{% if cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled' %}
-global:
-  domain: {{ hostname }}
-{% endif %}
 notifications:
   resources:
     limits:
@@ -50,6 +53,7 @@ redis:
     requests:
       cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
+{% endif %}
 redis-ha:
   enabled: {{ argocd_vars.kubernetes.redis.high_availability.enabled }}
 repoServer:
@@ -58,6 +62,7 @@ repoServer:
     minReplicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}
     targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.cpu_percentage }}
     targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.memory_percentage }}
+{% if argocd_postinstall %}
   resources:
     limits:
       cpu: {{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}
@@ -65,12 +70,14 @@ repoServer:
     requests:
       cpu: {{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}
+{% endif %}
 server:
   autoscaling:
     enabled: {{ argocd_vars.kubernetes.server.autoscaling.enabled }}
     minReplicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
     targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.cpu_percentage }}
     targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.memory_percentage }}
+{% if argocd_postinstall %}
   resources:
     limits:
       cpu: {{ argocd_vars.kubernetes.server.resources.limits.cpu }}
@@ -78,3 +85,4 @@ server:
     requests:
       cpu: {{ argocd_vars.kubernetes.server.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.server.resources.requests.memory }}
+{% endif %}

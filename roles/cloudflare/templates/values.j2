@@ -7,6 +7,7 @@ env:
 policy: {{ cloudflare_vars.kubernetes.policy }}
 provider:
   name: cloudflare
+{% if cloudflare_postinstall %}
 resources:
   limits:
     cpu: {{ cloudflare_vars.kubernetes.resources.limits.cpu }}
@@ -14,5 +15,6 @@ resources:
   requests:
     cpu: {{ cloudflare_vars.kubernetes.resources.requests.cpu }}
     memory: {{ cloudflare_vars.kubernetes.resources.requests.memory }}
+{% endif %}
 sources:
   - gateway-httproute
