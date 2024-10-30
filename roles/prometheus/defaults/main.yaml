@@ -66,5 +66,5 @@ prometheus_vars:
           cpu: 10m
           memory: 2.5Gi
       retention: 3d
-      retention_size: 10GB
-      storage: 50Gi
+      retention_size: 20GB
+      storage: 100Gi
