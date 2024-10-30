@@ -1,3 +1,4 @@
+{% if certmanager_postinstall %}
 cainjector:
   resources:
     limits:
@@ -6,6 +7,7 @@ cainjector:
     requests:
       cpu: {{ certmanager_vars.kubernetes.cainjector.resources.requests.cpu }}
       memory: {{ certmanager_vars.kubernetes.cainjector.resources.requests.memory }}
+{% endif %}
 crds:
   enabled: true
   keep: false
@@ -19,8 +21,6 @@ prometheus:
   servicemonitor:
     enabled: true
     namespace: {{ prometheus_vars.kubernetes.namespace }}
-{% endif %}
-replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
 resources:
   limits:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.limits.cpu }}
@@ -28,11 +28,14 @@ resources:
   requests:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.requests.cpu }}
     memory: {{ certmanager_vars.kubernetes.controller.resources.requests.memory }}
+{% endif %}
+replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
 strategy:
   rollingUpdate:
     maxSurge: 0
     maxUnavailable: 1
   type: RollingUpdate
+{% if certmanager_postinstall %}
 webhook:
   resources:
     limits:
@@ -41,3 +44,4 @@ webhook:
     requests:
       cpu: {{ certmanager_vars.kubernetes.webhook.resources.requests.cpu }}
       memory: {{ certmanager_vars.kubernetes.webhook.resources.requests.memory }}
+{% endif %}

@@ -2,6 +2,7 @@ alertmanager:
   alertmanagerSpec:
     logLevel: {{ prometheus_vars.kubernetes.alertmanager.log_level }}
     replicas: {{ prometheus_vars.kubernetes.alertmanager.replicas }}
+{% if prometheus_postinstall %}
     resources:
       limits:
         cpu: {{ prometheus_vars.kubernetes.alertmanager.resources.limits.cpu }}
@@ -9,6 +10,7 @@ alertmanager:
       requests:
         cpu: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.cpu }}
         memory: {{ prometheus_vars.kubernetes.alertmanager.resources.requests.memory }}
+{% endif %}
     retention: {{ prometheus_vars.kubernetes.alertmanager.retention }}
     storage:
       volumeClaimTemplate:
@@ -63,6 +65,7 @@ prometheus:
     probeSelectorNilUsesHelmValues: false
     replicaExternalLabelName: replica
     replicas: {{ prometheus_vars.kubernetes.prometheus.replicas }}
+{% if prometheus_postinstall %}
     resources:
       limits:
         cpu: {{ prometheus_vars.kubernetes.prometheus.resources.limits.cpu }}
@@ -70,6 +73,7 @@ prometheus:
       requests:
         cpu: {{ prometheus_vars.kubernetes.prometheus.resources.requests.cpu }}
         memory: {{ prometheus_vars.kubernetes.prometheus.resources.requests.memory }}
+{% endif %}
     retention: {{ prometheus_vars.kubernetes.prometheus.retention }}
     retentionSize: {{ prometheus_vars.kubernetes.prometheus.retention_size }}
     ruleSelectorNilUsesHelmValues: false

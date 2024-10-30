@@ -13,6 +13,8 @@
       loop:
         - role: argocd
           tasks: main
+        - role: argocd
+          tasks: postinstall
         - role: certmanager
           tasks: main
         - role: certmanager
@@ -23,6 +25,8 @@
           tasks: postinstall
         - role: cloudflare
           tasks: main
+        - role: cloudflare
+          tasks: postinstall
         - role: cluster
           tasks: upgrade
         - role: helm
@@ -31,10 +35,14 @@
           tasks: upgrade
         - role: kured
           tasks: main
+        - role: kured
+          tasks: postinstall
         - role: longhorn
           tasks: main
         - role: prometheus
           tasks: main
+        - role: prometheus
+          tasks: postinstall
       loop_control:
         loop_var: upgrade
       tags: always

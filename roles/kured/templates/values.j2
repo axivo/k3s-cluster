@@ -21,6 +21,7 @@ metrics:
   labels:
     release: {{ prometheus_vars.kubernetes.helm.chart.name }}
   namespace: {{ prometheus_vars.kubernetes.namespace }}
+{% if kured_postinstall %}
 resources:
   limits:
     cpu: {{ kured_vars.kubernetes.resources.limits.cpu }}
@@ -28,6 +29,7 @@ resources:
   requests:
     cpu: {{ kured_vars.kubernetes.resources.requests.cpu }}
     memory: {{ kured_vars.kubernetes.resources.requests.memory }}
+{% endif %}
 service:
   annotations:
 {% for key, value in kured_vars.kubernetes.service.annotations.items() %}
