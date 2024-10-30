@@ -48,8 +48,12 @@
         name: '{{ role }}'
         tasks_from: postinstall
       loop:
+        - argocd
         - certmanager
         - cilium
+        - cloudflare
+        - kured
+        - prometheus
       loop_control:
         loop_var: role
   roles:

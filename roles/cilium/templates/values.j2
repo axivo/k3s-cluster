@@ -4,13 +4,6 @@ bandwidthManager:
 enableCiliumEndpointSlice: true
 envoy:
   enabled: true
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.envoy.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.envoy.resources.requests.memory }}
   rollOutPods: true
 externalIPs:
   enabled: true
@@ -28,33 +21,10 @@ hubble:
     podDisruptionBudget:
       enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
-    resources:
-      limits:
-        cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}
-        memory: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.memory }}
-      requests:
-        cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.cpu }}
-        memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
     retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
     rollOutPods: true
   ui:
     enabled: true
-    backend:
-      resources:
-        limits:
-          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu }}
-          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory }}
-        requests:
-          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu }}
-          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.memory }}
-    frontend:
-      resources:
-        limits:
-          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu }}
-          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory }}
-        requests:
-          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu }}
-          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.memory }}
     podDisruptionBudget:
       enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
@@ -66,21 +36,7 @@ k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
 k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
 kubeProxyReplacement: true
 operator:
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.operator.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.operator.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
   rollOutPods: true
-resources:
-  limits:
-    cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
-    memory: {{ cilium_vars.kubernetes.agent.resources.limits.memory }}
-  requests:
-    cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
-    memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 rollOutCiliumPods: true
 {% elif cilium_postinstall %}
 dashboards:
@@ -89,6 +45,13 @@ envoy:
   prometheus:
     serviceMonitor:
       enabled: true
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.envoy.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.envoy.resources.requests.memory }}
 hubble:
   metrics:
     dashboards:
@@ -107,6 +70,30 @@ hubble:
     prometheus:
       serviceMonitor:
         enabled: true
+    resources:
+      limits:
+        cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}
+        memory: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.memory }}
+      requests:
+        cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.cpu }}
+        memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
+  ui:
+    backend:
+      resources:
+        limits:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory }}
+        requests:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.memory }}
+    frontend:
+      resources:
+        limits:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory }}
+        requests:
+          cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu }}
+          memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.memory }}
 {% if cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager' %}
   tls:
     auto:
@@ -121,10 +108,24 @@ operator:
     enabled: true
     serviceMonitor:
       enabled: true
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.operator.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.operator.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
 prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
+resources:
+  limits:
+    cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
+    memory: {{ cilium_vars.kubernetes.agent.resources.limits.memory }}
+  requests:
+    cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
+    memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 {% else %}
 ingressController:
   enabled: true
