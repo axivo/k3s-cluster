@@ -6,6 +6,17 @@
 
 - name: Role Reset
   block:
+    - name: Remove nfs client package
+      ansible.builtin.apt:
+        name: nfs-common
+        state: absent
+        autoremove: true
+        clean: true
+        purge: true
+      when:
+        - "'nfs-common' in ansible_facts.packages"
+        - prompt_remove_packages in ['y', 'Y']
+
     - name: Remove repository
       kubernetes.core.helm_repository:
         name: '{{ longhorn_vars.kubernetes.helm.repository.org }}'

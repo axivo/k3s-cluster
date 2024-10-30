@@ -1,0 +1,17 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-rwx
+provisioner: driver.longhorn.io
+parameters:
+  dataEngine: '{{ longhorn_vars.kubernetes.default_settings.data_engine }}'
+  dataLocality: '{{ longhorn_vars.kubernetes.persistence.data_locality }}'
+  disableRevisionCounter: '{{ longhorn_vars.kubernetes.persistence.disable_revision_counter }}'
+  fromBackup: ''
+  fsType: '{{ longhorn_vars.kubernetes.persistence.fs_type }}'
+  migratable: 'false'
+  numberOfReplicas: '{{ longhorn_vars.kubernetes.default_settings.replicas }}'
+  staleReplicaTimeout: '30'
+  unmapMarkSnapChainRemoved: '{{ longhorn_vars.kubernetes.persistence.remove_snapshots_during_filesystem_trim }}'
+reclaimPolicy: Retain
+allowVolumeExpansion: true
