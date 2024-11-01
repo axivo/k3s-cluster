@@ -16,12 +16,12 @@ configuration:
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}
   timeZone: {{ kured_vars.kubernetes.configuration.time.zone }}
+{% if kured_postinstall %}
 metrics:
   create: {{ kured_vars.kubernetes.metrics.create }}
   labels:
-    release: {{ prometheus_vars.kubernetes.helm.chart.name }}
-  namespace: {{ prometheus_vars.kubernetes.namespace }}
-{% if kured_postinstall %}
+    release: {{ victoriametrics_vars.kubernetes.helm.chart.alias }}
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
     cpu: {{ kured_vars.kubernetes.resources.limits.cpu }}

@@ -5,7 +5,7 @@
     tasks_from: facts
   loop:
     - k3s
-    - prometheus
+    - victoriametrics
 
 - name: Role Validation
   ansible.builtin.import_tasks:

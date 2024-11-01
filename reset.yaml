@@ -31,7 +31,7 @@
         - cloudflare
         - kured
         - longhorn
-        - prometheus
+        - victoriametrics
         - helm
       loop_control:
         loop_var: role

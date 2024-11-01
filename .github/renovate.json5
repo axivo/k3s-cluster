@@ -183,15 +183,15 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "prometheus-community/kube-prometheus-stack",
-      "extractVersionTemplate": "^kube-prometheus-stack-(?<version>.+)$",
+      "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
+      "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
       "fileMatch": [
-        "roles/prometheus/defaults/main.yaml"
+        "roles/victoriametrics/defaults/main.yaml"
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
-      "packageNameTemplate": "prometheus-community/helm-charts"
+      "packageNameTemplate": "VictoriaMetrics/helm-charts"
     }
   ],
   "enabledManagers": [

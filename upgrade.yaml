@@ -39,10 +39,10 @@
           tasks: postinstall
         - role: longhorn
           tasks: main
-        - role: prometheus
+        - role: victoriametrics
           tasks: main
-        - role: prometheus
-          tasks: postinstall
+        # - role: victoriametrics
+        #   tasks: postinstall
       loop_control:
         loop_var: upgrade
       tags: always

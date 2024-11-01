@@ -20,7 +20,7 @@ podDisruptionBudget:
 prometheus:
   servicemonitor:
     enabled: true
-    namespace: {{ prometheus_vars.kubernetes.namespace }}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.limits.cpu }}

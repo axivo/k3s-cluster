@@ -5,7 +5,7 @@
     tasks_from: facts
   loop:
     - k3s
-    - prometheus
+    - victoriametrics
 
 - name: Role Post-Install
   when: ansible_host in k3s_server_hosts

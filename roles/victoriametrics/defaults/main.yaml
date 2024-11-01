@@ -1,0 +1,58 @@
+---
+victoriametrics_vars:
+  kubernetes:
+    alertmanager:
+      gateway:
+        subdomain: alertmanager
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.21
+      replicas: 2
+    default_dashboards:
+      enabled: true
+      timezone: utc
+    helm:
+      chart:
+        alias: vmks
+        name: victoria-metrics-k8s-stack
+        version: v0.27.6
+      repository:
+        grafana:
+          name: helm-charts
+          org: grafana
+          url: https://grafana.github.io
+        prometheus:
+          name: helm-charts
+          org: prometheus-community
+          url: https://prometheus-community.github.io
+        victoriametrics:
+          name: helm-charts
+          org: VictoriaMetrics
+          url: https://victoriametrics.github.io
+    grafana:
+      gateway:
+        subdomain: grafana
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.22
+      user:
+        name: admin
+        password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64373766356138653633346638343234336132383737616530303636366262313534656163616435
+          3363396663333933306431363038316239373164386332660a616136666438313933353762373063
+          38323135393830336132393239363236373961336464623432363338616266626334393233366263
+          6164623332633535310a626532356161363563303036353838306234306562303333333231643432
+          38383463653931373134663230383033666264646364316563663636303736326630
+    namespace: kube-system
+    vmcluster:
+      replication_factor: 2
+      retention_period: 72h
+      vminsert:
+        replicas: 2
+      vmselect:
+        replicas: 2
+        storage: 5Gi
+      vmstorage:
+        replicas: 2
+        storage: 50Gi

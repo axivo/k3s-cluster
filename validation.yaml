@@ -18,4 +18,4 @@
         - helm
         - kured
         - longhorn
-        - prometheus
+        - victoriametrics

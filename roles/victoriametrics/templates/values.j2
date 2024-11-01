@@ -1,0 +1,63 @@
+global:
+  clusterLabel: {{ k3s_vars.cluster.name }}
+alertmanager:
+  spec:
+    replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
+defaultDashboards:
+  enabled: {{ victoriametrics_vars.kubernetes.default_dashboards.enabled }}
+  defaultTimezone: {{ victoriametrics_vars.kubernetes.default_dashboards.timezone }}
+grafana:
+  admin:
+    existingSecret: {{ victoriametrics_project.secret.grafana }}
+kubeControllerManager:
+  endpoints:
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+kubeEtcd:
+  endpoints:
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+kubeProxy:
+  enabled: true
+  endpoints:
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+kubeScheduler:
+  endpoints:
+    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+prometheus-operator-crds:
+  enabled: true
+vmcluster:
+  enabled: true
+  spec:
+    replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
+    retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
+    vminsert:
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.replicas }}
+      resources:
+        {}
+    vmselect:
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.replicas }}
+      resources:
+        {}
+      storage:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage }}
+            storageClassName: longhorn
+    vmstorage:
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
+      resources:
+        {}
+      storage:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage }}
+            storageClassName: longhorn
+vmsingle:
+  enabled: false

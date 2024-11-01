@@ -4,8 +4,8 @@
     name: '{{ item }}'
     tasks_from: facts
   loop:
+    - cloudflare
     - k3s
-    - victoriametrics
 
 - name: Role Post-Install
   when: ansible_host in k3s_server_hosts
@@ -13,15 +13,15 @@
   block:
     - name: Set chart postinstall fact
       ansible.builtin.set_fact:
-        kured_postinstall: true
+        victoriametrics_postinstall: true
 
     - name: Update chart postinstall values
       kubernetes.core.helm:
-        chart_ref: '{{ kured_project_chart }}'
-        chart_version: '{{ kured_vars.kubernetes.helm.chart.version }}'
+        chart_ref: '{{ victoriametrics_project_chart }}'
+        chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        name: '{{ kured_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ kured_vars.kubernetes.namespace }}'
+        name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
+        namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         reset_values: false
         reuse_values: true

@@ -53,15 +53,15 @@
         - cilium
         - cloudflare
         - kured
-        - prometheus
+        # - victoriametrics
       loop_control:
         loop_var: role
   roles:
     - cilium
     - certmanager
     - cloudflare
-    - longhorn
-    - prometheus
-    - kured
     - argocd
+    - kured
+    - longhorn
+    - victoriametrics
   tags: charts

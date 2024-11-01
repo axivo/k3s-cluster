@@ -9,7 +9,7 @@
     - ./roles/cluster/defaults/main.yaml
     - ./roles/kured/defaults/main.yaml
     - ./roles/longhorn/defaults/main.yaml
-    - ./roles/prometheus/defaults/main.yaml
+    - ./roles/victoriametrics/defaults/main.yaml
   vars_prompt:
     - name: playbook_action
       prompt: "Select an action to perform:\n
@@ -55,11 +55,11 @@
                       backup:
                         user:
                           password: '{{ longhorn_vars.kubernetes.default_settings.backup.user.password }}'
-              - prometheus_vars:
+              - victoriametrics_vars:
                   kubernetes:
                     grafana:
                       user:
-                        password: '{{ prometheus_vars.kubernetes.grafana.user.password }}'
+                        password: '{{ victoriametrics_vars.kubernetes.grafana.user.password }}'
           no_log: true
 
         - name: List encrypted role variables
@@ -115,7 +115,7 @@
             - cluster_vars.service.postfix.user.password
             - kured_vars.kubernetes.configuration.slack.notify_url
             - longhorn_vars.kubernetes.default_settings.backup.user.password
-            - prometheus_vars.kubernetes.grafana.user.password
+            - victoriametrics_vars.kubernetes.grafana.user.password
           register: encrypted_variables
           changed_when: true
           no_log: true
