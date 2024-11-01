@@ -121,27 +121,27 @@
     - name: Copy kubeconfig file
       ansible.builtin.copy:
         src: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        dest: /tmp/config
+        dest: /tmp/kubeconfig
         mode: '0600'
         remote_src: true
 
     - name: Set kubeconfig host
       ansible.builtin.command:
         cmd: kubectl config set-cluster {{ k3s_vars.cluster.name }}
-              --kubeconfig=/tmp/config
+              --kubeconfig=/tmp/kubeconfig
               --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else k3s_server_default_ip }}:{{ k3s_vars.server.api.port }}
       changed_when: result.rc == 0
       register: result
 
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:
-        src: /tmp/config
+        src: /tmp/kubeconfig
         dest: "{{ k3s_vars.directory.kubeconfig + '/' }}"
         flat: true
 
     - name: Remove kubeconfig file
       ansible.builtin.file:
-        path: /tmp/config
+        path: /tmp/kubeconfig
         state: absent
 
     - name: Set local kubeconfig file permissions
