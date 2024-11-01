@@ -127,7 +127,7 @@
 
     - name: Set kubeconfig host
       ansible.builtin.command:
-        cmd: kubectl config set-cluster default
+        cmd: kubectl config set-cluster {{ k3s_vars.cluster.name }}
               --kubeconfig=/tmp/config
               --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else k3s_server_default_ip }}:{{ k3s_vars.server.api.port }}
       changed_when: result.rc == 0
@@ -150,3 +150,4 @@
         mode: '0600'
         state: file
       delegate_to: localhost
+      become: false

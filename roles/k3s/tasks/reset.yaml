@@ -86,12 +86,16 @@
         - /etc/systemd/system/{{ k3s_service_name }}.service
         - /etc/systemd/system/{{ k3s_service_name }}.service.env
 
-    - name: Remove local kubeconfig file
+    - name: Remove local kubeconfig files
       ansible.builtin.file:
-        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
+        path: '{{ k3s_vars.directory.kubeconfig }}/{{ item }}'
         state: absent
       delegate_to: localhost
+      loop:
+        - cache
+        - config
       when: k3s_vars.server.kubeconfig.local
+      become: false
       run_once: true
 
     - name: Reset systemd
