@@ -95,7 +95,6 @@
         - cache
         - config
       when: k3s_vars.server.kubeconfig.local
-      become: false
       run_once: true
 
     - name: Reset systemd

@@ -150,4 +150,3 @@
         mode: '0600'
         state: file
       delegate_to: localhost
-      become: false
