@@ -1,7 +1,5 @@
 ---
 k3s_vars:
-  cluster:
-    name: default
   directory:
     bin: /usr/local/bin
     config: /etc/rancher/k3s
