@@ -94,7 +94,9 @@
       loop:
         - cache
         - config
+        - http-cache
       when: k3s_vars.server.kubeconfig.local
+      become: false
       run_once: true
 
     - name: Reset systemd
