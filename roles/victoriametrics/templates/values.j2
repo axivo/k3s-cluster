@@ -1,5 +1,5 @@
 global:
-  clusterLabel: {{ k3s_vars.cluster.name }}
+  clusterLabel: default
 alertmanager:
   spec:
     replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
