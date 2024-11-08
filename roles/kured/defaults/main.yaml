@@ -30,7 +30,7 @@ kured_vars:
       chart:
         name: kured
         org: kubereboot
-        version: v5.5.0
+        version: v5.5.2
       repository:
         name: charts
         org: kubereboot
