@@ -17,4 +17,10 @@ resources:
     memory: {{ cloudflare_vars.kubernetes.resources.requests.memory }}
 {% endif %}
 sources:
+  - gateway-grcproute
   - gateway-httproute
+  - gateway-tcproute
+  - gateway-tlsroute
+  - gateway-udproute
+  - ingress
+  - service
