@@ -4,10 +4,14 @@ env:
       secretKeyRef:
         key: {{ cloudflare_vars.kubernetes.api.token.key }}
         name: {{ cloudflare_vars.kubernetes.api.token.name }}
+logLevel: {{ cloudflare_vars.kubernetes.log_level }}
 policy: {{ cloudflare_vars.kubernetes.policy }}
 provider:
   name: cloudflare
 {% if cloudflare_postinstall %}
+serviceMonitor:
+  enabled: true
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
     cpu: {{ cloudflare_vars.kubernetes.resources.limits.cpu }}
@@ -17,7 +21,7 @@ resources:
     memory: {{ cloudflare_vars.kubernetes.resources.requests.memory }}
 {% endif %}
 sources:
-  - gateway-grcproute
+  - gateway-grpcroute
   - gateway-httproute
   - gateway-tcproute
   - gateway-tlsroute

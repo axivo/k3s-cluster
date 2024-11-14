@@ -25,6 +25,7 @@ cloudflare_vars:
         url: https://kubernetes-sigs.github.io
     gateway:
       domain: noty.cc
+    log_level: warning
     namespace: kube-system
     policy: sync
     resources:

@@ -6,6 +6,7 @@
   loop:
     - cluster
     - k3s
+    - victoriametrics
 
 - name: Role Validation
   ansible.builtin.import_tasks:
