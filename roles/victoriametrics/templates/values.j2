@@ -1,14 +1,75 @@
 global:
+  cluster:
+    dnsDomain: {{ k3s_vars.server.cluster.domain }}.
   clusterLabel: default
 alertmanager:
+  config:
+    inhibit_rules:
+      - target_matchers:
+          - severity=~"info|warning"
+        source_matchers:
+          - severity="critical"
+        equal:
+          - cluster
+          - namespace
+          - alertname
+      - target_matchers:
+          - severity="info"
+        source_matchers:
+          - severity="warning"
+        equal:
+          - cluster
+          - namespace
+          - alertname
+      - target_matchers:
+          - severity="info"
+        source_matchers:
+          - alertname="InfoInhibitor"
+        equal:
+          - cluster
+          - namespace
+    route:
+      group_by:
+        - alertgroup
+        - job
+      group_interval: 5m
+      group_wait: 30s
+      repeat_interval: 12h
   spec:
+    podAntiAffinity: {{ victoriametrics_vars.kubernetes.alertmanager.pod_anti_affinity }}
     replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
+{% if victoriametrics_postinstall %}
+    resources:
+      limits:
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
+{% endif %}
 defaultDashboards:
   enabled: {{ victoriametrics_vars.kubernetes.default_dashboards.enabled }}
   defaultTimezone: {{ victoriametrics_vars.kubernetes.default_dashboards.timezone }}
 grafana:
   admin:
     existingSecret: {{ victoriametrics_project.secret.grafana }}
+{% if victoriametrics_postinstall %}
+  resources:
+    limits:
+      cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.cpu }}
+      memory: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.memory }}
+    requests:
+      cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.cpu }}
+      memory: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.memory }}
+  sidecar:
+    resources:
+      limits:
+        cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
+{% endif %}
 kubeControllerManager:
   endpoints:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
@@ -24,6 +85,10 @@ kubeScheduler:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 prometheus-operator-crds:
   enabled: true
+victoria-metrics-operator:
+  operator:
+    enable_converter_ownership: true
+    prometheus_converter_add_argocd_ignore_annotations: true
 vmcluster:
   enabled: true
   spec:
@@ -31,12 +96,26 @@ vmcluster:
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
     vminsert:
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.replicas }}
+{% if victoriametrics_postinstall %}
       resources:
-        {}
+        limits:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.memory }}
+        requests:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
+{% endif %}
     vmselect:
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.replicas }}
+{% if victoriametrics_postinstall %}
       resources:
-        {}
+        limits:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.memory }}
+        requests:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory }}
+{% endif %}
       storage:
         volumeClaimTemplate:
           spec:
@@ -48,8 +127,15 @@ vmcluster:
             storageClassName: longhorn
     vmstorage:
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
+{% if victoriametrics_postinstall %}
       resources:
-        {}
+        limits:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.memory }}
+        requests:
+          cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
+          memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
+{% endif %}
       storage:
         volumeClaimTemplate:
           spec:

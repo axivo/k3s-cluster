@@ -41,8 +41,8 @@
           tasks: main
         - role: victoriametrics
           tasks: main
-        # - role: victoriametrics
-        #   tasks: postinstall
+        - role: victoriametrics
+          tasks: postinstall
       loop_control:
         loop_var: upgrade
       tags: always

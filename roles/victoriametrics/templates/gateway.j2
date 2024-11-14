@@ -3,13 +3,13 @@ kind: Gateway
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: {{ cloudflare_cluster_issuer }}
-  name: {{ victoriametrics_project.gateway.service.alertmanager }}
+  name: {{ item.name }}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
   infrastructure:
     annotations:
-{% for key, value in victoriametrics_vars.kubernetes.alertmanager.infrastructure.annotations.items() %}
+{% for key, value in item.annotations %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
   listeners:
@@ -18,7 +18,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ victoriametrics_project.hostname.alertmanager }}
+      hostname: {{ item.hostname }}
       name: http
       port: 80
       protocol: HTTP
@@ -27,11 +27,11 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ victoriametrics_project.hostname.alertmanager }}
+      hostname: {{ item.hostname }}
       name: https
       port: 443
       protocol: HTTPS
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.gateway.service.alertmanager }}
+            name: {{ cloudflare_tls_key_prefix }}-{{ item.name }}

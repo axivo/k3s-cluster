@@ -5,13 +5,6 @@
       chart:
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         version: '{{ victoriametrics_vars.kubernetes.helm.chart.version[1:] }}'
-      gateway:
-        service:
-          alertmanager: 'vmalertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-          grafana: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
-      hostname:
-        alertmanager: '{{ victoriametrics_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-        grafana: '{{ victoriametrics_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
       repository:
         - name: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.name }}'
           org: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.org }}'
@@ -24,6 +17,27 @@
           url: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.url }}'
       secret:
         grafana: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
+      service:
+        alertmanager:
+          annotations: '{{ victoriametrics_vars.kubernetes.alertmanager.infrastructure.annotations.items() }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+          name: 'vmalertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          port: '{{ victoriametrics_vars.kubernetes.alertmanager.gateway.port }}'
+        grafana:
+          annotations: '{{ victoriametrics_vars.kubernetes.grafana.infrastructure.annotations.items() }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+          name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
+          port: '{{ victoriametrics_vars.kubernetes.grafana.gateway.port }}'
+        vmalert:
+          annotations: '{{ victoriametrics_vars.kubernetes.vmalert.infrastructure.annotations.items() }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmalert.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+          name: 'vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          port: '{{ victoriametrics_vars.kubernetes.vmalert.gateway.port }}'
+        vmselect:
+          annotations: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.infrastructure.annotations.items() }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+          name: 'vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          port: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.gateway.port }}'
   run_once: true
 
 - name: Set project chart fact

@@ -32,7 +32,7 @@
       block:
         - name: Create grafana secret
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'grafana_secret.j2') | from_yaml }}"
+            definition: "{{ lookup('ansible.builtin.template', 'secret.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
@@ -59,38 +59,70 @@
         - name: Gateway Setup
           when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
           block:
-            - name: Create alertmanager gateway
+            - name: Create gateway
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_gateway.j2') | from_yaml }}"
+                definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
                 wait: true
+              loop:
+                - annotations: '{{ victoriametrics_project.service.alertmanager.annotations }}'
+                  hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
+                  name: '{{ victoriametrics_project.service.alertmanager.name }}'
+                - annotations: '{{ victoriametrics_project.service.grafana.annotations }}'
+                  hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
+                  name: '{{ victoriametrics_project.service.grafana.name }}'
+                - annotations: '{{ victoriametrics_project.service.vmalert.annotations }}'
+                  hostname: '{{ victoriametrics_project.service.vmalert.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmalert.name }}'
+                - annotations: '{{ victoriametrics_project.service.vmselect.annotations }}'
+                  hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmselect.name }}'
 
-            - name: Create alertmanager http route
+            - name: Create http route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_http_route.j2') | from_yaml }}"
+                definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
                 wait: true
+              loop:
+                - hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
+                  name: '{{ victoriametrics_project.service.alertmanager.name }}'
+                - hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
+                  name: '{{ victoriametrics_project.service.grafana.name }}'
+                - hostname: '{{ victoriametrics_project.service.vmalert.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmalert.name }}'
+                - hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmselect.name }}'
 
-            - name: Create alertmanager https route
+            - name: Create https route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'alertmanager_https_route.j2') | from_yaml }}"
+                definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
                 wait: true
+              loop:
+                - hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
+                  name: '{{ victoriametrics_project.service.alertmanager.name }}'
+                  port: '{{ victoriametrics_project.service.alertmanager.port }}'
+                - hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
+                  name: '{{ victoriametrics_project.service.grafana.name }}'
+                  port: '{{ victoriametrics_project.service.grafana.port }}'
+                - hostname: '{{ victoriametrics_project.service.vmalert.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmalert.name }}'
+                  port: '{{ victoriametrics_project.service.vmalert.port }}'
+                - hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
+                  name: '{{ victoriametrics_project.service.vmselect.name }}'
+                  port: '{{ victoriametrics_project.service.vmselect.port }}'
 
-            - name: Create grafana gateway
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'grafana_gateway.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-                wait: true
-
-            - name: Create grafana http route
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'grafana_http_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-                wait: true
-
-            - name: Create grafana https route
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'grafana_https_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-                wait: true
+        - name: Set frontend loadbalancer ip
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+          loop:
+            - annotations: '{{ victoriametrics_project.service.alertmanager.annotations }}'
+              name: '{{ victoriametrics_project.service.alertmanager.name }}'
+            - annotations: '{{ victoriametrics_project.service.grafana.annotations }}'
+              name: '{{ victoriametrics_project.service.grafana.name }}'
+            - annotations: '{{ victoriametrics_project.service.vmselect.annotations }}'
+              name: '{{ victoriametrics_project.service.vmselect.name }}'
+            - annotations: '{{ victoriametrics_project.service.vmalert.annotations }}'
+              name: '{{ victoriametrics_project.service.vmalert.name }}'
+          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'

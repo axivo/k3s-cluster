@@ -3,11 +3,20 @@ victoriametrics_vars:
   kubernetes:
     alertmanager:
       gateway:
+        port: 9093
         subdomain: alertmanager
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.21
+      pod_anti_affinity: hard
       replicas: 2
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     default_dashboards:
       enabled: true
       timezone: utc
@@ -15,7 +24,7 @@ victoriametrics_vars:
       chart:
         alias: vmks
         name: victoria-metrics-k8s-stack
-        version: v0.27.6
+        version: v0.28.3
       repository:
         grafana:
           name: helm-charts
@@ -31,10 +40,26 @@ victoriametrics_vars:
           url: https://victoriametrics.github.io
     grafana:
       gateway:
+        port: 80
         subdomain: grafana
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.22
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
+      sidecar:
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
       user:
         name: admin
         password: !vault |
@@ -45,14 +70,48 @@ victoriametrics_vars:
           6164623332633535310a626532356161363563303036353838306234306562303333333231643432
           38383463653931373134663230383033666264646364316563663636303736326630
     namespace: kube-system
+    vmalert:
+      gateway:
+        port: 8080
+        subdomain: alert
+      infrastructure:
+        annotations:
+          io.cilium/lb-ipam-ips: 192.168.4.23
     vmcluster:
       replication_factor: 2
       retention_period: 72h
       vminsert:
         replicas: 2
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
       vmselect:
+        gateway:
+          port: 8481
+          subdomain: prometheus
+        infrastructure:
+          annotations:
+            io.cilium/lb-ipam-ips: 192.168.4.24
         replicas: 2
-        storage: 5Gi
+        resources:
+          limits:
+            cpu: null
+            memory: 160Mi
+          requests:
+            cpu: 10m
+            memory: 160Mi
+        storage: 2Gi
       vmstorage:
         replicas: 2
-        storage: 50Gi
+        resources:
+          limits:
+            cpu: null
+            memory: 1.5Gi
+          requests:
+            cpu: 10m
+            memory: 1.5Gi
+        storage: 20Gi
