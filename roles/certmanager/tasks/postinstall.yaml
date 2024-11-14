@@ -4,6 +4,7 @@
     name: '{{ item }}'
     tasks_from: facts
   loop:
+    - cloudflare
     - k3s
     - victoriametrics
 
