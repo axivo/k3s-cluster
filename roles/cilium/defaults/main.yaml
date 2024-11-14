@@ -74,11 +74,6 @@ cilium_vars:
             name: hubble-root-certs
         cluster_issuer:
           name: hubble-cluster-issuer
-    ingress:
-      controller:
-        service:
-          loadbalancer:
-            ip: 192.168.4.17
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
@@ -101,14 +96,13 @@ cilium_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-    routing_mode: native
   release:
     cli:
       file: cilium-linux-arm64.tar.gz
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.19
+      version: v0.16.20
     gateway_api:
       file: experimental-install.yaml
       repository:
