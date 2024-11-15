@@ -92,7 +92,7 @@ victoriametrics_vars:
       vmselect:
         gateway:
           port: 8481
-          subdomain: prometheus
+          subdomain: metrics
         infrastructure:
           annotations:
             io.cilium/lb-ipam-ips: 192.168.4.24
