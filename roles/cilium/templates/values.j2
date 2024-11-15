@@ -1,26 +1,15 @@
 {% if cilium_setup %}
 bandwidthManager:
   enabled: true
-bpf:
-  masquerade: true
 enableCiliumEndpointSlice: true
 envoy:
   enabled: true
   rollOutPods: true
-etcd:
-  enabled: true
-  endpoints:
-    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 externalIPs:
   enabled: true
 gatewayAPI:
   enabled: true
   enableAlpn: true
-ipMasqAgent:
-  config:
-    nonMasqueradeCIDRs:
-      - {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
-  enabled: true
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
