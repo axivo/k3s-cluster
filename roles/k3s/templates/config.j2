@@ -15,6 +15,8 @@ disable-network-policy: true
 embedded-registry: true
 etcd-expose-metrics: true
 flannel-backend: none
+kube-controller-manager-arg: bind-address={{ k3s_server_default_ip }}
+kube-scheduler-arg: bind-address={{ k3s_server_default_ip }}
 {% endif %}
 kubelet-arg:
   {{ k3s_node_kubelet_args | to_nice_yaml | indent(2) }}
