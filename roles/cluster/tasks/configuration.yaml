@@ -176,6 +176,17 @@
         - snapd.socket
       when: not cluster_vars.service.snapd.enabled
 
+    - name: Load kernel modules
+      ansible.builtin.copy:
+        content: |
+          br_netfilter
+          overlay
+        dest: /etc/modules-load.d/kubernetes.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reboot
+
     - name: Unattended Upgrades
       notify: Restart unattended upgrades service
       when: cluster_vars.service.unattended_upgrades.enabled
