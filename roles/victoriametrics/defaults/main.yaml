@@ -8,7 +8,6 @@ victoriametrics_vars:
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.21
-      pod_anti_affinity: hard
       replicas: 2
       resources:
         limits:
@@ -52,14 +51,6 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-      sidecar:
-        resources:
-          limits:
-            cpu: null
-            memory: 128Mi
-          requests:
-            cpu: 10m
-            memory: 128Mi
       user:
         name: admin
         password: !vault |
@@ -69,7 +60,25 @@ victoriametrics_vars:
           38323135393830336132393239363236373961336464623432363338616266626334393233366263
           6164623332633535310a626532356161363563303036353838306234306562303333333231643432
           38383463653931373134663230383033666264646364316563663636303736326630
+    kube_state_metrics:
+      replicas: 2
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     namespace: kube-system
+    victoria_metrics_operator:
+      replicas: 2
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     vmalert:
       gateway:
         port: 8080
@@ -77,6 +86,13 @@ victoriametrics_vars:
       infrastructure:
         annotations:
           io.cilium/lb-ipam-ips: 192.168.4.23
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     vmcluster:
       replication_factor: 2
       retention_period: 72h
@@ -85,10 +101,10 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 128Mi
+            memory: 192Mi
           requests:
             cpu: 10m
-            memory: 128Mi
+            memory: 192Mi
       vmselect:
         gateway:
           port: 8481
@@ -100,18 +116,18 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 160Mi
+            memory: 128Mi
           requests:
             cpu: 10m
-            memory: 160Mi
+            memory: 128Mi
         storage: 2Gi
       vmstorage:
         replicas: 2
         resources:
           limits:
             cpu: null
-            memory: 1.5Gi
+            memory: 1Gi
           requests:
             cpu: 10m
-            memory: 1.5Gi
+            memory: 1Gi
         storage: 20Gi

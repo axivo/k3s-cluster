@@ -16,7 +16,17 @@
           org: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org }}'
           url: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.url }}'
       secret:
-        grafana: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
+        data:
+          etcd:
+            - name: ca.crt
+              path: '{{ k3s_vars.directory.lib }}/server/tls/etcd/server-ca.crt'
+            - name: tls.crt
+              path: '{{ k3s_vars.directory.lib }}/server/tls/etcd/server-client.crt'
+            - name: tls.key
+              path: '{{ k3s_vars.directory.lib }}/server/tls/etcd/server-client.key'
+        name:
+          etcd: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-etcd-tls-configuration'
+          grafana: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-user-account'
       service:
         alertmanager:
           annotations: '{{ victoriametrics_vars.kubernetes.alertmanager.infrastructure.annotations.items() }}'

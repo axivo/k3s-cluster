@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ victoriametrics_vars.kubernetes.helm.chart.alias }}
+    app.kubernetes.io/name: {{ victoriametrics_project.secret.name.etcd }}
+  name: {{ victoriametrics_project.secret.name.etcd }}
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+data:
+{% for item in certificate.results %}
+  {{ item.certificate.name }}: >-
+    {{ item.content }}
+{% endfor %}
+type: kubernetes.io/tls
