@@ -40,11 +40,11 @@ alertmanager:
 {% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
-        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.memory }}
       requests:
-        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.memory }}
     resources:
       limits:
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.cpu }}
@@ -144,15 +144,31 @@ victoria-metrics-operator:
       memory: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory }}
 {% endif %}
 {% if victoriametrics_postinstall %}
+vmagent:
+  spec:
+    configReloaderResources:
+      limits:
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.memory }}
+    resources:
+      limits:
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
 vmalert:
   spec:
     configReloaderResources:
       limits:
-        cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.memory }}
       requests:
-        cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.memory }}
     resources:
       limits:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.cpu }}

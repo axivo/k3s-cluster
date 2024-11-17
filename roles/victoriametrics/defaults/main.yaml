@@ -2,6 +2,14 @@
 victoriametrics_vars:
   kubernetes:
     alertmanager:
+      config_reloader:
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
       gateway:
         port: 9093
         subdomain: alertmanager
@@ -79,7 +87,31 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    vmagent:
+      config_reloader:
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
+      resources:
+        limits:
+          cpu: null
+          memory: 512Mi
+        requests:
+          cpu: 10m
+          memory: 512Mi
     vmalert:
+      config_reloader:
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
       gateway:
         port: 8080
         subdomain: alert
@@ -101,10 +133,10 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 192Mi
+            memory: 256Mi
           requests:
             cpu: 10m
-            memory: 192Mi
+            memory: 256Mi
       vmselect:
         gateway:
           port: 8481
@@ -116,18 +148,18 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 128Mi
+            memory: 144Mi
           requests:
             cpu: 10m
-            memory: 128Mi
+            memory: 144Mi
         storage: 2Gi
       vmstorage:
         replicas: 2
         resources:
           limits:
             cpu: null
-            memory: 1Gi
+            memory: 1.5Gi
           requests:
             cpu: 10m
-            memory: 1Gi
+            memory: 1.5Gi
         storage: 20Gi
