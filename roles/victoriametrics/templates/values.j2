@@ -70,11 +70,11 @@ grafana:
   sidecar:
     resources:
       limits:
-        cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory }}
       requests:
-        cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
 {% endif %}
 kube-state-metrics:
   replicas: {{ victoriametrics_vars.kubernetes.kube_state_metrics.replicas }}

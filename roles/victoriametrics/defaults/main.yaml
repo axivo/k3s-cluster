@@ -55,10 +55,18 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 128Mi
+          memory: 256Mi
         requests:
           cpu: 10m
-          memory: 128Mi
+          memory: 256Mi
+      sidecar:
+        resources:
+          limits:
+            cpu: null
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
       user:
         name: admin
         password: !vault |
@@ -148,10 +156,10 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 144Mi
+            memory: 192Mi
           requests:
             cpu: 10m
-            memory: 144Mi
+            memory: 192Mi
         storage: 2Gi
       vmstorage:
         replicas: 2
