@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ victoriametrics_project.secret.name.grafana }}
+  name: {{ victoriametrics_project.secret.grafana.name }}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 stringData:
   admin-password: {{ victoriametrics_vars.kubernetes.grafana.user.password }}

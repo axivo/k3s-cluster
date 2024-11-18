@@ -58,7 +58,7 @@ defaultDashboards:
   enabled: {{ victoriametrics_vars.kubernetes.default_dashboards.enabled }}
 grafana:
   admin:
-    existingSecret: {{ victoriametrics_project.secret.name.grafana }}
+    existingSecret: {{ victoriametrics_project.secret.grafana.name }}
 {% if victoriametrics_postinstall %}
   resources:
     limits:
@@ -132,6 +132,13 @@ prometheus-operator-crds:
   enabled: true
 victoria-metrics-operator:
   operator:
+    admissionWebhooks:
+      certManager:
+        enabled: true
+        issuer:
+          group: cert-manager.io
+          kind: ClusterIssuer
+          name: {{ certmanager_vars.kubernetes.tls.cluster_issuer.name }}
     enable_converter_ownership: true
   replicaCount: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas }}
 {% if victoriametrics_postinstall %}

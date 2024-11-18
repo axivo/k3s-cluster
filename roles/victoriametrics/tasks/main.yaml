@@ -4,6 +4,7 @@
     name: '{{ item }}'
     tasks_from: facts
   loop:
+    - certmanager
     - cloudflare
     - k3s
 
@@ -33,21 +34,6 @@
         - name: Create grafana user account secret
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'account.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
-
-        - name: Set etcd certificates content
-          ansible.builtin.slurp:
-            path: '{{ certificate.path }}'
-          loop: '{{ victoriametrics_project.secret.data.etcd }}'
-          loop_control:
-            loop_var: certificate
-          register: certificate
-          no_log: true
-
-        - name: Create etcd tls configuration secret
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'tls_config.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             wait: true
 
