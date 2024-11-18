@@ -23,7 +23,7 @@ cloudflare_vars:
         name: external-dns
         org: kubernetes-sigs
         url: https://kubernetes-sigs.github.io
-    gateway:
+    host:
       domain: noty.cc
     log_level: warning
     namespace: kube-system

@@ -54,6 +54,20 @@ envoy:
       cpu: {{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}
       memory: {{ cilium_vars.kubernetes.envoy.resources.requests.memory }}
 hubble:
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: {{ cloudflare_cluster_issuer }}
+      io.cilium/lb-ipam-ips: '192.168.4.49'
+    className: cilium
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+    enabled: true
+{% endif %}
+    hosts:
+      - {{ cilium_vars.kubernetes.hubble.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}
+    tls:
+      - hosts:
+          - {{ cilium_vars.kubernetes.hubble.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}
+        secretName: {{ cloudflare_tls_key_prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
   metrics:
     dashboards:
       enabled: true

@@ -1,4 +1,4 @@
-{% if cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled' %}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
 global:
   domain: {{ hostname }}
 {% endif %}

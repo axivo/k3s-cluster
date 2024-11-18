@@ -55,11 +55,11 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
+          when: cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
           block:
             - name: Set hostname fact
               ansible.builtin.set_fact:
-                hostname: '{{ longhorn_vars.kubernetes.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
+                hostname: '{{ longhorn_vars.kubernetes.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
 
             - name: Create frontend gateway
               kubernetes.core.k8s:
@@ -83,4 +83,4 @@
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'
+          when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'
