@@ -5,6 +5,50 @@
       chart:
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         version: '{{ victoriametrics_vars.kubernetes.helm.chart.version[1:] }}'
+      ingress:
+        alertmanager:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.alertmanager.ingress.ip }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          name: 'alertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+        grafana:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.grafana.ingress.ip }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.grafana.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
+        vmagent:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.vmagent.ingress.ip }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmagent.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          name: 'vmagent-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+        vmalert:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.ip }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          name: 'vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+        vmcluster:
+          vminsert:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+              io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.ip }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vminsert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          vmselect:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+              io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.ip }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          vmstorage:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+              io.cilium/lb-ipam-ips: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.ip }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vmstorage-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
       repository:
         - name: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.name }}'
           org: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.org }}'
@@ -18,27 +62,6 @@
       secret:
         grafana:
           name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-user-account'
-      service:
-        alertmanager:
-          annotations: '{{ victoriametrics_vars.kubernetes.alertmanager.infrastructure.annotations.items() }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          name: 'vmalertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-          port: '{{ victoriametrics_vars.kubernetes.alertmanager.gateway.port }}'
-        grafana:
-          annotations: '{{ victoriametrics_vars.kubernetes.grafana.infrastructure.annotations.items() }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.grafana.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
-          port: '{{ victoriametrics_vars.kubernetes.grafana.gateway.port }}'
-        vmalert:
-          annotations: '{{ victoriametrics_vars.kubernetes.vmalert.infrastructure.annotations.items() }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.vmalert.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          name: 'vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-          port: '{{ victoriametrics_vars.kubernetes.vmalert.gateway.port }}'
-        vmselect:
-          annotations: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.infrastructure.annotations.items() }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          name: 'vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-          port: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.gateway.port }}'
   run_once: true
 
 - name: Set project chart fact

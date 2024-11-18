@@ -10,12 +10,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      gateway:
-        port: 9093
+      ingress:
+        ip: 192.168.4.21
         subdomain: alertmanager
-      infrastructure:
-        annotations:
-          io.cilium/lb-ipam-ips: 192.168.4.21
       replicas: 2
       resources:
         limits:
@@ -25,13 +22,12 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
     default_dashboards:
-      enabled: true
       timezone: utc
     helm:
       chart:
         alias: vmks
         name: victoria-metrics-k8s-stack
-        version: v0.28.3
+        version: v0.28.4
       repository:
         grafana:
           name: helm-charts
@@ -46,19 +42,16 @@ victoriametrics_vars:
           org: VictoriaMetrics
           url: https://victoriametrics.github.io
     grafana:
-      gateway:
-        port: 80
+      ingress:
+        ip: 192.168.4.22
         subdomain: grafana
-      infrastructure:
-        annotations:
-          io.cilium/lb-ipam-ips: 192.168.4.22
       resources:
         limits:
           cpu: null
-          memory: 256Mi
+          memory: 128Mi
         requests:
           cpu: 10m
-          memory: 256Mi
+          memory: 128Mi
       sidecar:
         resources:
           limits:
@@ -95,6 +88,14 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    prometheus_node_exporter:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     vmagent:
       config_reloader:
         resources:
@@ -104,6 +105,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      ingress:
+        ip: 192.168.4.23
+        subdomain: agent
       resources:
         limits:
           cpu: null
@@ -120,12 +124,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      gateway:
-        port: 8080
+      ingress:
+        ip: 192.168.4.24
         subdomain: alert
-      infrastructure:
-        annotations:
-          io.cilium/lb-ipam-ips: 192.168.4.23
       resources:
         limits:
           cpu: null
@@ -137,37 +138,40 @@ victoriametrics_vars:
       replication_factor: 2
       retention_period: 72h
       vminsert:
+        ingress:
+          ip: 192.168.4.25
+          subdomain: insert
         replicas: 2
         resources:
           limits:
             cpu: null
-            memory: 256Mi
+            memory: 320Mi
           requests:
             cpu: 10m
-            memory: 256Mi
+            memory: 320Mi
       vmselect:
-        gateway:
-          port: 8481
+        ingress:
+          ip: 192.168.4.26
           subdomain: metrics
-        infrastructure:
-          annotations:
-            io.cilium/lb-ipam-ips: 192.168.4.24
         replicas: 2
         resources:
           limits:
             cpu: null
-            memory: 192Mi
+            memory: 256Mi
           requests:
             cpu: 10m
-            memory: 192Mi
+            memory: 256Mi
         storage: 2Gi
       vmstorage:
+        ingress:
+          ip: 192.168.4.27
+          subdomain: storage
         replicas: 2
         resources:
           limits:
             cpu: null
-            memory: 1.5Gi
+            memory: 2Gi
           requests:
             cpu: 10m
-            memory: 1.5Gi
+            memory: 2Gi
         storage: 20Gi
