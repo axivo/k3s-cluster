@@ -4,17 +4,17 @@ inhibit_rules:
     source_matchers:
       - severity="critical"
     equal:
+      - alertname
       - cluster
       - namespace
-      - alertname
   - target_matchers:
       - severity="info"
     source_matchers:
       - severity="warning"
     equal:
+      - alertname
       - cluster
       - namespace
-      - alertname
   - target_matchers:
       - severity="info"
     source_matchers:
