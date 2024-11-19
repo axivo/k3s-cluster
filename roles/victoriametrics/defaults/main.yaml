@@ -145,10 +145,10 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 320Mi
+            memory: 384Mi
           requests:
             cpu: 10m
-            memory: 320Mi
+            memory: 384Mi
       vmselect:
         ingress:
           subdomain: metrics
