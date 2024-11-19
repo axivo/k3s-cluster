@@ -4,37 +4,7 @@ global:
   clusterLabel: default
 alertmanager:
   config:
-    inhibit_rules:
-      - target_matchers:
-          - severity=~"info|warning"
-        source_matchers:
-          - severity="critical"
-        equal:
-          - cluster
-          - namespace
-          - alertname
-      - target_matchers:
-          - severity="info"
-        source_matchers:
-          - severity="warning"
-        equal:
-          - cluster
-          - namespace
-          - alertname
-      - target_matchers:
-          - severity="info"
-        source_matchers:
-          - alertname="InfoInhibitor"
-        equal:
-          - cluster
-          - namespace
-    route:
-      group_by:
-        - alertgroup
-        - job
-      group_interval: 5m
-      group_wait: 30s
-      repeat_interval: 12h
+    {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | indent(4) }}
   ingress:
     annotations:
 {% for key, value in victoriametrics_project.ingress.alertmanager.annotations.items() %}

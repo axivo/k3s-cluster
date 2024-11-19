@@ -2,6 +2,11 @@
 victoriametrics_vars:
   kubernetes:
     alertmanager:
+      config:
+        route:
+          group_interval: 5m
+          group_wait: 30s
+          repeat_interval: 12h
       config_reloader:
         resources:
           limits:
@@ -11,7 +16,6 @@ victoriametrics_vars:
             cpu: 10m
             memory: 128Mi
       ingress:
-        ip: 192.168.4.21
         subdomain: alertmanager
       replicas: 2
       resources:
@@ -43,7 +47,6 @@ victoriametrics_vars:
           url: https://victoriametrics.github.io
     grafana:
       ingress:
-        ip: 192.168.4.22
         subdomain: grafana
       resources:
         limits:
@@ -106,7 +109,6 @@ victoriametrics_vars:
             cpu: 10m
             memory: 128Mi
       ingress:
-        ip: 192.168.4.23
         subdomain: agent
       resources:
         limits:
@@ -125,7 +127,6 @@ victoriametrics_vars:
             cpu: 10m
             memory: 128Mi
       ingress:
-        ip: 192.168.4.24
         subdomain: alert
       resources:
         limits:
@@ -139,7 +140,6 @@ victoriametrics_vars:
       retention_period: 72h
       vminsert:
         ingress:
-          ip: 192.168.4.25
           subdomain: insert
         replicas: 2
         resources:
@@ -151,7 +151,6 @@ victoriametrics_vars:
             memory: 320Mi
       vmselect:
         ingress:
-          ip: 192.168.4.26
           subdomain: metrics
         replicas: 2
         resources:
@@ -164,7 +163,6 @@ victoriametrics_vars:
         storage: 2Gi
       vmstorage:
         ingress:
-          ip: 192.168.4.27
           subdomain: storage
         replicas: 2
         resources:
