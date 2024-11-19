@@ -2,8 +2,8 @@
 bandwidthManager:
   enabled: true
 bpf:
-  datapathMode: netkit
-  masquerade: true
+  datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
+  masquerade: {{ cilium_vars.kubernetes.bpf.masquerade }}
 enableCiliumEndpointSlice: true
 enableIPv6Masquerade: false
 envoy:
@@ -20,8 +20,8 @@ ipam:
 ipMasqAgent:
   config:
     nonMasqueradeCIDRs:
-      - {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
-  enabled: true
+      {{ cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs | to_nice_yaml | indent(6) }}
+  enabled: {{ cilium_vars.kubernetes.ip_masq_agent.enabled }}
 hubble:
   peerService:
     clusterDomain: {{ k3s_vars.server.cluster.domain }}

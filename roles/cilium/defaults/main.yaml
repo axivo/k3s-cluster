@@ -9,6 +9,9 @@ cilium_vars:
         requests:
           cpu: 10m
           memory: 256Mi
+    bpf:
+      datapath_mode: netkit
+      masquerade: true
     client:
       rate_limit:
         burst: 100
@@ -74,6 +77,12 @@ cilium_vars:
             name: hubble-root-certs
         cluster_issuer:
           name: hubble-cluster-issuer
+    ip_masq_agent:
+      enabled: true
+      non_masquerade_cidrs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
