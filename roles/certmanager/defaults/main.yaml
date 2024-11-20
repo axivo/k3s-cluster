@@ -22,7 +22,7 @@ certmanager_vars:
       chart:
         name: cert-manager
         org: cert-manager
-        version: v1.16.1
+        version: v1.16.2
       repository:
         name: cert-manager
         org: jetstack
