@@ -155,6 +155,19 @@
             - secret.resources is iterable
             - secret.resources | length > 0
 
+        - name: Set deployment container resources
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'deployment.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            state: patched
+            wait_condition:
+              reason: MinimumReplicasAvailable
+              type: Available
+            wait: true
+          loop:
+            - coredns
+            - metrics-server
+
         - name: Create l2 announcement policy
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
