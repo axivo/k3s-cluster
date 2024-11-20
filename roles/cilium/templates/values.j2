@@ -4,11 +4,13 @@ bandwidthManager:
 bpf:
   datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
   masquerade: {{ cilium_vars.kubernetes.bpf.masquerade }}
-enableCiliumEndpointSlice: true
-enableIPv6Masquerade: false
+ciliumEndpointSlice:
+  enabled: true
 envoy:
   enabled: true
   rollOutPods: true
+envoyConfig:
+  enabled: true
 externalIPs:
   enabled: true
 gatewayAPI:
@@ -44,10 +46,31 @@ k8sClientRateLimit:
 k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
 k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
 kubeProxyReplacement: true
+nodePort:
+  enabled: true
+  enableHealthCheck: false
 operator:
   rollOutPods: true
 rollOutCiliumPods: true
+socketLB:
+  enabled: true
 {% elif cilium_postinstall %}
+cgroup:
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.requests.memory }}
+cni:
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.cni.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.cni.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cni.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cni.resources.requests.memory }}
 dashboards:
   enabled: true
 envoy:

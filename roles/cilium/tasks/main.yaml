@@ -90,6 +90,7 @@
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: hubble-server-certs
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            wait_timeout: 10
             wait: true
           register: secret
           no_log: true
@@ -107,6 +108,7 @@
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            state: patched
             wait: true
           loop:
             - hubble-relay-client-certs
@@ -144,6 +146,7 @@
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            state: patched
             wait: true
           loop:
             - hubble-relay-client-certs

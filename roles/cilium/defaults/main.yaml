@@ -12,10 +12,26 @@ cilium_vars:
     bpf:
       datapath_mode: netkit
       masquerade: true
+    cgroup:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     client:
       rate_limit:
         burst: 100
         qps: 50
+    cni:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     envoy:
       resources:
         limits:
@@ -81,8 +97,6 @@ cilium_vars:
       enabled: true
       non_masquerade_cidrs:
         - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
