@@ -46,14 +46,9 @@ k8sClientRateLimit:
 k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
 k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
 kubeProxyReplacement: true
-nodePort:
-  enabled: true
-  enableHealthCheck: false
 operator:
   rollOutPods: true
 rollOutCiliumPods: true
-socketLB:
-  enabled: true
 {% elif cilium_postinstall %}
 cgroup:
   resources:
