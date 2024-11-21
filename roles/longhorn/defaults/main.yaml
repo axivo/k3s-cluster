@@ -17,7 +17,7 @@ longhorn_vars:
             6133643231643063640a383531396462663633663532383630316636313034636664613632323736
             3835
       collect_usage_metrics: false
-      data_locality: strict-local
+      data_locality: best-effort
       log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       replica_auto_balance: best-effort
