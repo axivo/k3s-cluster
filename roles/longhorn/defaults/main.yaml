@@ -16,12 +16,12 @@ longhorn_vars:
             65653632373566323430363838386531336365316262363937376565653430313138303935386663
             6133643231643063640a383531396462663633663532383630316636313034636664613632323736
             3835
+      collect_usage_metrics: false
       data_locality: strict-local
-      orphan_auto_deletion: true
+      log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       replica_auto_balance: best-effort
       replicas: 3
-      usage_metrics: false
     helm:
       chart:
         name: longhorn
@@ -37,7 +37,3 @@ longhorn_vars:
       annotations:
         io.cilium/lb-ipam-ips: 192.168.4.20
     namespace: kube-system
-    persistence:
-      data_locality: best-effort
-      migratable: true
-      replicas: 3

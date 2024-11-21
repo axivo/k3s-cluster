@@ -17,6 +17,7 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         subdomain: alertmanager
+      log_level: WARN
       replicas: 2
       resources:
         limits:
@@ -48,6 +49,7 @@ victoriametrics_vars:
     grafana:
       ingress:
         subdomain: grafana
+      log_level: WARN
       resources:
         limits:
           cpu: null
@@ -110,6 +112,8 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         subdomain: agent
+      log_level: WARN
+      replicas: 2
       resources:
         limits:
           cpu: null
@@ -128,6 +132,8 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         subdomain: alert
+      log_level: WARN
+      replicas: 2
       resources:
         limits:
           cpu: null
@@ -141,6 +147,7 @@ victoriametrics_vars:
       vminsert:
         ingress:
           subdomain: insert
+        log_level: WARN
         replicas: 2
         resources:
           limits:
@@ -152,6 +159,7 @@ victoriametrics_vars:
       vmselect:
         ingress:
           subdomain: metrics
+        log_level: WARN
         replicas: 2
         resources:
           limits:
@@ -164,6 +172,7 @@ victoriametrics_vars:
       vmstorage:
         ingress:
           subdomain: storage
+        log_level: WARN
         replicas: 2
         resources:
           limits:

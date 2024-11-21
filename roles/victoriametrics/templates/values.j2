@@ -5,14 +5,13 @@ global:
 alertmanager:
   config:
     {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | indent(4) }}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_project.ingress.alertmanager.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
     enabled: true
-{% endif %}
     hosts:
       - {{ victoriametrics_project.ingress.alertmanager.hostname }}
     ingressClassName: cilium
@@ -20,7 +19,9 @@ alertmanager:
       - hosts:
           - {{ victoriametrics_project.ingress.alertmanager.hostname }}
         secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.alertmanager.name }}
+{% endif %}
   spec:
+    logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
 {% if victoriametrics_postinstall %}
     configReloaderResources:
@@ -48,14 +49,13 @@ defaultDashboards:
 grafana:
   admin:
     existingSecret: {{ victoriametrics_project.secret.grafana.name }}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_project.ingress.grafana.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
     enabled: true
-{% endif %}
     hosts:
       - {{ victoriametrics_project.ingress.grafana.hostname }}
     ingressClassName: cilium
@@ -63,6 +63,8 @@ grafana:
       - hosts:
           - {{ victoriametrics_project.ingress.grafana.hostname }}
         secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.grafana.name }}
+{% endif %}
+  logLevel: {{ victoriametrics_vars.kubernetes.grafana.log_level }}
 {% if victoriametrics_postinstall %}
   resources:
     limits:
@@ -164,14 +166,13 @@ victoria-metrics-operator:
       memory: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory }}
 {% endif %}
 vmagent:
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_project.ingress.vmagent.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
     enabled: true
-{% endif %}
     hosts:
       - {{ victoriametrics_project.ingress.vmagent.hostname }}
     ingressClassName: cilium
@@ -179,8 +180,11 @@ vmagent:
       - hosts:
           - {{ victoriametrics_project.ingress.vmagent.hostname }}
         secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.vmagent.name }}
-{% if victoriametrics_postinstall %}
+{% endif %}
   spec:
+    logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
+{% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu }}
@@ -197,14 +201,13 @@ vmagent:
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
 {% endif %}
 vmalert:
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_project.ingress.vmalert.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
     enabled: true
-{% endif %}
     hosts:
       - {{ victoriametrics_project.ingress.vmalert.hostname }}
     ingressClassName: cilium
@@ -212,8 +215,11 @@ vmalert:
       - hosts:
           - {{ victoriametrics_project.ingress.vmalert.hostname }}
         secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.vmalert.name }}
-{% if victoriametrics_postinstall %}
+{% endif %}
   spec:
+    logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
+{% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.cpu }}
@@ -221,6 +227,10 @@ vmalert:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.memory }}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+    extraArgs:
+      external.url: https://{{ victoriametrics_project.ingress.vmalert.hostname }}
+{% endif %}
     resources:
       limits:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.cpu }}
@@ -231,11 +241,10 @@ vmalert:
 {% endif %}
 vmcluster:
   enabled: true
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     insert:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
       enabled: true
-{% endif %}
       annotations:
 {% for key, value in victoriametrics_project.ingress.vmcluster.vminsert.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
@@ -248,9 +257,7 @@ vmcluster:
             - {{ victoriametrics_project.ingress.vmcluster.vminsert.hostname }}
           secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.vmcluster.vminsert.name }}
     select:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
       enabled: true
-{% endif %}
       annotations:
 {% for key, value in victoriametrics_project.ingress.vmcluster.vmselect.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
@@ -263,9 +270,7 @@ vmcluster:
             - {{ victoriametrics_project.ingress.vmcluster.vmselect.hostname }}
           secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.vmcluster.vmselect.name }}
     storage:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
       enabled: true
-{% endif %}
       annotations:
 {% for key, value in victoriametrics_project.ingress.vmcluster.vmstorage.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
@@ -277,10 +282,12 @@ vmcluster:
         - hosts:
             - {{ victoriametrics_project.ingress.vmcluster.vmstorage.hostname }}
           secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_project.ingress.vmcluster.vmstorage.name }}
+{% endif %}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
     vminsert:
+      logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.log_level }}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.replicas }}
 {% if victoriametrics_postinstall %}
       resources:
@@ -292,6 +299,7 @@ vmcluster:
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
 {% endif %}
     vmselect:
+      logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.log_level }}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.replicas }}
 {% if victoriametrics_postinstall %}
       resources:
@@ -312,6 +320,7 @@ vmcluster:
                 storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage }}
             storageClassName: longhorn
     vmstorage:
+      logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
 {% if victoriametrics_postinstall %}
       resources:
