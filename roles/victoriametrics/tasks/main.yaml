@@ -26,7 +26,7 @@
       kubernetes.core.helm_repository:
         name: '{{ item.org }}'
         repo_url: '{{ item.url }}/{{ item.name }}'
-      loop: '{{ victoriametrics_project.repository }}'
+      loop: '{{ victoriametrics_map.repository }}'
 
     - name: Chart Setup
       run_once: true
@@ -43,7 +43,7 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ victoriametrics_project_chart }}'
+            chart_ref: '{{ victoriametrics_project.chart }}'
             chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
@@ -66,15 +66,15 @@
         #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         #         wait: true
         #       loop:
-        #         - annotations: '{{ victoriametrics_project.service.alertmanager.annotations }}'
-        #           hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
-        #           name: '{{ victoriametrics_project.service.alertmanager.name }}'
-        #         - annotations: '{{ victoriametrics_project.service.grafana.annotations }}'
-        #           hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
-        #           name: '{{ victoriametrics_project.service.grafana.name }}'
-        #         - annotations: '{{ victoriametrics_project.service.vmselect.annotations }}'
-        #           hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
-        #           name: '{{ victoriametrics_project.service.vmselect.name }}'
+        #         - annotations: '{{ victoriametrics_map.service.alertmanager.annotations }}'
+        #           hostname: '{{ victoriametrics_map.service.alertmanager.hostname }}'
+        #           name: '{{ victoriametrics_map.service.alertmanager.name }}'
+        #         - annotations: '{{ victoriametrics_map.service.grafana.annotations }}'
+        #           hostname: '{{ victoriametrics_map.service.grafana.hostname }}'
+        #           name: '{{ victoriametrics_map.service.grafana.name }}'
+        #         - annotations: '{{ victoriametrics_map.service.vmselect.annotations }}'
+        #           hostname: '{{ victoriametrics_map.service.vmselect.hostname }}'
+        #           name: '{{ victoriametrics_map.service.vmselect.name }}'
 
         #     - name: Create http route
         #       kubernetes.core.k8s:
@@ -82,12 +82,12 @@
         #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         #         wait: true
         #       loop:
-        #         - hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
-        #           name: '{{ victoriametrics_project.service.alertmanager.name }}'
-        #         - hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
-        #           name: '{{ victoriametrics_project.service.grafana.name }}'
-        #         - hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
-        #           name: '{{ victoriametrics_project.service.vmselect.name }}'
+        #         - hostname: '{{ victoriametrics_map.service.alertmanager.hostname }}'
+        #           name: '{{ victoriametrics_map.service.alertmanager.name }}'
+        #         - hostname: '{{ victoriametrics_map.service.grafana.hostname }}'
+        #           name: '{{ victoriametrics_map.service.grafana.name }}'
+        #         - hostname: '{{ victoriametrics_map.service.vmselect.hostname }}'
+        #           name: '{{ victoriametrics_map.service.vmselect.name }}'
 
         #     - name: Create https route
         #       kubernetes.core.k8s:
@@ -95,25 +95,25 @@
         #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         #         wait: true
         #       loop:
-        #         - hostname: '{{ victoriametrics_project.service.alertmanager.hostname }}'
-        #           name: '{{ victoriametrics_project.service.alertmanager.name }}'
-        #           port: '{{ victoriametrics_project.service.alertmanager.port }}'
-        #         - hostname: '{{ victoriametrics_project.service.grafana.hostname }}'
-        #           name: '{{ victoriametrics_project.service.grafana.name }}'
-        #           port: '{{ victoriametrics_project.service.grafana.port }}'
-        #         - hostname: '{{ victoriametrics_project.service.vmselect.hostname }}'
-        #           name: '{{ victoriametrics_project.service.vmselect.name }}'
-        #           port: '{{ victoriametrics_project.service.vmselect.port }}'
+        #         - hostname: '{{ victoriametrics_map.service.alertmanager.hostname }}'
+        #           name: '{{ victoriametrics_map.service.alertmanager.name }}'
+        #           port: '{{ victoriametrics_map.service.alertmanager.port }}'
+        #         - hostname: '{{ victoriametrics_map.service.grafana.hostname }}'
+        #           name: '{{ victoriametrics_map.service.grafana.name }}'
+        #           port: '{{ victoriametrics_map.service.grafana.port }}'
+        #         - hostname: '{{ victoriametrics_map.service.vmselect.hostname }}'
+        #           name: '{{ victoriametrics_map.service.vmselect.name }}'
+        #           port: '{{ victoriametrics_map.service.vmselect.port }}'
 
         # - name: Set frontend loadbalancer ip
         #   kubernetes.core.k8s:
         #     definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
         #     kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         #   loop:
-        #     - annotations: '{{ victoriametrics_project.service.alertmanager.annotations }}'
-        #       name: '{{ victoriametrics_project.service.alertmanager.name }}'
-        #     - annotations: '{{ victoriametrics_project.service.grafana.annotations }}'
-        #       name: '{{ victoriametrics_project.service.grafana.name }}'
-        #     - annotations: '{{ victoriametrics_project.service.vmselect.annotations }}'
-        #       name: '{{ victoriametrics_project.service.vmselect.name }}'
+        #     - annotations: '{{ victoriametrics_map.service.alertmanager.annotations }}'
+        #       name: '{{ victoriametrics_map.service.alertmanager.name }}'
+        #     - annotations: '{{ victoriametrics_map.service.grafana.annotations }}'
+        #       name: '{{ victoriametrics_map.service.grafana.name }}'
+        #     - annotations: '{{ victoriametrics_map.service.vmselect.annotations }}'
+        #       name: '{{ victoriametrics_map.service.vmselect.name }}'
         #   when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'

@@ -17,7 +17,7 @@
 
     - name: Update chart postinstall values
       kubernetes.core.helm:
-        chart_ref: '{{ victoriametrics_project_chart }}'
+        chart_ref: '{{ victoriametrics_project.chart }}'
         chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'

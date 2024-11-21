@@ -1,7 +1,7 @@
 ---
-- name: Set project fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    victoriametrics_project:
+    victoriametrics_map:
       chart:
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         version: '{{ victoriametrics_vars.kubernetes.helm.chart.version[1:] }}'
@@ -57,29 +57,12 @@
           name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-user-account'
   run_once: true
 
-- name: Set project chart fact
+- name: Set project fact
   ansible.builtin.set_fact:
-    victoriametrics_project_chart: '{{ victoriametrics_project.repository[2].org }}/{{ victoriametrics_project.chart.name }}'
-  run_once: true
-
-- name: Set project release fact
-  ansible.builtin.set_fact:
-    victoriametrics_project_release: '{{ victoriametrics_project.repository[2].org }}/{{ victoriametrics_project.repository[2].name }}'
-  run_once: true
-
-- name: Set project tag fact
-  ansible.builtin.set_fact:
-    victoriametrics_project_tag: '{{ victoriametrics_project.chart.name }}-{{ victoriametrics_project.chart.version }}'
-  run_once: true
-
-- name: Set project url fact
-  ansible.builtin.set_fact:
-    victoriametrics_project_url: https://github.com/{{ victoriametrics_project_release }}/releases/tag
-  run_once: true
-
-- name: Set project url tag fact
-  ansible.builtin.set_fact:
-    victoriametrics_project_url_tag: '{{ victoriametrics_project_url }}/{{ victoriametrics_project_tag }}'
+    victoriametrics_project:
+      chart: '{{ victoriametrics_map.repository[2].org }}/{{ victoriametrics_map.chart.name }}'
+      tag: '{{ victoriametrics_map.chart.name }}-{{ victoriametrics_map.chart.version }}'
+      url: https://github.com/{{ victoriametrics_map.repository[2].org }}/{{ victoriametrics_map.repository[2].name }}/releases/tag
   run_once: true
 
 - name: Set variables fact
