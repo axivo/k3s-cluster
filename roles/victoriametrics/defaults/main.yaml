@@ -176,8 +176,8 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 2.5Gi
+            memory: 2560Mi
           requests:
             cpu: 10m
-            memory: 2.5Gi
+            memory: 2560Mi
         storage: 20Gi
