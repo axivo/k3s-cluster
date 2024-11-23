@@ -10,8 +10,8 @@ cilium_vars:
           cpu: 10m
           memory: 256Mi
     bpf:
-      datapath_mode: veth
-      masquerade: false
+      datapath_mode: netkit
+      masquerade: true
     cgroup:
       resources:
         limits:
@@ -94,7 +94,7 @@ cilium_vars:
         cluster_issuer:
           name: hubble-cluster-issuer
     ip_masq_agent:
-      enabled: false
+      enabled: true
       non_masquerade_cidrs:
         - 10.0.0.0/8
     ipam:
@@ -137,4 +137,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.16.3
+      version: v1.16.4
