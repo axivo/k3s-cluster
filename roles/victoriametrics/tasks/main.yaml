@@ -26,7 +26,7 @@
       kubernetes.core.helm_repository:
         name: '{{ item.org }}'
         repo_url: '{{ item.url }}/{{ item.name }}'
-      loop: '{{ victoriametrics_map.repository }}'
+      loop: '{{ victoriametrics_map.helm.repository }}'
 
     - name: Chart Setup
       run_once: true

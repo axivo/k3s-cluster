@@ -175,7 +175,7 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 512Mi
-        storage: 2Gi
+        storage: 5Gi
       vmstorage:
         ingress:
           enabled: false
