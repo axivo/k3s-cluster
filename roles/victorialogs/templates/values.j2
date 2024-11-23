@@ -1,0 +1,63 @@
+{% if victorialogs_postinstall %}
+dashboards:
+  enabled: true
+{% endif %}
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+server:
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+  ingress:
+    annotations:
+{% for key, value in victorialogs_map.ingress.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
+    enabled: {{ victorialogs_vars.kubernetes.server.ingress.enabled }}
+    hosts:
+      - name: {{ victorialogs_map.ingress.hostname }}
+        path:
+          - /
+        port: http
+    ingressClassName: cilium
+    tls:
+      - hosts:
+          - {{ victorialogs_map.ingress.hostname }}
+        secretName: {{ cloudflare_tls_key_prefix }}-{{ victorialogs_map.ingress.name }}
+{% endif %}
+  persistentVolume:
+    enabled: true
+    size: {{ victorialogs_vars.kubernetes.server.persistent_volume.size }}
+    storageClassName: longhorn
+  replicaCount: {{ victorialogs_vars.kubernetes.server.replicas }}
+{% if victorialogs_postinstall %}
+  resources:
+    limits:
+      cpu: {{ victorialogs_vars.kubernetes.server.resources.limits.cpu }}
+      memory: {{ victorialogs_vars.kubernetes.server.resources.limits.memory }}
+    requests:
+      cpu: {{ victorialogs_vars.kubernetes.server.resources.requests.cpu }}
+      memory: {{ victorialogs_vars.kubernetes.server.resources.requests.memory }}
+  serviceMonitor:
+    enabled: true
+{% endif %}
+  retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
+  tolerations:
+    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+vector:
+  enabled: {{ victorialogs_vars.kubernetes.vector.enabled }}
+  logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
+{% if victorialogs_postinstall %}
+  podMonitor:
+    enabled: true
+  resources:
+    limits:
+      cpu: {{ victorialogs_vars.kubernetes.vector.resources.limits.cpu }}
+      memory: {{ victorialogs_vars.kubernetes.vector.resources.limits.memory }}
+    requests:
+      cpu: {{ victorialogs_vars.kubernetes.vector.resources.requests.cpu }}
+      memory: {{ victorialogs_vars.kubernetes.vector.resources.requests.memory }}
+  serviceMonitor:
+    enabled: true
+{% endif %}
+  tolerations:
+    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}

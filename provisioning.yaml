@@ -54,6 +54,7 @@
         - cloudflare
         - kured
         - longhorn
+        - victorialogs
         - victoriametrics
       loop_control:
         loop_var: role
@@ -64,5 +65,6 @@
     - argocd
     - kured
     - longhorn
+    - victorialogs
     - victoriametrics
   tags: charts

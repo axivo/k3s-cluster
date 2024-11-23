@@ -183,6 +183,19 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "VictoriaMetrics/victoria-logs-single",
+      "extractVersionTemplate": "^victoria-logs-single-(?<version>.+)$",
+      "fileMatch": [
+        "roles/victorialogs/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ],
+      "packageNameTemplate": "VictoriaMetrics/helm-charts"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
       "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
       "fileMatch": [

@@ -1,0 +1,39 @@
+---
+victorialogs_vars:
+  kubernetes:
+    helm:
+      chart:
+        alias: vls
+        name: victoria-logs-single
+        version: v0.8.2
+      repository:
+        name: helm-charts
+        org: VictoriaMetrics
+        url: https://victoriametrics.github.io
+    namespace: kube-system
+    server:
+      ingress:
+        enabled: true
+        subdomain: logs
+      log_level: WARN
+      resources:
+        limits:
+          cpu: null
+          memory: 512Mi
+        requests:
+          cpu: 10m
+          memory: 512Mi
+      persistent_volume:
+        size: 5Gi
+      replicas: 1
+      retention_period: 7d
+    vector:
+      enabled: true
+      log_level: warn
+      resources:
+        limits:
+          cpu: null
+          memory: 512Mi
+        requests:
+          cpu: 10m
+          memory: 512Mi

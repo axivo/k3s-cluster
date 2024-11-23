@@ -41,6 +41,10 @@
           tasks: main
         - role: longhorn
           tasks: postinstall
+        - role: victorialogs
+          tasks: main
+        - role: victorialogs
+          tasks: postinstall
         - role: victoriametrics
           tasks: main
         - role: victoriametrics
