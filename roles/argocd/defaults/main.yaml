@@ -42,6 +42,9 @@ argocd_vars:
         name: argo-helm
         org: argoproj
         url: https://argoproj.github.io
+    global:
+      logging:
+        level: warn
     namespace: kube-system
     notifications:
       resources:

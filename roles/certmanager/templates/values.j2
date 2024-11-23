@@ -1,3 +1,7 @@
+global:
+  leaderElection:
+    namespace: {{ certmanager_vars.kubernetes.namespace }}
+  logLevel: {{ certmanager_vars.kubernetes.global.log_level }}
 {% if certmanager_postinstall %}
 cainjector:
   resources:

@@ -27,6 +27,8 @@ certmanager_vars:
         name: cert-manager
         org: jetstack
         url: https://charts.jetstack.io
+    global:
+      log_level: 2
     namespace: kube-system
     tls:
       cluster_issuer:

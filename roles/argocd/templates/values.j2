@@ -1,7 +1,9 @@
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
 global:
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   domain: {{ hostname }}
 {% endif %}
+  logging:
+    level: {{ argocd_vars.kubernetes.global.logging.level }}
 {% if argocd_postinstall %}
 applicationSet:
   resources:
