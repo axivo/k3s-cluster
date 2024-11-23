@@ -11,7 +11,7 @@ alertmanager:
 {% for key, value in victoriametrics_map.ingress.alertmanager.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
+    enabled: {{ victoriametrics_vars.kubernetes.alertmanager.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.alertmanager.hostname }}
     ingressClassName: cilium
@@ -55,7 +55,7 @@ grafana:
 {% for key, value in victoriametrics_map.ingress.grafana.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
+    enabled: {{ victoriametrics_vars.kubernetes.grafana.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.grafana.hostname }}
     ingressClassName: cilium
@@ -172,7 +172,7 @@ vmagent:
 {% for key, value in victoriametrics_map.ingress.vmagent.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
+    enabled: {{ victoriametrics_vars.kubernetes.vmagent.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.vmagent.hostname }}
     ingressClassName: cilium
@@ -207,7 +207,7 @@ vmalert:
 {% for key, value in victoriametrics_map.ingress.vmalert.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
+    enabled: {{ victoriametrics_vars.kubernetes.vmalert.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.vmalert.hostname }}
     ingressClassName: cilium
@@ -227,7 +227,7 @@ vmalert:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.memory }}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' and victoriametrics_vars.kubernetes.vmalert.ingress.enabled %}
     extraArgs:
       external.url: https://{{ victoriametrics_map.ingress.vmalert.hostname }}
 {% endif %}
@@ -242,6 +242,48 @@ vmalert:
 {% if k3s_ha_cluster and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
   enabled: {{ victoriametrics_vars.kubernetes.vmcluster.enabled }}
+{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+  ingress:
+    insert:
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.enabled }}
+      annotations:
+{% for key, value in victoriametrics_map.ingress.vmcluster.vminsert.annotations.items() %}
+        {{ key | indent(8) }}: {{ value }}
+{% endfor %}
+      hosts:
+        - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
+      ingressClassName: cilium
+      tls:
+        - hosts:
+            - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
+          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
+    select:
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled }}
+      annotations:
+{% for key, value in victoriametrics_map.ingress.vmcluster.vmselect.annotations.items() %}
+        {{ key | indent(8) }}: {{ value }}
+{% endfor %}
+      hosts:
+        - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
+      ingressClassName: cilium
+      tls:
+        - hosts:
+            - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
+          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
+    storage:
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.enabled }}
+      annotations:
+{% for key, value in victoriametrics_map.ingress.vmcluster.vmstorage.annotations.items() %}
+        {{ key | indent(8) }}: {{ value }}
+{% endfor %}
+      hosts:
+        - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
+      ingressClassName: cilium
+      tls:
+        - hosts:
+            - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
+          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
+{% endif %}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}

@@ -26,6 +26,22 @@
             cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
           name: 'vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+        vmcluster:
+          vminsert:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vminsert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          vmselect:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+          vmstorage:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            name: 'vmstorage-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
       repository:
         - name: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.name }}'
           org: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.org }}'
