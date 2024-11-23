@@ -113,7 +113,7 @@ victoriametrics_vars:
       ingress:
         subdomain: agent
       log_level: WARN
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -133,7 +133,7 @@ victoriametrics_vars:
       ingress:
         subdomain: alert
       log_level: WARN
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -142,43 +142,42 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
     vmcluster:
+      enabled: true
       replication_factor: 2
       retention_period: 72h
       vminsert:
-        ingress:
-          subdomain: insert
         log_level: WARN
-        replicas: 2
+        replicas: 1
         resources:
           limits:
             cpu: null
-            memory: 384Mi
+            memory: 512Mi
           requests:
             cpu: 10m
-            memory: 384Mi
+            memory: 512Mi
       vmselect:
         ingress:
           subdomain: metrics
         log_level: WARN
-        replicas: 2
+        replicas: 1
         resources:
           limits:
             cpu: null
-            memory: 256Mi
+            memory: 512Mi
           requests:
             cpu: 10m
-            memory: 256Mi
+            memory: 512Mi
         storage: 2Gi
       vmstorage:
         ingress:
           subdomain: storage
         log_level: WARN
-        replicas: 2
+        replicas: 1
         resources:
           limits:
             cpu: null
-            memory: 2Gi
+            memory: 2.5Gi
           requests:
             cpu: 10m
-            memory: 2Gi
+            memory: 2.5Gi
         storage: 20Gi

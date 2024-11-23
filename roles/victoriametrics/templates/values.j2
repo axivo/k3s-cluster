@@ -239,50 +239,9 @@ vmalert:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
 {% endif %}
+{% if k3s_ha_cluster and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
-  enabled: true
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
-  ingress:
-    insert:
-      enabled: true
-      annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vminsert.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
-      hosts:
-        - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-      ingressClassName: cilium
-      tls:
-        - hosts:
-            - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
-    select:
-      enabled: true
-      annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vmselect.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
-      hosts:
-        - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-      ingressClassName: cilium
-      tls:
-        - hosts:
-            - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
-    storage:
-      enabled: true
-      annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vmstorage.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
-      hosts:
-        - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-      ingressClassName: cilium
-      tls:
-        - hosts:
-            - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
-{% endif %}
+  enabled: {{ victoriametrics_vars.kubernetes.vmcluster.enabled }}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
@@ -342,3 +301,28 @@ vmcluster:
             storageClassName: longhorn
 vmsingle:
   enabled: false
+{% else %}
+vmsingle:
+  spec:
+    logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
+    retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
+{% if victoriametrics_postinstall %}
+    resources:
+      limits:
+        cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
+{% endif %}
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage }}
+          storageClassName: longhorn
+{% endif %}
