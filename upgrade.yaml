@@ -39,6 +39,8 @@
           tasks: postinstall
         - role: longhorn
           tasks: main
+        - role: longhorn
+          tasks: postinstall
         - role: victoriametrics
           tasks: main
         - role: victoriametrics

@@ -53,6 +53,7 @@
         - cilium
         - cloudflare
         - kured
+        - longhorn
         - victoriametrics
       loop_control:
         loop_var: role

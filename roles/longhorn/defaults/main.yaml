@@ -20,8 +20,8 @@ longhorn_vars:
       data_locality: strict-local
       log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
-      replica_auto_balance: best-effort
-      replicas: 3
+      replica_auto_balance: least-effort
+      replicas: 2
     helm:
       chart:
         name: longhorn
@@ -37,3 +37,7 @@ longhorn_vars:
       annotations:
         io.cilium/lb-ipam-ips: 192.168.4.20
     namespace: kube-system
+    persistence:
+      data_engine: v1
+      data_locality: disabled
+      remove_snapshots_during_filesystem_trim: enabled

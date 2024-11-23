@@ -29,3 +29,13 @@ longhornManager:
   tolerations:
     {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
+{% if longhorn_postinstall %}
+metrics:
+  serviceMonitor:
+    enabled: true
+{% endif %}
+persistence:
+  dataEngine: {{ longhorn_vars.kubernetes.persistence.data_engine }}
+  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replicas }}
+  defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
+  removeSnapshotsDuringFilesystemTrim: {{ longhorn_vars.kubernetes.persistence.remove_snapshots_during_filesystem_trim }}

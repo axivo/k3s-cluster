@@ -38,6 +38,10 @@
             - longhorn_vars.kubernetes.default_settings.backup.enabled
             - longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs'
 
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            longhorn_postinstall: false
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ longhorn_project_chart }}'
