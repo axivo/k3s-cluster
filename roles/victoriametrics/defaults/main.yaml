@@ -77,7 +77,7 @@ victoriametrics_vars:
           6164623332633535310a626532356161363563303036353838306234306562303333333231643432
           38383463653931373134663230383033666264646364316563663636303736326630
     kube_state_metrics:
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -87,7 +87,8 @@ victoriametrics_vars:
           memory: 128Mi
     namespace: kube-system
     victoria_metrics_operator:
-      replicas: 2
+      log_level: WARN
+      replicas: 1
       resources:
         limits:
           cpu: null
