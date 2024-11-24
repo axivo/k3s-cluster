@@ -11,7 +11,7 @@ cilium_vars:
           memory: 256Mi
     bpf:
       datapath_mode: netkit
-      masquerade: true
+      masquerade: false
     cgroup:
       resources:
         limits:
@@ -94,7 +94,7 @@ cilium_vars:
         cluster_issuer:
           name: hubble-cluster-issuer
     ip_masq_agent:
-      enabled: true
+      enabled: false
       non_masquerade_cidrs:
         - 10.0.0.0/8
         - 192.168.1.0/24
@@ -111,6 +111,8 @@ cilium_vars:
       l2_announcement_policy:
         name: default-l2-announcement-policy
       table_size: 16381
+    log_options:
+      level: warn
     namespace: kube-system
     operator:
       resources:

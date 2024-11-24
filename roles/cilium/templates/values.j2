@@ -46,6 +46,8 @@ k8sClientRateLimit:
 k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
 k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
 kubeProxyReplacement: true
+logOptions:
+  level: {{ cilium_vars.kubernetes.log_options.level }}
 operator:
   rollOutPods: true
 rollOutCiliumPods: true
