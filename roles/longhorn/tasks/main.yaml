@@ -36,7 +36,8 @@
             wait: true
           when:
             - longhorn_vars.kubernetes.default_settings.backup.enabled
-            - longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs'
+            - longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs'
+          no_log: true
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:

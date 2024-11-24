@@ -6,7 +6,7 @@ defaultSettings:
   autoDeletePodWhenVolumeDetachedUnexpectedly: true
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
-{% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs' %}
+{% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower == 'cifs' %}
   backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret.name }}
 {% endif %}
 {% endif %}

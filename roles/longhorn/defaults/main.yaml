@@ -5,8 +5,8 @@ longhorn_vars:
       backup:
         enabled: true
         secret:
-          name: longhorn-secret
-        target: nfs://192.168.1.8:/mnt/default/opt/backup
+          name: longhorn-backup-secret
+        target: cifs://192.168.1.8/mnt/default/opt/backup
         user:
           name: floren
           password: !vault |

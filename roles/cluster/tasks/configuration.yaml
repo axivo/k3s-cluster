@@ -176,6 +176,12 @@
         - snapd.socket
       when: not cluster_vars.service.snapd.enabled
 
+    - name: Install cifs utilities package
+      ansible.builtin.apt:
+        name: cifs-utils
+        autoremove: true
+        update_cache: true
+
     - name: Load kernel modules
       ansible.builtin.copy:
         content: |
