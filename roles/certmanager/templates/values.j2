@@ -19,7 +19,7 @@ extraArgs:
   - --enable-gateway-api
 podDisruptionBudget:
   enabled: true
-  maxUnavailable: 1
+  minAvailable: 1
 {% if certmanager_postinstall %}
 prometheus:
   servicemonitor:
