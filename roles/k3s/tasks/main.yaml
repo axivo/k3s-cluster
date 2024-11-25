@@ -34,7 +34,7 @@
     - name: Create configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        dest: '{{ k3s_map.cluster.config }}'
         owner: root
         group: root
         mode: '0600'
@@ -72,6 +72,10 @@
 - name: Server Setup
   when: ansible_host in k3s_map.server.hosts
   block:
+    - name: Kubepug Setup
+      ansible.builtin.import_tasks:
+        file: kubepug.yaml
+
     - name: Add variable to environment file
       ansible.builtin.lineinfile:
         path: /etc/environment

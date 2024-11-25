@@ -68,7 +68,7 @@
           file: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
         kubepug:
           checksum: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_map.release.kubepug.checksum }}'
-          file: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
+          file: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_vars.release.kubepug.file }}'
       token: "{{ hostvars[k3s_map.server.default_host].token | default('') }}"
   run_once: true
 

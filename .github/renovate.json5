@@ -159,6 +159,17 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubepug/kubepug",
+      "fileMatch": [
+        "roles/k3s/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubereboot/kured",
       "extractVersionTemplate": "^kured-(?<version>.+)$",
       "fileMatch": [

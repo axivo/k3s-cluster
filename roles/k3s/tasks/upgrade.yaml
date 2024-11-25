@@ -1,5 +1,5 @@
 ---
-- name: Set facts
+- name: Role Facts
   ansible.builtin.import_tasks:
     file: facts.yaml
 
@@ -33,21 +33,32 @@
 
 - name: Role Upgrade
   block:
-    - name: Set Token
+    - name: Server Upgrade
       when: ansible_host in k3s_map.server.hosts
-      run_once: true
       block:
-        - name: Read token
-          ansible.builtin.slurp:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-          register: node_token
+        - name: Set Token
           no_log: true
+          run_once: true
+          block:
+            - name: Read server token
+              ansible.builtin.slurp:
+                path: '{{ k3s_vars.directory.lib }}/server/token'
+              register: server_token
 
-        - name: Set token fact
-          ansible.builtin.set_fact:
-            k3s_project:
-              token: '{{ node_token.content | b64decode | trim }}'
-          no_log: true
+            - name: Update project token fact
+              ansible.utils.update_fact:
+                updates:
+                  - path: k3s_project.token
+                    value: '{{ server_token.content | b64decode | trim }}'
+              register: update
+
+            - name: Set project fact
+              ansible.builtin.set_fact:
+                k3s_project: '{{ update.k3s_project }}'
+
+        - name: Kubepug Upgrade
+          ansible.builtin.import_tasks:
+            file: kubepug.yaml
 
     - name: Set configuration postinstall fact
       ansible.builtin.set_fact:
@@ -56,7 +67,7 @@
     - name: Update configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        dest: '{{ k3s_map.cluster.config }}'
         owner: root
         group: root
         mode: '0600'

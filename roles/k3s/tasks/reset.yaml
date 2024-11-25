@@ -42,7 +42,7 @@
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
 
-    - name: Remove kubernetes files
+    - name: Remove cluster files
       ansible.builtin.shell: |
         set -eo pipefail
         if [[ -d {{ item }} ]]; then
@@ -65,13 +65,22 @@
         - /var/lib/rancher
       register: result
 
-    - name: Remove variable from environment file
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
-        regexp: ^KUBECONFIG
-        state: absent
+    - name: Server Reset
       when: ansible_host in k3s_map.server.hosts
+      block:
+        - name: Remove server files
+          ansible.builtin.file:
+            path: '{{ item }}'
+            state: absent
+          loop:
+            - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.kubepug.name }}'
+
+        - name: Remove variable from environment file
+          ansible.builtin.lineinfile:
+            path: /etc/environment
+            line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
+            regexp: ^KUBECONFIG
+            state: absent
 
     - name: Remove generic files
       ansible.builtin.file:
@@ -79,7 +88,6 @@
         state: absent
       loop:
         - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
-        - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.kubepug.name }}'
         - '{{ k3s_vars.directory.bin }}/crictl'
         - '{{ k3s_vars.directory.bin }}/ctr'
         - '{{ k3s_vars.directory.bin }}/kubectl'
