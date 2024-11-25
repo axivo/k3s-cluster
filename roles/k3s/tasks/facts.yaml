@@ -19,6 +19,7 @@
   ansible.builtin.set_fact:
     k3s_map:
       cluster:
+        config: '{{ k3s_vars.directory.config }}/config.yaml'
         ha: '{{ groups.server | length > 2 }}'
         kubeconfig: '{{ k3s_vars.directory.config }}/{{ k3s_vars.release.k3s.name }}.yaml'
         label: default
