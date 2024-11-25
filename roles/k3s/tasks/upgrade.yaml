@@ -33,46 +33,6 @@
 
 - name: Role Upgrade
   block:
-    - name: Server Upgrade
-      when: ansible_host in k3s_map.server.hosts
-      block:
-        - name: Set Token
-          no_log: true
-          run_once: true
-          block:
-            - name: Read node token
-              ansible.builtin.slurp:
-                path: '{{ k3s_vars.directory.lib }}/server/node-token'
-              register: node_token
-
-            - name: Update project token fact
-              ansible.utils.update_fact:
-                updates:
-                  - path: k3s_project.token
-                    value: '{{ node_token.content | b64decode | trim }}'
-              register: update
-
-            - name: Set project fact
-              ansible.builtin.set_fact:
-                k3s_project: '{{ update.k3s_project }}'
-
-        - name: Kubepug Upgrade
-          ansible.builtin.import_tasks:
-            file: kubepug.yaml
-
-    - name: Set configuration postinstall fact
-      ansible.builtin.set_fact:
-        k3s_config_postinstall: true
-
-    - name: Update configuration file
-      ansible.builtin.template:
-        src: config.j2
-        dest: '{{ k3s_map.cluster.config }}'
-        owner: root
-        group: root
-        mode: '0600'
-      register: k3s_config
-
     - name: Install k3s binary
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
@@ -87,6 +47,71 @@
       until: result is not failed
       when: k3s_version.stdout != k3s_vars.release.k3s.version
 
+    - name: Get configuration file status
+      ansible.builtin.stat:
+        checksum: sha256
+        path: '{{ k3s_map.cluster.config }}'
+      register: k3s_file
+
+    - name: Set server configuration postinstall fact
+      ansible.builtin.set_fact:
+        k3s_config_postinstall: false
+
+    - name: Update configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_map.cluster.config }}'
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Update service file
+      ansible.builtin.template:
+        src: service.j2
+        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Set flush handlers fact
+      ansible.builtin.set_fact:
+        k3s_flush_handlers: false
+
+    - name: Role Configuration
+      ansible.builtin.import_tasks:
+        file: configuration.yaml
+
+    - name: Server Configuration
+      notify: Restart service
+      when: k3s_map.cluster.ha
+      block:
+        - name: Set server configuration postinstall fact
+          ansible.builtin.set_fact:
+            k3s_config_postinstall: true
+
+        - name: Update server configuration file
+          ansible.builtin.template:
+            src: config.j2
+            dest: '{{ k3s_map.cluster.config }}'
+            owner: root
+            group: root
+            mode: '0600'
+
+    - name: Get revised configuration file status
+      ansible.builtin.stat:
+        checksum: sha256
+        path: '{{ k3s_map.cluster.config }}'
+      register: k3s_file_revised
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: '{{ item }}'
+      loop:
+        - k3s_file.stat.checksum
+        - k3s_file_revised.stat.checksum
+        - k3s_version.stdout
+        - k3s_vars.release.k3s.version
+
     - name: Schedule reboot
       ansible.builtin.file:
         path: /var/run/reboot-required
@@ -96,4 +121,4 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.k3s.version
+      when: (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or (k3s_version.stdout != k3s_vars.release.k3s.version)

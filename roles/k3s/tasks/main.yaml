@@ -39,15 +39,6 @@
         group: root
         mode: '0600'
 
-    - name: Create registries file
-      ansible.builtin.template:
-        src: registries.j2
-        dest: '{{ k3s_map.cluster.registries }}'
-        owner: root
-        group: root
-        mode: '0600'
-      when: (k3s_vars.cluster.controlplane.tainted and ansible_host not in k3s_map.server.hosts) or not k3s_vars.cluster.controlplane.tainted
-
     - name: Create service file
       ansible.builtin.template:
         src: service.j2
@@ -69,114 +60,10 @@
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
-- name: Server Setup
-  when: ansible_host in k3s_map.server.hosts
-  block:
-    - name: Kubepug Setup
-      ansible.builtin.import_tasks:
-        file: kubepug.yaml
+- name: Set flush handlers fact
+  ansible.builtin.set_fact:
+    k3s_flush_handlers: true
 
-    - name: Add variable to environment file
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
-        regexp: ^KUBECONFIG
-
-    - name: Create symlinks
-      ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/{{ item }}'
-        src: '{{ k3s_map.node.binary }}'
-        state: link
-      loop:
-        - crictl
-        - ctr
-        - kubectl
-
-    - name: Validate service state
-      ansible.builtin.wait_for:
-        port: '{{ k3s_vars.server.api.port }}'
-        state: drained
-        timeout: 30
-      any_errors_fatal: true
-
-    - name: Set Token
-      when: k3s_project.token | length == 0
-      block:
-        - name: Wait for token creation
-          ansible.builtin.wait_for:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-
-        - name: Read token
-          ansible.builtin.slurp:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-          register: node_token
-
-        - name: Set token fact
-          ansible.builtin.set_fact:
-            token: '{{ node_token.content | b64decode | trim }}'
-          no_log: true
-          run_once: true
-
-- name: Local Kubeconfig Setup
-  when:
-    - k3s_vars.cluster.kubeconfig.local
-    - ansible_host in ['localhost', k3s_map.server.default_host]
-  run_once: true
-  block:
-    - name: Create temporary file
-      ansible.builtin.tempfile:
-        prefix: kubeconfig.
-      register: kubeconfig
-
-    - name: Copy kubeconfig file
-      ansible.builtin.copy:
-        src: '{{ k3s_map.cluster.kubeconfig }}'
-        dest: '{{ kubeconfig.path }}'
-        mode: preserve
-        remote_src: true
-
-    - name: Get file content
-      ansible.builtin.slurp:
-        path: '{{ kubeconfig.path }}'
-      register: file
-
-    - name: Set datasource fact
-      ansible.builtin.set_fact:
-        datasource: '{{ file.content | b64decode | from_yaml }}'
-
-    - name: Set datasource parameters
-      ansible.builtin.set_fact:
-        datasource: '{{ datasource | combine(parameters) }}'
-      vars:
-        parameters:
-          clusters:
-            - cluster:
-                certificate-authority-data: "{{ datasource.clusters[0].cluster['certificate-authority-data'] }}"
-                server: https://{{ k3s_vars.server.api.host if k3s_map.cluster.ha else k3s_map_server.default_ip }}:{{ k3s_vars.server.api.port }}
-              name: '{{ datasource.clusters[0].name }}'
-
-    - name: Update kubeconfig file
-      ansible.builtin.copy:
-        content: '{{ datasource | to_nice_yaml(indent=2) }}'
-        dest: '{{ kubeconfig.path }}'
-        mode: preserve
-        remote_src: true
-
-    - name: Copy kubeconfig file locally
-      ansible.builtin.fetch:
-        src: '{{ kubeconfig.path }}'
-        dest: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
-        flat: true
-
-    - name: Remove kubeconfig file
-      ansible.builtin.file:
-        path: '{{ kubeconfig.path }}'
-        state: absent
-
-    - name: Set local kubeconfig file permissions
-      ansible.builtin.file:
-        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
-        mode: '0600'
-        state: file
-      delegate_to: localhost
-      become: false
+- name: Role Configuration
+  ansible.builtin.import_tasks:
+    file: configuration.yaml
