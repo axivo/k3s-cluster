@@ -44,7 +44,7 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ cloudflare_project_chart }}'
+            chart_ref: '{{ cloudflare_map.helm.chart.reference }}'
             chart_version: '{{ cloudflare_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ cloudflare_vars.kubernetes.helm.chart.name }}'

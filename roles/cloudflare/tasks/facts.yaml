@@ -1,42 +1,36 @@
 ---
-- name: Set acme server fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    cloudflare_acme_server: "{{ '-staging' if cloudflare_vars.kubernetes.acme.server | lower == 'staging' | default('') }}"
+    cloudflare_map:
+      acme:
+        server: "{{ '-staging' if cloudflare_vars.kubernetes.acme.server | lower == 'staging' | default('') }}"
+      helm:
+        chart:
+          reference: '{{ cloudflare_vars.kubernetes.helm.repository.org }}/{{ cloudflare_vars.kubernetes.helm.chart.name }}'
+          version: '{{ cloudflare_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
+          url: '{{ cloudflare_vars.kubernetes.helm.repository.url }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
+      tls:
+        key:
+          prefix: '{{ cloudflare_vars.kubernetes.tls.key_prefix }}'
   run_once: true
 
-- name: Set acme server url fact
+- name: Set project fact
   ansible.builtin.set_fact:
-    cloudflare_acme_server_url: https://acme{{ cloudflare_acme_server }}-v02.api.letsencrypt.org/directory
+    cloudflare_project:
+      tag: '{{ cloudflare_vars.kubernetes.helm.chart.name }}-helm-chart-{{ cloudflare_map.helm.chart.version }}'
+      url: https://github.com/{{ cloudflare_map.helm.repository.name }}/releases/tag
   run_once: true
 
-- name: Set cluster issuer fact
+- name: Set resources fact
   ansible.builtin.set_fact:
-    cloudflare_cluster_issuer: '{{ cloudflare_vars.kubernetes.tls.cluster_issuer.name }}{{ cloudflare_acme_server }}'
-  run_once: true
-
-- name: Set project chart fact
-  ansible.builtin.set_fact:
-    cloudflare_project_chart: '{{ cloudflare_vars.kubernetes.helm.repository.org }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
-  run_once: true
-
-- name: Set project tag fact
-  ansible.builtin.set_fact:
-    cloudflare_project_tag: '{{ cloudflare_vars.kubernetes.helm.chart.name }}-helm-chart-{{ cloudflare_vars.kubernetes.helm.chart.version[1:] }}'
-  run_once: true
-
-- name: Set project url fact
-  ansible.builtin.set_fact:
-    cloudflare_project_url: https://github.com/{{ cloudflare_project_chart }}/releases/tag
-  run_once: true
-
-- name: Set project tag url fact
-  ansible.builtin.set_fact:
-    cloudflare_project_url_tag: '{{ cloudflare_project_url }}/{{ cloudflare_project_tag }}'
-  run_once: true
-
-- name: Set tls prefix fact
-  ansible.builtin.set_fact:
-    cloudflare_tls_key_prefix: '{{ cloudflare_vars.kubernetes.tls.key_prefix }}'
+    cloudflare_resources:
+      acme:
+        server:
+          url: https://acme{{ cloudflare_map.acme.server }}-v02.api.letsencrypt.org/directory
+      cluster:
+        issuer: '{{ cloudflare_vars.kubernetes.tls.cluster_issuer.name }}{{ cloudflare_map.acme.server }}'
   run_once: true
 
 - name: Set variables fact

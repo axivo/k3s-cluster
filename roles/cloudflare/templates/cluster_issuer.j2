@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ cloudflare_cluster_issuer }}
+  name: {{ cloudflare_resources.cluster.issuer }}
 spec:
   acme:
     email: {{ cluster_vars.service.postfix.user.alias }}
     privateKeySecretRef:
-      name: {{ cloudflare_tls_key_prefix }}-key
-    server: {{ cloudflare_acme_server_url }}
+      name: {{ cloudflare_map.tls.key.prefix }}-key
+    server: {{ cloudflare_resources.acme.server.url }}
     solvers:
       - dns01:
           cloudflare:

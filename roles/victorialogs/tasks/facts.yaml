@@ -11,7 +11,7 @@
           url: '{{ victorialogs_vars.kubernetes.helm.repository.url }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
       ingress:
         annotations:
-          cert-manager.io/cluster-issuer: '{{ cloudflare_cluster_issuer }}'
+          cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
         hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
         name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}-{{ victorialogs_vars.kubernetes.helm.chart.name }}-server'
   run_once: true

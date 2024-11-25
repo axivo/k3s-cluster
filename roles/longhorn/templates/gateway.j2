@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: {{ cloudflare_cluster_issuer }}
+    cert-manager.io/cluster-issuer: {{ cloudflare_resources.cluster.issuer }}
   name: {{ longhorn_vars.kubernetes.gateway.service }}
   namespace: {{ longhorn_vars.kubernetes.namespace }}
 spec:
@@ -34,4 +34,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ cloudflare_tls_key_prefix }}-{{ longhorn_vars.kubernetes.gateway.service }}
+            name: {{ cloudflare_map.tls.key.prefix }}-{{ longhorn_vars.kubernetes.gateway.service }}

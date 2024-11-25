@@ -18,7 +18,7 @@ alertmanager:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.alertmanager.hostname }}
-        secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
@@ -64,7 +64,7 @@ grafana:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.grafana.hostname }}
-        secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
 {% endif %}
   logLevel: {{ victoriametrics_vars.kubernetes.grafana.log_level }}
   podDisruptionBudget:
@@ -190,7 +190,7 @@ vmagent:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmagent.hostname }}
-        secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
@@ -227,7 +227,7 @@ vmalert:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmalert.hostname }}
-        secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
@@ -271,7 +271,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
+          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
     select:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled }}
       annotations:
@@ -284,7 +284,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
+          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
     storage:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.enabled }}
       annotations:
@@ -297,7 +297,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-          secretName: {{ cloudflare_tls_key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
+          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
 {% endif %}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}

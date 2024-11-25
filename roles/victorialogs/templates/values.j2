@@ -22,7 +22,7 @@ server:
     tls:
       - hosts:
           - {{ victorialogs_map.ingress.hostname }}
-        secretName: {{ cloudflare_tls_key_prefix }}-{{ victorialogs_map.ingress.name }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victorialogs_map.ingress.name }}
 {% endif %}
   persistentVolume:
     enabled: true
