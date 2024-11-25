@@ -1,5 +1,5 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
     name: '{{ item }}'
     tasks_from: facts
@@ -25,7 +25,7 @@
     - name: Add repository
       kubernetes.core.helm_repository:
         name: '{{ kured_vars.kubernetes.helm.repository.org }}'
-        repo_url: '{{ kured_vars.kubernetes.helm.repository.url }}/{{ kured_vars.kubernetes.helm.repository.name }}'
+        repo_url: '{{ kured_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
@@ -36,9 +36,9 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ kured_project_chart }}'
+            chart_ref: '{{ kured_map.helm.chart.reference }}'
             chart_version: '{{ kured_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ kured_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ kured_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

@@ -29,7 +29,6 @@ kured_vars:
     helm:
       chart:
         name: kured
-        org: kubereboot
         version: v5.5.2
       repository:
         name: charts

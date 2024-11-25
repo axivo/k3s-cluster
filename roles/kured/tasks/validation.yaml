@@ -1,5 +1,5 @@
 ---
-- name: Set facts
+- name: Role Facts
   ansible.builtin.import_tasks:
     file: facts.yaml
 
@@ -8,7 +8,7 @@
   block:
     - name: Validate project tag url
       ansible.builtin.uri:
-        url: '{{ kured_project_url_tag }}'
+        url: '{{ kured_project.url }}/{{ kured_project.tag }}'
         timeout: 5
       register: result
       delay: 1
