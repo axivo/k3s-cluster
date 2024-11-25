@@ -34,7 +34,7 @@
         - name: Create grafana user account secret
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'account.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Set chart postinstall fact
@@ -45,7 +45,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ victoriametrics_project.chart }}'
             chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
             namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
@@ -63,7 +63,7 @@
         #     - name: Create gateway
         #       kubernetes.core.k8s:
         #         definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-        #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        #         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         #         wait: true
         #       loop:
         #         - annotations: '{{ victoriametrics_map.service.alertmanager.annotations }}'
@@ -79,7 +79,7 @@
         #     - name: Create http route
         #       kubernetes.core.k8s:
         #         definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
-        #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        #         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         #         wait: true
         #       loop:
         #         - hostname: '{{ victoriametrics_map.service.alertmanager.hostname }}'
@@ -92,7 +92,7 @@
         #     - name: Create https route
         #       kubernetes.core.k8s:
         #         definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
-        #         kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        #         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         #         wait: true
         #       loop:
         #         - hostname: '{{ victoriametrics_map.service.alertmanager.hostname }}'
@@ -108,7 +108,7 @@
         # - name: Set frontend loadbalancer ip
         #   kubernetes.core.k8s:
         #     definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-        #     kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        #     kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         #   loop:
         #     - annotations: '{{ victoriametrics_map.service.alertmanager.annotations }}'
         #       name: '{{ victoriametrics_map.service.alertmanager.name }}'

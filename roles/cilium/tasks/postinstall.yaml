@@ -22,25 +22,25 @@
         - name: Create hubble ui gateway
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Create http route
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Create https route
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
     - name: Set hubble ui loadbalancer ip
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
       when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'
 
     - name: Hubble TLS
@@ -49,13 +49,13 @@
         - name: Create hubble certificate
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'certificate.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Create hubble cluster issuer
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
     - name: Set chart setup fact
@@ -70,7 +70,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ cilium_project_chart }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ cilium_vars.kubernetes.namespace }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

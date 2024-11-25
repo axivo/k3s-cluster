@@ -20,6 +20,7 @@
     k3s_map:
       cluster:
         ha: '{{ groups.server | length > 2 }}'
+        kubeconfig: '{{ k3s_vars.directory.config }}/{{ k3s_vars.release.k3s.name }}.yaml'
         label: default
         non_ha: '{{ groups.server | length == 1 }}'
       loadbalancer:
@@ -33,7 +34,11 @@
           server: "{{ k3s_list_taints | select('search', 'control-plane') | default('') }}"
       release:
         k3s:
+          checksum: '{{ k3s_vars.release.k3s.checksum }}'
           url: https://github.com/{{ k3s_vars.release.k3s.repository.org }}/{{ k3s_vars.release.k3s.repository.name }}/releases
+        kubepug:
+          checksum: '{{ k3s_vars.release.kubepug.name }}_{{ k3s_vars.release.kubepug.version[1:] }}_{{ k3s_vars.release.kubepug.checksum }}'
+          url: https://github.com/{{ k3s_vars.release.kubepug.repository.org }}/{{ k3s_vars.release.kubepug.repository.name }}/releases
       server:
         default_host: '{{ hostvars[groups.server[0]].ansible_hostname | default(groups.server[0]) }}'
         hosts: '{{ groups.server }}'
@@ -59,7 +64,10 @@
     k3s_project:
       release:
         k3s:
-          checksum: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.checksum }}'
+          checksum: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_map.release.k3s.checksum }}'
+          file: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
+        kubepug:
+          checksum: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_map.release.kubepug.checksum }}'
           file: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
       token: "{{ hostvars[k3s_map.server.default_host].token | default('') }}"
   run_once: true

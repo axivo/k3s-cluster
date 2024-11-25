@@ -10,7 +10,7 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/k3s'
+        dest: '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
         owner: root
         group: root
         mode: '0755'
@@ -75,13 +75,13 @@
     - name: Add variable to environment file
       ansible.builtin.lineinfile:
         path: /etc/environment
-        line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
+        line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
         regexp: ^KUBECONFIG
 
     - name: Create symlinks
       ansible.builtin.file:
         path: '{{ k3s_vars.directory.bin }}/{{ item }}'
-        src: '{{ k3s_vars.directory.bin }}/k3s'
+        src: '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
         state: link
       loop:
         - crictl
@@ -126,7 +126,7 @@
 
     - name: Copy kubeconfig file
       ansible.builtin.copy:
-        src: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        src: '{{ k3s_map.cluster.kubeconfig }}'
         dest: '{{ kubeconfig.path }}'
         mode: preserve
         remote_src: true

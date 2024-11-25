@@ -19,7 +19,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ victoriametrics_project.chart }}'
         chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
         namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

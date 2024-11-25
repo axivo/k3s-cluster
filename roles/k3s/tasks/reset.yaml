@@ -68,7 +68,7 @@
     - name: Remove variable from environment file
       ansible.builtin.lineinfile:
         path: /etc/environment
-        line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
+        line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
         regexp: ^KUBECONFIG
         state: absent
       when: ansible_host in k3s_map.server.hosts
@@ -78,9 +78,10 @@
         path: '{{ item }}'
         state: absent
       loop:
+        - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+        - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.kubepug.name }}'
         - '{{ k3s_vars.directory.bin }}/crictl'
         - '{{ k3s_vars.directory.bin }}/ctr'
-        - '{{ k3s_vars.directory.bin }}/k3s'
         - '{{ k3s_vars.directory.bin }}/kubectl'
         - '{{ k3s_vars.directory.config }}'
         - /etc/systemd/system/{{ k3s_map.service.name }}.service

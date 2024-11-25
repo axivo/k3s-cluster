@@ -19,7 +19,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ argocd_project_chart }}'
         chart_version: '{{ argocd_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ argocd_vars.kubernetes.namespace }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

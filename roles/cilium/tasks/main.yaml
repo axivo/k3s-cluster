@@ -73,7 +73,7 @@
       block:
         - name: Apply gateway api crds manifest
           kubernetes.core.k8s:
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             src: '{{ cilium_gateway_api_release_url_file }}'
 
         - name: Set chart setup fact
@@ -87,7 +87,7 @@
         - name: Get secret info
           kubernetes.core.k8s_info:
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: hubble-server-certs
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             wait_timeout: 10
@@ -105,7 +105,7 @@
                 labels:
                   app.kubernetes.io/managed-by: Helm
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             state: patched
@@ -121,7 +121,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ cilium_project_chart }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
@@ -143,7 +143,7 @@
                 labels:
                   app.kubernetes.io/managed-by: null
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             state: patched
@@ -158,13 +158,13 @@
         - name: Create l2 announcement policy
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Create loadbalancer ip pool
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Set chart setup fact
@@ -175,7 +175,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ cilium_project_chart }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

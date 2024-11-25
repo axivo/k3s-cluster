@@ -79,7 +79,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ argocd_project_chart }}'
             chart_version: '{{ argocd_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ argocd_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
@@ -97,42 +97,42 @@
             - name: Create server gateway
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 
             - name: Create http route
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 
             - name: Create https route
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 
         - name: Set server loadbalancer ip
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
           when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'
 
         - name: Set server user name
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'username.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Set server user password
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'password.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
         - name: Set server rbac policy
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'policy.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
