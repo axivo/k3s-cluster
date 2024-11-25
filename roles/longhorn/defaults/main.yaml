@@ -6,7 +6,7 @@ longhorn_vars:
         enabled: true
         secret:
           name: longhorn-backup-secret
-        target: cifs://192.168.1.8/mnt/default/opt/backup
+        target: cifs://192.168.1.8/backup
         user:
           name: floren
           password: !vault |
@@ -20,8 +20,9 @@ longhorn_vars:
       data_locality: strict-local
       log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
-      replica_auto_balance: least-effort
-      replicas: 2
+      volume:
+        replica_auto_balance: least-effort
+        replicas: 2
     helm:
       chart:
         name: longhorn

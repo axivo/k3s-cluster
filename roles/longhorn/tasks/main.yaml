@@ -45,7 +45,7 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ longhorn_project_chart }}'
+            chart_ref: '{{ longhorn_map.helm.chart.reference }}'
             chart_version: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
             name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'
