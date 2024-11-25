@@ -10,7 +10,7 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+        dest: '{{ k3s_map.node.binary }}'
         owner: root
         group: root
         mode: '0755'
@@ -42,7 +42,7 @@
     - name: Create registries file
       ansible.builtin.template:
         src: registries.j2
-        dest: '{{ k3s_vars.directory.config }}/registries.yaml'
+        dest: '{{ k3s_map.cluster.registries }}'
         owner: root
         group: root
         mode: '0600'
@@ -85,7 +85,7 @@
     - name: Create symlinks
       ansible.builtin.file:
         path: '{{ k3s_vars.directory.bin }}/{{ item }}'
-        src: '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+        src: '{{ k3s_map.node.binary }}'
         state: link
       loop:
         - crictl

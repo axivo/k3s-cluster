@@ -87,7 +87,7 @@
         path: '{{ item }}'
         state: absent
       loop:
-        - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+        - '{{ k3s_map.node.binary }}'
         - '{{ k3s_vars.directory.bin }}/crictl'
         - '{{ k3s_vars.directory.bin }}/ctr'
         - '{{ k3s_vars.directory.bin }}/kubectl'
