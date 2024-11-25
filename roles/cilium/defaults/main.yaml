@@ -10,8 +10,12 @@ cilium_vars:
           cpu: 10m
           memory: 256Mi
     bpf:
+      clock_probe: true
       datapath_mode: netkit
+      external_access: false
       masquerade: false
+      tproxy: true
+      vlan_bypass_ids: []
     cgroup:
       resources:
         limits:

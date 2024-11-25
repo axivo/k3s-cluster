@@ -3,7 +3,14 @@ bandwidthManager:
   enabled: true
 bpf:
   datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
+  lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access }}
   masquerade: {{ cilium_vars.kubernetes.bpf.masquerade }}
+  tproxy: {{ cilium_vars.kubernetes.bpf.tproxy }}
+{% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
+  vlanBypass:
+    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) }}
+{% endif %}
+bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe }}
 ciliumEndpointSlice:
   enabled: true
 envoy:
