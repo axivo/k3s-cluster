@@ -18,9 +18,9 @@ defaultSettings:
   orphanAutoDeletion: true
   removeSnapshotsDuringFilesystemTrim: true
   replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.replica_auto_balance }}
-{% if k3s_vars.server.controlplane.tainted %}
-{% if k3s_node_default_taint | length > 0 %}
-  taintToleration: {{ k3s_node_default_taint | join | trim }}
+{% if k3s_vars.cluster.controlplane.tainted %}
+{% if k3s_map.node.taint.server | length > 0 %}
+  taintToleration: {{ k3s_map.node.taint.server | join | trim }}
 {% endif %}
 longhornDriver:
   tolerations:

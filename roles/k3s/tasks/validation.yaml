@@ -8,27 +8,27 @@
   block:
     - name: Validate inventory
       ansible.builtin.assert:
-        that: k3s_ha_cluster or k3s_non_ha_cluster
+        that: k3s_map.cluster.ha or k3s_map.cluster.non_ha
         fail_msg: |-
           ERROR: Invalid number of 'server' type nodes.
-            - Defined nodes: {{ k3s_server_hosts | length }} ({{ k3s_server_hosts | join(', ') }})
+            - Defined nodes: {{ k3s_map.server.hosts | length }} ({{ k3s_map.server.hosts | join(', ') }})
             - Valid values: 1, higher than 2
           FIXES:
             - Update the number of 'server' type nodes, into inventory file.
         quiet: true
 
-    - name: Validate release binary url
+    - name: Validate release checksum url
       ansible.builtin.uri:
-        url: '{{ k3s_release_url_file }}'
+        url: '{{ k3s_project.release.k3s.checksum }}'
         timeout: 5
       register: result
       delay: 1
       retries: 3
       until: result is not failed
 
-    - name: Validate release checksum url
+    - name: Validate release file url
       ansible.builtin.uri:
-        url: '{{ k3s_release_url_checksum }}'
+        url: '{{ k3s_project.release.k3s.file }}'
         timeout: 5
       register: result
       delay: 1

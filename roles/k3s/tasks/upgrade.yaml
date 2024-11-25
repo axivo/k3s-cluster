@@ -28,23 +28,26 @@
         k3s --version | grep k3s | cut -d ' ' -f 3
       args:
         executable: /bin/bash
-      changed_when: false
       register: k3s_version
+      changed_when: false
 
 - name: Role Upgrade
   block:
     - name: Set Token
-      when: ansible_host in k3s_server_hosts
+      when: ansible_host in k3s_map.server.hosts
       run_once: true
       block:
         - name: Read token
           ansible.builtin.slurp:
             path: '{{ k3s_vars.directory.lib }}/server/node-token'
           register: node_token
+          no_log: true
 
         - name: Set token fact
           ansible.builtin.set_fact:
-            k3s_token: '{{ node_token.content | b64decode | trim }}'
+            k3s_project:
+              token: '{{ node_token.content | b64decode | trim }}'
+          no_log: true
 
     - name: Set configuration postinstall fact
       ansible.builtin.set_fact:
@@ -61,8 +64,8 @@
 
     - name: Install k3s binary
       ansible.builtin.get_url:
-        url: '{{ k3s_release_url_file }}'
-        checksum: sha256:{{ k3s_release_url_checksum }}
+        url: '{{ k3s_project.release.k3s.file }}'
+        checksum: sha256:{{ k3s_project.release.k3s.checksum }}
         dest: '{{ k3s_vars.directory.bin }}/k3s'
         owner: root
         group: root
@@ -71,7 +74,7 @@
       delay: 1
       retries: 3
       until: result is not failed
-      when: k3s_version.stdout != k3s_vars.release.version
+      when: k3s_version.stdout != k3s_vars.release.k3s.version
 
     - name: Schedule reboot
       ansible.builtin.file:
@@ -82,4 +85,4 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.version
+      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.k3s.version

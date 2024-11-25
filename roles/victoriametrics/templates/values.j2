@@ -1,7 +1,7 @@
 global:
   cluster:
-    dnsDomain: {{ k3s_vars.server.cluster.domain }}.
-  clusterLabel: default
+    dnsDomain: {{ k3s_vars.cluster.domain }}.
+  clusterLabel: {{ k3s_map.cluster.label }}
 alertmanager:
   config:
     {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | indent(4) }}
@@ -102,7 +102,7 @@ kube-state-metrics:
 {% endif %}
 kubeControllerManager:
   endpoints:
-    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
   vmScrape:
     spec:
       endpoints:
@@ -114,11 +114,11 @@ kubeControllerManager:
             insecureSkipVerify: true
             serverName: localhost
 kubeEtcd:
-{% if not k3s_ha_cluster %}
+{% if not k3s_map.cluster.ha %}
   enabled: false
 {% endif %}
   endpoints:
-    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
   service:
     port: 2381
     targetPort: 2381
@@ -129,7 +129,7 @@ kubeEtcd:
           scheme: http
 kubeScheduler:
   endpoints:
-    {{ k3s_server_ips | to_nice_yaml | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
   vmScrape:
     spec:
       endpoints:
@@ -254,7 +254,7 @@ vmalert:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
 {% endif %}
-{% if k3s_ha_cluster and victoriametrics_vars.kubernetes.vmcluster.enabled %}
+{% if k3s_map.cluster.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
   enabled: {{ victoriametrics_vars.kubernetes.vmcluster.enabled }}
 {% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}

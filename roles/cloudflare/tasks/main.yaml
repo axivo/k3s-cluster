@@ -14,7 +14,7 @@
 
 - name: Role Provisioning
   when:
-    - ansible_host in k3s_server_hosts
+    - ansible_host in k3s_map.server.hosts
     - cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
   block:
     - name: Validate service state

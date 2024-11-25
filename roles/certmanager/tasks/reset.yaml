@@ -5,7 +5,7 @@
     tasks_from: facts
 
 - name: Role Reset
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Remove repository
       kubernetes.core.helm_repository:

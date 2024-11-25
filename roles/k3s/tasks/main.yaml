@@ -8,8 +8,8 @@
   block:
     - name: Install k3s binary
       ansible.builtin.get_url:
-        url: '{{ k3s_release_url_file }}'
-        checksum: sha256:{{ k3s_release_url_checksum }}
+        url: '{{ k3s_project.release.k3s.file }}'
+        checksum: sha256:{{ k3s_project.release.k3s.checksum }}
         dest: '{{ k3s_vars.directory.bin }}/k3s'
         owner: root
         group: root
@@ -46,19 +46,19 @@
         owner: root
         group: root
         mode: '0600'
-      when: (k3s_vars.server.controlplane.tainted and ansible_host not in k3s_server_hosts) or not k3s_vars.server.controlplane.tainted
+      when: (k3s_vars.cluster.controlplane.tainted and ansible_host not in k3s_map.server.hosts) or not k3s_vars.cluster.controlplane.tainted
 
     - name: Create service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_service_name }}.service
+        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
         owner: root
         group: root
         mode: '0644'
 
     - name: Create service environment file
       ansible.builtin.file:
-        path: /etc/systemd/system/{{ k3s_service_name }}.service.env
+        path: /etc/systemd/system/{{ k3s_map.service.name }}.service.env
         access_time: preserve
         modification_time: preserve
         state: touch
@@ -70,7 +70,7 @@
   ansible.builtin.meta: flush_handlers
 
 - name: Server Setup
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Add variable to environment file
       ansible.builtin.lineinfile:
@@ -96,7 +96,7 @@
       any_errors_fatal: true
 
     - name: Set Token
-      when: k3s_token | length == 0
+      when: k3s_project.token | length == 0
       block:
         - name: Wait for token creation
           ansible.builtin.wait_for:
@@ -115,8 +115,8 @@
 
 - name: Local Kubeconfig Setup
   when:
-    - k3s_vars.server.kubeconfig.local
-    - ansible_host in ['localhost', k3s_server_default_host]
+    - k3s_vars.cluster.kubeconfig.local
+    - ansible_host in ['localhost', k3s_map.server.default_host]
   run_once: true
   block:
     - name: Create temporary file
@@ -148,7 +148,7 @@
           clusters:
             - cluster:
                 certificate-authority-data: "{{ datasource.clusters[0].cluster['certificate-authority-data'] }}"
-                server: https://{{ k3s_vars.server.api.host if k3s_ha_cluster else k3s_server_default_ip }}:{{ k3s_vars.server.api.port }}
+                server: https://{{ k3s_vars.server.api.host if k3s_map.cluster.ha else k3s_map_server.default_ip }}:{{ k3s_vars.server.api.port }}
               name: '{{ datasource.clusters[0].name }}'
 
     - name: Update kubeconfig file

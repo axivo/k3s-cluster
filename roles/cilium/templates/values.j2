@@ -26,7 +26,7 @@ ipMasqAgent:
   enabled: {{ cilium_vars.kubernetes.ip_masq_agent.enabled }}
 hubble:
   peerService:
-    clusterDomain: {{ k3s_vars.server.cluster.domain }}
+    clusterDomain: {{ k3s_vars.cluster.domain }}
   relay:
     enabled: true
     podDisruptionBudget:
@@ -43,8 +43,8 @@ hubble:
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
   qps: {{ cilium_vars.kubernetes.client.rate_limit.qps }}
-k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
-k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
+k8sServiceHost: {{ k3s_vars.cluster.service.host }}
+k8sServicePort: {{ k3s_vars.cluster.service.port }}
 kubeProxyReplacement: true
 logOptions:
   level: {{ cilium_vars.kubernetes.log_options.level }}

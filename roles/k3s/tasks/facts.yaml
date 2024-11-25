@@ -1,108 +1,72 @@
 ---
-- name: Set server hosts fact
+- name: Set list kubelet arguments fact
   ansible.builtin.set_fact:
-    k3s_server_hosts: "{{ groups['server'] }}"
-  run_once: true
-
-- name: Set high availability cluster fact
-  ansible.builtin.set_fact:
-    k3s_ha_cluster: '{{ k3s_server_hosts | length > 2 }}'
-  run_once: true
-
-- name: Set non high availability cluster fact
-  ansible.builtin.set_fact:
-    k3s_non_ha_cluster: '{{ k3s_server_hosts | length == 1 }}'
-  run_once: true
-
-- name: Set server ips fact
-  ansible.builtin.set_fact:
-    k3s_server_ips: "{{ k3s_server_hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
-  when: ansible_host in k3s_server_hosts
-
-- name: Set server default host fact
-  ansible.builtin.set_fact:
-    k3s_server_default_host: "{{ hostvars[k3s_server_hosts[0]]['ansible_hostname'] | default(k3s_server_hosts[0]) }}"
-  run_once: true
-
-- name: Set server default ip fact
-  ansible.builtin.set_fact:
-    k3s_server_default_ip: '{{ ansible_default_ipv4.address }}'
-  when: ansible_host in k3s_server_hosts
-
-- name: Set loadbalancer hosts fact
-  ansible.builtin.set_fact:
-    k3s_loadbalancer_hosts: '{{ k3s_server_hosts[-2:] }}'
-  run_once: true
-
-- name: Set loadbalancer ips fact
-  ansible.builtin.set_fact:
-    k3s_loadbalancer_ips: "{{ k3s_loadbalancer_hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
-  when: ansible_host in k3s_loadbalancer_hosts
-
-- name: Set loadbalancer password fact
-  ansible.builtin.set_fact:
-    k3s_loadbalancer_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
-  run_once: true
-
-- name: Set node kubelet arguments fact
-  ansible.builtin.set_fact:
-    k3s_node_kubelet_args: "{{ k3s_node_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) }}"
+    k3s_list_kubelet_args: "{{ k3s_list_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) }}"
   loop: '{{ k3s_vars.kubelet }}'
   loop_control:
     loop_var: kubelet
   run_once: true
 
-- name: Set node taints fact
+- name: Set list taints fact
   ansible.builtin.set_fact:
-    k3s_node_taints: "{{ k3s_node_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) }}"
+    k3s_list_taints: "{{ k3s_list_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) }}"
   loop: '{{ k3s_vars.tolerations }}'
   loop_control:
     loop_var: taint
   run_once: true
 
-- name: Set node agent taint fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    k3s_node_agent_taint: "{{ k3s_node_taints | select('search', 'agent-not-ready') | default('') }}"
+    k3s_map:
+      cluster:
+        ha: '{{ groups.server | length > 2 }}'
+        label: default
+        non_ha: '{{ groups.server | length == 1 }}'
+      loadbalancer:
+        hosts: '{{ groups.server[-2:] }}'
+        password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
+      node:
+        kubelet:
+          args: '{{ k3s_list_kubelet_args }}'
+        taint:
+          agent: "{{ k3s_list_taints | select('search', 'agent-not-ready') | default('') }}"
+          server: "{{ k3s_list_taints | select('search', 'control-plane') | default('') }}"
+      release:
+        k3s:
+          url: https://github.com/{{ k3s_vars.release.k3s.repository.org }}/{{ k3s_vars.release.k3s.repository.name }}/releases
+      server:
+        default_host: '{{ hostvars[groups.server[0]].ansible_hostname | default(groups.server[0]) }}'
+        hosts: '{{ groups.server }}'
+      service:
+        name: "k3s{{ '-agent' if ansible_host not in groups.server }}"
   run_once: true
 
-- name: Set node default taint fact
+- name: Set map loadbalancer fact
   ansible.builtin.set_fact:
-    k3s_node_default_taint: "{{ k3s_node_taints | select('search', 'control-plane') | default('') }}"
-  run_once: true
+    k3s_map_loadbalancer:
+      ips: "{{ k3s_map.loadbalancer.hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
+  when: ansible_host in k3s_map.loadbalancer.hosts
 
-- name: Set release fact
+- name: Set map server fact
   ansible.builtin.set_fact:
-    k3s_release: '{{ k3s_vars.release.repository.org }}/{{ k3s_vars.release.repository.name }}'
-  run_once: true
+    k3s_map_server:
+      default_ip: '{{ ansible_default_ipv4.address }}'
+      ips: "{{ k3s_map.server.hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
+  when: ansible_host in k3s_map.server.hosts
 
-- name: Set release url fact
+- name: Set project fact
   ansible.builtin.set_fact:
-    k3s_release_url: https://github.com/{{ k3s_release }}/releases
-  run_once: true
-
-- name: Set release checksum url fact
-  ansible.builtin.set_fact:
-    k3s_release_url_checksum: '{{ k3s_release_url }}/download/{{ k3s_vars.release.version }}/{{ k3s_vars.release.checksum }}'
-  run_once: true
-
-- name: Set release file url fact
-  ansible.builtin.set_fact:
-    k3s_release_url_file: '{{ k3s_release_url }}/download/{{ k3s_vars.release.version }}/{{ k3s_vars.release.file }}'
-  run_once: true
-
-- name: Set service name fact
-  ansible.builtin.set_fact:
-    k3s_service_name: "k3s{{ '-agent' if ansible_host not in k3s_server_hosts }}"
+    k3s_project:
+      release:
+        k3s:
+          checksum: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.checksum }}'
+          file: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_vars.release.k3s.file }}'
+      token: "{{ hostvars[k3s_map.server.default_host].token | default('') }}"
   run_once: true
 
 - name: Set service type fact
   ansible.builtin.set_fact:
-    k3s_service_type: "{{ 'agent' if ansible_host not in k3s_server_hosts else 'server' }}"
-
-- name: Set token fact
-  ansible.builtin.set_fact:
-    k3s_token: "{{ hostvars[k3s_server_default_host]['token'] | default('') }}"
-  run_once: true
+    k3s_service_type: "{{ 'agent' if ansible_host not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set variables fact
   ansible.builtin.set_fact:

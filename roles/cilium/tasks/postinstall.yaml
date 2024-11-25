@@ -9,7 +9,7 @@
     - k3s
 
 - name: Role Post-Install
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   run_once: true
   block:
     - name: Gateway Setup

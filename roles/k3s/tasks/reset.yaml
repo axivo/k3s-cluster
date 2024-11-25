@@ -7,7 +7,7 @@
   block:
     - name: Loadbalancer Reset
       when:
-        - ansible_host in k3s_loadbalancer_hosts
+        - ansible_host in k3s_map.loadbalancer.hosts
         - prompt_remove_packages in ['y', 'Y']
       block:
         - name: Remove loadbalancer packages
@@ -71,7 +71,7 @@
         line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
         regexp: ^KUBECONFIG
         state: absent
-      when: ansible_host in k3s_server_hosts
+      when: ansible_host in k3s_map.server.hosts
 
     - name: Remove generic files
       ansible.builtin.file:
@@ -83,8 +83,8 @@
         - '{{ k3s_vars.directory.bin }}/k3s'
         - '{{ k3s_vars.directory.bin }}/kubectl'
         - '{{ k3s_vars.directory.config }}'
-        - /etc/systemd/system/{{ k3s_service_name }}.service
-        - /etc/systemd/system/{{ k3s_service_name }}.service.env
+        - /etc/systemd/system/{{ k3s_map.service.name }}.service
+        - /etc/systemd/system/{{ k3s_map.service.name }}.service.env
 
     - name: Remove local kubeconfig files
       ansible.builtin.file:
@@ -95,7 +95,7 @@
         - cache
         - config
         - http-cache
-      when: k3s_vars.server.kubeconfig.local
+      when: k3s_vars.cluster.kubeconfig.local
       become: false
       run_once: true
 
