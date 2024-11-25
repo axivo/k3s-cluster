@@ -1,5 +1,5 @@
 ---
-- name: Set facts
+- name: Role Facts
   ansible.builtin.import_tasks:
     file: facts.yaml
 

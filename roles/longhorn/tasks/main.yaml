@@ -1,5 +1,5 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
     name: '{{ item }}'
     tasks_from: facts

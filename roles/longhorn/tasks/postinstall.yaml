@@ -1,5 +1,5 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
     name: k3s
     tasks_from: facts
