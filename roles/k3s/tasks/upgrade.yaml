@@ -40,16 +40,16 @@
           no_log: true
           run_once: true
           block:
-            - name: Read server token
+            - name: Read node token
               ansible.builtin.slurp:
-                path: '{{ k3s_vars.directory.lib }}/server/token'
-              register: server_token
+                path: '{{ k3s_vars.directory.lib }}/server/node-token'
+              register: node_token
 
             - name: Update project token fact
               ansible.utils.update_fact:
                 updates:
                   - path: k3s_project.token
-                    value: '{{ server_token.content | b64decode | trim }}'
+                    value: '{{ node_token.content | b64decode | trim }}'
               register: update
 
             - name: Set project fact
