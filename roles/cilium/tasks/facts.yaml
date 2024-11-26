@@ -8,6 +8,7 @@
         repository:
           name: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.repository.name }}'
           url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
+      hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
       release:
         cli:
           url: https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases
@@ -34,7 +35,6 @@
 - name: Set resources fact
   ansible.builtin.set_fact:
     cilium_resources:
-      hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
       release:
         - file: '{{ cilium_vars.release.cli.file }}'
           url: '{{ cilium_project.release.cli.file }}'

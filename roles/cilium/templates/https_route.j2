@@ -5,7 +5,7 @@ metadata:
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   hostnames:
-    - {{ cilium_resources.hostname }}
+    - {{ cilium_map.hostname }}
   parentRefs:
     - kind: Gateway
       name: {{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
