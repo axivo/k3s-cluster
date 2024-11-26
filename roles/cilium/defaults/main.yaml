@@ -13,9 +13,11 @@ cilium_vars:
       clock_probe: true
       datapath_mode: netkit
       external_access: false
-      masquerade: false
+      masquerade: true
       tproxy: true
-      vlan_bypass_ids: []
+      vlan_bypass_ids:
+        - 1
+        - 4
     cgroup:
       resources:
         limits:
@@ -101,7 +103,7 @@ cilium_vars:
       enabled: false
       non_masquerade_cidrs:
         - 10.0.0.0/8
-        - 192.168.1.0/24
+        - 192.168.0.0/16
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
