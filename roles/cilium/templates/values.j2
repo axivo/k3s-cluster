@@ -26,11 +26,13 @@ gatewayAPI:
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
+{% if cilium_vars.kubernetes.ip_masq_agent.enabled %}
 ipMasqAgent:
   config:
     nonMasqueradeCIDRs:
       {{ cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs | to_nice_yaml | indent(6) }}
   enabled: {{ cilium_vars.kubernetes.ip_masq_agent.enabled }}
+{% endif %}
 hubble:
   peerService:
     clusterDomain: {{ k3s_vars.cluster.domain }}
