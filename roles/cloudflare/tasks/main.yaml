@@ -27,7 +27,7 @@
     - name: Add repository
       kubernetes.core.helm_repository:
         name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}'
-        repo_url: '{{ cloudflare_vars.kubernetes.helm.repository.url }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
+        repo_url: '{{ cloudflare_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
