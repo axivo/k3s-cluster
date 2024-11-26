@@ -86,6 +86,7 @@ cilium_vars:
           service: hubble-ui
           subdomain: hubble
         infrastructure:
+          enabled: true
           annotations:
             io.cilium/lb-ipam-ips: 192.168.4.19
         replicas: 1

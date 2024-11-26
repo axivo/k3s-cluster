@@ -7,11 +7,13 @@ metadata:
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
+{% if cilium_vars.kubernetes.hubble.ui.infrastructure.enabled %}
   infrastructure:
     annotations:
 {% for key, value in cilium_vars.kubernetes.hubble.ui.infrastructure.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
+{% endif %}
   listeners:
     - allowedRoutes:
         kinds:
