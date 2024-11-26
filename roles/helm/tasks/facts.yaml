@@ -1,14 +1,18 @@
 ---
-- name: Set environment variables fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    helm_environment_vars:
-      HELM_CACHE_HOME: '{{ helm_vars.directory.share }}/cache'
-      HELM_CONFIG_HOME: '{{ helm_vars.directory.share }}/config'
-      HELM_DATA_HOME: '{{ helm_vars.directory.share }}'
-      HELM_PLUGINS: '{{ helm_vars.directory.share }}/plugins'
-      HELM_REGISTRY_CONFIG: '{{ helm_vars.directory.share }}/config/registry/config.json'
-      HELM_REPOSITORY_CACHE: '{{ helm_vars.directory.share }}/cache/repository'
-      HELM_REPOSITORY_CONFIG: '{{ helm_vars.directory.share }}/config/repositories.yaml'
+    helm_map:
+      environment:
+        HELM_CACHE_HOME: '{{ helm_vars.directory.share }}/cache'
+        HELM_CONFIG_HOME: '{{ helm_vars.directory.share }}/config'
+        HELM_DATA_HOME: '{{ helm_vars.directory.share }}'
+        HELM_PLUGINS: '{{ helm_vars.directory.share }}/plugins'
+        HELM_REGISTRY_CONFIG: '{{ helm_vars.directory.share }}/config/registry/config.json'
+        HELM_REPOSITORY_CACHE: '{{ helm_vars.directory.share }}/cache/repository'
+        HELM_REPOSITORY_CONFIG: '{{ helm_vars.directory.share }}/config/repositories.yaml'
+      release:
+        channel: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.channel }}'
+        key: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
   run_once: true
 
 - name: Set plugin packages fact
@@ -32,13 +36,3 @@
   when:
     - not plugin.enabled
     - plugin.packages is defined
-
-- name: Set release channel fact
-  ansible.builtin.set_fact:
-    helm_release_channel: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.channel }}'
-  run_once: true
-
-- name: Set release key fact
-  ansible.builtin.set_fact:
-    helm_release_key: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
-  run_once: true

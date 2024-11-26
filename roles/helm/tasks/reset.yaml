@@ -69,4 +69,4 @@
         line: '{{ item.key }}={{ item.value }}'
         regexp: ^{{ item.key }}
         state: absent
-      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars | combine(helm_vars.environment)) }}"
+      loop: "{{ lookup('ansible.builtin.dict', helm_map.environment | combine(helm_vars.environment)) }}"

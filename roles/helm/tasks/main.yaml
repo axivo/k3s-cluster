@@ -25,7 +25,7 @@
         path: /etc/environment
         line: '{{ item.key }}={{ item.value }}'
         regexp: ^{{ item.key }}
-      loop: "{{ lookup('ansible.builtin.dict', helm_environment_vars | combine(helm_vars.environment)) | sort(attribute='key') }}"
+      loop: "{{ lookup('ansible.builtin.dict', helm_map.environment | combine(helm_vars.environment)) | sort(attribute='key') }}"
 
     - name: Initialize variables
       ansible.builtin.shell: |
@@ -46,7 +46,7 @@
       block:
         - name: Download key
           ansible.builtin.get_url:
-            url: '{{ helm_release_key }}'
+            url: '{{  helm_map.release.key }}'
             dest: /tmp/{{ helm_vars.release.repository.key }}
             owner: root
             group: root
@@ -80,7 +80,7 @@
             name: helm-{{ helm_vars.release.repository.channel }}
             signed_by: /usr/share/keyrings/{{ helm_vars.release.key }}
             suites: all
-            uris: '{{ helm_release_channel }}/{{ helm_vars.release.distro }}/'
+            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.distro }}/'
             enabled: true
             trusted: true
 

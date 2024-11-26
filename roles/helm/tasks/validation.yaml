@@ -17,7 +17,7 @@
 
 - name: Validate release key url
   ansible.builtin.uri:
-    url: '{{ helm_release_key }}'
+    url: '{{  helm_map.release.key }}'
     timeout: 5
   run_once: true
   register: result
