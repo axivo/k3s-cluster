@@ -303,10 +303,24 @@ vmcluster:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
     vminsert:
+{% if victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
+      hpa:
+        maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.max_replicas }}
+        minReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
+        metrics:
+          - type: Resource
+            resource:
+              name: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.resource.name }}
+              target:
+                type: Utilization
+                averageUtilization: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.resource.target.utilization }}
+{% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.log_level }}
       podDisruptionBudget:
         minAvailable: 1
-      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.replicas }}
+{% if not victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
+{% endif %}
 {% if victoriametrics_postinstall %}
       resources:
         limits:
@@ -317,10 +331,24 @@ vmcluster:
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
 {% endif %}
     vmselect:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
+      hpa:
+        maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.max_replicas }}
+        minReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
+        metrics:
+          - type: Resource
+            resource:
+              name: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.resource.name }}
+              target:
+                type: Utilization
+                averageUtilization: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.resource.target.utilization }}
+{% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.log_level }}
       podDisruptionBudget:
         minAvailable: 1
-      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.replicas }}
+{% if not victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
+{% endif %}
 {% if victoriametrics_postinstall %}
       resources:
         limits:

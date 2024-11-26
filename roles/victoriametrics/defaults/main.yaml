@@ -151,31 +151,45 @@ victoriametrics_vars:
       replication_factor: 2
       retention_period: 72h
       vminsert:
+        hpa:
+          enabled: true
+          min_replicas: 1
+          max_replicas: 3
+          resource:
+            name: memory
+            target:
+              utilization: 80
         ingress:
           enabled: false
           subdomain: insert
         log_level: WARN
-        replicas: 1
         resources:
           limits:
             cpu: null
-            memory: 512Mi
+            memory: 256Mi
           requests:
             cpu: 10m
-            memory: 512Mi
+            memory: 256Mi
       vmselect:
+        hpa:
+          enabled: true
+          min_replicas: 1
+          max_replicas: 3
+          resource:
+            name: memory
+            target:
+              utilization: 80
         ingress:
           enabled: true
           subdomain: metrics
         log_level: WARN
-        replicas: 1
         resources:
           limits:
             cpu: null
-            memory: 512Mi
+            memory: 256Mi
           requests:
             cpu: 10m
-            memory: 512Mi
+            memory: 256Mi
         storage: 5Gi
       vmstorage:
         ingress:
