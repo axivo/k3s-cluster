@@ -5,7 +5,7 @@
 
 - name: Validate cli release file url
   ansible.builtin.uri:
-    url: '{{ cilium_cli_release_url_file }}'
+    url: '{{ cilium_project.release.cli.file }}'
     timeout: 5
   run_once: true
   register: result
@@ -15,7 +15,7 @@
 
 - name: Validate hubble release file url
   ansible.builtin.uri:
-    url: '{{ cilium_hubble_release_url_file }}'
+    url: '{{ cilium_project.release.hubble.file }}'
     timeout: 5
   run_once: true
   register: result
@@ -25,7 +25,7 @@
 
 - name: Validate gateway api release file url
   ansible.builtin.uri:
-    url: '{{ cilium_gateway_api_release_url_file }}'
+    url: '{{ cilium_project.release.gateway_api.file }}'
     timeout: 5
   run_once: true
   register: result
@@ -35,7 +35,7 @@
 
 - name: Validate project tag url
   ansible.builtin.uri:
-    url: '{{ cilium_project_url_tag }}'
+    url: '{{ cilium_project.url }}/{{ cilium_project.tag }}'
     timeout: 5
   run_once: true
   register: result

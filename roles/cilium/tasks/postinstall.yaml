@@ -15,10 +15,6 @@
     - name: Gateway Setup
       when: cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
       block:
-        - name: Set hostname fact
-          ansible.builtin.set_fact:
-            hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
-
         - name: Create hubble ui gateway
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
@@ -68,7 +64,7 @@
 
     - name: Update chart postinstall values
       kubernetes.core.helm:
-        chart_ref: '{{ cilium_project_chart }}'
+        chart_ref: '{{ cilium_map.helm.chart.reference }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'

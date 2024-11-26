@@ -20,7 +20,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ cilium_resources.hostname }}
       name: http
       port: 80
       protocol: HTTP
@@ -29,7 +29,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ cilium_resources.hostname }}
       name: https
       port: 443
       protocol: HTTPS
