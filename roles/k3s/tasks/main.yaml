@@ -66,9 +66,7 @@
 
 - name: Server Configuration
   notify: Restart service
-  when:
-    - k3s_map.cluster.ha
-    - ansible_host in k3s_map.server.hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Set server configuration postinstall fact
       ansible.builtin.set_fact:

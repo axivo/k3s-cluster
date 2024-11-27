@@ -7,15 +7,16 @@
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Get binary status
-  ansible.builtin.stat:
-    path: '{{ k3s_map.node.binary }}'
-  changed_when: not k3s_binary.stat.exists
-  register: k3s_binary
-
-- name: Role Upgrade Validation
+- name: Cluster Validation
+  when: ansible_host == k3s_map.server.default_host
   run_once: true
   block:
+    - name: Get binary status
+      ansible.builtin.stat:
+        path: '{{ k3s_map.node.binary }}'
+      changed_when: not k3s_binary.stat.exists
+      register: k3s_binary
+
     - name: Validate deployed cluster
       ansible.builtin.assert:
         that: k3s_binary.stat.exists
@@ -23,13 +24,10 @@
         quiet: true
 
     - name: Get deployed cluster version
-      ansible.builtin.shell: |
-        set -eo pipefail
-        k3s --version | grep k3s | cut -d ' ' -f 3
-      args:
-        executable: /bin/bash
-      register: k3s_version
-      changed_when: false
+      kubernetes.core.k8s_cluster_info:
+        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+      register: k3s_cluster
+      no_log: true
 
 - name: Role Upgrade
   block:
@@ -45,7 +43,7 @@
       delay: 1
       retries: 3
       until: result is not failed
-      when: k3s_version.stdout != k3s_vars.release.k3s.version
+      when: k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version
 
     - name: Get configuration file status
       ansible.builtin.stat:
@@ -77,22 +75,17 @@
       ansible.builtin.import_tasks:
         file: configuration.yaml
 
-    - name: Server Configuration
-      when:
-        - k3s_map.cluster.ha
-        - ansible_host in k3s_map.server.hosts
-      block:
-        - name: Set server configuration postinstall fact
-          ansible.builtin.set_fact:
-            k3s_config_postinstall: true
+    - name: Set configuration postinstall fact
+      ansible.builtin.set_fact:
+        k3s_config_postinstall: true
 
-        - name: Update server configuration file
-          ansible.builtin.template:
-            src: config.j2
-            dest: '{{ k3s_map.cluster.config }}'
-            owner: root
-            group: root
-            mode: '0600'
+    - name: Update configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_map.cluster.config }}'
+        owner: root
+        group: root
+        mode: '0600'
 
     - name: Get revised configuration file status
       ansible.builtin.stat:
@@ -109,4 +102,6 @@
         owner: root
         group: root
         mode: '0644'
-      when: (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or (k3s_version.stdout != k3s_vars.release.k3s.version)
+      when: >
+        (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or
+        (k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version)
