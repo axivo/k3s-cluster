@@ -1,7 +1,7 @@
 ---
 - name: Set list kubelet arguments fact
   ansible.builtin.set_fact:
-    k3s_list_kubelet_args: "{{ k3s_list_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) }}"
+    k3s_list_kubelet_args: "{{ k3s_list_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) | sort }}"
   loop: '{{ k3s_vars.kubelet }}'
   loop_control:
     loop_var: kubelet
@@ -9,7 +9,7 @@
 
 - name: Set list taints fact
   ansible.builtin.set_fact:
-    k3s_list_taints: "{{ k3s_list_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) }}"
+    k3s_list_taints: "{{ k3s_list_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) | sort }}"
   loop: '{{ k3s_vars.tolerations }}'
   loop_control:
     loop_var: taint
@@ -72,7 +72,7 @@
         kubepug:
           checksum: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_map.release.kubepug.checksum }}'
           file: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_vars.release.kubepug.file }}'
-      token: "{{ hostvars[k3s_map.server.default_host].token | default('') }}"
+      token: "{{ hostvars[k3s_map.server.default_host].k3s_project.token | default('') }}"
   run_once: true
 
 - name: Set service type fact

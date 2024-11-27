@@ -73,17 +73,14 @@
         group: root
         mode: '0644'
 
-    - name: Set flush handlers fact
-      ansible.builtin.set_fact:
-        k3s_flush_handlers: false
-
     - name: Role Configuration
       ansible.builtin.import_tasks:
         file: configuration.yaml
 
     - name: Server Configuration
-      notify: Restart service
-      when: k3s_map.cluster.ha
+      when:
+        - k3s_map.cluster.ha
+        - ansible_host in k3s_map.server.hosts
       block:
         - name: Set server configuration postinstall fact
           ansible.builtin.set_fact:
@@ -102,15 +99,6 @@
         checksum: sha256
         path: '{{ k3s_map.cluster.config }}'
       register: k3s_file_revised
-
-    - name: Debug
-      ansible.builtin.debug:
-        var: '{{ item }}'
-      loop:
-        - k3s_file.stat.checksum
-        - k3s_file_revised.stat.checksum
-        - k3s_version.stdout
-        - k3s_vars.release.k3s.version
 
     - name: Schedule reboot
       ansible.builtin.file:

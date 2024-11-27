@@ -1,6 +1,5 @@
 ---
 - name: Node Configuration
-  notify: Restart service
   block:
     - name: Create registries file
       ansible.builtin.template:
@@ -39,7 +38,7 @@
         timeout: 30
       any_errors_fatal: true
 
-    - name: Token Setup
+    - name: Token Configuration
       when: k3s_project.token | length == 0
       no_log: true
       run_once: true
@@ -53,13 +52,20 @@
             path: '{{ k3s_vars.directory.lib }}/server/node-token'
           register: node_token
 
-        - name: Set token fact
-          ansible.builtin.set_fact:
-            token: '{{ node_token.content | b64decode | trim }}'
+        - name: Set project token
+          ansible.utils.update_fact:
+            updates:
+              - path: k3s_project.token
+                value: '{{ node_token.content | b64decode | trim }}'
+          register: update
 
-    - name: Kubepug Setup
+        - name: Update project fact
+          ansible.builtin.set_fact:
+            k3s_project: '{{ update.k3s_project }}'
+
+    - name: Kubepug Configuration
       block:
-        - name: Checksum Setup
+        - name: Checksum Configuration
           run_once: true
           block:
             - name: Get remote checksum
@@ -104,14 +110,11 @@
             state: absent
           check_mode: false
 
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-  when: k3s_flush_handlers
-
 - name: Local Configuration
   when:
     - k3s_vars.cluster.kubeconfig.local
     - ansible_host in ['localhost', k3s_map.server.default_host]
+  no_log: true
   run_once: true
   block:
     - name: Create temporary file

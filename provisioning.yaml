@@ -24,11 +24,6 @@
   hosts: cluster
   become: true
   gather_facts: true
-  post_tasks:
-    - name: Perform post-install tasks
-      ansible.builtin.import_role:
-        name: k3s
-        tasks_from: postinstall
   roles:
     - helm
     - k3s
