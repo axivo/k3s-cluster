@@ -18,6 +18,7 @@ longhorn_vars:
             3835
       collect_usage_metrics: false
       data_locality: strict-local
+      data_path: /var/lib/longhorn
       log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       volume:

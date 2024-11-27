@@ -3,7 +3,6 @@ defaultSettings:
   autoCleanupRecurringJobBackupSnapshot: true
   autoCleanupSnapshotWhenDeleteBackup: true
   autoCleanupSystemGeneratedSnapshot: true
-  autoDeletePodWhenVolumeDetachedUnexpectedly: true
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
 {% if longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs' %}
@@ -11,6 +10,7 @@ defaultSettings:
 {% endif %}
 {% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
+  defaultDataPath: {{ longhorn_vars.kubernetes.default_settings.data_path }}
   defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
   disableSchedulingOnCordonedNode: true
   logLevel: {{ longhorn_vars.kubernetes.default_settings.log_level }}

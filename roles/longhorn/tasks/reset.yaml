@@ -16,5 +16,5 @@
 
     - name: Remove directory
       ansible.builtin.file:
-        path: /var/lib/longhorn
+        path: '{{ longhorn_vars.kubernetes.default_settings.data_path }}'
         state: absent
