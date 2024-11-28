@@ -257,34 +257,40 @@ null
 			<td></td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources</td>
-			<td>object</td>
+			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu</td>
+			<td>string</td>
 			<td><pre lang="json">
-{
-  "limits": {
-    "cpu": null,
-    "memory": "128Mi"
-  },
-  "requests": {
-    "cpu": "10m",
-    "memory": "128Mi"
-  }
-}
+null
 </pre>
 </td>
-			<td>CPU and memory resources</td>
+			<td></td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.grafana.user</td>
-			<td>object</td>
+			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory</td>
+			<td>string</td>
 			<td><pre lang="json">
-{
-  "name": null,
-  "password": null
-}
+"128Mi"
 </pre>
 </td>
-			<td>Login credentials for Grafana UI</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu</td>
+			<td>string</td>
+			<td><pre lang="json">
+"10m"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory</td>
+			<td>string</td>
+			<td><pre lang="json">
+"128Mi"
+</pre>
+</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
@@ -419,25 +425,43 @@ Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a
 1
 </pre>
 </td>
-			<td>Number of replicas</td>
+			<td></td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources</td>
-			<td>object</td>
+			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.cpu</td>
+			<td>string</td>
 			<td><pre lang="json">
-{
-  "limits": {
-    "cpu": null,
-    "memory": "128Mi"
-  },
-  "requests": {
-    "cpu": "10m",
-    "memory": "128Mi"
-  }
-}
+null
 </pre>
 </td>
-			<td>CPU and memory resources</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.memory</td>
+			<td>string</td>
+			<td><pre lang="json">
+"128Mi"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.cpu</td>
+			<td>string</td>
+			<td><pre lang="json">
+"10m"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.memory</td>
+			<td>string</td>
+			<td><pre lang="json">
+"128Mi"
+</pre>
+</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.namespace</td>
@@ -446,7 +470,7 @@ Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a
 "kube-system"
 </pre>
 </td>
-			<td>Chart deployment namespace</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.limits.cpu</td>
@@ -500,25 +524,43 @@ null
 2
 </pre>
 </td>
-			<td>Number of replicas</td>
+			<td></td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources</td>
-			<td>object</td>
+			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.cpu</td>
+			<td>string</td>
 			<td><pre lang="json">
-{
-  "limits": {
-    "cpu": null,
-    "memory": "128Mi"
-  },
-  "requests": {
-    "cpu": "10m",
-    "memory": "128Mi"
-  }
-}
+null
 </pre>
 </td>
-			<td>CPU and memory resources</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.memory</td>
+			<td>string</td>
+			<td><pre lang="json">
+"128Mi"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.cpu</td>
+			<td>string</td>
+			<td><pre lang="json">
+"10m"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory</td>
+			<td>string</td>
+			<td><pre lang="json">
+"128Mi"
+</pre>
+</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu</td>
