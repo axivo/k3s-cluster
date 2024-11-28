@@ -299,7 +299,7 @@ null
 "user"
 </pre>
 </td>
-			<td>User name used to access Grafana dashboards Define value into [all.yaml](../../../all.yaml) cluster variables</td>
+			<td>User name used to access Grafana dashboards Define value into [all.yaml](https://github.com/axivo/k3s-cluster/blob/main/inventory/cluster/group_vars/all.yaml) cluster variables</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.password</td>
@@ -308,7 +308,7 @@ null
 "encrypted"
 </pre>
 </td>
-			<td>User password used to access Grafana dashboards Define value into [all.yaml](../../../all.yaml) cluster variables</td>
+			<td>User password used to access Grafana dashboards Define value into [all.yaml](https://github.com/axivo/k3s-cluster/blob/main/inventory/cluster/group_vars/all.yaml) cluster variables</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.helm.chart.alias</td>
