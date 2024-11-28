@@ -1,0 +1,30 @@
+name: Update Documentation
+on:
+  pull_request:
+    paths:
+      - roles/*/defaults/main.yaml
+concurrency:
+  cancel-in-progress: false
+  group: docs
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install Package
+        env:
+          HELM_DOCS_URL: https://github.com/norwoodj/helm-docs/releases/download
+          HELM_DOCS_VERSION: 1.14.2
+        run: |
+          sudo wget -qP /tmp $HELM_DOCS_URL/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
+          sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
+      - name: Refresh Documentation
+        id: docs
+        run: helm-docs
+permissions:
+  contents: write
