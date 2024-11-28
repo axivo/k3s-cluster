@@ -7,11 +7,13 @@ fi
 declare -a roles=(
     victoriametrics
 )
-for role in ${roles[@]}; do
-    pushd ./roles/$role >/dev/null 2>&1
-    helm-docs -f ./defaults/main.yaml -l error -s --skip-version-footer
-    if [ $? -eq 0 ]; then result='generated'; else result='failed'; fi
+for role in "${roles[@]}"; do
+    pushd "./roles/$role" >/dev/null 2>&1 || exit
+    result='failed'
+    if helm-docs -f ./defaults/main.yaml -l error -s --skip-version-footer; then
+        result='generated'
+    fi
     echo "Documentation $result for '$role' role."
-    popd >/dev/null 2>&1
+    popd >/dev/null 2>&1 || exit
 done
 unset result roles
