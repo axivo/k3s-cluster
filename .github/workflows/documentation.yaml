@@ -2,8 +2,20 @@ name: Update Documentation
 on:
   push:
     paths:
+      - '.pre-commit-config.yaml'
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/README.md.gotmpl'
+  pull_request:
+    paths:
+      - '.pre-commit-config.yaml'
+      - 'roles/*/defaults/main.yaml'
+      - 'roles/*/README.md.gotmpl'
+    types:
+      - converted_to_draft
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,3 +46,4 @@ jobs:
           git push origin ${{ github.ref_name }}
 permissions:
   contents: write
+  pull-requests: write
