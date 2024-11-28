@@ -105,9 +105,11 @@ victoriametrics_vars:
       # -- Number of replicas
       replicas: 2
       resources:
+        # -- CPU and memory limits
         limits:
           cpu: null
           memory: 128Mi
+        # -- CPU and memory requests
         requests:
           cpu: 10m
           memory: 128Mi
