@@ -2,10 +2,12 @@ name: Update Documentation
 on:
   push:
     paths:
-      - '.pre-commit-config.yaml'
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/README.md.gotmpl'
   pull_request:
+    paths:
+      - 'roles/*/defaults/main.yaml'
+      - 'roles/*/README.md.gotmpl'
     types:
       - converted_to_draft
       - opened
@@ -33,12 +35,12 @@ jobs:
           sudo wget -qP /tmp $HELM_DOCS_URL/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
       - name: Update documentation
-        run: if helm-docs; then exit 0; else exit 1; fi
+        run: helm-docs
       - name: Update pull request
         run: |
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
-          git commit -am 'Workflow: Update documentation'
+          git commit -am 'workflow: Update documentation'
           git push origin ${{ github.ref_name }}
 permissions:
   contents: write
