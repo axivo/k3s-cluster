@@ -1,6 +1,6 @@
 name: Update Documentation
 on:
-  push:
+  pull_request:
     paths:
       - '**/defaults/main.yaml'
 concurrency:
