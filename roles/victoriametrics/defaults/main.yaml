@@ -85,6 +85,7 @@ victoriametrics_vars:
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
         password:
     kube_state_metrics:
+      # -- Number of replicas
       replicas: 1
       # -- Resources
       resources:
