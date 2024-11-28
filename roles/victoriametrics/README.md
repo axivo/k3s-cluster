@@ -293,22 +293,34 @@ null
 			<td></td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
-			<td>string</td>
+			<td>victoriametrics_vars.kubernetes.grafana.user</td>
+			<td>object</td>
 			<td><pre lang="json">
-"user"
+{
+  "name": null,
+  "password": null
+}
 </pre>
 </td>
-			<td>User name used to access Grafana dashboards Define value into [all.yaml](https://github.com/axivo/k3s-cluster/blob/main/inventory/cluster/group_vars/all.yaml) cluster variables</td>
+			<td>Credentials for Grafana UI</td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
+			<td>string</td>
+			<td><pre lang="">
+Set value in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+</pre>
+</td>
+			<td>User name used to access Grafana UI</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.password</td>
 			<td>string</td>
-			<td><pre lang="json">
-"encrypted"
+			<td><pre lang="">
+Set value in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
 </pre>
 </td>
-			<td>User password used to access Grafana dashboards Define value into [all.yaml](https://github.com/axivo/k3s-cluster/blob/main/inventory/cluster/group_vars/all.yaml) cluster variables</td>
+			<td>User password used to access Grafana UI</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.helm.chart.alias</td>
