@@ -272,31 +272,7 @@ null
 }
 </pre>
 </td>
-			<td>Sidecar resources</td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits</td>
-			<td>object</td>
-			<td><pre lang="json">
-{
-  "cpu": null,
-  "memory": "128Mi"
-}
-</pre>
-</td>
-			<td>CPU and memory limits</td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests</td>
-			<td>object</td>
-			<td><pre lang="json">
-{
-  "cpu": "10m",
-  "memory": "128Mi"
-}
-</pre>
-</td>
-			<td>CPU and memory requests</td>
+			<td>CPU and memory resources</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user</td>
@@ -443,43 +419,25 @@ Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a
 1
 </pre>
 </td>
-			<td></td>
+			<td>Number of replicas</td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.cpu</td>
-			<td>string</td>
+			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources</td>
+			<td>object</td>
 			<td><pre lang="json">
-null
+{
+  "limits": {
+    "cpu": null,
+    "memory": "128Mi"
+  },
+  "requests": {
+    "cpu": "10m",
+    "memory": "128Mi"
+  }
+}
 </pre>
 </td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.memory</td>
-			<td>string</td>
-			<td><pre lang="json">
-"128Mi"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.cpu</td>
-			<td>string</td>
-			<td><pre lang="json">
-"10m"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.memory</td>
-			<td>string</td>
-			<td><pre lang="json">
-"128Mi"
-</pre>
-</td>
-			<td></td>
+			<td>CPU and memory resources</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.namespace</td>
@@ -488,7 +446,7 @@ null
 "kube-system"
 </pre>
 </td>
-			<td></td>
+			<td>Chart deployment namespace</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.limits.cpu</td>
@@ -533,7 +491,7 @@ null
 "error"
 </pre>
 </td>
-			<td></td>
+			<td>Log level, possible options are 'info' or 'error'</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas</td>
@@ -542,43 +500,25 @@ null
 2
 </pre>
 </td>
-			<td></td>
+			<td>Number of replicas</td>
 		</tr>
 		<tr>
-			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.cpu</td>
-			<td>string</td>
+			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources</td>
+			<td>object</td>
 			<td><pre lang="json">
-null
+{
+  "limits": {
+    "cpu": null,
+    "memory": "128Mi"
+  },
+  "requests": {
+    "cpu": "10m",
+    "memory": "128Mi"
+  }
+}
 </pre>
 </td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.memory</td>
-			<td>string</td>
-			<td><pre lang="json">
-"128Mi"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.cpu</td>
-			<td>string</td>
-			<td><pre lang="json">
-"10m"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory</td>
-			<td>string</td>
-			<td><pre lang="json">
-"128Mi"
-</pre>
-</td>
-			<td></td>
+			<td>CPU and memory resources</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu</td>
