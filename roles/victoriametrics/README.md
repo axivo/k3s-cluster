@@ -308,7 +308,7 @@ null
 			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
 			<td>string</td>
 			<td><pre lang="">
-Set value in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+Set in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a>
 </pre>
 </td>
 			<td>User name used to access Grafana UI</td>
@@ -317,7 +317,7 @@ Set value in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> 
 			<td>victoriametrics_vars.kubernetes.grafana.user.password</td>
 			<td>string</td>
 			<td><pre lang="">
-Set value in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+Set in <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a>
 </pre>
 </td>
 			<td>User password used to access Grafana UI</td>
