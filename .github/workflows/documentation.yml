@@ -2,7 +2,8 @@ name: Update Documentation
 on:
   push:
     paths:
-      - '**/defaults/main.yaml'
+      - roles/*/defaults/main.yaml
+      - roles/*/README.md.gotmpl
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
