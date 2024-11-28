@@ -66,14 +66,17 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
+        # -- Sidecar resources
         resources:
+          # -- CPU and memory limits
           limits:
             cpu: null
             memory: 128Mi
+          # -- CPU and memory requests
           requests:
             cpu: 10m
             memory: 128Mi
-      # -- Credentials for Grafana UI
+      # -- Login credentials for Grafana UI
       user:
         # -- User name used to access Grafana UI
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
