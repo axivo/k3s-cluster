@@ -97,6 +97,7 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    # -- Chart deployment namespace
     namespace: kube-system
     victoria_metrics_operator:
       log_level: error
