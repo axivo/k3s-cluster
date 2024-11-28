@@ -66,6 +66,7 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
+        # -- Sidecar resources
         resources:
           limits:
             cpu: null
