@@ -66,7 +66,7 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
-        # -- Sidecar resources
+        # -- Resources
         resources:
           # -- CPU and memory limits
           limits:
@@ -86,10 +86,13 @@ victoriametrics_vars:
         password:
     kube_state_metrics:
       replicas: 1
+      # -- Resources
       resources:
+        # -- CPU and memory limits
         limits:
           cpu: null
           memory: 128Mi
+        # -- CPU and memory requests
         requests:
           cpu: 10m
           memory: 128Mi
