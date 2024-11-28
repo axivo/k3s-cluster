@@ -30,7 +30,6 @@ jobs:
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
           git commit -am 'Workflow: Update documentation'
-          git push
+          git push origin ${{ github.ref_name }}
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write
