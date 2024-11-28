@@ -6,6 +6,10 @@ on:
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/README.md.gotmpl'
   pull_request:
+    paths:
+      - '.pre-commit-config.yaml'
+      - 'roles/*/defaults/main.yaml'
+      - 'roles/*/README.md.gotmpl'
     types:
       - converted_to_draft
       - opened
