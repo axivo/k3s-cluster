@@ -1,6 +1,6 @@
 name: Update Documentation
 on:
-  pull_request:
+  push:
     paths:
       - '**/defaults/main.yaml'
 concurrency:
@@ -25,6 +25,10 @@ jobs:
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
       - name: Refresh Documentation
         run: helm-docs
+      - name: Update Documentation
+        run: |
+          git commit -am 'Update documentation'
+          git push
 permissions:
   contents: read
   pull-requests: write
