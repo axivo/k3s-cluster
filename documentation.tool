@@ -16,4 +16,4 @@ for role in "${roles[@]}"; do
     echo "Documentation $result for '$role' role."
     popd >/dev/null 2>&1 || exit
 done
-unset result roles
+unset result role roles
