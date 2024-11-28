@@ -4,8 +4,8 @@ on:
     paths:
       - '**/defaults/main.yaml'
 concurrency:
-  cancel-in-progress: false
-  group: docs
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 defaults:
   run:
     shell: bash
@@ -24,7 +24,7 @@ jobs:
           sudo wget -qP /tmp $HELM_DOCS_URL/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
       - name: Refresh Documentation
-        id: docs
         run: helm-docs
 permissions:
-  contents: write
+  contents: read
+  pull-requests: write
