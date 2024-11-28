@@ -295,20 +295,20 @@ null
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
 			<td>string</td>
-			<td><pre lang="">
-Define values into [all.yaml](../../../all.yaml) cluster variables
+			<td><pre lang="json">
+"user"
 </pre>
 </td>
-			<td>User name used to access Grafana dashboards</td>
+			<td>User name used to access Grafana dashboards Define value into [all.yaml](../../../all.yaml) cluster variables</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.password</td>
 			<td>string</td>
-			<td><pre lang="">
-Define values into [all.yaml](../../../all.yaml) cluster variables
+			<td><pre lang="json">
+"encrypted"
 </pre>
 </td>
-			<td>User passwords used to access Grafana dashboards</td>
+			<td>User password used to access Grafana dashboards Define value into [all.yaml](../../../all.yaml) cluster variables</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.helm.chart.alias</td>
