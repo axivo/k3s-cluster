@@ -1,6 +1,8 @@
 {
     "ansible.python.interpreterPath": "/usr/bin/python3",
     "files.associations": {
+        ".github/worksflows/*.yaml": "github-actions-workflow",
+        "*.j2": "ansible-jinja",
         "*.json5": "json",
         "*.yaml": "ansible"
     }
