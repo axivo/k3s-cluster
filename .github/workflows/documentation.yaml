@@ -46,4 +46,3 @@ jobs:
           git push origin ${{ github.ref_name }}
 permissions:
   contents: write
-  pull-requests: write
