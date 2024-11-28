@@ -1,9 +1,9 @@
 The role performs various tasks related to VictoriaMetrics
 [chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-metrics-k8s-stack) deployment, reset and validation.
 
-## Role Settings
+## Role Variables
 
-See the related role settings listed below, defined into [main.yaml](defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](defaults/main.yaml) defaults file.
 
 <table>
 	<thead>
@@ -295,20 +295,20 @@ null
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.name</td>
 			<td>string</td>
-			<td><pre lang="json">
-"username"
+			<td><pre lang="">
+Define values into [all.yaml](../../../all.yaml) cluster variables
 </pre>
 </td>
-			<td></td>
+			<td>User name used to access Grafana dashboards</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.grafana.user.password</td>
 			<td>string</td>
-			<td><pre lang="json">
-"password"
+			<td><pre lang="">
+Define values into [all.yaml](../../../all.yaml) cluster variables
 </pre>
 </td>
-			<td></td>
+			<td>User passwords used to access Grafana dashboards</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.helm.chart.alias</td>
