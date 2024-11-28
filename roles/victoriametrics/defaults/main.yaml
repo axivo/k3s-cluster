@@ -100,8 +100,9 @@ victoriametrics_vars:
     # -- Chart deployment namespace
     namespace: kube-system
     victoria_metrics_operator:
-      # Log level, possible options are 'info' or 'error'
+      # -- Log level, possible options are 'info' or 'error'
       log_level: error
+      # -- Number of replicas
       replicas: 2
       resources:
         limits:
