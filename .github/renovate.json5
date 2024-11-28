@@ -36,6 +36,18 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "norwoodj/helm-docs",
+      "extractVersionTemplate": "^v(?<version>.+)$",
+      "fileMatch": [
+        ".github/workflows/documentation.yml"
+      ],
+      "matchStrings": [
+        "HELM_DOCS_VERSION:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
