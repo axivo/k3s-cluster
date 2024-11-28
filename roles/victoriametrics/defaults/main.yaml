@@ -66,7 +66,6 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
-        # -- CPU and memory resources
         resources:
           limits:
             cpu: null
@@ -74,7 +73,6 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      # -- Login credentials for Grafana UI
       user:
         # -- User name used to access Grafana UI
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
@@ -83,9 +81,7 @@ victoriametrics_vars:
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
         password:
     kube_state_metrics:
-      # -- Number of replicas
       replicas: 1
-      # -- CPU and memory resources
       resources:
         limits:
           cpu: null
@@ -93,14 +89,10 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-    # -- Chart deployment namespace
     namespace: kube-system
     victoria_metrics_operator:
-      # -- Log level, possible options are 'info' or 'error'
       log_level: error
-      # -- Number of replicas
       replicas: 2
-      # -- CPU and memory resources
       resources:
         limits:
           cpu: null
