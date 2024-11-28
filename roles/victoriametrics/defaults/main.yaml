@@ -91,6 +91,7 @@ victoriametrics_vars:
           memory: 128Mi
     namespace: kube-system
     victoria_metrics_operator:
+      # -- Log level, possible options are 'info' or 'error'
       log_level: error
       replicas: 2
       resources:
