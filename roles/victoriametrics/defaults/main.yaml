@@ -66,13 +66,11 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
-        # -- Resources
+        # -- CPU and memory resources
         resources:
-          # -- CPU and memory limits
           limits:
             cpu: null
             memory: 128Mi
-          # -- CPU and memory requests
           requests:
             cpu: 10m
             memory: 128Mi
@@ -87,13 +85,11 @@ victoriametrics_vars:
     kube_state_metrics:
       # -- Number of replicas
       replicas: 1
-      # -- Resources
+      # -- CPU and memory resources
       resources:
-        # -- CPU and memory limits
         limits:
           cpu: null
           memory: 128Mi
-        # -- CPU and memory requests
         requests:
           cpu: 10m
           memory: 128Mi
@@ -104,12 +100,11 @@ victoriametrics_vars:
       log_level: error
       # -- Number of replicas
       replicas: 2
+      # -- CPU and memory resources
       resources:
-        # -- CPU and memory limits
         limits:
           cpu: null
           memory: 128Mi
-        # -- CPU and memory requests
         requests:
           cpu: 10m
           memory: 128Mi
