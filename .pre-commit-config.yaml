@@ -1,0 +1,9 @@
+---
+repos:
+  - repo: https://github.com/axivo/k3s-cluster
+    rev: v1.0.0
+    hooks:
+      - id: victoriametrics
+        args:
+          - --chart-search-root=./roles/victoriametrics
+          - --values-file=./defaults/main.yaml

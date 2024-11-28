@@ -27,6 +27,12 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+      storage:
+        enabled: false
+        access_modes:
+          - ReadWriteOnce
+        class: longhorn
+        size: 5Gi
     default_dashboards:
       timezone: utc
     helm:
@@ -67,15 +73,14 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      # -- Credentials for Grafana UI
       user:
-        name: admin
-        password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          64373766356138653633346638343234336132383737616530303636366262313534656163616435
-          3363396663333933306431363038316239373164386332660a616136666438313933353762373063
-          38323135393830336132393239363236373961336464623432363338616266626334393233366263
-          6164623332633535310a626532356161363563303036353838306234306562303333333231643432
-          38383463653931373134663230383033666264646364316563663636303736326630
+        # -- User name used to access Grafana UI
+        # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+        name:
+        # -- User password used to access Grafana UI
+        # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+        password:
     kube_state_metrics:
       replicas: 1
       resources:
@@ -88,7 +93,7 @@ victoriametrics_vars:
     namespace: kube-system
     victoria_metrics_operator:
       log_level: error
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpu: null
@@ -117,7 +122,7 @@ victoriametrics_vars:
         enabled: true
         subdomain: agent
       log_level: WARN
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpu: null
@@ -125,6 +130,12 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 512Mi
+      storage:
+        enabled: false
+        access_modes:
+          - ReadWriteOnce
+        class: longhorn
+        size: 5Gi
     vmalert:
       config_reloader:
         resources:
@@ -138,7 +149,7 @@ victoriametrics_vars:
         enabled: true
         subdomain: alert
       log_level: WARN
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpu: null
@@ -153,8 +164,8 @@ victoriametrics_vars:
       vminsert:
         hpa:
           enabled: true
-          min_replicas: 1
-          max_replicas: 3
+          min_replicas: 2
+          max_replicas: 4
           resource:
             name: memory
             target:
@@ -166,15 +177,15 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 256Mi
+            memory: 512Mi
           requests:
             cpu: 10m
-            memory: 256Mi
+            memory: 512Mi
       vmselect:
         hpa:
           enabled: true
-          min_replicas: 1
-          max_replicas: 3
+          min_replicas: 2
+          max_replicas: 4
           resource:
             name: memory
             target:
@@ -190,13 +201,18 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 256Mi
-        storage: 5Gi
+        storage:
+          enabled: false
+          access_modes:
+            - ReadWriteOnce
+          class: longhorn
+          size: 5Gi
       vmstorage:
         ingress:
           enabled: false
           subdomain: storage
         log_level: WARN
-        replicas: 1
+        replicas: 2
         resources:
           limits:
             cpu: null
@@ -204,4 +220,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 2560Mi
-        storage: 20Gi
+        storage:
+          enabled: false
+          access_modes:
+            - ReadWriteOnce
+          class: longhorn
+          size: 20Gi
