@@ -2,7 +2,7 @@ name: Update Documentation
 on:
   push:
     paths:
-      - roles/*/defaults/main.yaml
+      - '**/defaults/main.yaml'
 concurrency:
   cancel-in-progress: false
   group: docs
