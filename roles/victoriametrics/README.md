@@ -5,19 +5,10 @@ The role performs various tasks related to VictoriaMetrics
 
 See the related role tasks, listed below.
 
-- Ansible facts, see [facts.yaml](./tasks/facts.yaml) for details.
-
-### Main
-
-Main role related tasks, see [main.yaml](./tasks/main.yaml) for details.
-
-### Reset
-
-Reset related tasks, see [reset.yaml](./tasks/reset.yaml) for details.
-
-### Validation
-
-Validation related tasks, see [validation.yaml](./tasks/validation.yaml) for details.
+- Ansible facts, see [facts.yaml](./tasks/facts.yaml)
+- Main role related tasks, see [main.yaml](./tasks/main.yaml)
+- Reset related tasks, see [reset.yaml](./tasks/reset.yaml)
+- Validation related tasks, see [validation.yaml](./tasks/validation.yaml)
 
 ## Role Variables
 
