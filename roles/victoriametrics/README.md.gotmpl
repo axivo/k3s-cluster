@@ -1,8 +1,26 @@
 The role performs various tasks related to VictoriaMetrics
 [chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-metrics-k8s-stack) deployment, reset and validation.
 
+## Role Tasks
+
+See the related role tasks, listed below.
+
+- Ansible facts, see [facts.yaml](./tasks/facts.yaml) for details.
+
+### Main
+
+Main role related tasks, see [main.yaml](./tasks/main.yaml) for details.
+
+### Reset
+
+Reset related tasks, see [reset.yaml](./tasks/reset.yaml) for details.
+
+### Validation
+
+Validation related tasks, see [validation.yaml](./tasks/validation.yaml) for details.
+
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
 
 {{ template "chart.valuesTableHtml" . }}
