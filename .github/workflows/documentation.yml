@@ -27,7 +27,9 @@ jobs:
         run: helm-docs
       - name: Update Documentation
         run: |
-          git commit -am 'Update documentation'
+          git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
+          git config user.name '${{ github.actor }}'
+          git commit -am 'Workflow: Update documentation'
           git push
 permissions:
   contents: read
