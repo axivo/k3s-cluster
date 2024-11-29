@@ -15,6 +15,11 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      infrastructure:
+        # -- If disabled, a random IP address will be assigned
+        enabled: false
+        loadbalancer:
+          ip: 192.168.4.30
       ingress:
         enabled: true
         subdomain: alertmanager
@@ -74,10 +79,10 @@ victoriametrics_vars:
             cpu: 10m
             memory: 128Mi
       user:
-        # -- User name used to access Grafana UI
+        # -- (string) User name used to access Grafana UI
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
         name:
-        # -- User password used to access Grafana UI
+        # -- (string) User password used to access Grafana UI
         # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
         password:
     kube_state_metrics:
@@ -91,7 +96,7 @@ victoriametrics_vars:
           memory: 128Mi
     namespace: kube-system
     victoria_metrics_operator:
-      # -- Log level, possible options are 'info' or 'error'
+      # -- Available options are "info" or "error"
       log_level: error
       replicas: 2
       resources:
@@ -197,10 +202,10 @@ victoriametrics_vars:
         resources:
           limits:
             cpu: null
-            memory: 256Mi
+            memory: 512Mi
           requests:
             cpu: 10m
-            memory: 256Mi
+            memory: 512Mi
         storage:
           enabled: false
           access_modes:

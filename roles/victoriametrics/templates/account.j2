@@ -4,6 +4,6 @@ metadata:
   name: {{ victoriametrics_map.secret.grafana.name }}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 stringData:
-  admin-password: {{ victoriametrics_vars.kubernetes.grafana.user.password }}
-  admin-user: {{ victoriametrics_vars.kubernetes.grafana.user.name }}
+  admin-password: {{ global_map[role_name].kubernetes.grafana.user.password }}
+  admin-user: {{ global_map[role_name].kubernetes.grafana.user.name }}
 type: Opaque

@@ -24,6 +24,20 @@ alertmanager:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
       minAvailable: 1
+    storage:
+{% if victoriametrics_vars.kubernetes.alertmanager.storage.enabled %}
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            {{ victoriametrics_vars.kubernetes.alertmanager.storage.access_modes | to_nice_yaml | indent(12) }}
+          resources:
+            requests:
+              storage: {{ victoriametrics_vars.kubernetes.alertmanager.storage.size }}
+          storageClassName: {{ victoriametrics_vars.kubernetes.alertmanager.storage.class }}
+{% else %}
+    emptyDir:
+      sizeLimit: {{ victoriametrics_vars.kubernetes.alertmanager.storage.size }}
+{% endif %}
     replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
 {% if victoriametrics_postinstall %}
     configReloaderResources:
@@ -153,6 +167,7 @@ prometheus-node-exporter:
 prometheus-operator-crds:
   enabled: true
 victoria-metrics-operator:
+  logLevel: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.log_level }}
   operator:
     admissionWebhooks:
       certManager:
@@ -162,10 +177,9 @@ victoria-metrics-operator:
           kind: ClusterIssuer
           name: {{ certmanager_vars.kubernetes.tls.cluster_issuer.name }}
     enable_converter_ownership: true
-    logLevel: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.log_level }}
-    podDisruptionBudget:
-      enabled: true
-      minAvailable: 1
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
   replicaCount: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas }}
 {% if victoriametrics_postinstall %}
   resources:
@@ -212,6 +226,20 @@ vmagent:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
+{% endif %}
+    storage:
+{% if victoriametrics_vars.kubernetes.vmagent.storage.enabled %}
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            {{ victoriametrics_vars.kubernetes.vmagent.storage.access_modes | to_nice_yaml | indent(12) }}
+          resources:
+            requests:
+              storage: {{ victoriametrics_vars.kubernetes.vmagent.storage.size }}
+          storageClassName: {{ victoriametrics_vars.kubernetes.vmagent.storage.class }}
+{% else %}
+      emptyDir:
+        sizeLimit: {{ victoriametrics_vars.kubernetes.vmagent.storage.size }}
 {% endif %}
 vmalert:
 {% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
@@ -359,14 +387,19 @@ vmcluster:
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory }}
 {% endif %}
       storage:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.enabled %}
         volumeClaimTemplate:
           spec:
             accessModes:
-              - ReadWriteOnce
+              {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.access_modes | to_nice_yaml | indent(14) }}
             resources:
               requests:
-                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage }}
-            storageClassName: longhorn
+                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.size }}
+            storageClassName: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.class }}
+{% else %}
+        emptyDir:
+          sizeLimit: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.size }}
+{% endif %}
     vmstorage:
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       podDisruptionBudget:
@@ -382,14 +415,19 @@ vmcluster:
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
 {% endif %}
       storage:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled %}
         volumeClaimTemplate:
           spec:
             accessModes:
-              - ReadWriteOnce
+              {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes | to_nice_yaml | indent(14) }}
             resources:
               requests:
-                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage }}
-            storageClassName: longhorn
+                storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
+            storageClassName: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.class }}
+{% else %}
+        emptyDir:
+          sizeLimit: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
+{% endif %}
 vmsingle:
   enabled: false
 {% else %}
@@ -410,12 +448,17 @@ vmsingle:
         memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
 {% endif %}
     storage:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled %}
       volumeClaimTemplate:
         spec:
           accessModes:
-            - ReadWriteOnce
+            {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes | to_nice_yaml | indent(12) }}
           resources:
             requests:
-              storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage }}
-          storageClassName: longhorn
+              storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
+          storageClassName: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.class }}
+{% else %}
+      emptyDir:
+        sizeLimit: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
+{% endif %}
 {% endif %}
