@@ -24,10 +24,14 @@ server:
           - {{ victorialogs_map.ingress.hostname }}
         secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victorialogs_map.ingress.name }}
 {% endif %}
+{% if victorialogs_vars.kubernetes.server.storage.enabled %}
   persistentVolume:
+    accessModes:
+      {{ victorialogs_vars.kubernetes.server.storage.access_modes | to_nice_yaml | indent(6) }}
     enabled: true
-    size: {{ victorialogs_vars.kubernetes.server.persistent_volume.size }}
-    storageClassName: longhorn
+    size: {{ victorialogs_vars.kubernetes.server.storage.size }}
+    storageClassName: {{ victorialogs_vars.kubernetes.server.storage.class }}
+{% endif %}
   replicaCount: {{ victorialogs_vars.kubernetes.server.replicas }}
 {% if victorialogs_postinstall %}
   resources:
@@ -41,8 +45,10 @@ server:
     enabled: true
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+{% endif %}
 vector:
   enabled: {{ victorialogs_vars.kubernetes.vector.enabled }}
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
@@ -59,5 +65,7 @@ vector:
   serviceMonitor:
     enabled: true
 {% endif %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+{% endif %}
