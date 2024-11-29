@@ -11,6 +11,10 @@ defaultSettings:
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
   orphanAutoDeletion: {{ longhorn_vars.kubernetes.default_settings.orphan_auto_deletion }}
   replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.replica_auto_balance }}
+  rwxVolumeFastFailover: {{ longhorn_vars.kubernetes.default_settings.rwx_volume_fast_failover }}
+{% if longhorn_vars.kubernetes.default_settings.data_engine | lower == 'v1' %}
+  v1DataEngine: true
+{% endif %}
 {% if k3s_vars.server.controlplane.tainted %}
 {% if k3s_node_default_taint | length > 0 %}
   taintToleration: {{ k3s_node_default_taint | join | trim }}
@@ -23,6 +27,9 @@ longhornManager:
     {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 persistence:
-  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.persistence.replicas }}
   defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
+  defaultFsType: {{ longhorn_vars.kubernetes.persistence.fs_type }}
+  disableRevisionCounter: {{ longhorn_vars.kubernetes.persistence.disable_revision_counter }}
   migratable: {{ longhorn_vars.kubernetes.persistence.migratable }}
+  nfsOptions: {{ longhorn_vars.kubernetes.persistence.nfs_options }}
+  removeSnapshotsDuringFilesystemTrim: {{ longhorn_vars.kubernetes.persistence.remove_snapshots_during_filesystem_trim }}

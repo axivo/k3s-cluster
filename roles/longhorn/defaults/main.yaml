@@ -16,11 +16,13 @@ longhorn_vars:
             65653632373566323430363838386531336365316262363937376565653430313138303935386663
             6133643231643063640a383531396462663633663532383630316636313034636664613632323736
             3835
+      data_engine: v1
       data_locality: strict-local
       orphan_auto_deletion: true
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       replica_auto_balance: best-effort
       replicas: 3
+      rwx_volume_fast_failover: false
       usage_metrics: false
     helm:
       chart:
@@ -39,5 +41,8 @@ longhorn_vars:
     namespace: kube-system
     persistence:
       data_locality: best-effort
-      migratable: true
-      replicas: 3
+      disable_revision_counter: 'true'
+      fs_type: ext4
+      migratable: 'true'
+      nfs_options: ''
+      remove_snapshots_during_filesystem_trim: ignored
