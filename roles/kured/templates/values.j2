@@ -39,5 +39,5 @@ service:
   name: {{ kured_vars.kubernetes.service.name }}
 {% if k3s_vars.cluster.controlplane.tainted %}
 tolerations:
-  {{ k3s_vars.tolerations | to_nice_yaml | indent(2) }}
+  {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(2) }}
 {% endif %}

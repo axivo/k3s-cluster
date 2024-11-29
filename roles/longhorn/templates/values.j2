@@ -24,10 +24,10 @@ defaultSettings:
 {% endif %}
 longhornDriver:
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
 longhornManager:
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 {% if longhorn_postinstall %}
 metrics:

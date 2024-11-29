@@ -25,6 +25,7 @@
         label: default
         non_ha: '{{ groups.server | length == 1 }}'
         registries: '{{ k3s_vars.directory.config }}/registries.yaml'
+        tolerations: "{{ k3s_vars.tolerations | select('search', 'control-plane') | default('') }}"
       loadbalancer:
         hosts: '{{ groups.server[-2:] }}'
         password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
