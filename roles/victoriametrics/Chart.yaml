@@ -1,6 +1,5 @@
 apiVersion: v2
 name: victoriametrics
-displayName: VictoriaMetrics
 version: 0.28.4
 appVersion: 1.0.0
 description: Documentation generator for victoriametrics Ansible role
