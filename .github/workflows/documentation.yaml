@@ -1,9 +1,5 @@
 name: Update Documentation
 on:
-  push:
-    paths:
-      - 'roles/*/defaults/main.yaml'
-      - 'roles/*/README.md.gotmpl'
   pull_request:
     paths:
       - 'roles/*/defaults/main.yaml'
