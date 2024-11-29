@@ -86,6 +86,24 @@ null
 			<td></td>
 		</tr>
 		<tr>
+			<td>victoriametrics_vars.kubernetes.alertmanager.infrastructure.enabled</td>
+			<td>bool</td>
+			<td><pre lang="json">
+false
+</pre>
+</td>
+			<td>If disabled, a random IP address will be assigned</td>
+		</tr>
+		<tr>
+			<td>victoriametrics_vars.kubernetes.alertmanager.infrastructure.loadbalancer.ip</td>
+			<td>string</td>
+			<td><pre lang="json">
+"192.168.4.30"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>victoriametrics_vars.kubernetes.alertmanager.ingress.enabled</td>
 			<td>bool</td>
 			<td><pre lang="json">
@@ -524,7 +542,7 @@ null
 "error"
 </pre>
 </td>
-			<td>Log level, possible options are 'info' or 'error'</td>
+			<td>Available options are "info" or "error"</td>
 		</tr>
 		<tr>
 			<td>victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas</td>
@@ -1043,7 +1061,7 @@ null
 			<td>victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.memory</td>
 			<td>string</td>
 			<td><pre lang="json">
-"256Mi"
+"512Mi"
 </pre>
 </td>
 			<td></td>
@@ -1061,7 +1079,7 @@ null
 			<td>victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory</td>
 			<td>string</td>
 			<td><pre lang="json">
-"256Mi"
+"512Mi"
 </pre>
 </td>
 			<td></td>
