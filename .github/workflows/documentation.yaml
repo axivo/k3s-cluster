@@ -8,12 +8,6 @@ on:
     paths:
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/README.md.gotmpl'
-    types:
-      - converted_to_draft
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
