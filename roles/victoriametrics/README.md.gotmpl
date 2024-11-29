@@ -1,5 +1,8 @@
-The role performs various tasks related to VictoriaMetrics
-[chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-metrics-k8s-stack) deployment, reset and validation.
+# VictoriaMetrics
+
+The role performs various tasks related to
+[chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-metrics-k8s-stack) deployment,
+reset and validation.
 
 ## Role Tasks
 
