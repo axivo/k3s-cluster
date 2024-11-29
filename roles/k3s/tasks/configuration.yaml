@@ -9,8 +9,8 @@
         group: root
         mode: '0600'
       when:
-        - ansible_host not in k3s_map.server.hosts
         - k3s_vars.cluster.controlplane.tainted
+        - ansible_host not in k3s_map.server.hosts
 
 - name: Server Configuration
   when: ansible_host in k3s_map.server.hosts
