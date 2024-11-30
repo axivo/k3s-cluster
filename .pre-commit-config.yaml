@@ -6,4 +6,3 @@ repos:
       - id: victoriametrics
         args:
           - --chart-search-root=./roles/victoriametrics
-          - --values-file=./defaults/main.yaml
