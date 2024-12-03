@@ -1,20 +1,14 @@
-# VictoriaMetrics
+{{- define "chart.url" -}}
+{{- printf "%s/tree/%s-%s/charts/%s" .Home .Name .Version .Name -}}
+{{- end -}}
+# {{ template "chart.name" . }}
 
-The role performs various tasks related to
-[chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-metrics-k8s-stack) deployment,
-reset and validation.
+{{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
 
-## Role Tasks
-
-See the related role tasks, listed below.
-
-- Ansible facts, see [facts.yaml](./tasks/facts.yaml)
-- Main role related tasks, see [main.yaml](./tasks/main.yaml)
-- Reset related tasks, see [reset.yaml](./tasks/reset.yaml)
-- Validation related tasks, see [validation.yaml](./tasks/validation.yaml)
+The role performs various tasks related to `{{ template "chart.name" . }}` [chart]({{ template "chart.url" . }}) deployment, reset and validation.
 
 ## Role Variables
 
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
 
-{{ template "chart.valuesTableHtml" . }}
+{{ template "chart.valuesTable" . }}

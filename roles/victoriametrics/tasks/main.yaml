@@ -1,12 +1,14 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
     - certmanager
     - cloudflare
     - k3s
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
@@ -31,9 +33,9 @@
     - name: Chart Setup
       run_once: true
       block:
-        - name: Create grafana user account secret
+        - name: Create grafana user credentials secret
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'account.j2') | from_yaml }}"
+            definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
 
@@ -43,11 +45,12 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ victoriametrics_project.chart }}'
+            chart_ref: '{{ victoriametrics_project.helm.chart.reference }}'
             chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
             namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
+            timeout: '{{ victoriametrics_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true

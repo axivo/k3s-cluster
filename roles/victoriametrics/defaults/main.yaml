@@ -15,15 +15,11 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      infrastructure:
-        # -- If disabled, a random IP address will be assigned
-        enabled: false
-        loadbalancer:
-          ip: 192.168.4.30
       ingress:
         enabled: true
         subdomain: alertmanager
       log_level: WARN
+      # -- Minimum accepted value is `2`
       replicas: 2
       resources:
         limits:
@@ -80,10 +76,10 @@ victoriametrics_vars:
             memory: 128Mi
       user:
         # -- (string) User name used to access Grafana UI
-        # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
         name:
         # -- (string) User password used to access Grafana UI
-        # @default -- Set value into <a href="../../inventory/cluster/group_vars/all.yaml">all.yaml</a> variables
+        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
         password:
     kube_state_metrics:
       replicas: 1
@@ -94,9 +90,13 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    infrastructure:
+      # -- (string) Used globally for multiple services
+      # @default -- Set each value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
+      loadbalancer:
     namespace: kube-system
     victoria_metrics_operator:
-      # -- Available options are "info" or "error"
+      # -- Available options are `info` or `error`
       log_level: error
       replicas: 2
       resources:
@@ -123,6 +123,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      infrastructure:
+        # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
+        enabled: true
       ingress:
         enabled: true
         subdomain: agent
@@ -150,6 +153,9 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      infrastructure:
+        # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
+        enabled: true
       ingress:
         enabled: true
         subdomain: alert
@@ -163,6 +169,7 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
     vmcluster:
+      # -- If false, `vmsingle` settings are used
       enabled: true
       replication_factor: 2
       retention_period: 72h
@@ -175,6 +182,9 @@ victoriametrics_vars:
             name: memory
             target:
               utilization: 80
+        infrastructure:
+          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
+          enabled: true
         ingress:
           enabled: false
           subdomain: insert
@@ -195,6 +205,9 @@ victoriametrics_vars:
             name: memory
             target:
               utilization: 80
+        infrastructure:
+          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
+          enabled: true
         ingress:
           enabled: true
           subdomain: metrics
@@ -213,6 +226,9 @@ victoriametrics_vars:
           class: longhorn
           size: 5Gi
       vmstorage:
+        infrastructure:
+          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
+          enabled: true
         ingress:
           enabled: false
           subdomain: storage

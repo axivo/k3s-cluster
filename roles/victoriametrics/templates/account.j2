@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ victoriametrics_map.secret.grafana.name }}
-  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-stringData:
-  admin-password: {{ global_map[role_name].kubernetes.grafana.user.password }}
-  admin-user: {{ global_map[role_name].kubernetes.grafana.user.name }}
-type: Opaque

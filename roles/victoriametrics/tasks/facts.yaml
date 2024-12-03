@@ -2,9 +2,11 @@
 - name: Set map fact
   ansible.builtin.set_fact:
     victoriametrics_map:
+      credentials:
+        grafana:
+          secret: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-credentials'
       helm:
         chart:
-          name: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
           version: '{{ victoriametrics_vars.kubernetes.helm.chart.version[1:] }}'
         repository:
           - name: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.name }}'
@@ -16,6 +18,30 @@
           - name: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name }}'
             org: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org }}'
             url: '{{ victoriametrics_vars.kubernetes.helm.repository.victoriametrics.url }}'
+        timeout: 5m0s
+      infrastructure:
+        alertmanager:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.alertmanager }}'
+        grafana:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.grafana }}'
+        vmagent:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.vmagent }}'
+        vmalert:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.vmalert }}'
+        vmcluster:
+          vminsert:
+            annotations:
+              io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.vmcluster.vminsert }}'
+          vmselect:
+            annotations:
+              io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.vmcluster.vmselect }}'
+          vmstorage:
+            annotations:
+              io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.vmcluster.vmstorage }}'
       ingress:
         alertmanager:
           annotations:
@@ -53,17 +79,16 @@
               cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
             hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
             name: 'vmstorage-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-      secret:
-        grafana:
-          name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-user-account'
   run_once: true
 
 - name: Set project fact
   ansible.builtin.set_fact:
     victoriametrics_project:
-      chart: '{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_map.helm.chart.name }}'
-      tag: '{{ victoriametrics_map.helm.chart.name }}-{{ victoriametrics_map.helm.chart.version }}'
-      url: https://github.com/{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_map.helm.repository[2].name }}/releases/tag
+      helm:
+        chart:
+          reference: '{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
+      tag: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}-{{ victoriametrics_map.helm.chart.version }}'
+      url: 'https://github.com/{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_map.helm.repository[2].name }}/releases/tag'
   run_once: true
 
 - name: Set variables fact

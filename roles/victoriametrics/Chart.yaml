@@ -1,8 +1,7 @@
 apiVersion: v2
-name: victoriametrics
+name: victoria-metrics-k8s-stack
+type: application
 version: 0.28.4
 appVersion: 1.0.0
 description: Documentation generator for victoriametrics Ansible role
-home: https://axivo.com/k3s-cluster
-sources:
-  - https://github.com/VictoriaMetrics/helm-charts
+home: https://github.com/VictoriaMetrics/helm-charts
