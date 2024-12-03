@@ -1,7 +1,6 @@
 {
     "ansible.python.interpreterPath": "/usr/bin/python3",
     "files.associations": {
-        "roles/*/Chart.yaml": "helm",
         "*.j2": "ansible-jinja",
         "*.json5": "json",
         "*.yaml": "ansible"
