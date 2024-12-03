@@ -3,7 +3,6 @@ kured_vars:
   kubernetes:
     configuration:
       concurrency: 1
-      log_format: text
       period: 15m
       reboot_delay: 60s
       slack:
@@ -35,7 +34,7 @@ kured_vars:
         org: kubereboot
         url: https://kubereboot.github.io
     metrics:
-      create: 'true'
+      create: true
     namespace: kube-system
     resources:
       limits:
@@ -45,9 +44,4 @@ kured_vars:
         cpu: 10m
         memory: 128Mi
     service:
-      annotations:
-        prometheus.io/path: /metrics
-        prometheus.io/port: 8080
-        prometheus.io/scrape: 'true'
-      create: 'true'
-      name: kured
+      create: true

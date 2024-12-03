@@ -9,11 +9,17 @@
         repository:
           name: '{{ kured_vars.kubernetes.helm.repository.org }}/{{ kured_vars.kubernetes.helm.repository.name }}'
           url: '{{ kured_vars.kubernetes.helm.repository.url }}/{{ kured_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+      service:
+        annotations:
+          prometheus.io/path: /metrics
+          prometheus.io/port: 8080
+          prometheus.io/scrape: 'true'
   run_once: true
 
 - name: Set project fact
   ansible.builtin.set_fact:
     kured_project:
       tag: '{{ kured_vars.kubernetes.helm.chart.name }}-{{ kured_map.helm.chart.version }}'
-      url: https://github.com/{{ kured_map.helm.repository.name }}/releases/tag
+      url: 'https://github.com/{{ kured_map.helm.repository.name }}/releases/tag'
   run_once: true

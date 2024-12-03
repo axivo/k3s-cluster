@@ -19,11 +19,13 @@
 
     - name: Validate release checksum url
       ansible.builtin.uri:
-        url: '{{ item }}'
+        url: '{{ checksum }}'
         timeout: 5
       loop:
         - '{{ k3s_project.release.k3s.checksum }}'
         - '{{ k3s_project.release.kubepug.checksum }}'
+      loop_control:
+        loop_var: checksum
       register: result
       delay: 1
       retries: 3
@@ -31,11 +33,13 @@
 
     - name: Validate release file url
       ansible.builtin.uri:
-        url: '{{ item }}'
+        url: '{{ file }}'
         timeout: 5
       loop:
         - '{{ k3s_project.release.k3s.file }}'
         - '{{ k3s_project.release.kubepug.file }}'
+      loop_control:
+        loop_var: file
       register: result
       delay: 1
       retries: 3

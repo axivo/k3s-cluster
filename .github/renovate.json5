@@ -51,9 +51,11 @@
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
+        "roles/argocd/Chart.yaml",
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -62,9 +64,11 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-cd",
       "fileMatch": [
+        "roles/argocd/Chart.yaml",
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^dependencies:[\\s\\S]+?name:\\s+argo-cd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ]
     },
@@ -213,7 +217,7 @@
         "roles/victorialogs/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s(?<currentValue>.+)",
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
@@ -224,9 +228,11 @@
       "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
       "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
       "fileMatch": [
+        "roles/victorialogs/Chart.yaml",
         "roles/victoriametrics/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"

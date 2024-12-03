@@ -1,13 +1,4 @@
 ---
-- name: Role Facts
-  ansible.builtin.include_role:
-    name: '{{ item }}'
-    tasks_from: facts
-  loop:
-    - cloudflare
-    - k3s
-    - victoriametrics
-
 - name: Role Post-Install
   when: ansible_host in k3s_map.server.hosts
   run_once: true
@@ -23,6 +14,7 @@
         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
         name: '{{ kured_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ kured_vars.kubernetes.namespace }}'
+        timeout: '{{ kured_map.helm.timeout }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         reset_values: false
         reuse_values: true

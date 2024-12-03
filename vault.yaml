@@ -36,7 +36,7 @@
                   kubernetes:
                     api:
                       token:
-                        value: '{{ cloudflare_vars.kubernetes.api.token.value }}'
+                        value: '{{ global_map.credentials[role_name].api.token.value }}'
               - cluster_vars:
                   service:
                     postfix:
@@ -109,7 +109,7 @@
             - ansible_password
             - argocd_vars.kubernetes.server.admin.password
             - argocd_vars.kubernetes.server.user.password
-            - cloudflare_vars.kubernetes.api.token.value
+            - global_map.credentials[role_name].api.token.value
             - cluster_vars.service.postfix.user.alias
             - cluster_vars.service.postfix.user.name
             - cluster_vars.service.postfix.user.password

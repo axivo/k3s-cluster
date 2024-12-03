@@ -1,11 +1,13 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
     - cluster
     - k3s
+  loop_control:
+    loop_var: role
 
 - name: Loadbalancer Setup
   notify: Restart loadbalancer services

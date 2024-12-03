@@ -8,14 +8,28 @@
         repository:
           name: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.repository.name }}'
           url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
-      hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+        timeout: 5m0s
+      gateway:
+        hubble:
+          ui:
+            annotations:
+              cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
+            hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            http_route:
+              insecure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-http'
+              secure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-https'
+      infrastructure:
+        hubble:
+          ui:
+            annotations:
+              io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.hubble.ui }}'
       release:
         cli:
-          url: https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases
+          url: 'https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases'
         gateway_api:
-          url: https://github.com/{{ cilium_vars.release.gateway_api.repository.org }}/{{ cilium_vars.release.gateway_api.repository.name }}/releases
+          url: 'https://github.com/{{ cilium_vars.release.gateway_api.repository.org }}/{{ cilium_vars.release.gateway_api.repository.name }}/releases'
         hubble:
-          url: https://github.com/{{ cilium_vars.release.hubble.repository.org }}/{{ cilium_vars.release.hubble.repository.name }}/releases
+          url: 'https://github.com/{{ cilium_vars.release.hubble.repository.org }}/{{ cilium_vars.release.hubble.repository.name }}/releases'
   run_once: true
 
 - name: Set project fact
@@ -29,7 +43,7 @@
         hubble:
           file: '{{ cilium_map.release.hubble.url }}/download/{{ cilium_vars.release.hubble.version }}/{{ cilium_vars.release.hubble.file }}'
       tag: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-      url: https://github.com/{{ cilium_map.helm.repository.name }}/releases/tag
+      url: 'https://github.com/{{ cilium_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set resources fact

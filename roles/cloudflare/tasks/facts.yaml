@@ -11,6 +11,7 @@
         repository:
           name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
           url: '{{ cloudflare_vars.kubernetes.helm.repository.url }}/{{ cloudflare_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
       tls:
         key:
           prefix: '{{ cloudflare_vars.kubernetes.tls.key_prefix }}'
@@ -20,7 +21,7 @@
   ansible.builtin.set_fact:
     cloudflare_project:
       tag: '{{ cloudflare_vars.kubernetes.helm.chart.name }}-helm-chart-{{ cloudflare_map.helm.chart.version }}'
-      url: https://github.com/{{ cloudflare_map.helm.repository.name }}/releases/tag
+      url: 'https://github.com/{{ cloudflare_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set resources fact
@@ -28,7 +29,7 @@
     cloudflare_resources:
       acme:
         server:
-          url: https://acme{{ cloudflare_map.acme.server }}-v02.api.letsencrypt.org/directory
+          url: 'https://acme{{ cloudflare_map.acme.server }}-v02.api.letsencrypt.org/directory'
       cluster:
         issuer: '{{ cloudflare_vars.kubernetes.tls.cluster_issuer.name }}{{ cloudflare_map.acme.server }}'
   run_once: true

@@ -2,10 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-{% for key, value in longhorn_vars.kubernetes.infrastructure.annotations.items() %}
+{% for key, value in longhorn_map.infrastructure.frontend.annotations.items() %}
     {{ key | indent(4) }}: {{ value }}
 {% endfor %}
-  name: {{ longhorn_vars.kubernetes.gateway.service }}
+  name: {{ longhorn_vars.kubernetes.frontend.gateway.service }}
   namespace: {{ longhorn_vars.kubernetes.namespace }}
 spec:
   type: LoadBalancer

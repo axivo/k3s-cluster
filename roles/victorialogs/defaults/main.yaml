@@ -5,13 +5,15 @@ victorialogs_vars:
       chart:
         alias: vls
         name: victoria-logs-single
-        version: v0.8.5
+        version: v0.8.9
       repository:
         name: helm-charts
         org: VictoriaMetrics
         url: https://victoriametrics.github.io
     namespace: kube-system
     server:
+      infrastructure:
+        enabled: false
       ingress:
         enabled: true
         subdomain: logs

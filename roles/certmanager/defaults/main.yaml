@@ -21,7 +21,6 @@ certmanager_vars:
     helm:
       chart:
         name: cert-manager
-        org: cert-manager
         version: v1.16.2
       repository:
         name: cert-manager
@@ -32,7 +31,7 @@ certmanager_vars:
     namespace: kube-system
     tls:
       cluster_issuer:
-        name: certmanager-cluster-issuer
+        name: cert-manager-cluster-issuer
     webhook:
       resources:
         limits:
@@ -42,7 +41,7 @@ certmanager_vars:
           cpu: 10m
           memory: 128Mi
   release:
-    checksums: checksums.txt
+    checksum: checksums.txt
     file: cmctl_linux_arm64
     repository:
       name: cmctl

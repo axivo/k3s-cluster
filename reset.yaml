@@ -19,8 +19,8 @@
     - name: Reset cluster
       ansible.builtin.include_role:
         apply:
-          tags: '{{ role }}'
-        name: '{{ role }}'
+          tags: '{{ reset }}'
+        name: '{{ reset }}'
         tasks_from: reset
       loop:
         - cluster
@@ -35,9 +35,9 @@
         - victoriametrics
         - helm
       loop_control:
-        loop_var: role
+        loop_var: reset
       tags: always
-      when: (role in ansible_run_tags) or (ansible_run_tags == ['all'])
+      when: (reset in ansible_run_tags) or (ansible_run_tags == ['all'])
   vars_prompt:
     - name: prompt_remove_packages
       prompt: Remove installed apt packages? [Y/n]

@@ -18,6 +18,8 @@
 - name: Set map fact
   ansible.builtin.set_fact:
     k3s_map:
+      agent:
+        ha: '{{ groups.agent | length > 2 }}'
       cluster:
         config: '{{ k3s_vars.directory.config }}/config.yaml'
         ha: '{{ groups.server | length > 2 }}'
@@ -39,10 +41,10 @@
       release:
         k3s:
           checksum: '{{ k3s_vars.release.k3s.checksum }}'
-          url: https://github.com/{{ k3s_vars.release.k3s.repository.org }}/{{ k3s_vars.release.k3s.repository.name }}/releases
+          url: 'https://github.com/{{ k3s_vars.release.k3s.repository.org }}/{{ k3s_vars.release.k3s.repository.name }}/releases'
         kubepug:
           checksum: '{{ k3s_vars.release.kubepug.name }}_{{ k3s_vars.release.kubepug.version[1:] }}_{{ k3s_vars.release.kubepug.checksum }}'
-          url: https://github.com/{{ k3s_vars.release.kubepug.repository.org }}/{{ k3s_vars.release.kubepug.repository.name }}/releases
+          url: 'https://github.com/{{ k3s_vars.release.kubepug.repository.org }}/{{ k3s_vars.release.kubepug.repository.name }}/releases'
       server:
         default_host: '{{ hostvars[groups.server[0]].ansible_hostname | default(groups.server[0]) }}'
         hosts: '{{ groups.server }}'

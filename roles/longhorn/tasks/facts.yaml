@@ -2,16 +2,32 @@
 - name: Set map fact
   ansible.builtin.set_fact:
     longhorn_map:
+      credentials:
+        backup:
+          secret: '{{ longhorn_vars.kubernetes.helm.chart.name }}-backup-credentials'
       helm:
         chart:
           reference: '{{ longhorn_vars.kubernetes.helm.repository.org }}/{{ longhorn_vars.kubernetes.helm.chart.name }}'
         repository:
           name: '{{ longhorn_vars.kubernetes.helm.repository.org }}/{{ longhorn_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+      gateway:
+        frontend:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
+          hostname: '{{ longhorn_vars.kubernetes.frontend.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          http_route:
+            insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
+            secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'
+      infrastructure:
+        frontend:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.frontend }}'
   run_once: true
 
 - name: Set project fact
   ansible.builtin.set_fact:
     longhorn_project:
       tag: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
-      url: https://github.com/{{ longhorn_map.helm.repository.name }}/releases/tag
+      url: 'https://github.com/{{ longhorn_map.helm.repository.name }}/releases/tag'
   run_once: true

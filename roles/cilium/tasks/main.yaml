@@ -1,12 +1,14 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
     - cloudflare
     - k3s
     - victoriametrics
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
@@ -115,6 +117,7 @@
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            timeout: '{{ cilium_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true

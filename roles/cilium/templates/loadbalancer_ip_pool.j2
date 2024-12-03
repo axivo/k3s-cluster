@@ -5,5 +5,5 @@ metadata:
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   blocks:
-    - start: {{ cilium_vars.kubernetes.loadbalancer.ip_pool.blocks.start }}
-      stop: {{ cilium_vars.kubernetes.loadbalancer.ip_pool.blocks.stop }}
+    - start: {{ global_map.infrastructure[role_name].loadbalancer.ip_pool.blocks.start }}
+      stop: {{ global_map.infrastructure[role_name].loadbalancer.ip_pool.blocks.stop }}

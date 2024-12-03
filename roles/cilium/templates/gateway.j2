@@ -2,15 +2,17 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: {{ cloudflare_resources.cluster.issuer }}
+{% for key, value in cilium_map.gateway.hubble.ui.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
+{% endfor %}
   name: {{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
   namespace: {{ cilium_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
-{% if cilium_vars.kubernetes.hubble.ui.infrastructure.enabled %}
+{% if global_map.infrastructure.enabled %}
   infrastructure:
     annotations:
-{% for key, value in cilium_vars.kubernetes.hubble.ui.infrastructure.annotations.items() %}
+{% for key, value in cilium_map.gateway.hubble.ui.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
 {% endif %}
@@ -20,7 +22,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ cilium_map.hostname }}
+      hostname: {{ cilium_map.gateway.hubble.ui.hostname }}
       name: http
       port: 80
       protocol: HTTP
@@ -29,7 +31,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ cilium_map.hostname }}
+      hostname: {{ cilium_map.gateway.hubble.ui.hostname }}
       name: https
       port: 443
       protocol: HTTPS

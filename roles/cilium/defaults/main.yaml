@@ -66,6 +66,7 @@ cilium_vars:
             memory: 128Mi
         retry_timeout: 10s
       ui:
+        enabled: true
         backend:
           resources:
             limits:
@@ -86,9 +87,9 @@ cilium_vars:
           service: hubble-ui
           subdomain: hubble
         infrastructure:
-          enabled: true
-          annotations:
-            io.cilium/lb-ipam-ips: 192.168.4.19
+          # -- (string) `CiliumLoadBalancerIPPool` address, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
+          loadbalancer:
         replicas: 1
       tls:
         auto:
@@ -100,6 +101,10 @@ cilium_vars:
             name: hubble-root-certs
         cluster_issuer:
           name: hubble-cluster-issuer
+    ingress_controller:
+      # -- (string) Assign the first `CiliumLoadBalancerIPPool` address, set at global level
+      # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
+      service:
     ip_masq_agent:
       enabled: false
       non_masquerade_cidrs:
@@ -112,14 +117,19 @@ cilium_vars:
       algorithm: maglev
       ip_pool:
         blocks:
-          start: 192.168.4.16
-          stop: 192.168.4.50
+          # -- (string) First `CiliumLoadBalancerIPPool` address, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
+          start:
+          # -- (string) Last `CiliumLoadBalancerIPPool` address, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
+          stop:
         name: default-pool
       l2_announcement_policy:
         name: default-l2-announcement-policy
       table_size: 16381
     log_options:
-      level: warn
+      # -- Available options are `Info`, `Warn` and `Error`
+      level: Warn
     namespace: kube-system
     operator:
       resources:

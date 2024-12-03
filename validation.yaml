@@ -6,7 +6,7 @@
   tasks:
     - name: Validate global settings
       ansible.builtin.include_role:
-        name: '{{ item }}'
+        name: '{{ validation }}'
         tasks_from: validation
       loop:
         - cluster
@@ -20,3 +20,5 @@
         - longhorn
         - victorialogs
         - victoriametrics
+      loop_control:
+        loop_var: validation

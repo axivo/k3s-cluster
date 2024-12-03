@@ -6,12 +6,16 @@ defaultSettings:
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
 {% if longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs' %}
-  backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret.name }}
+  backupTargetCredentialSecret: {{ longhorn_map.credentials.backup.secret }}
 {% endif %}
 {% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
   defaultDataPath: {{ longhorn_vars.kubernetes.default_settings.data_path }}
+{% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
+  defaultReplicaCount: 2
+{% else %}
   defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
+{% endif %}
   disableSchedulingOnCordonedNode: true
   logLevel: {{ longhorn_vars.kubernetes.default_settings.log_level }}
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
@@ -38,6 +42,10 @@ metrics:
 {% endif %}
 persistence:
   dataEngine: {{ longhorn_vars.kubernetes.persistence.data_engine }}
+{% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
+  defaultClassReplicaCount: 2
+{% else %}
   defaultClassReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
+{% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
   removeSnapshotsDuringFilesystemTrim: {{ longhorn_vars.kubernetes.persistence.remove_snapshots_during_filesystem_trim }}

@@ -1,11 +1,13 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
     - cloudflare
     - k3s
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
@@ -29,9 +31,9 @@
     - name: Chart Setup
       run_once: true
       block:
-        - name: Create backup secret
+        - name: Create backup credentials secret
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'secret.j2') | from_yaml }}"
+            definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
           when:
@@ -50,6 +52,7 @@
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ longhorn_vars.kubernetes.namespace }}'
+            timeout: '{{ longhorn_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true
@@ -62,25 +65,21 @@
         - name: Gateway Setup
           when: cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
           block:
-            - name: Set hostname fact
-              ansible.builtin.set_fact:
-                hostname: '{{ longhorn_vars.kubernetes.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
-
             - name: Create frontend gateway
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create http route
+            - name: Create frontend http insecure route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create https route
+            - name: Create frontend http secure route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
 

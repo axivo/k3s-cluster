@@ -1,42 +1,26 @@
 ---
-- name: Set project chart fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    certmanager_project_chart: '{{ certmanager_vars.kubernetes.helm.repository.org }}/{{ certmanager_vars.kubernetes.helm.repository.name }}'
+    certmanager_map:
+      helm:
+        chart:
+          reference: '{{ certmanager_vars.kubernetes.helm.repository.org }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
+        repository:
+          name: '{{ certmanager_vars.kubernetes.helm.repository.name }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
+          url: '{{ certmanager_vars.kubernetes.helm.repository.url }}/{{ certmanager_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+      release:
+        url: 'https://github.com/{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}/releases'
   run_once: true
 
-- name: Set project release fact
+- name: Set project fact
   ansible.builtin.set_fact:
-    certmanager_project_release: '{{ certmanager_vars.kubernetes.helm.chart.org }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
-  run_once: true
-
-- name: Set project url fact
-  ansible.builtin.set_fact:
-    certmanager_project_url: https://github.com/{{ certmanager_project_release }}/releases/tag
-  run_once: true
-
-- name: Set project tag url fact
-  ansible.builtin.set_fact:
-    certmanager_project_url_tag: '{{ certmanager_project_url }}/{{ certmanager_vars.kubernetes.helm.chart.version }}'
-  run_once: true
-
-- name: Set release fact
-  ansible.builtin.set_fact:
-    certmanager_release: '{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}'
-  run_once: true
-
-- name: Set release url fact
-  ansible.builtin.set_fact:
-    certmanager_release_url: https://github.com/{{ certmanager_release }}/releases
-  run_once: true
-
-- name: Set release checksums url fact
-  ansible.builtin.set_fact:
-    certmanager_release_url_checksums: '{{ certmanager_release_url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.checksums }}'
-  run_once: true
-
-- name: Set release file url fact
-  ansible.builtin.set_fact:
-    certmanager_release_url_file: '{{ certmanager_release_url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.file }}'
+    certmanager_project:
+      release:
+        checksum: '{{ certmanager_map.release.url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.checksum }}'
+        file: '{{ certmanager_map.release.url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.file }}'
+      tag: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
+      url: 'https://github.com/{{ certmanager_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set variables fact

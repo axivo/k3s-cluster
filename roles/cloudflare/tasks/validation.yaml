@@ -6,7 +6,7 @@
 - name: Role Validation
   run_once: true
   block:
-    - name: Validate release tag url
+    - name: Validate project url
       ansible.builtin.uri:
         url: '{{ cloudflare_project.url }}/{{ cloudflare_project.tag }}'
         timeout: 5

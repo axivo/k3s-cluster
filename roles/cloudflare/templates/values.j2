@@ -2,8 +2,8 @@ env:
   - name: CF_API_TOKEN
     valueFrom:
       secretKeyRef:
-        key: {{ cloudflare_vars.kubernetes.api.token.key }}
-        name: {{ cloudflare_vars.kubernetes.api.token.name }}
+        key: {{ global_map.credentials[role_name].api.token.key }}
+        name: {{ global_map.credentials[role_name].api.token.name }}
 logLevel: {{ cloudflare_vars.kubernetes.log_level }}
 policy: {{ cloudflare_vars.kubernetes.policy }}
 provider:

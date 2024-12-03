@@ -6,27 +6,27 @@
 - name: Role Validation
   run_once: true
   block:
-    - name: Validate release tag url
+    - name: Validate project url
       ansible.builtin.uri:
-        url: '{{ certmanager_project_url_tag }}'
+        url: '{{ certmanager_project.url }}/{{ certmanager_project.tag }}'
         timeout: 5
       register: result
       delay: 1
       retries: 3
       until: result is not failed
 
-    - name: Validate release binary url
+    - name: Validate release checksum url
       ansible.builtin.uri:
-        url: '{{ certmanager_release_url_file }}'
+        url: '{{ certmanager_project.release.checksum }}'
         timeout: 5
       register: result
       delay: 1
       retries: 3
       until: result is not failed
 
-    - name: Validate release checksums url
+    - name: Validate release file url
       ansible.builtin.uri:
-        url: '{{ certmanager_release_url_checksums }}'
+        url: '{{ certmanager_project.release.file }}'
         timeout: 5
       register: result
       delay: 1

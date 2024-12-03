@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-{% if cilium_vars.kubernetes.hubble.ui.infrastructure.enabled %}
+{% if global_map.infrastructure.enabled %}
   annotations:
-{% for key, value in cilium_vars.kubernetes.hubble.ui.infrastructure.annotations.items() %}
+{% for key, value in cilium_map.gateway.hubble.ui.annotations.items() %}
     {{ key | indent(4) }}: {{ value }}
 {% endfor %}
 {% endif %}

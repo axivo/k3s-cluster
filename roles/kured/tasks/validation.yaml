@@ -6,7 +6,7 @@
 - name: Role Validation
   run_once: true
   block:
-    - name: Validate project tag url
+    - name: Validate project url
       ansible.builtin.uri:
         url: '{{ kured_project.url }}/{{ kured_project.tag }}'
         timeout: 5

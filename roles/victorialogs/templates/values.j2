@@ -4,25 +4,27 @@ dashboards:
 {% endif %}
 podDisruptionBudget:
   enabled: true
-  minAvailable: 1
+  maxUnavailable: 1
 server:
 {% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victorialogs_map.ingress.annotations.items() %}
+{% for key, value in victorialogs_map.ingress.server.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
     enabled: {{ victorialogs_vars.kubernetes.server.ingress.enabled }}
     hosts:
-      - name: {{ victorialogs_map.ingress.hostname }}
+      - name: {{ victorialogs_map.ingress.server.hostname }}
         path:
           - /
         port: http
+{% if not global_map.infrastructure.enabled %}
     ingressClassName: cilium
+{% endif %}
     tls:
       - hosts:
-          - {{ victorialogs_map.ingress.hostname }}
-        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victorialogs_map.ingress.name }}
+          - {{ victorialogs_map.ingress.server.hostname }}
+        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victorialogs_map.ingress.server.name }}
 {% endif %}
 {% if victorialogs_vars.kubernetes.server.storage.enabled %}
   persistentVolume:
@@ -45,12 +47,21 @@ server:
     enabled: true
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
+{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+  service:
+    annotations:
+{% for key, value in victorialogs_map.infrastructure.server.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
+    type: LoadBalancer
+{% endif %}
 {% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
   tolerations:
     {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
+{% if victorialogs_vars.kubernetes.vector.enabled %}
 vector:
-  enabled: {{ victorialogs_vars.kubernetes.vector.enabled }}
+  enabled: true
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
 {% if victorialogs_postinstall %}
   podMonitor:
@@ -64,6 +75,7 @@ vector:
       memory: {{ victorialogs_vars.kubernetes.vector.resources.requests.memory }}
   serviceMonitor:
     enabled: true
+{% endif %}
 {% endif %}
 {% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
   tolerations:
