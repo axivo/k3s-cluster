@@ -6,7 +6,7 @@ The role performs various tasks related to `argo-cd` [chart](https://github.com/
 
 ## Role Binary Files
 
-See the installed role binary files listed below, defined into [main.yaml](./defaults/main.yaml) `release` collection.
+See the installed binary files listed below, defined into [main.yaml](./defaults/main.yaml) `release` collection.
 
 | Repository | Name | Version |
 |------------|------|---------|
