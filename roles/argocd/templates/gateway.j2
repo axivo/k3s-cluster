@@ -2,14 +2,16 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: {{ cloudflare_resources.cluster.issuer }}
+{% for key, value in argocd_map.gateway.server.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
+{% endfor %}
   name: {{ argocd_vars.kubernetes.server.gateway.service }}
   namespace: {{ argocd_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
   infrastructure:
     annotations:
-{% for key, value in argocd_vars.kubernetes.server.infrastructure.annotations.items() %}
+{% for key, value in argocd_map.infrastructure.server.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
   listeners:
@@ -18,7 +20,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ argocd_map.gateway.server.hostname }}
       name: http
       port: 80
       protocol: HTTP
@@ -27,7 +29,7 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ argocd_map.gateway.server.hostname }}
       name: https
       port: 443
       protocol: HTTPS

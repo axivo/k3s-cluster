@@ -65,14 +65,16 @@ global_map:
             6164623332633535310a626532356161363563303036353838306234306562303333333231643432
             38383463653931373134663230383033666264646364316563663636303736326630
   infrastructure:
-    # -- If false, random `CiliumLoadBalancerIPPool` addresses are assigned
+    # -- If `false`, random `CiliumLoadBalancerIPPool` addresses are assigned to all services
     enabled: true
     argocd:
       loadbalancer:
+        # -- If `null`, a random `CiliumLoadBalancerIPPool` address is assigned for this service
         server: 192.168.4.21
     cilium:
       loadbalancer:
         ingress_controller:
+          # -- Assign the `CiliumLoadBalancerIPPool` blocks start address
           service: 192.168.4.20
         ip_pool:
           blocks:

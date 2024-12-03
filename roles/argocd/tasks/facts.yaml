@@ -1,40 +1,44 @@
 ---
-- name: Set project chart fact
+- name: Set map fact
   ansible.builtin.set_fact:
-    argocd_project_chart: '{{ argocd_vars.kubernetes.helm.chart.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
+    argocd_map:
+      credentials:
+        server:
+          admin:
+            password: "{{ global_map.credentials[role_name].server.admin.password | string | password_hash('blowfish') }}"
+          user:
+            name: '{{ global_map.credentials[role_name].server.user.name }}'
+            password: "{{ global_map.credentials[role_name].server.user.password | string | password_hash('blowfish') }}"
+      gateway:
+        server:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
+          hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+          http_route:
+            insecure: '{{ argocd_vars.kubernetes.server.gateway.service }}-http'
+            secure: '{{ argocd_vars.kubernetes.server.gateway.service }}-https'
+      helm:
+        chart:
+          reference: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
+          version: '{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+          url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+        timeout: 10m0s
+      infrastructure:
+        server:
+          annotations:
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.server }}'
+      release:
+        url: 'https://github.com/{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}/releases'
   run_once: true
 
-- name: Set project release fact
+- name: Set project fact
   ansible.builtin.set_fact:
-    argocd_project_release: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
-  run_once: true
-
-- name: Set project url fact
-  ansible.builtin.set_fact:
-    argocd_project_url: https://github.com/{{ argocd_project_release }}/releases/tag
-  run_once: true
-
-- name: Set project tag url fact
-  ansible.builtin.set_fact:
-    argocd_project_url_tag: '{{ argocd_project_url }}/{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
-  run_once: true
-
-- name: Set release fact
-  ansible.builtin.set_fact:
-    argocd_release: '{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}'
-  run_once: true
-
-- name: Set release url fact
-  ansible.builtin.set_fact:
-    argocd_release_url: https://github.com/{{ argocd_release }}/releases
-  run_once: true
-
-- name: Set release checksums url fact
-  ansible.builtin.set_fact:
-    argocd_release_url_checksums: '{{ argocd_release_url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksums }}'
-  run_once: true
-
-- name: Set release file url fact
-  ansible.builtin.set_fact:
-    argocd_release_url_file: '{{ argocd_release_url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+    argocd_project:
+      release:
+        checksum: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksum }}'
+        file: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+      tag: '{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_map.helm.chart.version }}'
+      url: 'https://github.com/{{ argocd_map.helm.repository.name }}/releases/tag'
   run_once: true

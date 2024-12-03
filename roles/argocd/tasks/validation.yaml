@@ -1,32 +1,38 @@
 ---
 - name: Role Facts
-  ansible.builtin.import_tasks:
-    file: facts.yaml
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - cloudflare
+    - argocd
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   run_once: true
   block:
-    - name: Validate project tag url
+    - name: Validate project url
       ansible.builtin.uri:
-        url: '{{ argocd_project_url_tag }}'
+        url: '{{ argocd_project.url }}/{{ argocd_project.tag }}'
         timeout: 5
       register: result
       delay: 1
       retries: 3
       until: result is not failed
 
-    - name: Validate release binary url
+    - name: Validate release checksum url
       ansible.builtin.uri:
-        url: '{{ argocd_release_url_file }}'
+        url: '{{ argocd_project.release.checksum }}'
         timeout: 5
       register: result
       delay: 1
       retries: 3
       until: result is not failed
 
-    - name: Validate release checksums url
+    - name: Validate release file url
       ansible.builtin.uri:
-        url: '{{ argocd_release_url_checksums }}'
+        url: '{{ argocd_project.release.file }}'
         timeout: 5
       register: result
       delay: 1
