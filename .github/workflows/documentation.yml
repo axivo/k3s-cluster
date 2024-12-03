@@ -4,6 +4,10 @@ on:
     paths:
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/README.md.gotmpl'
+  push:
+    paths:
+      - 'roles/*/defaults/main.yaml'
+      - 'roles/*/README.md.gotmpl'
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,6 +34,7 @@ jobs:
         run: |
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
+          git update-index --no-assume-unchanged ./roles/*/README.md
           git commit -am 'docs(github-action): Update documentation'
           git push origin ${{ github.ref_name }}
 permissions:
