@@ -147,11 +147,11 @@ cilium_vars:
         org: cilium
       version: v0.16.20
     gateway_api:
-      file: experimental-install.yaml
+      file: standard-install.yaml
       repository:
         name: gateway-api
         org: kubernetes-sigs
-      version: v1.2.0
+      version: v1.2.1
     hubble:
       file: hubble-linux-arm64.tar.gz
       repository:

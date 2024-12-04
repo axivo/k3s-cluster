@@ -9,6 +9,9 @@ repos:
       - id: cert-manager
         args:
           - --chart-search-root=./roles/certmanager
+      - id: cilium
+        args:
+          - --chart-search-root=./roles/cilium
       - id: victoria-metrics-k8s-stack
         args:
           - --chart-search-root=./roles/victoriametrics

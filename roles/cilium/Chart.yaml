@@ -1,0 +1,17 @@
+apiVersion: v2
+name: cilium
+type: application
+version: 1.16.4
+appVersion: 1.0.0
+description: Documentation generator for cilium Ansible role
+home: https://github.com/cilium/cilium
+dependencies:
+  - name: cilium-cli
+    repository: https://github.com/cilium/cilium-cli
+    version: 0.16.20
+  - name: hubble
+    repository: https://github.com/cilium/hubble
+    version: 1.16.4
+  - name: gateway-api
+    repository: https://github.com/kubernetes-sigs/gateway-api
+    version: 1.2.1
