@@ -38,4 +38,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ externaldns_map.tls.key.prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}
+            name: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}

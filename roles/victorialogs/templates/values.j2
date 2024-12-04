@@ -6,7 +6,7 @@ podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
 server:
-{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victorialogs_map.ingress.server.annotations.items() %}
@@ -24,7 +24,7 @@ server:
     tls:
       - hosts:
           - {{ victorialogs_map.ingress.server.hostname }}
-        secretName: {{ externaldns_map.tls.key.prefix }}-{{ victorialogs_map.ingress.server.name }}
+        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victorialogs_map.ingress.server.name }}
 {% endif %}
 {% if victorialogs_vars.kubernetes.server.storage.enabled %}
   persistentVolume:
@@ -47,7 +47,7 @@ server:
     enabled: true
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
-{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled %}
   service:
     annotations:
 {% for key, value in victorialogs_map.infrastructure.server.annotations.items() %}

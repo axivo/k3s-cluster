@@ -63,7 +63,7 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: externaldns_vars.kubernetes.host.domain | lower != 'disabled'
+          when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
           block:
             - name: Create frontend gateway
               kubernetes.core.k8s:
@@ -82,9 +82,3 @@
                 definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
                 kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
                 wait: true
-
-        - name: Set frontend loadbalancer ip
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
-          when: externaldns_vars.kubernetes.host.domain | lower == 'disabled'

@@ -38,4 +38,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ externaldns_map.tls.key.prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+            name: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}

@@ -9,11 +9,13 @@ metadata:
   namespace: {{ argocd_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
+{% if global_map.infrastructure.enabled %}
   infrastructure:
     annotations:
 {% for key, value in argocd_map.infrastructure.server.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
+{% endif %}
   listeners:
     - allowedRoutes:
         kinds:
@@ -36,4 +38,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ externaldns_map.tls.key.prefix }}-{{ argocd_vars.kubernetes.server.gateway.service }}
+            name: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ argocd_vars.kubernetes.server.gateway.service }}

@@ -2,9 +2,9 @@ global_defs {
     enable_script_security
     max_auto_priority 99
     notification_email {
-        {{ cluster_vars.service.postfix.user.alias }}
+        {{ global_map.credentials.cluster.postfix.user.alias }}
     }
-    notification_email_from {{ cluster_vars.service.postfix.user.alias }}
+    notification_email_from {{ global_map.credentials.cluster.postfix.user.alias }}
     script_user haproxy
     smtp_connect_timeout 30
     smtp_server 127.0.0.1

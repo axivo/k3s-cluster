@@ -13,13 +13,13 @@
       ingress:
         server:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
-          hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+          hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
           name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}-{{ victorialogs_vars.kubernetes.helm.chart.name }}-server'
       infrastructure:
         server:
           annotations:
-            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.server }}'
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].server.service.ip }}'
   run_once: true
 
 - name: Set project fact

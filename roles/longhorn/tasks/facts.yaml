@@ -14,15 +14,15 @@
       gateway:
         frontend:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
-          hostname: '{{ longhorn_vars.kubernetes.frontend.gateway.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+          hostname: '{{ longhorn_vars.kubernetes.frontend.gateway.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
           http_route:
             insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
             secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'
       infrastructure:
         frontend:
           annotations:
-            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].loadbalancer.frontend }}'
+            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].frontend.service.ip }}'
   run_once: true
 
 - name: Set project fact

@@ -178,7 +178,7 @@ directRoutingSkipUnreachable: true
 ingressController:
   enabled: true
   service:
-    loadBalancerIP: 
+    loadBalancerIP: {{ global_map.infrastructure[role_name].ingress_controller.service.ip }}
 ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 l2announcements:
   enabled: true
