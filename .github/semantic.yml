@@ -1,0 +1,15 @@
+titleOnly: true
+# See: https://www.conventionalcommits.org
+# Valid types listed below can be overridden
+types:
+  - build
+  - ci
+  - chore
+  - docs
+  - feat
+  - fix
+  - perf
+  - refactor
+  - revert
+  - style
+  - test
