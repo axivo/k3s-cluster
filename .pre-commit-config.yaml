@@ -12,6 +12,9 @@ repos:
       - id: cilium
         args:
           - --chart-search-root=./roles/cilium
+      - id: external-dns
+        args:
+          - --chart-search-root=./roles/externaldns
       - id: victoria-metrics-k8s-stack
         args:
           - --chart-search-root=./roles/victoriametrics
