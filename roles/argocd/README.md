@@ -4,9 +4,9 @@
 
 The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.7/charts/argo-cd) deployment, reset and validation.
 
-## Role Binary Files
+## Role Dependencies
 
-See the installed binary files listed below, defined into [main.yaml](./defaults/main.yaml) `release` collection.
+See the installed role dependencies listed below, defined into [main.yaml](./defaults/main.yaml) `dependencies` collection.
 
 | Repository | Name | Version |
 |------------|------|---------|

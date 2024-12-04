@@ -4,7 +4,7 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
-    - cloudflare
+    - externaldns
     - k3s
     - victoriametrics
   loop_control:

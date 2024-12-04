@@ -5,7 +5,7 @@
     tasks_from: facts
   loop:
     - certmanager
-    - cloudflare
+    - externaldns
     - k3s
   loop_control:
     loop_var: role

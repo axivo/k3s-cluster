@@ -12,8 +12,8 @@
       gateway:
         server:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           http_route:
             insecure: '{{ argocd_vars.kubernetes.server.gateway.service }}-http'
             secure: '{{ argocd_vars.kubernetes.server.gateway.service }}-https'

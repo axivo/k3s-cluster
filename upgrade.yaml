@@ -14,8 +14,8 @@
         - argocd
         - certmanager
         - cilium
-        - cloudflare
         - cluster
+        - externaldns
         - helm
         - k3s
         - kured

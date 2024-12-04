@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ global_map.credentials[role_name].api.token.name }}
-  namespace: {{ cloudflare_vars.kubernetes.namespace }}
+  namespace: {{ externaldns_vars.kubernetes.namespace }}
 stringData:
   {{ global_map.credentials[role_name].api.token.key }}: {{ global_map.credentials[role_name].api.token.value }}
 type: Opaque

@@ -45,39 +45,39 @@
       ingress:
         alertmanager:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           name: 'alertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         grafana:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.grafana.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.grafana.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
         vmagent:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.vmagent.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmagent.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           name: 'vmagent-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         vmalert:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           name: 'vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
         vmcluster:
           vminsert:
             annotations:
-              cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+              cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
             name: 'vminsert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
           vmselect:
             annotations:
-              cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+              cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
             name: 'vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
           vmstorage:
             annotations:
-              cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+              cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+            hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
             name: 'vmstorage-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
   run_once: true
 

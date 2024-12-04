@@ -5,7 +5,7 @@ global:
 alertmanager:
   config:
     {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | indent(4) }}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_map.ingress.alertmanager.annotations.items() %}
@@ -20,13 +20,13 @@ alertmanager:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.alertmanager.hostname }}
-        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
+        secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
       maxUnavailable: 1
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
     serviceSpec:
       metadata:
         annotations:
@@ -82,7 +82,7 @@ defaultDashboards:
 grafana:
   admin:
     existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_map.ingress.grafana.annotations.items() %}
@@ -97,7 +97,7 @@ grafana:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.grafana.hostname }}
-        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
+        secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
 {% endif %}
   logLevel: {{ victoriametrics_vars.kubernetes.grafana.log_level }}
   podDisruptionBudget:
@@ -120,7 +120,7 @@ grafana:
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
 {% endif %}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
   service:
     annotations:
 {% for key, value in victoriametrics_map.infrastructure.grafana.annotations.items() %}
@@ -218,7 +218,7 @@ victoria-metrics-operator:
       memory: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory }}
 {% endif %}
 vmagent:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_map.ingress.vmagent.annotations.items() %}
@@ -233,14 +233,14 @@ vmagent:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmagent.hostname }}
-        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
+        secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
       maxUnavailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
     serviceSpec:
       metadata:
         annotations:
@@ -282,7 +282,7 @@ vmagent:
         sizeLimit: {{ victoriametrics_vars.kubernetes.vmagent.storage.size }}
 {% endif %}
 vmalert:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_map.ingress.vmalert.annotations.items() %}
@@ -297,14 +297,14 @@ vmalert:
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmalert.hostname }}
-        secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
+        secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
     podDisruptionBudget:
       maxUnavailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
     serviceSpec:
       metadata:
         annotations:
@@ -323,7 +323,7 @@ vmalert:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.memory }}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' and victoriametrics_vars.kubernetes.vmalert.ingress.enabled %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' and victoriametrics_vars.kubernetes.vmalert.ingress.enabled %}
     extraArgs:
       external.url: https://{{ victoriametrics_map.ingress.vmalert.hostname }}
 {% endif %}
@@ -338,7 +338,7 @@ vmalert:
 {% if k3s_map.cluster.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
   enabled: {{ victoriametrics_vars.kubernetes.vmcluster.enabled }}
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   ingress:
     insert:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.enabled }}
@@ -354,7 +354,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
+          secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
     select:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled }}
       annotations:
@@ -369,7 +369,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
+          secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
     storage:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.enabled }}
       annotations:
@@ -384,7 +384,7 @@ vmcluster:
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-          secretName: {{ cloudflare_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
+          secretName: {{ externaldns_map.tls.key.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
 {% endif %}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
@@ -408,7 +408,7 @@ vmcluster:
 {% if not victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
 {% endif %}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
       serviceSpec:
         metadata:
           annotations:
@@ -447,7 +447,7 @@ vmcluster:
 {% if not victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
 {% endif %}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
       serviceSpec:
         metadata:
           annotations:
@@ -486,7 +486,7 @@ vmcluster:
       podDisruptionBudget:
         maxUnavailable: 1
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
-{% if global_map.infrastructure.enabled or cloudflare_vars.kubernetes.host.domain | lower == 'disabled' %}
+{% if global_map.infrastructure.enabled or externaldns_vars.kubernetes.host.domain | lower == 'disabled' %}
       serviceSpec:
         metadata:
           annotations:

@@ -144,7 +144,7 @@
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
       "fileMatch": [
-        "roles/cloudflare/defaults/main.yaml"
+        "roles/externaldns/defaults/main.yaml"
       ],
       "matchStrings": [
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"

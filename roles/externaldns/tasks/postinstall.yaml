@@ -9,12 +9,12 @@
 
     - name: Update chart postinstall values
       kubernetes.core.helm:
-        chart_ref: '{{ cloudflare_map.helm.chart.reference }}'
-        chart_version: '{{ cloudflare_vars.kubernetes.helm.chart.version }}'
+        chart_ref: '{{ externaldns_map.helm.chart.reference }}'
+        chart_version: '{{ externaldns_vars.kubernetes.helm.chart.version }}'
         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
-        name: '{{ cloudflare_vars.kubernetes.helm.chart.name }}'
-        namespace: '{{ cloudflare_vars.kubernetes.namespace }}'
-        timeout: '{{ cloudflare_map.helm.timeout }}'
+        name: '{{ externaldns_vars.kubernetes.helm.chart.name }}'
+        namespace: '{{ externaldns_vars.kubernetes.namespace }}'
+        timeout: '{{ externaldns_map.helm.timeout }}'
         values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
         reset_values: false
         reuse_values: true

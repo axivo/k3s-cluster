@@ -1,0 +1,18 @@
+{{- define "chart.url" -}}
+{{- printf "%s/tree/%s-helm-chart-%s/charts/%s" .Home .Name .Version .Name -}}
+{{- end -}}
+{{- define "chart.urlCloudflare" -}}
+{{- printf "%s/blob/%s-helm-chart-%s/docs/tutorials/cloudflare.md" .Home .Name .Version -}}
+{{- end -}}
+# {{ template "chart.name" . }}
+
+{{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
+
+The role performs various tasks related to [Cloudflare]({{ template "chart.urlCloudflare" . }}) based
+`{{ template "chart.name" . }}` [chart]({{ template "chart.url" . }}) deployment, reset and validation.
+
+## Role Variables
+
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+
+{{ template "chart.valuesTable" . }}

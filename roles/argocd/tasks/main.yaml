@@ -76,7 +76,7 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
+          when: externaldns_vars.kubernetes.host.domain | lower != 'disabled'
           block:
             - name: Create server gateway
               kubernetes.core.k8s:
@@ -101,7 +101,7 @@
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
             wait: true
-          when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'
+          when: externaldns_vars.kubernetes.host.domain | lower == 'disabled'
 
         - name: Set server user name
           kubernetes.core.k8s:

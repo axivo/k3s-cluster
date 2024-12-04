@@ -5,7 +5,7 @@
   gather_facts: false
   vars_files:
     - ./roles/argocd/defaults/main.yaml
-    - ./roles/cloudflare/defaults/main.yaml
+    - ./roles/externaldns/defaults/main.yaml
     - ./roles/cluster/defaults/main.yaml
     - ./roles/kured/defaults/main.yaml
     - ./roles/longhorn/defaults/main.yaml
@@ -32,7 +32,7 @@
                         password: '{{ argocd_vars.kubernetes.server.admin.password }}'
                       user:
                         password: '{{ argocd_vars.kubernetes.server.user.password }}'
-              - cloudflare_vars:
+              - externaldns_vars:
                   kubernetes:
                     api:
                       token:

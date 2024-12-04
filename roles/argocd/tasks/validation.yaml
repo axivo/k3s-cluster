@@ -4,7 +4,7 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
-    - cloudflare
+    - externaldns
     - argocd
   loop_control:
     loop_var: role

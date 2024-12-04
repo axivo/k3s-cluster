@@ -14,7 +14,7 @@
         - argocd
         - certmanager
         - cilium
-        - cloudflare
+        - externaldns
         - helm
         - kured
         - longhorn

@@ -4,7 +4,7 @@
   run_once: true
   block:
     - name: Gateway Setup
-      when: cloudflare_vars.kubernetes.host.domain | lower != 'disabled'
+      when: externaldns_vars.kubernetes.host.domain | lower != 'disabled'
       block:
         - name: Create hubble ui gateway
           kubernetes.core.k8s:
@@ -28,7 +28,7 @@
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
-      when: cloudflare_vars.kubernetes.host.domain | lower == 'disabled'
+      when: externaldns_vars.kubernetes.host.domain | lower == 'disabled'
 
     - name: Hubble TLS
       when: cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager'

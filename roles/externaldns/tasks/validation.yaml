@@ -8,7 +8,7 @@
   block:
     - name: Validate project url
       ansible.builtin.uri:
-        url: '{{ cloudflare_project.url }}/{{ cloudflare_project.tag }}'
+        url: '{{ externaldns_project.url }}/{{ externaldns_project.tag }}'
         timeout: 5
       register: result
       delay: 1

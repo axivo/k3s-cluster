@@ -46,7 +46,7 @@
         - argocd
         - certmanager
         - cilium
-        - cloudflare
+        - externaldns
         - kured
         - longhorn
         - victorialogs
@@ -56,7 +56,7 @@
   roles:
     - cilium
     - certmanager
-    - cloudflare
+    - externaldns
     - argocd
     - kured
     - longhorn

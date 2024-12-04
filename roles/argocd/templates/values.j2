@@ -1,5 +1,5 @@
 global:
-{% if cloudflare_vars.kubernetes.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.kubernetes.host.domain | lower != 'disabled' %}
   domain: {{ argocd_map.gateway.server.hostname }}
 {% endif %}
   logging:

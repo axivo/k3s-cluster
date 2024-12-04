@@ -13,8 +13,8 @@
       ingress:
         server:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}-{{ victorialogs_vars.kubernetes.helm.chart.name }}-server'
       infrastructure:
         server:

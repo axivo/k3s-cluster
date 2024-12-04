@@ -13,8 +13,8 @@
         hubble:
           ui:
             annotations:
-              cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-            hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+              cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+            hostname: '{{ cilium_vars.kubernetes.hubble.ui.gateway.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
             http_route:
               insecure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-http'
               secure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-https'

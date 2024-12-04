@@ -1,0 +1,33 @@
+---
+externaldns_vars:
+  kubernetes:
+    acme:
+      # -- Available options are `production` and `staging`
+      server: staging
+    helm:
+      chart:
+        name: external-dns
+        version: v1.15.0
+      repository:
+        name: external-dns
+        org: kubernetes-sigs
+        url: https://kubernetes-sigs.github.io
+    host:
+      domain: noty.cc
+    log_level: warning
+    namespace: kube-system
+    policy: sync
+    resources:
+      limits:
+        cpu: null
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 128Mi
+    secret:
+      key: token
+      name: cloudflare-api-token
+    tls:
+      cluster_issuer:
+        name: cloudflare-cluster-issuer
+      key_prefix: cloudflare

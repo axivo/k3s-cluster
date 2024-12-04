@@ -14,8 +14,8 @@
       gateway:
         frontend:
           annotations:
-            cert-manager.io/cluster-issuer: '{{ cloudflare_resources.cluster.issuer }}'
-          hostname: '{{ longhorn_vars.kubernetes.frontend.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.host.domain }}'
+            cert-manager.io/cluster-issuer: '{{ externaldns_resources.cluster.issuer }}'
+          hostname: '{{ longhorn_vars.kubernetes.frontend.gateway.subdomain }}.{{ externaldns_vars.kubernetes.host.domain }}'
           http_route:
             insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
             secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'

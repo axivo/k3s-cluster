@@ -9,6 +9,6 @@
   block:
     - name: Remove repository
       kubernetes.core.helm_repository:
-        name: '{{ cloudflare_vars.kubernetes.helm.repository.org }}'
+        name: '{{ externaldns_vars.kubernetes.helm.repository.org }}'
         repo_state: absent
       when: "'helm' in ansible_facts.packages"

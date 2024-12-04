@@ -28,7 +28,7 @@
         - argocd
         - certmanager
         - cilium
-        - cloudflare
+        - externaldns
         - kured
         - longhorn
         - victorialogs
