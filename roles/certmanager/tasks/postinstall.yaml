@@ -11,7 +11,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ certmanager_map.helm.chart.reference }}'
         chart_version: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         name: '{{ certmanager_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ certmanager_vars.kubernetes.namespace }}'
         timeout: '{{ certmanager_map.helm.timeout }}'

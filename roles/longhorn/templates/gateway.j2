@@ -9,13 +9,6 @@ metadata:
   namespace: {{ longhorn_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
-{% if global_map.infrastructure.enabled %}
-  infrastructure:
-    annotations:
-{% for key, value in longhorn_map.infrastructure.frontend.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
-{% endif %}
   listeners:
     - allowedRoutes:
         kinds:
@@ -38,4 +31,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}
+            name: {{ externaldns_vars.cloudflare.prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}

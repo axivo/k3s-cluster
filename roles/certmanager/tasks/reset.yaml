@@ -15,7 +15,7 @@
 
     - name: Remove binary files
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/{{ item }}'
+        path: '{{ k3s_map.node.directory.bin }}/{{ item }}'
         state: absent
       loop:
         - cmctl

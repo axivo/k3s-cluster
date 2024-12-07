@@ -5,6 +5,14 @@
       cloudflare:
         acme:
           server: "{{ '-staging' if externaldns_vars.cloudflare.acme.server | lower == 'staging' | default('') }}"
+        api:
+          token:
+            key: token
+            name: '{{ externaldns_vars.cloudflare.prefix }}-api-token'
+        ca:
+          cluster:
+            issuer:
+              name: '{{ externaldns_vars.cloudflare.prefix }}-cluster-issuer'
       helm:
         chart:
           reference: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.chart.name }}'
@@ -21,11 +29,11 @@
       cloudflare:
         acme:
           server:
-            url: 'https://acme{{ externaldns_map.cloudflare.acme.server }}-v02.api.letsencrypt.org/directory'
+            url: https://acme{{ externaldns_map.cloudflare.acme.server }}-v02.api.letsencrypt.org/directory
         cluster:
-          issuer: '{{ externaldns_vars.cloudflare.tls.cluster_issuer.name }}{{ externaldns_map.cloudflare.acme.server }}'
+          issuer: '{{ externaldns_map.cloudflare.ca.cluster.issuer.name }}{{ externaldns_map.cloudflare.acme.server }}'
       tag: '{{ externaldns_vars.kubernetes.helm.chart.name }}-helm-chart-{{ externaldns_map.helm.chart.version }}'
-      url: 'https://github.com/{{ externaldns_map.helm.repository.name }}/releases/tag'
+      url: https://github.com/{{ externaldns_map.helm.repository.name }}/releases/tag
   run_once: true
 
 - name: Set variables fact

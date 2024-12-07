@@ -7,7 +7,7 @@ global:
 applicationSet:
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -29,7 +29,7 @@ configs:
 controller:
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -43,7 +43,7 @@ controller:
 dex:
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -56,7 +56,7 @@ dex:
 notifications:
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -72,7 +72,7 @@ redis:
 redis-ha:
   enabled: true
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   haproxy:
     resources:
@@ -103,7 +103,7 @@ redis-ha:
 redis:
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -127,7 +127,7 @@ repoServer:
 {% endif %}
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:
@@ -150,7 +150,7 @@ server:
 {% endif %}
   pdb:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
 {% if argocd_postinstall %}
   resources:
     limits:

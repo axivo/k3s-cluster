@@ -4,7 +4,7 @@
     - name: Create registries file
       ansible.builtin.template:
         src: registries.j2
-        dest: '{{ k3s_map.cluster.registries }}'
+        dest: '{{ k3s_project.cluster.registries }}'
         owner: root
         group: root
         mode: '0600'
@@ -18,13 +18,13 @@
     - name: Add variable to environment file
       ansible.builtin.lineinfile:
         path: /etc/environment
-        line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
+        line: KUBECONFIG={{ k3s_project.cluster.kubeconfig }}
         regexp: ^KUBECONFIG
 
     - name: Create symlinks
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/{{ item }}'
-        src: '{{ k3s_map.node.binary }}'
+        path: '{{ k3s_map.node.directory.bin }}/{{ item }}'
+        src: '{{ k3s_project.node.binary }}'
         state: link
       loop:
         - crictl
@@ -39,23 +39,23 @@
       any_errors_fatal: true
 
     - name: Token Configuration
-      when: k3s_project.token | length == 0
+      when: k3s_project.cluster.token | length == 0
       no_log: true
       run_once: true
       block:
         - name: Wait for token creation
           ansible.builtin.wait_for:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
+            path: '{{ k3s_map.node.directory.lib }}/server/node-token'
 
         - name: Read token
           ansible.builtin.slurp:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
+            path: '{{ k3s_map.node.directory.lib }}/server/node-token'
           register: node_token
 
         - name: Set project token
           ansible.utils.update_fact:
             updates:
-              - path: k3s_project.token
+              - path: k3s_project.cluster.token
                 value: '{{ node_token.content | b64decode | trim }}'
           register: update
 
@@ -98,7 +98,7 @@
         - name: Install kubepug binary
           ansible.builtin.unarchive:
             src: /tmp/{{ k3s_vars.release.kubepug.file }}
-            dest: '{{ k3s_vars.directory.bin }}'
+            dest: '{{ k3s_map.node.directory.bin }}'
             owner: root
             group: root
             mode: '0755'
@@ -124,7 +124,7 @@
 
     - name: Copy kubeconfig file
       ansible.builtin.copy:
-        src: '{{ k3s_map.cluster.kubeconfig }}'
+        src: '{{ k3s_project.cluster.kubeconfig }}'
         dest: '{{ kubeconfig.path }}'
         mode: preserve
         remote_src: true
@@ -146,7 +146,7 @@
           clusters:
             - cluster:
                 certificate-authority-data: "{{ datasource.clusters[0].cluster['certificate-authority-data'] }}"
-                server: https://{{ k3s_vars.server.api.host if k3s_map.cluster.ha else k3s_map_server.default_ip }}:{{ k3s_vars.server.api.port }}
+                server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha else k3s_map_server.default_ip }}:{{ k3s_vars.server.api.port }}
               name: '{{ datasource.clusters[0].name }}'
 
     - name: Update kubeconfig file
@@ -159,7 +159,7 @@
     - name: Copy kubeconfig file locally
       ansible.builtin.fetch:
         src: '{{ kubeconfig.path }}'
-        dest: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
+        dest: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
         flat: true
 
     - name: Remove kubeconfig file
@@ -169,7 +169,7 @@
 
     - name: Set local kubeconfig file permissions
       ansible.builtin.file:
-        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
+        path: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
         mode: '0600'
         state: file
       delegate_to: localhost

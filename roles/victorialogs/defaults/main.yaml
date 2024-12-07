@@ -5,15 +5,13 @@ victorialogs_vars:
       chart:
         alias: vls
         name: victoria-logs-single
-        version: v0.8.9
+        version: v0.8.10
       repository:
         name: helm-charts
         org: VictoriaMetrics
         url: https://victoriametrics.github.io
     namespace: kube-system
     server:
-      infrastructure:
-        enabled: false
       ingress:
         enabled: true
         subdomain: logs
@@ -35,11 +33,20 @@ victorialogs_vars:
       retention_period: 7d
     vector:
       enabled: true
+      autoscaling:
+        # -- If `false`, `replicas` value is set from `min_replicas` value
+        enabled: true
+        min_replicas: 1
+        max_replicas: 3
+        target:
+          utilization_percentage:
+            cpu: null
+            memory: 80
       log_level: warn
       resources:
         limits:
           cpu: null
-          memory: 512Mi
+          memory: 256Mi
         requests:
           cpu: 10m
-          memory: 512Mi
+          memory: 256Mi

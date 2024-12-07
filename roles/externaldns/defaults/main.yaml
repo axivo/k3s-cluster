@@ -2,18 +2,12 @@
 externaldns_vars:
   cloudflare:
     acme:
-      # -- Available options are `production` and `staging`
+      # -- Available options are [`production`](https://letsencrypt.org/docs/rate-limits/)
+      # and [`staging`](https://letsencrypt.org/docs/staging-environment/)
       server: staging
-    api:
-      token:
-        key: token
-        name: cloudflare-api-token
     host:
       domain: noty.cc
-    tls:
-      cluster_issuer:
-        name: cloudflare-cluster-issuer
-      key_prefix: cloudflare
+    prefix: cloudflare
   kubernetes:
     helm:
       chart:

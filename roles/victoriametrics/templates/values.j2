@@ -14,29 +14,16 @@ alertmanager:
     enabled: {{ victoriametrics_vars.kubernetes.alertmanager.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.alertmanager.hostname }}
-{% if not global_map.infrastructure.enabled %}
-    ingressClassName: cilium
-{% endif %}
+    ingressClassName: {{ victoriametrics_map.ingress.class.name }}
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.alertmanager.hostname }}
-        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
-      maxUnavailable: 1
-{% if global_map.infrastructure.enabled %}
-    serviceSpec:
-      metadata:
-        annotations:
-{% for key, value in victoriametrics_map.infrastructure.alertmanager.annotations.items() %}
-          {{ key | indent(10) }}: {{ value }}
-{% endfor %}
-      spec:
-        type: LoadBalancer
-      useAsDefault: true
-{% endif %}
+      minAvailable: 1
     storage:
 {% if victoriametrics_vars.kubernetes.alertmanager.storage.enabled %}
       volumeClaimTemplate:
@@ -91,18 +78,16 @@ grafana:
     enabled: {{ victoriametrics_vars.kubernetes.grafana.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.grafana.hostname }}
-{% if not global_map.infrastructure.enabled %}
-    ingressClassName: cilium
-{% endif %}
+    ingressClassName: {{ victoriametrics_map.ingress.class.name }}
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.grafana.hostname }}
-        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.grafana.name }}
 {% endif %}
   logLevel: {{ victoriametrics_vars.kubernetes.grafana.log_level }}
   podDisruptionBudget:
-    maxUnavailable: 1
-  replicas: 1
+    minAvailable: 1
+  replicas: {{ victoriametrics_vars.kubernetes.grafana.replicas }}
 {% if victoriametrics_postinstall %}
   resources:
     limits:
@@ -120,17 +105,9 @@ grafana:
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
 {% endif %}
-{% if global_map.infrastructure.enabled %}
-  service:
-    annotations:
-{% for key, value in victoriametrics_map.infrastructure.grafana.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
-    type: LoadBalancer
-{% endif %}
 kube-state-metrics:
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
   replicas: {{ victoriametrics_vars.kubernetes.kube_state_metrics.replicas }}
 {% if victoriametrics_postinstall %}
   resources:
@@ -155,7 +132,7 @@ kubeControllerManager:
             insecureSkipVerify: true
             serverName: localhost
 kubeEtcd:
-{% if not k3s_map.cluster.ha %}
+{% if not k3s_map.server.ha %}
   enabled: false
 {% endif %}
   endpoints:
@@ -202,11 +179,11 @@ victoria-metrics-operator:
         issuer:
           group: cert-manager.io
           kind: ClusterIssuer
-          name: {{ certmanager_vars.kubernetes.tls.cluster_issuer.name }}
+          name: {{ certmanager_map.ca.cluster.issuer.name }}
     enable_converter_ownership: true
   podDisruptionBudget:
     enabled: true
-    maxUnavailable: 1
+    minAvailable: 1
   replicaCount: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas }}
 {% if victoriametrics_postinstall %}
   resources:
@@ -227,30 +204,17 @@ vmagent:
     enabled: {{ victoriametrics_vars.kubernetes.vmagent.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.vmagent.hostname }}
-{% if not global_map.infrastructure.enabled %}
-    ingressClassName: cilium
-{% endif %}
+    ingressClassName: {{ victoriametrics_map.ingress.class.name }}
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmagent.hostname }}
-        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
-      maxUnavailable: 1
+      minAvailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
-{% if global_map.infrastructure.enabled %}
-    serviceSpec:
-      metadata:
-        annotations:
-{% for key, value in victoriametrics_map.infrastructure.vmagent.annotations.items() %}
-          {{ key | indent(10) }}: {{ value }}
-{% endfor %}
-      spec:
-        type: LoadBalancer
-      useAsDefault: true
-{% endif %}
 {% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
@@ -291,30 +255,17 @@ vmalert:
     enabled: {{ victoriametrics_vars.kubernetes.vmalert.ingress.enabled }}
     hosts:
       - {{ victoriametrics_map.ingress.vmalert.hostname }}
-{% if not global_map.infrastructure.enabled %}
-    ingressClassName: cilium
-{% endif %}
+    ingressClassName: {{ victoriametrics_map.ingress.class.name }}
     tls:
       - hosts:
           - {{ victoriametrics_map.ingress.vmalert.hostname }}
-        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
 {% endif %}
   spec:
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
     podDisruptionBudget:
-      maxUnavailable: 1
+      minAvailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
-{% if global_map.infrastructure.enabled %}
-    serviceSpec:
-      metadata:
-        annotations:
-{% for key, value in victoriametrics_map.infrastructure.vmalert.annotations.items() %}
-          {{ key | indent(10) }}: {{ value }}
-{% endfor %}
-      spec:
-        type: LoadBalancer
-      useAsDefault: true
-{% endif %}
 {% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
@@ -335,9 +286,9 @@ vmalert:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
 {% endif %}
-{% if k3s_map.cluster.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
+{% if k3s_map.server.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
-  enabled: {{ victoriametrics_vars.kubernetes.vmcluster.enabled }}
+  enabled: true
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     insert:
@@ -348,13 +299,11 @@ vmcluster:
 {% endfor %}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-{% if not global_map.infrastructure.enabled %}
-      ingressClassName: cilium
-{% endif %}
+      ingressClassName: {{ victoriametrics_map.ingress.class.name }}
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
-          secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
+          secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
     select:
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled }}
       annotations:
@@ -363,28 +312,24 @@ vmcluster:
 {% endfor %}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-{% if not global_map.infrastructure.enabled %}
-      ingressClassName: cilium
-{% endif %}
+      ingressClassName: {{ victoriametrics_map.ingress.class.name }}
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
-          secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
+          secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
     storage:
-      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.enabled }}
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled }}
       annotations:
 {% for key, value in victoriametrics_map.ingress.vmcluster.vmstorage.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
 {% endfor %}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-{% if not global_map.infrastructure.enabled %}
-      ingressClassName: cilium
-{% endif %}
+      ingressClassName: {{ victoriametrics_map.ingress.class.name }}
       tls:
         - hosts:
             - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
-          secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
+          secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmstorage.name }}
 {% endif %}
   spec:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
@@ -404,20 +349,9 @@ vmcluster:
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.log_level }}
       podDisruptionBudget:
-        maxUnavailable: 1
+        minAvailable: 1
 {% if not victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
-{% endif %}
-{% if global_map.infrastructure.enabled %}
-      serviceSpec:
-        metadata:
-          annotations:
-{% for key, value in victoriametrics_map.infrastructure.vmcluster.vminsert.annotations.items() %}
-            {{ key | indent(12) }}: {{ value }}
-{% endfor %}
-        spec:
-          type: LoadBalancer
-        useAsDefault: true
 {% endif %}
 {% if victoriametrics_postinstall %}
       resources:
@@ -443,20 +377,9 @@ vmcluster:
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.log_level }}
       podDisruptionBudget:
-        maxUnavailable: 1
+        minAvailable: 1
 {% if not victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
-{% endif %}
-{% if global_map.infrastructure.enabled %}
-      serviceSpec:
-        metadata:
-          annotations:
-{% for key, value in victoriametrics_map.infrastructure.vmcluster.vmselect.annotations.items() %}
-            {{ key | indent(12) }}: {{ value }}
-{% endfor %}
-        spec:
-          type: LoadBalancer
-        useAsDefault: true
 {% endif %}
 {% if victoriametrics_postinstall %}
       resources:
@@ -484,19 +407,8 @@ vmcluster:
     vmstorage:
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       podDisruptionBudget:
-        maxUnavailable: 1
+        minAvailable: 1
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
-{% if global_map.infrastructure.enabled %}
-      serviceSpec:
-        metadata:
-          annotations:
-{% for key, value in victoriametrics_map.infrastructure.vmcluster.vmstorage.annotations.items() %}
-            {{ key | indent(12) }}: {{ value }}
-{% endfor %}
-        spec:
-          type: LoadBalancer
-        useAsDefault: true
-{% endif %}
 {% if victoriametrics_postinstall %}
       resources:
         limits:
@@ -524,33 +436,46 @@ vmsingle:
   enabled: false
 {% else %}
 vmsingle:
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
+  ingress:
+    annotations:
+{% for key, value in victoriametrics_map.ingress.vmsingle.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
+    enabled: {{ victoriametrics_vars.kubernetes.vmsingle.ingress.enabled }}
+    hosts:
+      - {{ victoriametrics_map.ingress.vmsingle.hostname }}
+    ingressClassName: {{ victoriametrics_map.ingress.class.name }}
+    tls:
+      - hosts:
+          - {{ victoriametrics_map.ingress.vmsingle.hostname }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmsingle.name }}
+{% endif %}
   spec:
-    logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
-    podDisruptionBudget:
-      maxUnavailable: 1
-    replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
-    retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
+    logLevel: {{ victoriametrics_vars.kubernetes.vmsingle.log_level }}
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmsingle.replicas }}
 {% if victoriametrics_postinstall %}
     resources:
       limits:
-        cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.vmsingle.resources.limits.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmsingle.resources.limits.memory }}
       requests:
-        cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
+        cpu: {{ victoriametrics_vars.kubernetes.vmsingle.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmsingle.resources.requests.memory }}
 {% endif %}
+    retentionPeriod: {{ victoriametrics_vars.kubernetes.vmsingle.retention_period }}
     storage:
-{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.vmsingle.storage.enabled %}
       volumeClaimTemplate:
         spec:
           accessModes:
-            {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes | to_nice_yaml | indent(12) }}
+            {{ victoriametrics_vars.kubernetes.vmsingle.storage.access_modes | to_nice_yaml | indent(12) }}
           resources:
             requests:
-              storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
-          storageClassName: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.class }}
+              storage: {{ victoriametrics_vars.kubernetes.vmsingle.storage.size }}
+          storageClassName: {{ victoriametrics_vars.kubernetes.vmsingle.storage.class }}
 {% else %}
       emptyDir:
-        sizeLimit: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
+        sizeLimit: {{ victoriametrics_vars.kubernetes.vmsingle.storage.size }}
 {% endif %}
 {% endif %}

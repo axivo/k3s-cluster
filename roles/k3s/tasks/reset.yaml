@@ -73,12 +73,12 @@
             path: '{{ item }}'
             state: absent
           loop:
-            - '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.kubepug.name }}'
+            - '{{ k3s_map.node.directory.bin }}/{{ k3s_vars.release.kubepug.name }}'
 
         - name: Remove variable from environment file
           ansible.builtin.lineinfile:
             path: /etc/environment
-            line: KUBECONFIG={{ k3s_map.cluster.kubeconfig }}
+            line: KUBECONFIG={{ k3s_project.cluster.kubeconfig }}
             regexp: ^KUBECONFIG
             state: absent
 
@@ -87,17 +87,17 @@
         path: '{{ item }}'
         state: absent
       loop:
-        - '{{ k3s_map.node.binary }}'
-        - '{{ k3s_vars.directory.bin }}/crictl'
-        - '{{ k3s_vars.directory.bin }}/ctr'
-        - '{{ k3s_vars.directory.bin }}/kubectl'
-        - '{{ k3s_vars.directory.config }}'
+        - '{{ k3s_project.node.binary }}'
+        - '{{ k3s_map.node.directory.bin }}/crictl'
+        - '{{ k3s_map.node.directory.bin }}/ctr'
+        - '{{ k3s_map.node.directory.bin }}/kubectl'
+        - '{{ k3s_map.node.directory.config }}'
         - /etc/systemd/system/{{ k3s_map.service.name }}.service
         - /etc/systemd/system/{{ k3s_map.service.name }}.service.env
 
     - name: Remove local kubeconfig files
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.kubeconfig }}/{{ item }}'
+        path: '{{ k3s_vars.cluster.kubeconfig.path }}/{{ item }}'
         state: absent
       delegate_to: localhost
       loop:

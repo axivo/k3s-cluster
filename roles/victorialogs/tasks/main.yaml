@@ -39,7 +39,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ victorialogs_map.helm.chart.reference }}'
             chart_version: '{{ victorialogs_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}'
             namespace: '{{ victorialogs_vars.kubernetes.namespace }}'
             timeout: '{{ victorialogs_map.helm.timeout }}'

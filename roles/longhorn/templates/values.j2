@@ -23,16 +23,16 @@ defaultSettings:
   removeSnapshotsDuringFilesystemTrim: true
   replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance }}
 {% if k3s_vars.cluster.controlplane.tainted %}
-{% if k3s_map.node.taint.server | length > 0 %}
-  taintToleration: {{ k3s_map.node.taint.server | join | trim }}
+{% if k3s_resources.node.taint.server | length > 0 %}
+  taintToleration: {{ k3s_resources.node.taint.server | join | trim }}
 {% endif %}
-{% if k3s_map.cluster.tolerations | length > 0 %}
+{% if k3s_project.cluster.tolerations | length > 0 %}
 longhornDriver:
   tolerations:
-    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 longhornManager:
   tolerations:
-    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 {% endif %}
 {% if longhorn_postinstall %}

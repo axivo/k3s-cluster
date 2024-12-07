@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'roles/*/defaults/main.yaml'
+      - 'roles/*/Chart.yaml'
       - 'roles/*/README.md.gotmpl'
 concurrency:
   cancel-in-progress: true

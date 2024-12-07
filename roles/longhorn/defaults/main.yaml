@@ -26,9 +26,6 @@ longhorn_vars:
       gateway:
         service: longhorn-frontend
         subdomain: longhorn
-      infrastructure:
-        # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-        enabled: true
     helm:
       chart:
         name: longhorn

@@ -29,9 +29,6 @@ certmanager_vars:
     global:
       log_level: 2
     namespace: kube-system
-    tls:
-      cluster_issuer:
-        name: cert-manager-cluster-issuer
     webhook:
       resources:
         limits:

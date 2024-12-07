@@ -25,10 +25,6 @@
           name: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
           url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
         timeout: 10m0s
-      infrastructure:
-        server:
-          annotations:
-            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].server.service.ip }}'
       release:
         url: 'https://github.com/{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}/releases'
   run_once: true

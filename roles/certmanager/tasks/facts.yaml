@@ -2,6 +2,10 @@
 - name: Set map fact
   ansible.builtin.set_fact:
     certmanager_map:
+      ca:
+        cluster:
+          issuer:
+            name: '{{ certmanager_vars.kubernetes.helm.chart.name }}-cluster-issuer'
       helm:
         chart:
           reference: '{{ certmanager_vars.kubernetes.helm.repository.org }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'

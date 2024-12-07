@@ -25,7 +25,7 @@
         path: /etc/environment
         line: '{{ item.key }}={{ item.value }}'
         regexp: ^{{ item.key }}
-      loop: "{{ lookup('ansible.builtin.dict', helm_map.environment | combine(helm_vars.environment)) | sort(attribute='key') }}"
+      loop: "{{ lookup('ansible.builtin.dict', helm_project.environment | combine(helm_vars.environment)) | sort(attribute='key') }}"
 
     - name: Initialize variables
       ansible.builtin.shell: |
@@ -80,7 +80,7 @@
             name: helm-{{ helm_vars.release.repository.channel }}
             signed_by: /usr/share/keyrings/{{ helm_vars.release.key }}
             suites: all
-            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.distro }}/'
+            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.distro.name }}/'
             enabled: true
             trusted: true
 
@@ -109,40 +109,6 @@
             group: root
             mode: '0644'
 
-    - name: Remove Helm Plugins
-      notify: Restart service
-      block:
-        - name: Remove plugins
-          kubernetes.core.helm_plugin:
-            plugin_name: '{{ item.name }}'
-            state: absent
-          loop: '{{ helm_vars.plugins }}'
-
-        - name: Remove plugin packages
-          ansible.builtin.apt:
-            name: '{{ item }}'
-            state: absent
-            autoremove: true
-            clean: true
-            purge: true
-          loop: '{{ helm_plugin_packages_disabled | default([]) }}'
-
-    - name: Install Helm Plugins
-      block:
-        - name: Install plugin packages
-          ansible.builtin.apt:
-            name: '{{ item }}'
-            autoremove: true
-            update_cache: true
-          loop: '{{ helm_plugin_packages | default([]) }}'
-
-        - name: Install plugins
-          kubernetes.core.helm_plugin:
-            plugin_path: '{{ item.repository.url }}'
-            plugin_version: '{{ item.version }}'
-          loop: '{{ helm_vars.plugins }}'
-          register: result
-          delay: 1
-          retries: 3
-          until: result is not failed
-          when: item.enabled
+    - name: Helm Plugins
+      ansible.builtin.import_tasks:
+        file: plugins.yaml

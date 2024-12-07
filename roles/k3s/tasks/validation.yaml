@@ -8,7 +8,7 @@
   block:
     - name: Validate inventory
       ansible.builtin.assert:
-        that: k3s_map.cluster.ha or k3s_map.cluster.non_ha
+        that: k3s_map.server.ha or k3s_map.server.non_ha
         fail_msg: |-
           ERROR: Invalid number of 'server' type nodes.
             - Defined nodes: {{ k3s_map.server.hosts | length }} ({{ k3s_map.server.hosts | join(', ') }})

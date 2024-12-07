@@ -19,10 +19,6 @@
           http_route:
             insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
             secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'
-      infrastructure:
-        frontend:
-          annotations:
-            io.cilium/lb-ipam-ips: '{{ global_map.infrastructure[role_name].frontend.service.ip }}'
   run_once: true
 
 - name: Set project fact

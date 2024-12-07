@@ -49,7 +49,7 @@
             path: '{{ item }}'
             state: absent
           loop:
-            - '{{ helm_vars.directory.share }}'
+            - '{{ helm_map.directory.share }}'
             - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
             - /etc/systemd/system/helm-cache.service
             - /etc/systemd/system/helm-cache.timer
@@ -69,4 +69,4 @@
         line: '{{ item.key }}={{ item.value }}'
         regexp: ^{{ item.key }}
         state: absent
-      loop: "{{ lookup('ansible.builtin.dict', helm_map.environment | combine(helm_vars.environment)) }}"
+      loop: "{{ lookup('ansible.builtin.dict', helm_project.environment | combine(helm_vars.environment)) }}"

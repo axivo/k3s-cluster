@@ -8,7 +8,7 @@ configuration:
   messageTemplateReboot: {{ kured_vars.kubernetes.configuration.slack.messages.reboot }}
   messageTemplateUncordon: {{ kured_vars.kubernetes.configuration.slack.messages.uncordon }}
 {% endif %}
-  notifyUrl: {{ kured_vars.kubernetes.configuration.slack.notify_url }}
+  notifyUrl: {{ global_map.credentials[role_name].slack.notify.url }}
 {% endif %}
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}
@@ -38,7 +38,7 @@ service:
   create: true
   name: {{ kured_vars.kubernetes.helm.chart.name }}
 {% endif %}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
 tolerations:
-  {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(2) }}
+  {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(2) }}
 {% endif %}

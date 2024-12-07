@@ -10,7 +10,7 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_map.node.binary }}'
+        dest: '{{ k3s_project.node.binary }}'
         owner: root
         group: root
         mode: '0755'
@@ -21,7 +21,7 @@
 
     - name: Create configuration directory
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.config }}'
+        path: '{{ k3s_map.node.directory.config }}'
         state: directory
         owner: root
         group: root
@@ -34,7 +34,7 @@
     - name: Create configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_map.cluster.config }}'
+        dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
         mode: '0600'
@@ -75,7 +75,7 @@
     - name: Update server configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_map.cluster.config }}'
+        dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
         mode: '0600'

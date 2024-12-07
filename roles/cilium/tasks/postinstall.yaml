@@ -9,19 +9,19 @@
         - name: Create hubble ui gateway
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Create hubble ui http insecure route
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Create hubble ui http secure route
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
     - name: Hubble TLS
@@ -30,13 +30,13 @@
         - name: Create hubble certificate
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'certificate.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Create hubble cluster issuer
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
     - name: Set chart setup fact
@@ -51,7 +51,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ cilium_map.helm.chart.reference }}'
         chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
         namespace: '{{ cilium_vars.kubernetes.namespace }}'
         timeout: '{{ cilium_map.helm.timeout }}'

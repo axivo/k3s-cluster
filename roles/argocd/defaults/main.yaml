@@ -113,21 +113,17 @@ argocd_vars:
         admin:
           # -- (string) ArgoCD UI admin password, set at global level
           # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
-          password: null
+          password:
         user:
           # -- (string) ArgoCD UI user name, set at global level
           # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
-          name: null
+          name:
           # -- (string) ArgoCD UI user password, set at global level
           # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
-          password: null
+          password:
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
-      infrastructure:
-        # -- (string) `CiliumLoadBalancerIPPool` address, set at global level
-        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `infrastructure` collection
-        loadbalancer: null
       resources:
         limits:
           cpu: null

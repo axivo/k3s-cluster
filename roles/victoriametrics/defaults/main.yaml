@@ -40,7 +40,7 @@ victoriametrics_vars:
       chart:
         alias: vmks
         name: victoria-metrics-k8s-stack
-        version: v0.28.4
+        version: v0.30.3
       repository:
         grafana:
           name: helm-charts
@@ -59,6 +59,7 @@ victoriametrics_vars:
         enabled: true
         subdomain: grafana
       log_level: WARN
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -76,10 +77,10 @@ victoriametrics_vars:
             memory: 128Mi
       user:
         # -- (string) User name used to access Grafana UI
-        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
+        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
         name:
         # -- (string) User password used to access Grafana UI
-        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
+        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
         password:
     kube_state_metrics:
       replicas: 1
@@ -90,15 +91,11 @@ victoriametrics_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-    infrastructure:
-      # -- (string) Used globally for multiple services
-      # @default -- Set each value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
-      loadbalancer:
     namespace: kube-system
     victoria_metrics_operator:
-      # -- Available options are `info` or `error`
+      # -- Available options are `info` and `error`
       log_level: error
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -123,9 +120,6 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      infrastructure:
-        # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-        enabled: true
       ingress:
         enabled: true
         subdomain: agent
@@ -153,9 +147,6 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
-      infrastructure:
-        # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-        enabled: true
       ingress:
         enabled: true
         subdomain: alert
@@ -170,7 +161,7 @@ victoriametrics_vars:
           memory: 128Mi
     vmcluster:
       # -- If false, `vmsingle` settings are used
-      enabled: true
+      enabled: false
       replication_factor: 2
       retention_period: 72h
       vminsert:
@@ -182,9 +173,6 @@ victoriametrics_vars:
             name: memory
             target:
               utilization: 80
-        infrastructure:
-          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-          enabled: true
         ingress:
           enabled: false
           subdomain: insert
@@ -205,9 +193,6 @@ victoriametrics_vars:
             name: memory
             target:
               utilization: 80
-        infrastructure:
-          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-          enabled: true
         ingress:
           enabled: true
           subdomain: metrics
@@ -226,14 +211,11 @@ victoriametrics_vars:
           class: longhorn
           size: 5Gi
       vmstorage:
-        infrastructure:
-          # -- If false, a random `CiliumLoadBalancerIPPool` address is assigned
-          enabled: true
         ingress:
           enabled: false
           subdomain: storage
         log_level: WARN
-        replicas: 2
+        replicas: 1
         resources:
           limits:
             cpu: null
@@ -247,3 +229,23 @@ victoriametrics_vars:
             - ReadWriteOnce
           class: longhorn
           size: 20Gi
+    vmsingle:
+      ingress:
+        enabled: true
+        subdomain: metrics
+      log_level: WARN
+      replicas: 1
+      resources:
+        limits:
+          cpu: null
+          memory: 2560Mi
+        requests:
+          cpu: 10m
+          memory: 2560Mi
+      retention_period: 72h
+      storage:
+        enabled: true
+        access_modes:
+          - ReadWriteOnce
+        class: longhorn
+        size: 20Gi

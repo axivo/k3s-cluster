@@ -34,10 +34,10 @@
     - name: Chart Setup
       run_once: true
       block:
-        - name: Create api token secret
+        - name: Create cloudflare api token secret
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'api_token.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Set chart postinstall fact
@@ -48,7 +48,7 @@
           kubernetes.core.helm:
             chart_ref: '{{ externaldns_map.helm.chart.reference }}'
             chart_version: '{{ externaldns_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ externaldns_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ externaldns_vars.kubernetes.namespace }}'
             timeout: '{{ externaldns_map.helm.timeout }}'
@@ -64,5 +64,5 @@
         - name: Create cluster issuer
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true

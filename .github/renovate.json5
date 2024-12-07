@@ -8,27 +8,40 @@
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium/main/stable.txt",
       "format": "plain",
       "transformTemplates": [
-        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/cilium\"}"
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io\", \"sourceUrl\": \"https://github.com/cilium/cilium\"}"
       ]
     },
     "cilium-cli": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt",
       "format": "plain",
       "transformTemplates": [
-        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/cilium-cli\"}"
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io\", \"sourceUrl\": \"https://github.com/cilium/cilium-cli\"}"
+      ]
+    },
+    "cluster": {
+      "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/canonical/ubuntu.com/main/releases.yaml",
+      "format": "yaml",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": $string(lts.full_version)}], \"homepage\": \"https://ubuntu.com\", \"sourceUrl\": \"https://github.com/canonical/ubuntu.com\"}"
+      ]
+    },
+    "helm": {
+      "defaultRegistryUrlTemplate": "https://helm.baltorepo.com/stable/debian/packages/helm/badge/latest.json",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": $string(status)}], \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://helm.baltorepo.com/stable/debian/packages/helm/\"}"
       ]
     },
     "hubble": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/hubble/main/stable.txt",
       "format": "plain",
       "transformTemplates": [
-        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io/\", \"sourceUrl\": \"https://github.com/cilium/hubble\"}"
+        "{\"releases\": $.releases, \"homepage\": \"https://cilium.io\", \"sourceUrl\": \"https://github.com/cilium/hubble\"}"
       ]
     },
     "k3s": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest)}], \"homepage\": \"https://k3s.io/\", \"sourceUrl\": \"https://github.com/k3s-io/k3s\"}"
+        "{\"releases\": [{\"version\": $$.(data[id = 'stable'].latest)}], \"homepage\": \"https://k3s.io\", \"sourceUrl\": \"https://github.com/k3s-io/k3s\"}"
       ]
     }
   },
@@ -63,79 +76,98 @@
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-cd",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
         "roles/argocd/Chart.yaml",
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+argo-cd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "cert-manager/cert-manager",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/certmanager/Chart.yaml",
         "roles/certmanager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "cert-manager/cmctl",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/certmanager/Chart.yaml",
         "roles/certmanager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "custom.cilium",
       "depNameTemplate": "cilium/cilium",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "custom.cilium-cli",
       "depNameTemplate": "cilium/cilium-cli",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/gateway-api",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "custom.hubble",
       "depNameTemplate": "cilium/hubble",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -144,43 +176,67 @@
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
       "fileMatch": [
+        "roles/externaldns/Chart.yaml",
         "roles/externaldns/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "custom.helm",
+      "depNameTemplate": "debian/helm",
+      "fileMatch": [
+        "roles/helm/Chart.yaml",
+        "roles/helm/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "databus23/helm-diff",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/helm/Chart.yaml",
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "custom.k3s",
       "depNameTemplate": "k3s-io/k3s",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/k3s/Chart.yaml",
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubepug/kubepug",
+      "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
+        "roles/k3s/Chart.yaml",
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
+        "^dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -189,9 +245,11 @@
       "depNameTemplate": "kubereboot/kured",
       "extractVersionTemplate": "^kured-(?<version>.+)$",
       "fileMatch": [
+        "roles/kured/Chart.yaml",
         "roles/kured/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "kubereboot/charts"
@@ -200,12 +258,16 @@
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "longhorn/longhorn",
+      "extractVersionTemplate": "^longhorn-(?<version>.+)$",
       "fileMatch": [
+        "roles/longhorn/Chart.yaml",
         "roles/longhorn/defaults/main.yaml"
       ],
       "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
-      ]
+      ],
+      "packageNameTemplate": "longhorn/charts"
     },
     {
       "customType": "regex",
@@ -228,7 +290,7 @@
       "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
       "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
       "fileMatch": [
-        "roles/victorialogs/Chart.yaml",
+        "roles/victoriametrics/Chart.yaml",
         "roles/victoriametrics/defaults/main.yaml"
       ],
       "matchStrings": [

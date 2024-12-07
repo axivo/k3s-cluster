@@ -15,6 +15,7 @@ cilium_vars:
       external_access: false
       masquerade: true
       tproxy: true
+      # -- `1` for Longhorn CIFS backup, `4` for Cilium IP pool
       vlan_bypass_ids:
         - 1
         - 4
@@ -86,25 +87,16 @@ cilium_vars:
         gateway:
           service: hubble-ui
           subdomain: hubble
-        infrastructure:
-          # -- (string) `CiliumLoadBalancerIPPool` address, set at global level
-          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
-          loadbalancer:
+        # -- Related to [cilium/cilium#33109](https://github.com/cilium/cilium/issues/33109)
         replicas: 1
       tls:
         auto:
+          # -- Available options are `certmanager` and `helm`
           method: certmanager
-        certificate:
-          common:
-            name: hubble-common-certs
-          root:
-            name: hubble-root-certs
-        cluster_issuer:
-          name: hubble-cluster-issuer
     ingress_controller:
-      # -- (string) Assign the first `CiliumLoadBalancerIPPool` address, set at global level
-      # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
       service:
+        # -- Assign the `CiliumLoadBalancerIPPool` blocks start address
+        ip: 192.168.4.20
     ip_masq_agent:
       enabled: false
       non_masquerade_cidrs:
@@ -117,15 +109,13 @@ cilium_vars:
       algorithm: maglev
       ip_pool:
         blocks:
-          # -- (string) First `CiliumLoadBalancerIPPool` address, set at global level
-          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
-          start:
-          # -- (string) Last `CiliumLoadBalancerIPPool` address, set at global level
-          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) infrastructure
-          stop:
-        name: default-pool
+          # -- `CiliumLoadBalancerIPPool` blocks start address
+          start: 192.168.4.20
+          # -- `CiliumLoadBalancerIPPool` blocks stop address
+          stop: 192.168.4.100
+        name: cilium-ip-pool
       l2_announcement_policy:
-        name: default-l2-announcement-policy
+        name: cilium-l2-announcement-policy
       table_size: 16381
     log_options:
       # -- Available options are `Info`, `Warn` and `Error`
@@ -145,9 +135,10 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.20
+      version: v0.16.21
     gateway_api:
-      # -- See Cilium [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for implementation details
+      # -- See Cilium [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/),
+      # for implementation details
       file: experimental-install.yaml
       repository:
         name: gateway-api

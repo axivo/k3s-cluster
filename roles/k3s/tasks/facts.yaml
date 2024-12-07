@@ -1,43 +1,39 @@
 ---
-- name: Set list kubelet arguments fact
-  ansible.builtin.set_fact:
-    k3s_list_kubelet_args: "{{ k3s_list_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) | sort }}"
-  loop: '{{ k3s_vars.kubelet }}'
-  loop_control:
-    loop_var: kubelet
-  run_once: true
-
-- name: Set list taints fact
-  ansible.builtin.set_fact:
-    k3s_list_taints: "{{ k3s_list_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) | sort }}"
-  loop: '{{ k3s_vars.tolerations }}'
-  loop_control:
-    loop_var: taint
-  run_once: true
-
 - name: Set map fact
   ansible.builtin.set_fact:
     k3s_map:
       agent:
         ha: '{{ groups.agent | length > 2 }}'
       cluster:
-        config: '{{ k3s_vars.directory.config }}/config.yaml'
-        ha: '{{ groups.server | length > 2 }}'
-        kubeconfig: '{{ k3s_vars.directory.config }}/{{ k3s_vars.release.k3s.name }}.yaml'
         label: default
-        non_ha: '{{ groups.server | length == 1 }}'
-        registries: '{{ k3s_vars.directory.config }}/registries.yaml'
-        tolerations: "{{ k3s_vars.tolerations | select('search', 'control-plane') | default('') }}"
       loadbalancer:
         hosts: '{{ groups.server[-2:] }}'
         password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
       node:
-        binary: '{{ k3s_vars.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+        directory:
+          bin: /usr/local/bin
+          config: /etc/rancher/k3s
+          lib: /var/lib/rancher/k3s
         kubelet:
-          args: '{{ k3s_list_kubelet_args }}'
-        taint:
-          agent: "{{ k3s_list_taints | select('search', 'agent-not-ready') | default('') }}"
-          server: "{{ k3s_list_taints | select('search', 'control-plane') | default('') }}"
+          - arg: eviction-hard
+            value: imagefs.available<15%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
+          - arg: eviction-max-pod-grace-period
+            value: 60
+          - arg: eviction-minimum-reclaim
+            value: imagefs.available=15%,imagefs.inodesFree=5%,memory.available=500Mi,nodefs.available=10%,nodefs.inodesFree=5%
+          - arg: eviction-soft
+            value: imagefs.available<30%,imagefs.inodesFree<10%,memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<10%
+          - arg: eviction-soft-grace-period
+            value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
+          - arg: system-reserved
+            value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
+        tolerations:
+          - key: node.cilium.io/agent-not-ready
+            operator: Exists
+            effect: NoExecute
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
       release:
         k3s:
           checksum: '{{ k3s_vars.release.k3s.checksum }}'
@@ -47,7 +43,9 @@
           url: 'https://github.com/{{ k3s_vars.release.kubepug.repository.org }}/{{ k3s_vars.release.kubepug.repository.name }}/releases'
       server:
         default_host: '{{ hostvars[groups.server[0]].ansible_hostname | default(groups.server[0]) }}'
+        ha: '{{ groups.server | length > 2 }}'
         hosts: '{{ groups.server }}'
+        non_ha: '{{ groups.server | length == 1 }}'
       service:
         name: "k3s{{ '-agent' if ansible_host not in groups.server }}"
   run_once: true
@@ -68,6 +66,14 @@
 - name: Set project fact
   ansible.builtin.set_fact:
     k3s_project:
+      cluster:
+        config: '{{ k3s_map.node.directory.config }}/config.yaml'
+        kubeconfig: '{{ k3s_map.node.directory.config }}/{{ k3s_vars.release.k3s.name }}.yaml'
+        registries: '{{ k3s_map.node.directory.config }}/registries.yaml'
+        token: "{{ hostvars[k3s_map.server.default_host].k3s_project.cluster.token | default('') }}"
+        tolerations: "{{ k3s_map.node.tolerations | select('search', 'control-plane') | default('') }}"
+      node:
+        binary: '{{ k3s_map.node.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
       release:
         k3s:
           checksum: '{{ k3s_map.release.k3s.url }}/download/{{ k3s_vars.release.k3s.version }}/{{ k3s_map.release.k3s.checksum }}'
@@ -75,7 +81,33 @@
         kubepug:
           checksum: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_map.release.kubepug.checksum }}'
           file: '{{ k3s_map.release.kubepug.url }}/download/{{ k3s_vars.release.kubepug.version }}/{{ k3s_vars.release.kubepug.file }}'
-      token: "{{ hostvars[k3s_map.server.default_host].k3s_project.token | default('') }}"
+  run_once: true
+
+- name: Set project kubelet arguments fact
+  ansible.builtin.set_fact:
+    k3s_project_kubelet_args: "{{ k3s_project_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) | sort }}"
+  loop: '{{ k3s_map.node.kubelet }}'
+  loop_control:
+    loop_var: kubelet
+  run_once: true
+
+- name: Set project taints fact
+  ansible.builtin.set_fact:
+    k3s_project_taints: "{{ k3s_project_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) | sort }}"
+  loop: '{{ k3s_map.node.tolerations }}'
+  loop_control:
+    loop_var: taint
+  run_once: true
+
+- name: Set resources fact
+  ansible.builtin.set_fact:
+    k3s_resources:
+      node:
+        kubelet:
+          args: '{{ k3s_project_kubelet_args }}'
+        taint:
+          agent: "{{ k3s_project_taints | select('search', 'agent-not-ready') | default('') }}"
+          server: "{{ k3s_project_taints | select('search', 'control-plane') | default('') }}"
   run_once: true
 
 - name: Set service type fact

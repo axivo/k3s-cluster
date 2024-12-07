@@ -6,11 +6,11 @@ spec:
   acme:
     email: {{ global_map.credentials.cluster.postfix.user.alias }}
     privateKeySecretRef:
-      name: {{ externaldns_vars.cloudflare.tls.key_prefix }}-private-key
+      name: {{ externaldns_vars.cloudflare.prefix }}-private-key
     server: {{ externaldns_project.cloudflare.acme.server.url }}
     solvers:
       - dns01:
           cloudflare:
             apiTokenSecretRef:
-              key: {{ externaldns_vars.cloudflare.api.token.key }}
-              name: {{ externaldns_vars.cloudflare.api.token.name }}
+              key: {{ externaldns_map.cloudflare.api.token.key }}
+              name: {{ externaldns_map.cloudflare.api.token.name }}

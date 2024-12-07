@@ -144,7 +144,7 @@ hubble:
       certManagerIssuerRef:
         group: cert-manager.io
         kind: ClusterIssuer
-        name: {{ cilium_vars.kubernetes.hubble.tls.cluster_issuer.name }}
+        name: {{ cilium_map.ca.hubble.cluster.issuer.name }}
       method: {{ cilium_vars.kubernetes.hubble.tls.auto.method }}
 {% endif %}
 operator:
@@ -178,7 +178,7 @@ directRoutingSkipUnreachable: true
 ingressController:
   enabled: true
   service:
-    loadBalancerIP: {{ global_map.infrastructure[role_name].ingress_controller.service.ip }}
+    loadBalancerIP: {{ cilium_vars.kubernetes.ingress_controller.service.ip }}
 ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
 l2announcements:
   enabled: true

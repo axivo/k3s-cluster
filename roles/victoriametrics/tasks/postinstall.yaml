@@ -11,7 +11,7 @@
       kubernetes.core.helm:
         chart_ref: '{{ victoriametrics_project.helm.chart.reference }}'
         chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
-        kubeconfig: '{{ k3s_map.cluster.kubeconfig }}'
+        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
         namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
         timeout: '{{ victoriametrics_map.helm.timeout }}'

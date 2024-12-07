@@ -4,7 +4,7 @@ dashboards:
 {% endif %}
 podDisruptionBudget:
   enabled: true
-  maxUnavailable: 1
+  minAvailable: 1
 server:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
@@ -18,13 +18,11 @@ server:
         path:
           - /
         port: http
-{% if not global_map.infrastructure.enabled %}
     ingressClassName: cilium
-{% endif %}
     tls:
       - hosts:
           - {{ victorialogs_map.ingress.server.hostname }}
-        secretName: {{ externaldns_vars.cloudflare.tls.key_prefix }}-{{ victorialogs_map.ingress.server.name }}
+        secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victorialogs_map.ingress.server.name }}
 {% endif %}
 {% if victorialogs_vars.kubernetes.server.storage.enabled %}
   persistentVolume:
@@ -47,22 +45,27 @@ server:
     enabled: true
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
-{% if global_map.infrastructure.enabled %}
-  service:
-    annotations:
-{% for key, value in victorialogs_map.infrastructure.server.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
-    type: LoadBalancer
-{% endif %}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 {% if victorialogs_vars.kubernetes.vector.enabled %}
 vector:
   enabled: true
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
+{% if victorialogs_vars.kubernetes.vector.autoscaling.enabled %}
+  autoscaling:
+    enabled: true
+    maxReplicas: {{ victorialogs_vars.kubernetes.vector.autoscaling.max_replicas }}
+    minReplicas: {{ victorialogs_vars.kubernetes.vector.autoscaling.min_replicas }}
+    targetCPUUtilizationPercentage: {{ victorialogs_vars.kubernetes.vector.autoscaling.target.utilization_percentage.cpu }}
+    targetMemoryUtilizationPercentage: {{ victorialogs_vars.kubernetes.vector.autoscaling.target.utilization_percentage.memory }}
+{% else %}
+  replicas: {{ victorialogs_vars.kubernetes.vector.autoscaling.min_replicas }}
+{% endif %}
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
 {% if victorialogs_postinstall %}
   podMonitor:
     enabled: true
@@ -77,7 +80,7 @@ vector:
     enabled: true
 {% endif %}
 {% endif %}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_map.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_map.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
