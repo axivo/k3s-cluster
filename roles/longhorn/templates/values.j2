@@ -41,11 +41,8 @@ metrics:
     enabled: true
 {% endif %}
 persistence:
-  dataEngine: {{ longhorn_vars.kubernetes.persistence.data_engine }}
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
   defaultClassReplicaCount: 2
 {% else %}
   defaultClassReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
 {% endif %}
-  defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
-  removeSnapshotsDuringFilesystemTrim: {{ longhorn_vars.kubernetes.persistence.remove_snapshots_during_filesystem_trim }}

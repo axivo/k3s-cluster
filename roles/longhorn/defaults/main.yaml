@@ -35,7 +35,3 @@ longhorn_vars:
         org: longhorn
         url: https://charts.longhorn.io
     namespace: kube-system
-    persistence:
-      data_engine: v1
-      data_locality: disabled
-      remove_snapshots_during_filesystem_trim: enabled
