@@ -118,8 +118,8 @@ cilium_vars:
         name: cilium-l2-announcement-policy
       table_size: 16381
     log_options:
-      # -- Available options are `Info`, `Warn` and `Error`
-      level: Warn
+      # -- Available options are `INFO`, `WARNING`, `ERROR` and `FATAL`
+      level: WARNING
     namespace: kube-system
     operator:
       resources:
