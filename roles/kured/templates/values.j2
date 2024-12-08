@@ -1,8 +1,5 @@
 configuration:
   concurrency: {{ kured_vars.kubernetes.configuration.concurrency }}
-{% if kured_vars.kubernetes.configuration.log_format != 'text' %}
-  logFormat: {{ kured_vars.kubernetes.configuration.log_format }}
-{% endif %}
   period: {{ kured_vars.kubernetes.configuration.period }}
   rebootDelay: {{ kured_vars.kubernetes.configuration.reboot_delay }}
 {% if kured_vars.kubernetes.configuration.slack.enabled %}
@@ -11,17 +8,19 @@ configuration:
   messageTemplateReboot: {{ kured_vars.kubernetes.configuration.slack.messages.reboot }}
   messageTemplateUncordon: {{ kured_vars.kubernetes.configuration.slack.messages.uncordon }}
 {% endif %}
-  notifyUrl: {{ kured_vars.kubernetes.configuration.slack.notify_url }}
+  notifyUrl: {{ global_map.credentials[role_name].slack.notify.url }}
 {% endif %}
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}
   timeZone: {{ kured_vars.kubernetes.configuration.time.zone }}
-metrics:
-  create: {{ kured_vars.kubernetes.metrics.create }}
-  labels:
-    release: {{ prometheus_vars.kubernetes.helm.chart.name }}
-  namespace: {{ prometheus_vars.kubernetes.namespace }}
 {% if kured_postinstall %}
+{% if kured_vars.kubernetes.metrics.create %}
+metrics:
+  create: true
+  labels:
+    release: {{ victoriametrics_vars.kubernetes.helm.chart.alias }}
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
 resources:
   limits:
     cpu: {{ kured_vars.kubernetes.resources.limits.cpu }}
@@ -30,14 +29,16 @@ resources:
     cpu: {{ kured_vars.kubernetes.resources.requests.cpu }}
     memory: {{ kured_vars.kubernetes.resources.requests.memory }}
 {% endif %}
+{% if kured_vars.kubernetes.service.create %}
 service:
   annotations:
-{% for key, value in kured_vars.kubernetes.service.annotations.items() %}
+{% for key, value in kured_map.service.annotations.items() %}
     {{ key | indent(4) }}: {{ value }}
 {% endfor %}
-  create: {{ kured_vars.kubernetes.service.create }}
-  name: {{ kured_vars.kubernetes.service.name }}
-{% if k3s_vars.server.controlplane.tainted %}
+  create: true
+  name: {{ kured_vars.kubernetes.helm.chart.name }}
+{% endif %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
 tolerations:
-  {{ k3s_vars.tolerations | to_nice_yaml | indent(2) }}
+  {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(2) }}
 {% endif %}

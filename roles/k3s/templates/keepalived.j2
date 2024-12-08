@@ -2,9 +2,9 @@ global_defs {
     enable_script_security
     max_auto_priority 99
     notification_email {
-        {{ cluster_vars.service.postfix.user.alias }}
+        {{ global_map.credentials.cluster.postfix.user.alias }}
     }
-    notification_email_from {{ cluster_vars.service.postfix.user.alias }}
+    notification_email_from {{ global_map.credentials.cluster.postfix.user.alias }}
     script_user haproxy
     smtp_connect_timeout 30
     smtp_server 127.0.0.1
@@ -18,23 +18,23 @@ vrrp_script chk_haproxy {
 vrrp_instance haproxy-vip {
     authentication {
         auth_type AH
-        auth_pass {{ k3s_loadbalancer_password }}
+        auth_pass {{ k3s_map.loadbalancer.password }}
     }
     interface {{ k3s_vars.network.interface }}
-{% if ansible_host == k3s_loadbalancer_hosts[0] %}
+{% if ansible_host == k3s_map.loadbalancer.hosts[0] %}
     priority 200
     state MASTER 
     unicast_peer {
-        {{ k3s_loadbalancer_ips[1] }}
+        {{ k3s_map_loadbalancer.ips[1] }}
     }
-    unicast_src_ip {{ k3s_loadbalancer_ips[0] }}
+    unicast_src_ip {{ k3s_map_loadbalancer.ips[0] }}
 {% else %}
     priority 100
     state BACKUP
     unicast_peer {
-        {{ k3s_loadbalancer_ips[0] }}
+        {{ k3s_map_loadbalancer.ips[0] }}
     }
-    unicast_src_ip {{ k3s_loadbalancer_ips[1] }}
+    unicast_src_ip {{ k3s_map_loadbalancer.ips[1] }}
 {% endif %}
     smtp_alert
     track_script {

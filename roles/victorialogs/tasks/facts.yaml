@@ -1,0 +1,28 @@
+---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    victorialogs_map:
+      helm:
+        chart:
+          reference: '{{ victorialogs_vars.kubernetes.helm.repository.org }}/{{ victorialogs_vars.kubernetes.helm.chart.name }}'
+          version: '{{ victorialogs_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
+          url: '{{ victorialogs_vars.kubernetes.helm.repository.url }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+      ingress:
+        class:
+          name: cilium
+        server:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+          hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
+          name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}-{{ victorialogs_vars.kubernetes.helm.chart.name }}-server'
+  run_once: true
+
+- name: Set project fact
+  ansible.builtin.set_fact:
+    victorialogs_project:
+      tag: '{{ victorialogs_vars.kubernetes.helm.chart.name }}-{{ victorialogs_map.helm.chart.version }}'
+      url: 'https://github.com/{{ victorialogs_map.helm.repository.name }}/releases/tag'
+  run_once: true

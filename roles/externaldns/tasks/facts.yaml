@@ -1,0 +1,42 @@
+---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    externaldns_map:
+      cloudflare:
+        acme:
+          server: "{{ '-staging' if externaldns_vars.cloudflare.acme.server | lower == 'staging' | default('') }}"
+        api:
+          token:
+            key: token
+            name: '{{ externaldns_vars.cloudflare.prefix }}-api-token'
+        ca:
+          cluster:
+            issuer:
+              name: '{{ externaldns_vars.cloudflare.prefix }}-cluster-issuer'
+      helm:
+        chart:
+          reference: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.chart.name }}'
+          version: '{{ externaldns_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
+          url: '{{ externaldns_vars.kubernetes.helm.repository.url }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+  run_once: true
+
+- name: Set project fact
+  ansible.builtin.set_fact:
+    externaldns_project:
+      cloudflare:
+        acme:
+          server:
+            url: https://acme{{ externaldns_map.cloudflare.acme.server }}-v02.api.letsencrypt.org/directory
+        cluster:
+          issuer: '{{ externaldns_map.cloudflare.ca.cluster.issuer.name }}{{ externaldns_map.cloudflare.acme.server }}'
+      tag: '{{ externaldns_vars.kubernetes.helm.chart.name }}-helm-chart-{{ externaldns_map.helm.chart.version }}'
+      url: https://github.com/{{ externaldns_map.helm.repository.name }}/releases/tag
+  run_once: true
+
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    externaldns_vars: '{{ externaldns_vars }}'
+  run_once: true

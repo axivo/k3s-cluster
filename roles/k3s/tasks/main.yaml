@@ -8,9 +8,9 @@
   block:
     - name: Install k3s binary
       ansible.builtin.get_url:
-        url: '{{ k3s_release_url_file }}'
-        checksum: sha256:{{ k3s_release_url_checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/k3s'
+        url: '{{ k3s_project.release.k3s.file }}'
+        checksum: sha256:{{ k3s_project.release.k3s.checksum }}
+        dest: '{{ k3s_project.node.binary }}'
         owner: root
         group: root
         mode: '0755'
@@ -21,7 +21,7 @@
 
     - name: Create configuration directory
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.config }}'
+        path: '{{ k3s_map.node.directory.config }}'
         state: directory
         owner: root
         group: root
@@ -34,31 +34,22 @@
     - name: Create configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
         mode: '0600'
-
-    - name: Create registries file
-      ansible.builtin.template:
-        src: registries.j2
-        dest: '{{ k3s_vars.directory.config }}/registries.yaml'
-        owner: root
-        group: root
-        mode: '0600'
-      when: (k3s_vars.server.controlplane.tainted and ansible_host not in k3s_server_hosts) or not k3s_vars.server.controlplane.tainted
 
     - name: Create service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_service_name }}.service
+        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
         owner: root
         group: root
         mode: '0644'
 
     - name: Create service environment file
       ansible.builtin.file:
-        path: /etc/systemd/system/{{ k3s_service_name }}.service.env
+        path: /etc/systemd/system/{{ k3s_map.service.name }}.service.env
         access_time: preserve
         modification_time: preserve
         state: touch
@@ -69,84 +60,22 @@
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
-- name: Server Setup
-  when: ansible_host in k3s_server_hosts
+- name: Role Configuration
+  ansible.builtin.import_tasks:
+    file: configuration.yaml
+
+- name: Server Configuration
+  notify: Restart service
+  when: ansible_host in k3s_map.server.hosts
   block:
-    - name: Add variable to environment file
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: KUBECONFIG={{ k3s_vars.directory.config }}/k3s.yaml
-        regexp: ^KUBECONFIG
+    - name: Set server configuration postinstall fact
+      ansible.builtin.set_fact:
+        k3s_config_postinstall: true
 
-    - name: Create symlinks
-      ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/{{ item }}'
-        src: '{{ k3s_vars.directory.bin }}/k3s'
-        state: link
-      loop:
-        - crictl
-        - ctr
-        - kubectl
-
-    - name: Validate service state
-      ansible.builtin.wait_for:
-        port: '{{ k3s_vars.server.api.port }}'
-        state: drained
-        timeout: 30
-      any_errors_fatal: true
-
-    - name: Set Token
-      when: k3s_token | length == 0
-      block:
-        - name: Wait for token creation
-          ansible.builtin.wait_for:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-
-        - name: Read token
-          ansible.builtin.slurp:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-          register: node_token
-
-        - name: Set token fact
-          ansible.builtin.set_fact:
-            token: '{{ node_token.content | b64decode | trim }}'
-          run_once: true
-
-- name: Local Kubeconfig Setup
-  when:
-    - k3s_vars.server.kubeconfig.local
-    - ansible_host in ['localhost', k3s_server_default_host]
-  run_once: true
-  block:
-    - name: Copy kubeconfig file
-      ansible.builtin.copy:
-        src: '{{ k3s_vars.directory.config }}/k3s.yaml'
-        dest: /tmp/config
+    - name: Update server configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_project.cluster.config }}'
+        owner: root
+        group: root
         mode: '0600'
-        remote_src: true
-
-    - name: Set kubeconfig host
-      ansible.builtin.command:
-        cmd: kubectl config set-cluster default
-              --kubeconfig=/tmp/config
-              --server=https://{{ k3s_vars.server.api.host if k3s_ha_cluster else k3s_server_default_ip }}:{{ k3s_vars.server.api.port }}
-      changed_when: result.rc == 0
-      register: result
-
-    - name: Copy kubeconfig file locally
-      ansible.builtin.fetch:
-        src: /tmp/config
-        dest: "{{ k3s_vars.directory.kubeconfig + '/' }}"
-        flat: true
-
-    - name: Remove kubeconfig file
-      ansible.builtin.file:
-        path: /tmp/config
-        state: absent
-
-    - name: Set local kubeconfig file permissions
-      ansible.builtin.file:
-        path: "{{ k3s_vars.directory.kubeconfig + '/config' }}"
-        mode: '0600'
-        state: file
-      delegate_to: localhost

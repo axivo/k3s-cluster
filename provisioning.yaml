@@ -24,11 +24,6 @@
   hosts: cluster
   become: true
   gather_facts: true
-  post_tasks:
-    - name: Perform post-install tasks
-      ansible.builtin.import_role:
-        name: k3s
-        tasks_from: postinstall
   roles:
     - helm
     - k3s
@@ -45,23 +40,26 @@
   post_tasks:
     - name: Perform post-install tasks
       ansible.builtin.include_role:
-        name: '{{ role }}'
+        name: '{{ postinstall }}'
         tasks_from: postinstall
       loop:
         - argocd
         - certmanager
         - cilium
-        - cloudflare
+        - externaldns
         - kured
-        - prometheus
+        - longhorn
+        - victorialogs
+        - victoriametrics
       loop_control:
-        loop_var: role
+        loop_var: postinstall
   roles:
     - cilium
     - certmanager
-    - cloudflare
-    - longhorn
-    - prometheus
-    - kured
+    - externaldns
     - argocd
+    - kured
+    - longhorn
+    - victorialogs
+    - victoriametrics
   tags: charts

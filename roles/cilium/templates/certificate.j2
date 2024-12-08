@@ -1,16 +1,16 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ cilium_vars.kubernetes.hubble.tls.certificate.common.name }}
+  name: {{ cilium_map.ca.hubble.certificate.common.name }}
   namespace: {{ certmanager_vars.kubernetes.namespace }}
 spec:
-  commonName: {{ cilium_vars.kubernetes.hubble.tls.certificate.common.name }}
+  commonName: {{ cilium_map.ca.hubble.certificate.common.name }}
   isCA: true
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
-    name: {{ certmanager_vars.kubernetes.tls.cluster_issuer.name }}
+    name: {{ certmanager_map.ca.cluster.issuer.name }}
   privateKey:
     algorithm: ECDSA
     size: 256
-  secretName: {{ cilium_vars.kubernetes.hubble.tls.certificate.root.name }}
+  secretName: {{ cilium_map.ca.hubble.certificate.root.name }}

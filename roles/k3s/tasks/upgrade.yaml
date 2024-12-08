@@ -1,21 +1,18 @@
 ---
-- name: Set facts
-  ansible.builtin.import_tasks:
-    file: facts.yaml
-
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
-- name: Get binary status
-  ansible.builtin.stat:
-    path: '{{ k3s_vars.directory.bin }}/k3s'
-  changed_when: not k3s_binary.stat.exists
-  register: k3s_binary
-
-- name: Role Upgrade Validation
+- name: Cluster Validation
+  when: ansible_host == k3s_map.server.default_host
   run_once: true
   block:
+    - name: Get binary status
+      ansible.builtin.stat:
+        path: '{{ k3s_project.node.binary }}'
+      changed_when: not k3s_binary.stat.exists
+      register: k3s_binary
+
     - name: Validate deployed cluster
       ansible.builtin.assert:
         that: k3s_binary.stat.exists
@@ -23,28 +20,56 @@
         quiet: true
 
     - name: Get deployed cluster version
-      ansible.builtin.shell: |
-        set -eo pipefail
-        k3s --version | grep k3s | cut -d ' ' -f 3
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: k3s_version
+      kubernetes.core.k8s_cluster_info:
+        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+      register: k3s_cluster
+      no_log: true
 
 - name: Role Upgrade
   block:
-    - name: Set Token
-      when: ansible_host in k3s_server_hosts
-      run_once: true
-      block:
-        - name: Read token
-          ansible.builtin.slurp:
-            path: '{{ k3s_vars.directory.lib }}/server/node-token'
-          register: node_token
+    - name: Install k3s binary
+      ansible.builtin.get_url:
+        url: '{{ k3s_project.release.k3s.file }}'
+        checksum: sha256:{{ k3s_project.release.k3s.checksum }}
+        dest: '{{ k3s_project.node.binary }}'
+        owner: root
+        group: root
+        mode: '0755'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+      when: k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version
 
-        - name: Set token fact
-          ansible.builtin.set_fact:
-            k3s_token: '{{ node_token.content | b64decode | trim }}'
+    - name: Get configuration file status
+      ansible.builtin.stat:
+        checksum: sha256
+        path: '{{ k3s_project.cluster.config }}'
+      register: k3s_file
+
+    - name: Set server configuration postinstall fact
+      ansible.builtin.set_fact:
+        k3s_config_postinstall: false
+
+    - name: Update configuration file
+      ansible.builtin.template:
+        src: config.j2
+        dest: '{{ k3s_project.cluster.config }}'
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Update service file
+      ansible.builtin.template:
+        src: service.j2
+        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Role Configuration
+      ansible.builtin.import_tasks:
+        file: configuration.yaml
 
     - name: Set configuration postinstall fact
       ansible.builtin.set_fact:
@@ -53,25 +78,16 @@
     - name: Update configuration file
       ansible.builtin.template:
         src: config.j2
-        dest: '{{ k3s_vars.directory.config }}/config.yaml'
+        dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
         mode: '0600'
-      register: k3s_config
 
-    - name: Install k3s binary
-      ansible.builtin.get_url:
-        url: '{{ k3s_release_url_file }}'
-        checksum: sha256:{{ k3s_release_url_checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/k3s'
-        owner: root
-        group: root
-        mode: '0755'
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
-      when: k3s_version.stdout != k3s_vars.release.version
+    - name: Get revised configuration file status
+      ansible.builtin.stat:
+        checksum: sha256
+        path: '{{ k3s_project.cluster.config }}'
+      register: k3s_file_revised
 
     - name: Schedule reboot
       ansible.builtin.file:
@@ -82,4 +98,6 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_config.changed or k3s_version.stdout != k3s_vars.release.version
+      when: >
+        (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or
+        (k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version)

@@ -1,0 +1,16 @@
+---
+- name: Role Facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Role Validation
+  run_once: true
+  block:
+    - name: Validate project url
+      ansible.builtin.uri:
+        url: '{{ victorialogs_project.url }}/{{ victorialogs_project.tag }}'
+        timeout: 5
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed

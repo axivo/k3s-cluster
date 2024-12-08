@@ -3,7 +3,6 @@ kured_vars:
   kubernetes:
     configuration:
       concurrency: 1
-      log_format: text
       period: 15m
       reboot_delay: 60s
       slack:
@@ -13,15 +12,9 @@ kured_vars:
           drain: ''
           reboot: ''
           uncordon: ''
-        notify_url: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          65346138646335313333393731396164323561333538653835656436306164353735376332373364
-          3465383862396539373964333735643334393336313337390a313539383465333039323664623235
-          62306634663130353837346462326438363232636333613661376235623438316636336433633037
-          3231376662636334360a616338386561663830356565373266666464363335626635663333643837
-          61613237663063383138313732653866613036376334373664313832613335663632666434356162
-          36616265323863373935643866393033623563383436396231663461373563356430316337313436
-          356561393562613137646636643332353137
+        # -- (string) Slack notifications, see [documentation](https://kured.dev/docs/configuration/#notifications) for details
+        # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
+        notify_url:
       time:
         start: '04:00'
         end: '08:00'
@@ -29,14 +22,13 @@ kured_vars:
     helm:
       chart:
         name: kured
-        org: kubereboot
         version: v5.5.2
       repository:
         name: charts
         org: kubereboot
         url: https://kubereboot.github.io
     metrics:
-      create: 'true'
+      create: true
     namespace: kube-system
     resources:
       limits:
@@ -46,9 +38,4 @@ kured_vars:
         cpu: 10m
         memory: 128Mi
     service:
-      annotations:
-        prometheus.io/path: /metrics
-        prometheus.io/port: 8080
-        prometheus.io/scrape: 'true'
-      create: 'true'
-      name: kured
+      create: true

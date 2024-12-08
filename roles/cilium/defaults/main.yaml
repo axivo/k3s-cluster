@@ -9,10 +9,36 @@ cilium_vars:
         requests:
           cpu: 10m
           memory: 256Mi
+    bpf:
+      clock_probe: true
+      datapath_mode: netkit
+      external_access: false
+      masquerade: true
+      tproxy: true
+      # -- `1` for Longhorn CIFS backup, `4` for Cilium IP pool
+      vlan_bypass_ids:
+        - 1
+        - 4
+    cgroup:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     client:
       rate_limit:
         burst: 100
         qps: 50
+    cni:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     envoy:
       resources:
         limits:
@@ -41,6 +67,7 @@ cilium_vars:
             memory: 128Mi
         retry_timeout: 10s
       ui:
+        enabled: true
         backend:
           resources:
             limits:
@@ -60,25 +87,21 @@ cilium_vars:
         gateway:
           service: hubble-ui
           subdomain: hubble
-        infrastructure:
-          annotations:
-            io.cilium/lb-ipam-ips: 192.168.4.19
+        # -- Related to [cilium/cilium#33109](https://github.com/cilium/cilium/issues/33109)
         replicas: 1
       tls:
         auto:
+          # -- Available options are `certmanager` and `helm`
           method: certmanager
-        certificate:
-          common:
-            name: hubble-common-certs
-          root:
-            name: hubble-root-certs
-        cluster_issuer:
-          name: hubble-cluster-issuer
-    ingress:
-      controller:
-        service:
-          loadbalancer:
-            ip: 192.168.4.17
+    ingress_controller:
+      service:
+        # -- Assign the `CiliumLoadBalancerIPPool` blocks start address
+        ip: 192.168.4.20
+    ip_masq_agent:
+      enabled: false
+      non_masquerade_cidrs:
+        - 10.0.0.0/8
+        - 192.168.0.0/16
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
@@ -86,12 +109,17 @@ cilium_vars:
       algorithm: maglev
       ip_pool:
         blocks:
-          start: 192.168.4.16
-          stop: 192.168.4.50
-        name: default-pool
+          # -- `CiliumLoadBalancerIPPool` blocks start address
+          start: 192.168.4.20
+          # -- `CiliumLoadBalancerIPPool` blocks stop address
+          stop: 192.168.4.100
+        name: cilium-ip-pool
       l2_announcement_policy:
-        name: default-l2-announcement-policy
+        name: cilium-l2-announcement-policy
       table_size: 16381
+    log_options:
+      # -- Available options are `INFO`, `WARNING`, `ERROR` and `FATAL`
+      level: WARNING
     namespace: kube-system
     operator:
       resources:
@@ -101,20 +129,21 @@ cilium_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-    routing_mode: native
   release:
     cli:
       file: cilium-linux-arm64.tar.gz
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.20
+      version: v0.16.21
     gateway_api:
+      # -- See Cilium [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/),
+      # for implementation details
       file: experimental-install.yaml
       repository:
         name: gateway-api
         org: kubernetes-sigs
-      version: v1.2.0
+      version: v1.2.1
     hubble:
       file: hubble-linux-arm64.tar.gz
       repository:

@@ -1,0 +1,20 @@
+{{- define "chart.url" -}}
+{{- printf "%s/%s" .Home .Version -}}
+{{- end -}}
+# {{ template "chart.name" . }}
+
+{{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
+
+The role performs various tasks related to `{{ template "chart.name" . }}` [package]({{ template "chart.url" . }}) deployment, reset and validation.
+
+## Helm Plugins
+
+See the installed `helm` plugins listed below, defined into [main.yaml](./defaults/main.yaml) `plugins` collection.
+
+{{ template "chart.requirementsTable" . }}
+
+## Role Variables
+
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+
+{{ template "chart.valuesTable" . }}

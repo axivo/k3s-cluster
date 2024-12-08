@@ -1,11 +1,11 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.import_role:
     name: k3s
     tasks_from: facts
 
 - name: Role Reset
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Remove repository
       kubernetes.core.helm_repository:
@@ -15,5 +15,5 @@
 
     - name: Remove binary file
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/argocd'
+        path: '{{ k3s_map.node.directory.bin }}/argocd'
         state: absent

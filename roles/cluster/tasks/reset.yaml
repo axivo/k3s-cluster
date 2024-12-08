@@ -1,6 +1,21 @@
 ---
-- name: Clean root mail
-  ansible.builtin.lineinfile:
-    path: /var/mail/root
-    regexp: ^.*
-    state: absent
+- name: Role Reset
+  block:
+    - name: Remove packages
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: absent
+        autoremove: true
+        clean: true
+        purge: true
+      loop:
+        - cifs-utils
+      when:
+        - item in ansible_facts.packages
+        - prompt_remove_packages in ['y', 'Y']
+
+    - name: Clean root mail
+      ansible.builtin.lineinfile:
+        path: /var/mail/root
+        regexp: ^.*
+        state: absent

@@ -1,18 +1,20 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
-    - cloudflare
+    - externaldns
     - k3s
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
 - name: Role Provisioning
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Validate service state
       ansible.builtin.wait_for:
@@ -29,22 +31,28 @@
     - name: Chart Setup
       run_once: true
       block:
-        - name: Create backup secret
+        - name: Create backup credentials secret
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'secret.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
           when:
             - longhorn_vars.kubernetes.default_settings.backup.enabled
-            - longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs'
+            - longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs'
+          no_log: true
+
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            longhorn_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ longhorn_project_chart }}'
+            chart_ref: '{{ longhorn_map.helm.chart.reference }}'
             chart_version: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ longhorn_vars.kubernetes.namespace }}'
+            timeout: '{{ longhorn_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true
@@ -55,32 +63,22 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
+          when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
           block:
-            - name: Set hostname fact
-              ansible.builtin.set_fact:
-                hostname: '{{ longhorn_vars.kubernetes.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-
             - name: Create frontend gateway
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create http route
+            - name: Create frontend http insecure route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create https route
+            - name: Create frontend http secure route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
-
-        - name: Set frontend loadbalancer ip
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'

@@ -1,0 +1,20 @@
+{{- define "chart.url" -}}
+{{- printf "%s/releases/tag/v%s" .Home .Version -}}
+{{- end -}}
+# {{ template "chart.name" . }}
+
+{{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
+
+The role performs various tasks related to `{{ template "chart.name" . }}` [cluster]({{ template "chart.url" . }}) deployment, reset and validation.
+
+## Role Dependencies
+
+See the installed role dependencies listed below, defined into [main.yaml](./defaults/main.yaml) `release` collection.
+
+{{ template "chart.requirementsTable" . }}
+
+## Role Variables
+
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+
+{{ template "chart.valuesTable" . }}

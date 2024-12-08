@@ -4,24 +4,28 @@ longhorn_vars:
     default_settings:
       backup:
         enabled: true
-        secret:
-          name: longhorn-secret
-        target: nfs://192.168.1.8:/mnt/default/opt/backup
-        user:
-          name: floren
-          password: !vault |
-            $ANSIBLE_VAULT;1.1;AES256
-            39316363313963356635616531306233316639313366646238383831633731646539663830326332
-            3663343133393436396234346339623366363366616263310a363937643063343133663036333936
-            65653632373566323430363838386531336365316262363937376565653430313138303935386663
-            6133643231643063640a383531396462663633663532383630316636313034636664613632323736
-            3835
+        # -- See Longhorn [documentation](https://longhorn.io/docs/latest/snapshots-and-backups/backup-and-restore/set-backup-target), for more details
+        target: cifs://192.168.1.8/backup
+        # user:
+        #   # -- (string) User name used to access CIFS share
+        #   # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
+        #   name:
+        #   # -- (string) User password used to access CIFS share
+        #   # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) credentials
+        #   password:
+      collect_usage_metrics: false
       data_locality: strict-local
-      orphan_auto_deletion: true
+      data_path: /var/lib/longhorn
+      log_level: Warn
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
-      replica_auto_balance: best-effort
-      replicas: 3
-      usage_metrics: false
+      volume:
+        replica_auto_balance: least-effort
+        # -- Minimum replicas accepted value is `2`
+        replicas: 2
+    frontend:
+      gateway:
+        service: longhorn-frontend
+        subdomain: longhorn
     helm:
       chart:
         name: longhorn
@@ -30,14 +34,4 @@ longhorn_vars:
         name: longhorn
         org: longhorn
         url: https://charts.longhorn.io
-    gateway:
-      service: longhorn-frontend
-      subdomain: longhorn
-    infrastructure:
-      annotations:
-        io.cilium/lb-ipam-ips: 192.168.4.20
     namespace: kube-system
-    persistence:
-      data_locality: best-effort
-      migratable: true
-      replicas: 3

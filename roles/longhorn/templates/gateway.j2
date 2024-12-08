@@ -2,23 +2,20 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: {{ cloudflare_cluster_issuer }}
-  name: {{ longhorn_vars.kubernetes.gateway.service }}
+{% for key, value in longhorn_map.gateway.frontend.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
+{% endfor %}
+  name: {{ longhorn_vars.kubernetes.frontend.gateway.service }}
   namespace: {{ longhorn_vars.kubernetes.namespace }}
 spec:
   gatewayClassName: cilium
-  infrastructure:
-    annotations:
-{% for key, value in longhorn_vars.kubernetes.infrastructure.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
   listeners:
     - allowedRoutes:
         kinds:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ longhorn_map.gateway.frontend.hostname }}
       name: http
       port: 80
       protocol: HTTP
@@ -27,11 +24,11 @@ spec:
           - kind: HTTPRoute
         namespaces:
           from: Same
-      hostname: {{ hostname }}
+      hostname: {{ longhorn_map.gateway.frontend.hostname }}
       name: https
       port: 443
       protocol: HTTPS
       tls:
         certificateRefs:
           - kind: Secret
-            name: {{ cloudflare_tls_key_prefix }}-{{ longhorn_vars.kubernetes.gateway.service }}
+            name: {{ externaldns_vars.cloudflare.prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}

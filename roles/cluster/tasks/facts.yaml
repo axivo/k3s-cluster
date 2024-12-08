@@ -1,4 +1,10 @@
 ---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    cluster_map:
+      ssh:
+        authorized_key: "{{ '/'.join([cluster_vars.ssh.path, cluster_vars.ssh.key]) }}"
+
 - name: Set variables fact
   ansible.builtin.set_fact:
     cluster_vars: '{{ cluster_vars }}'

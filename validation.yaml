@@ -6,7 +6,7 @@
   tasks:
     - name: Validate global settings
       ansible.builtin.include_role:
-        name: '{{ item }}'
+        name: '{{ validation }}'
         tasks_from: validation
       loop:
         - cluster
@@ -14,8 +14,11 @@
         - argocd
         - certmanager
         - cilium
-        - cloudflare
+        - externaldns
         - helm
         - kured
         - longhorn
-        - prometheus
+        - victorialogs
+        - victoriametrics
+      loop_control:
+        loop_var: validation

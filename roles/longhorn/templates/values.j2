@@ -1,28 +1,48 @@
 defaultSettings:
-  allowCollectingLonghornUsageMetrics: {{ longhorn_vars.kubernetes.default_settings.usage_metrics }}
+  allowCollectingLonghornUsageMetrics: {{ longhorn_vars.kubernetes.default_settings.collect_usage_metrics }}
+  autoCleanupRecurringJobBackupSnapshot: true
+  autoCleanupSnapshotWhenDeleteBackup: true
+  autoCleanupSystemGeneratedSnapshot: true
 {% if longhorn_vars.kubernetes.default_settings.backup.enabled %}
   backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
-{% if longhorn_vars.kubernetes.default_settings.backup.target[:3] | lower != 'nfs' %}
-  backupTargetCredentialSecret: {{ longhorn_vars.kubernetes.default_settings.backup.secret.name }}
+{% if longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs' %}
+  backupTargetCredentialSecret: {{ longhorn_map.credentials.backup.secret }}
 {% endif %}
 {% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
-  defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.replicas }}
-  nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
-  orphanAutoDeletion: {{ longhorn_vars.kubernetes.default_settings.orphan_auto_deletion }}
-  replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.replica_auto_balance }}
-{% if k3s_vars.server.controlplane.tainted %}
-{% if k3s_node_default_taint | length > 0 %}
-  taintToleration: {{ k3s_node_default_taint | join | trim }}
+  defaultDataPath: {{ longhorn_vars.kubernetes.default_settings.data_path }}
+{% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
+  defaultReplicaCount: 2
+{% else %}
+  defaultReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
 {% endif %}
+  disableSchedulingOnCordonedNode: true
+  logLevel: {{ longhorn_vars.kubernetes.default_settings.log_level }}
+  nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
+  orphanAutoDeletion: true
+  removeSnapshotsDuringFilesystemTrim: true
+  replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance }}
+{% if k3s_vars.cluster.controlplane.tainted %}
+{% if k3s_resources.node.taint.server | length > 0 %}
+  taintToleration: {{ k3s_resources.node.taint.server | join | trim }}
+{% endif %}
+{% if k3s_project.cluster.tolerations | length > 0 %}
 longhornDriver:
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 longhornManager:
   tolerations:
-    {{ k3s_vars.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
+{% endif %}
+{% endif %}
+{% if longhorn_postinstall %}
+metrics:
+  serviceMonitor:
+    enabled: true
 {% endif %}
 persistence:
-  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.persistence.replicas }}
-  defaultDataLocality: {{ longhorn_vars.kubernetes.persistence.data_locality }}
-  migratable: {{ longhorn_vars.kubernetes.persistence.migratable }}
+{% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
+  defaultClassReplicaCount: 2
+{% else %}
+  defaultClassReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
+{% endif %}
