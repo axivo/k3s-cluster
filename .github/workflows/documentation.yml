@@ -31,8 +31,10 @@ jobs:
         run: |
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
-          git add -fNA ./roles/*/README.md
+          git fetch
+          git switch ${{ github.event.pull_request.head.ref }}
+          git add -fA ./roles/*/README.md
           git commit -am 'docs(github-action): Update documentation'
-          git push origin ${{ github.ref_name }}
+          git push origin ${{ github.event.pull_request.head.ref }}
 permissions:
   contents: write
