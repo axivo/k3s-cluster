@@ -172,6 +172,17 @@
     },
     {
       "customType": "regex",
+      "datasourceTemplate": "custom.cluster",
+      "depNameTemplate": "cluster/ubuntu",
+      "fileMatch": [
+        "roles/cluster/Chart.yaml"
+      ],
+      "matchStrings": [
+        "^version:\\s+(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
