@@ -290,8 +290,8 @@
         "roles/victorialogs/defaults/main.yaml"
       ],
       "matchStrings": [
-        "version:\\s+(?<currentValue>.+)",
-        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)",
+        "^version:\\s+(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     },
