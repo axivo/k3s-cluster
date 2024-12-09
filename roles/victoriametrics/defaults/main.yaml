@@ -124,14 +124,14 @@ victoriametrics_vars:
         enabled: true
         subdomain: agent
       log_level: WARN
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
-          memory: 512Mi
+          memory: 1024Mi
         requests:
           cpu: 10m
-          memory: 512Mi
+          memory: 1024Mi
       storage:
         enabled: false
         access_modes:
@@ -151,7 +151,7 @@ victoriametrics_vars:
         enabled: true
         subdomain: alert
       log_level: WARN
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -238,10 +238,10 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 2560Mi
+          memory: 2048Mi
         requests:
           cpu: 10m
-          memory: 2560Mi
+          memory: 2048Mi
       retention_period: 72h
       storage:
         enabled: true

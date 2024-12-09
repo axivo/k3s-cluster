@@ -118,6 +118,17 @@ kube-state-metrics:
       cpu: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.memory }}
 {% endif %}
+kubeApiServer:
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: https
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecureSkipVerify: true
+            serverName: localhost
 kubeControllerManager:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
@@ -265,7 +276,7 @@ vmalert:
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
     podDisruptionBudget:
       minAvailable: 1
-    replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmalert.replicas }}
 {% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
