@@ -34,7 +34,7 @@ jobs:
           git fetch
           git switch ${{ github.event.pull_request.head.ref }}
           git add -fA ./roles/*/README.md
-          git commit -am 'docs(github-action): Update documentation'
+          git commit -am 'docs(github-action): update documentation'
           git push origin ${{ github.event.pull_request.head.ref }}
 permissions:
   contents: write
