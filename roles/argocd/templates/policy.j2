@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 data:
   policy.csv: |
-    g, {{ server['user']['name'] }}, role:admin
+    g, {{ argocd_map.credentials.server.user.name }}, role:admin
   policy.default: role:readonly
 metadata:
   labels:

@@ -1,18 +1,22 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
-    - cloudflare
+    - certmanager
+    - externaldns
     - k3s
+    - victoriametrics
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
 - name: Role Provisioning
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Validate service state
       ansible.builtin.wait_for:
@@ -20,15 +24,6 @@
         state: drained
         timeout: 30
       any_errors_fatal: true
-
-    - name: Set release fact
-      ansible.builtin.set_fact:
-        release:
-          - file: '{{ cilium_vars.release.cli.file }}'
-            url: '{{ cilium_cli_release_url_file }}'
-          - file: '{{ cilium_vars.release.hubble.file }}'
-            url: '{{ cilium_hubble_release_url_file }}'
-      run_once: true
 
     - name: Download archive
       ansible.builtin.get_url:
@@ -38,7 +33,7 @@
         owner: root
         group: root
         mode: '0644'
-      loop: '{{ release }}'
+      loop: '{{ cilium_resources.release }}'
       register: result
       delay: 1
       retries: 3
@@ -48,32 +43,32 @@
     - name: Install binary
       ansible.builtin.unarchive:
         src: /tmp/{{ item.file }}
-        dest: '{{ k3s_vars.directory.bin }}'
+        dest: '{{ k3s_map.node.directory.bin }}'
         owner: root
         group: root
         mode: '0755'
         remote_src: true
-      loop: '{{ release }}'
+      loop: '{{ cilium_resources.release }}'
 
     - name: Remove archive
       ansible.builtin.file:
         path: /tmp/{{ item.file }}
         state: absent
-      loop: '{{ release }}'
+      loop: '{{ cilium_resources.release }}'
       check_mode: false
 
     - name: Add repository
       kubernetes.core.helm_repository:
         name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
-        repo_url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
+        repo_url: '{{ cilium_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
       block:
         - name: Apply gateway api crds manifest
           kubernetes.core.k8s:
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            src: '{{ cilium_gateway_api_release_url_file }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            src: '{{ cilium_project.release.gateway_api.file }}'
 
         - name: Set chart setup fact
           ansible.builtin.set_fact:
@@ -86,9 +81,10 @@
         - name: Get secret info
           kubernetes.core.k8s_info:
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: hubble-server-certs
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            wait_timeout: 10
             wait: true
           register: secret
           no_log: true
@@ -103,9 +99,10 @@
                 labels:
                   app.kubernetes.io/managed-by: Helm
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            state: patched
             wait: true
           loop:
             - hubble-relay-client-certs
@@ -116,11 +113,12 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ cilium_project_chart }}'
+            chart_ref: '{{ cilium_map.helm.chart.reference }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            timeout: '{{ cilium_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true
@@ -140,9 +138,10 @@
                 labels:
                   app.kubernetes.io/managed-by: null
             kind: Secret
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ item }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
+            state: patched
             wait: true
           loop:
             - hubble-relay-client-certs
@@ -154,13 +153,13 @@
         - name: Create l2 announcement policy
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Create loadbalancer ip pool
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Set chart setup fact
@@ -169,9 +168,9 @@
 
         - name: Update chart values
           kubernetes.core.helm:
-            chart_ref: '{{ cilium_project_chart }}'
+            chart_ref: '{{ cilium_map.helm.chart.reference }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"

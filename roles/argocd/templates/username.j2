@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 data:
-  accounts.{{ server['user']['name'] }}: apiKey, login
-  accounts.{{ server['user']['name'] }}.enabled: 'true'
+  accounts.{{ argocd_map.credentials.server.user.name }}: apiKey, login
+  accounts.{{ argocd_map.credentials.server.user.name }}.enabled: 'true'
   admin.enabled: 'false'
 metadata:
   labels:

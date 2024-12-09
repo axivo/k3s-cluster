@@ -1,0 +1,29 @@
+---
+externaldns_vars:
+  cloudflare:
+    acme:
+      # -- Available options are [`production`](https://letsencrypt.org/docs/rate-limits/)
+      # and [`staging`](https://letsencrypt.org/docs/staging-environment/)
+      server: staging
+    host:
+      domain: noty.cc
+    prefix: cloudflare
+  kubernetes:
+    helm:
+      chart:
+        name: external-dns
+        version: v1.15.0
+      repository:
+        name: external-dns
+        org: kubernetes-sigs
+        url: https://kubernetes-sigs.github.io
+    log_level: warning
+    namespace: kube-system
+    policy: sync
+    resources:
+      limits:
+        cpu: null
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 128Mi

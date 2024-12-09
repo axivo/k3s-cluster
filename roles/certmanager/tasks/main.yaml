@@ -1,18 +1,21 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: '{{ role }}'
     tasks_from: facts
   loop:
+    - externaldns
     - k3s
-    - prometheus
+    - victoriametrics
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
 - name: Role Provisioning
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Validate service state
       ansible.builtin.wait_for:
@@ -23,7 +26,7 @@
 
     - name: Set checksums fact
       ansible.builtin.uri:
-        url: '{{ certmanager_release_url_checksums }}'
+        url: '{{ certmanager_project.release.checksum }}'
         return_content: true
       register: checksums
       check_mode: false
@@ -38,9 +41,9 @@
 
     - name: Install binary
       ansible.builtin.get_url:
-        url: '{{ certmanager_release_url_file }}'
+        url: '{{ certmanager_project.release.file }}'
         checksum: sha256:{{ sha256_checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/cmctl'
+        dest: '{{ k3s_map.node.directory.bin }}/cmctl'
         owner: root
         group: root
         mode: '0755'
@@ -51,8 +54,8 @@
 
     - name: Create symlink
       ansible.builtin.file:
-        path: '{{ k3s_vars.directory.bin }}/kubectl-cert_manager'
-        src: '{{ k3s_vars.directory.bin }}/cmctl'
+        path: '{{ k3s_map.node.directory.bin }}/kubectl-cert_manager'
+        src: '{{ k3s_map.node.directory.bin }}/cmctl'
         state: link
 
     - name: Add repository
@@ -69,11 +72,12 @@
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ certmanager_project_chart }}'
+            chart_ref: '{{ certmanager_map.helm.chart.reference }}'
             chart_version: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ certmanager_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ certmanager_vars.kubernetes.namespace }}'
+            timeout: '{{ certmanager_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true
@@ -86,5 +90,5 @@
         - name: Create self-signed cluster issuer
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true

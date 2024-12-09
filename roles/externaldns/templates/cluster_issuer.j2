@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ externaldns_project.cloudflare.cluster.issuer }}
+spec:
+  acme:
+    email: {{ global_map.credentials.cluster.postfix.user.alias }}
+    privateKeySecretRef:
+      name: {{ externaldns_vars.cloudflare.prefix }}-private-key
+    server: {{ externaldns_project.cloudflare.acme.server.url }}
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              key: {{ externaldns_map.cloudflare.api.token.key }}
+              name: {{ externaldns_map.cloudflare.api.token.name }}

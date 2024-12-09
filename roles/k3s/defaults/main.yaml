@@ -1,54 +1,44 @@
 ---
 k3s_vars:
-  directory:
-    bin: /usr/local/bin
-    config: /etc/rancher/k3s
-    kubeconfig: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"
-    lib: /var/lib/rancher/k3s
-  kubelet:
-    - arg: eviction-hard
-      value: imagefs.available<15%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
-    - arg: eviction-max-pod-grace-period
-      value: 60
-    - arg: eviction-minimum-reclaim
-      value: imagefs.available=15%,imagefs.inodesFree=5%,memory.available=500Mi,nodefs.available=10%,nodefs.inodesFree=5%
-    - arg: eviction-soft
-      value: imagefs.available<30%,imagefs.inodesFree<10%,memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<10%
-    - arg: eviction-soft-grace-period
-      value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
-    - arg: system-reserved
-      value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
+  cluster:
+    controlplane:
+      tainted: true
+    dns: 10.43.0.10
+    domain: cluster.local
+    kubeconfig:
+      local: true
+      # -- Local `/.kube` directory path
+      path: "{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"
+    service:
+      host: 127.0.0.1
+      port: 6444
+    # -- Related to `server.api.host` key
+    tls_san:
+      - 192.168.4.10
   network:
     interface: eth0
   release:
-    checksum: sha256sum-arm64.txt
-    file: k3s-arm64
-    repository:
+    k3s:
+      checksum: sha256sum-arm64.txt
+      file: k3s-arm64
       name: k3s
-      org: k3s-io
-    version: v1.30.6+k3s1
+      repository:
+        name: k3s
+        org: k3s-io
+      version: v1.30.6+k3s1
+    kubepug:
+      checksum: checksums.txt
+      file: kubepug_linux_arm64.tar.gz
+      name: kubepug
+      repository:
+        name: kubepug
+        org: kubepug
+      version: v1.7.1
   server:
     api:
+      # -- Related to `cluster.tls_san` key,
+      # used as frontend bind IP for Haproxy loadbalancer and populated into `/.kube/config` file
       host: 192.168.4.10
       port: 6443
-    cluster:
-      dns: 10.43.0.10
-      domain: cluster.local
-    controlplane:
-      tainted: true
-    loadbalancer:
-      host: 127.0.0.1
-      port: 6444
-    kubeconfig:
-      local: true
-    tls_san:
-      - 192.168.4.10
   service:
     debug: false
-  tolerations:
-    - key: node.cilium.io/agent-not-ready
-      operator: Exists
-      effect: NoExecute
-    - key: node-role.kubernetes.io/control-plane
-      operator: Exists
-      effect: NoSchedule

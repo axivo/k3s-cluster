@@ -1,18 +1,15 @@
 ---
-- name: Import facts
+- name: Role Facts
   ansible.builtin.include_role:
-    name: '{{ item }}'
+    name: k3s
     tasks_from: facts
-  loop:
-    - cloudflare
-    - k3s
 
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
 
 - name: Role Provisioning
-  when: ansible_host in k3s_server_hosts
+  when: ansible_host in k3s_map.server.hosts
   block:
     - name: Validate service state
       ansible.builtin.wait_for:
@@ -23,7 +20,7 @@
 
     - name: Set checksums fact
       ansible.builtin.uri:
-        url: '{{ argocd_release_url_checksums }}'
+        url: '{{ argocd_project.release.checksum }}'
         return_content: true
       register: checksums
       check_mode: false
@@ -38,9 +35,9 @@
 
     - name: Install binary
       ansible.builtin.get_url:
-        url: '{{ argocd_release_url_file }}'
+        url: '{{ argocd_project.release.file }}'
         checksum: sha256:{{ sha256_checksum }}
-        dest: '{{ k3s_vars.directory.bin }}/argocd'
+        dest: '{{ k3s_map.node.directory.bin }}/argocd'
         owner: root
         group: root
         mode: '0755'
@@ -52,36 +49,23 @@
     - name: Add repository
       kubernetes.core.helm_repository:
         name: '{{ argocd_vars.kubernetes.helm.repository.org }}'
-        repo_url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+        repo_url: '{{ argocd_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
       block:
-        - name: Set hostname fact
-          ansible.builtin.set_fact:
-            hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ cloudflare_vars.kubernetes.gateway.domain }}'
-          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
-
-        - name: Set server user settings fact
-          ansible.builtin.set_fact:
-            server:
-              admin:
-                password: "{{ argocd_vars.kubernetes.server.admin.password | string | ansible.builtin.password_hash('blowfish') }}"
-              user:
-                name: '{{ argocd_vars.kubernetes.server.user.name }}'
-                password: "{{ argocd_vars.kubernetes.server.user.password | string | ansible.builtin.password_hash('blowfish') }}"
-
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
             argocd_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ argocd_project_chart }}'
+            chart_ref: '{{ argocd_map.helm.chart.reference }}'
             chart_version: '{{ argocd_vars.kubernetes.helm.chart.version }}'
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ argocd_vars.kubernetes.namespace }}'
+            timeout: '{{ argocd_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true
@@ -92,47 +76,40 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: cloudflare_vars.kubernetes.gateway.domain | lower != 'disabled'
+          when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
           block:
             - name: Create server gateway
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create http route
+            - name: Create insecure http route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'http_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
 
-            - name: Create https route
+            - name: Create secure http route
               kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'https_route.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
-
-        - name: Set server loadbalancer ip
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'loadbalancer.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
-            wait: true
-          when: cloudflare_vars.kubernetes.gateway.domain | lower == 'disabled'
 
         - name: Set server user name
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'username.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
-        - name: Set server user password
+        - name: Set server user credentials
           kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'password.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
         - name: Set server rbac policy
           kubernetes.core.k8s:
             definition: "{{ lookup('ansible.builtin.template', 'policy.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_vars.directory.config }}/k3s.yaml'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true

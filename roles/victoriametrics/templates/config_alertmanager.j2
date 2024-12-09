@@ -1,0 +1,31 @@
+inhibit_rules:
+  - target_matchers:
+      - severity=~"info|warning"
+    source_matchers:
+      - severity="critical"
+    equal:
+      - alertname
+      - cluster
+      - namespace
+  - target_matchers:
+      - severity="info"
+    source_matchers:
+      - severity="warning"
+    equal:
+      - alertname
+      - cluster
+      - namespace
+  - target_matchers:
+      - severity="info"
+    source_matchers:
+      - alertname="InfoInhibitor"
+    equal:
+      - cluster
+      - namespace
+route:
+  group_by:
+    - alertgroup
+    - job
+  group_interval: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval }}
+  group_wait: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait }}
+  repeat_interval: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval }}

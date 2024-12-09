@@ -1,0 +1,38 @@
+---
+repos:
+  - repo: https://github.com/axivo/k3s-cluster
+    rev: v1.0.0
+    hooks:
+      - id: argo-cd
+        args:
+          - --chart-search-root=./roles/argocd
+      - id: cert-manager
+        args:
+          - --chart-search-root=./roles/certmanager
+      - id: cilium
+        args:
+          - --chart-search-root=./roles/cilium
+      - id: cluster
+        args:
+          - --chart-search-root=./roles/cluster
+      - id: external-dns
+        args:
+          - --chart-search-root=./roles/externaldns
+      - id: helm
+        args:
+          - --chart-search-root=./roles/helm
+      - id: k3s
+        args:
+          - --chart-search-root=./roles/k3s
+      - id: kured
+        args:
+          - --chart-search-root=./roles/kured
+      - id: longhorn
+        args:
+          - --chart-search-root=./roles/longhorn
+      - id: victoria-logs-single
+        args:
+          - --chart-search-root=./roles/victorialogs
+      - id: victoria-metrics-k8s-stack
+        args:
+          - --chart-search-root=./roles/victoriametrics

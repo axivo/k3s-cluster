@@ -1,0 +1,38 @@
+---
+- name: Remove Helm Plugins
+  notify: Restart service
+  block:
+    - name: Remove plugins
+      kubernetes.core.helm_plugin:
+        plugin_name: '{{ item.name }}'
+        state: absent
+      loop: '{{ helm_vars.plugins }}'
+
+    - name: Remove plugin packages
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: absent
+        autoremove: true
+        clean: true
+        purge: true
+      loop: '{{ helm_plugin_packages_disabled | default([]) }}'
+
+- name: Install Helm Plugins
+  block:
+    - name: Install plugin packages
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        autoremove: true
+        update_cache: true
+      loop: '{{ helm_plugin_packages | default([]) }}'
+
+    - name: Install plugins
+      kubernetes.core.helm_plugin:
+        plugin_path: '{{ item.repository.url }}'
+        plugin_version: '{{ item.version }}'
+      loop: '{{ helm_vars.plugins }}'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+      when: item.enabled

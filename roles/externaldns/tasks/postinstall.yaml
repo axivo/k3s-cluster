@@ -1,0 +1,25 @@
+---
+- name: Role Post-Install
+  when: ansible_host in k3s_map.server.hosts
+  run_once: true
+  block:
+    - name: Set chart postinstall fact
+      ansible.builtin.set_fact:
+        cloudflare_postinstall: true
+
+    - name: Update chart postinstall values
+      kubernetes.core.helm:
+        chart_ref: '{{ externaldns_map.helm.chart.reference }}'
+        chart_version: '{{ externaldns_vars.kubernetes.helm.chart.version }}'
+        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+        name: '{{ externaldns_vars.kubernetes.helm.chart.name }}'
+        namespace: '{{ externaldns_vars.kubernetes.namespace }}'
+        timeout: '{{ externaldns_map.helm.timeout }}'
+        values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
+        reset_values: false
+        reuse_values: true
+        wait: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed

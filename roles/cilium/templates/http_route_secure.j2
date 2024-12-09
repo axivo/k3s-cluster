@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ cilium_map.gateway.hubble.ui.http_route.secure }}
+  namespace: {{ cilium_vars.kubernetes.namespace }}
+spec:
+  hostnames:
+    - {{ cilium_map.gateway.hubble.ui.hostname }}
+  parentRefs:
+    - kind: Gateway
+      name: {{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+      namespace: {{ cilium_vars.kubernetes.namespace }}
+      sectionName: https
+  rules:
+    - backendRefs:
+        - kind: Service
+          name: {{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

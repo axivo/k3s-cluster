@@ -2,7 +2,7 @@
 argocd_vars:
   kubernetes:
     application_set:
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -18,6 +18,7 @@ argocd_vars:
         server:
           insecure: true
     controller:
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -33,15 +34,25 @@ argocd_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    haproxy:
+      resources:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 128Mi
     helm:
       chart:
         name: argo-cd
-        org: argoproj
-        version: v7.7.5
+        version: v7.7.8
       repository:
         name: argo-helm
         org: argoproj
         url: https://argoproj.github.io
+    global:
+      logging:
+        level: warn
     namespace: kube-system
     notifications:
       resources:
@@ -52,8 +63,15 @@ argocd_vars:
           cpu: 10m
           memory: 128Mi
     redis:
-      high_availability:
-        enabled: true
+      ha:
+        # -- Redis HA requires at least 3 worker nodes
+        enabled: false
+        storage:
+          enabled: false
+          access_modes:
+            - ReadWriteOnce
+          class: longhorn
+          size: 10Gi
       resources:
         limits:
           cpu: null
@@ -63,42 +81,49 @@ argocd_vars:
           memory: 128Mi
     repo_server:
       autoscaling:
+        # -- If `false`, `replicas` value is set from `min_replicas` value
         enabled: true
-        min_replicas: 2
+        min_replicas: 1
+        max_replicas: 3
         target:
-          cpu_percentage: 90
-          memory_percentage: 90
+          utilization_percentage:
+            cpu: null
+            memory: 80
       resources:
         limits:
           cpu: null
-          memory: 100Mi
+          memory: 128Mi
         requests:
           cpu: 10m
-          memory: 100Mi
+          memory: 128Mi
     server:
-      admin:
-        password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          34393938613865616665666136616561313166303463366665313630383439343035356161663963
-          6332616639663533643535333334656436386533386665660a663137326437326461373766623864
-          30633935616331333363346633633533346438353536356265323866363064653731376266306665
-          3138643266396539330a663132393231646265316330393765323631333838333432333531316639
-          62333838313937393162373537353632613866313161343366343361653738366265
       application:
         namespaces:
           - kube-system
       autoscaling:
+        # -- If `false`, `replicas` value is set from `min_replicas` value
         enabled: true
-        min_replicas: 2
+        min_replicas: 1
+        max_replicas: 3
         target:
-          cpu_percentage: 90
-          memory_percentage: 90
+          utilization_percentage:
+            cpu: null
+            memory: 80
+      credentials:
+        admin:
+          # -- (string) ArgoCD UI admin password, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
+          password:
+        user:
+          # -- (string) ArgoCD UI user name, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
+          name:
+          # -- (string) ArgoCD UI user password, set at global level
+          # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
+          password:
       gateway:
         service: argo-cd-argocd-server
         subdomain: argocd
-      infrastructure:
-        annotations:
-          io.cilium/lb-ipam-ips: 192.168.4.18
       resources:
         limits:
           cpu: null
@@ -106,17 +131,8 @@ argocd_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-      user:
-        name: floren
-        password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          64633339333736643362666261326638663532663037666334366366626236316235316566323730
-          3731303238393765383766616636323161636133623330330a373462353334616232623362643339
-          32393830626564653166386564383936653862376261343063316437636365333537663166633664
-          6163323837383863660a393936386633336336376539306235373364643430323930633261386130
-          63333630323765663465326438643862373831656437616262323739376634663037
   release:
-    checksums: cli_checksums.txt
+    checksum: cli_checksums.txt
     file: argocd-linux-arm64
     repository:
       name: argo-cd

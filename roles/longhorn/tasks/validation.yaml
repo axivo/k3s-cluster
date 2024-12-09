@@ -1,14 +1,14 @@
 ---
-- name: Set facts
+- name: Role Facts
   ansible.builtin.import_tasks:
     file: facts.yaml
 
 - name: Role Validation
   run_once: true
   block:
-    - name: Validate release tag url
+    - name: Validate project url
       ansible.builtin.uri:
-        url: '{{ longhorn_project_url_tag }}'
+        url: '{{ longhorn_project.url }}/{{ longhorn_project.tag }}'
         timeout: 5
       register: result
       delay: 1

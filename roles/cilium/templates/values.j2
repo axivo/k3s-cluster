@@ -1,10 +1,23 @@
 {% if cilium_setup %}
 bandwidthManager:
   enabled: true
-enableCiliumEndpointSlice: true
+bpf:
+  datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
+  lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access }}
+  masquerade: {{ cilium_vars.kubernetes.bpf.masquerade }}
+  tproxy: {{ cilium_vars.kubernetes.bpf.tproxy }}
+{% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
+  vlanBypass:
+    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) }}
+{% endif %}
+bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe }}
+ciliumEndpointSlice:
+  enabled: true
 envoy:
   enabled: true
   rollOutPods: true
+envoyConfig:
+  enabled: true
 externalIPs:
   enabled: true
 gatewayAPI:
@@ -13,9 +26,16 @@ gatewayAPI:
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
+{% if cilium_vars.kubernetes.ip_masq_agent.enabled %}
+ipMasqAgent:
+  config:
+    nonMasqueradeCIDRs:
+      {{ cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs | to_nice_yaml | indent(6) }}
+  enabled: true
+{% endif %}
 hubble:
   peerService:
-    clusterDomain: {{ k3s_vars.server.cluster.domain }}
+    clusterDomain: {{ k3s_vars.cluster.domain }}
   relay:
     enabled: true
     podDisruptionBudget:
@@ -23,28 +43,49 @@ hubble:
     replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
     retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
     rollOutPods: true
+{% if cilium_vars.kubernetes.hubble.ui.enabled %}
   ui:
     enabled: true
     podDisruptionBudget:
       enabled: true
     replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
     rollOutPods: true
+{% endif %}
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
   qps: {{ cilium_vars.kubernetes.client.rate_limit.qps }}
-k8sServiceHost: {{ k3s_vars.server.loadbalancer.host }}
-k8sServicePort: {{ k3s_vars.server.loadbalancer.port }}
+k8sServiceHost: {{ k3s_vars.cluster.service.host }}
+k8sServicePort: {{ k3s_vars.cluster.service.port }}
 kubeProxyReplacement: true
+logOptions:
+  level: {{ cilium_vars.kubernetes.log_options.level }}
 operator:
   rollOutPods: true
 rollOutCiliumPods: true
 {% elif cilium_postinstall %}
+cgroup:
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.requests.memory }}
+cni:
+  resources:
+    limits:
+      cpu: {{ cilium_vars.kubernetes.cni.resources.limits.cpu }}
+      memory: {{ cilium_vars.kubernetes.cni.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cni.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cni.resources.requests.memory }}
 dashboards:
   enabled: true
 envoy:
   prometheus:
     serviceMonitor:
       enabled: true
+      namespace: {{ victoriametrics_vars.kubernetes.namespace }}
   resources:
     limits:
       cpu: {{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}
@@ -66,10 +107,13 @@ hubble:
       - tcp
     serviceMonitor:
       enabled: true
+      namespace: {{ victoriametrics_vars.kubernetes.namespace }}
   relay:
     prometheus:
+      enabled: true
       serviceMonitor:
         enabled: true
+        namespace: {{ victoriametrics_vars.kubernetes.namespace }}
     resources:
       limits:
         cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}
@@ -100,7 +144,7 @@ hubble:
       certManagerIssuerRef:
         group: cert-manager.io
         kind: ClusterIssuer
-        name: {{ cilium_vars.kubernetes.hubble.tls.cluster_issuer.name }}
+        name: {{ cilium_map.ca.hubble.cluster.issuer.name }}
       method: {{ cilium_vars.kubernetes.hubble.tls.auto.method }}
 {% endif %}
 operator:
@@ -108,6 +152,7 @@ operator:
     enabled: true
     serviceMonitor:
       enabled: true
+      namespace: {{ victoriametrics_vars.kubernetes.namespace }}
   resources:
     limits:
       cpu: {{ cilium_vars.kubernetes.operator.resources.limits.cpu }}
@@ -119,6 +164,7 @@ prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
     cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
@@ -127,26 +173,29 @@ resources:
     cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
     memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 {% else %}
+autoDirectNodeRoutes: true
+directRoutingSkipUnreachable: true
 ingressController:
   enabled: true
   service:
-    loadBalancerIP: {{ cilium_vars.kubernetes.ingress.controller.service.loadbalancer.ip }}
-{% if cilium_vars.kubernetes.loadbalancer.algorithm | lower == 'maglev' %}
+    loadBalancerIP: {{ cilium_vars.kubernetes.ingress_controller.service.ip }}
+ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
+l2announcements:
+  enabled: true
+  leaseDuration: 15s
+  leaseRenewDeadline: 5s
+  leaseRetryPeriod: 2s
+l2podAnnouncements:
+  enabled: true
+  interface: {{ k3s_vars.network.interface }}
 loadBalancer:
+  l7:
+    backend: envoy
+{% if cilium_vars.kubernetes.loadbalancer.algorithm | lower == 'maglev' %}
   algorithm: {{ cilium_vars.kubernetes.loadbalancer.algorithm }}
 maglev:
   hashSeed: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=16) }}"
   tableSize: {{ cilium_vars.kubernetes.loadbalancer.table_size }}
 {% endif %}
-{% if cilium_vars.kubernetes.routing_mode | lower == 'native' %}
-autoDirectNodeRoutes: true
-directRoutingSkipUnreachable: true
-ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
-l2announcements:
-  enabled: true
-l2podAnnouncements:
-  enabled: true
-  interface: {{ k3s_vars.network.interface }}
-routingMode: {{ cilium_vars.kubernetes.routing_mode }}
-{% endif %}
+routingMode: native
 {% endif %}

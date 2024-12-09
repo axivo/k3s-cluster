@@ -4,46 +4,25 @@
   become: true
   gather_facts: true
   tasks:
-    - name: Roles Upgrade
+    - name: Role Upgrade
       ansible.builtin.include_role:
         apply:
-          tags: '{{ upgrade.role }}'
-        name: '{{ upgrade.role }}'
-        tasks_from: '{{ upgrade.tasks }}'
+          tags: '{{ upgrade }}'
+        name: '{{ upgrade }}'
+        tasks_from: upgrade
       loop:
-        - role: argocd
-          tasks: main
-        - role: argocd
-          tasks: postinstall
-        - role: certmanager
-          tasks: main
-        - role: certmanager
-          tasks: postinstall
-        - role: cilium
-          tasks: main
-        - role: cilium
-          tasks: postinstall
-        - role: cloudflare
-          tasks: main
-        - role: cloudflare
-          tasks: postinstall
-        - role: cluster
-          tasks: upgrade
-        - role: helm
-          tasks: main
-        - role: k3s
-          tasks: upgrade
-        - role: kured
-          tasks: main
-        - role: kured
-          tasks: postinstall
-        - role: longhorn
-          tasks: main
-        - role: prometheus
-          tasks: main
-        - role: prometheus
-          tasks: postinstall
+        - argocd
+        - certmanager
+        - cilium
+        - cluster
+        - externaldns
+        - helm
+        - k3s
+        - kured
+        - longhorn
+        - victorialogs
+        - victoriametrics
       loop_control:
         loop_var: upgrade
       tags: always
-      when: upgrade.role in ansible_run_tags
+      when: upgrade in ansible_run_tags

@@ -1,3 +1,7 @@
+global:
+  leaderElection:
+    namespace: {{ certmanager_vars.kubernetes.namespace }}
+  logLevel: {{ certmanager_vars.kubernetes.global.log_level }}
 {% if certmanager_postinstall %}
 cainjector:
   resources:
@@ -15,12 +19,12 @@ extraArgs:
   - --enable-gateway-api
 podDisruptionBudget:
   enabled: true
-  maxUnavailable: 1
+  minAvailable: 1
 {% if certmanager_postinstall %}
 prometheus:
   servicemonitor:
     enabled: true
-    namespace: {{ prometheus_vars.kubernetes.namespace }}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
     cpu: {{ certmanager_vars.kubernetes.controller.resources.limits.cpu }}
@@ -33,7 +37,7 @@ replicaCount: {{ certmanager_vars.kubernetes.controller.replicas }}
 strategy:
   rollingUpdate:
     maxSurge: 0
-    maxUnavailable: 1
+    minAvailable: 1
   type: RollingUpdate
 {% if certmanager_postinstall %}
 webhook:
