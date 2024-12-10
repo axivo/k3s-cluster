@@ -1,8 +1,8 @@
 # argo-cd
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.7](https://img.shields.io/badge/Version-7.7.7-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.8](https://img.shields.io/badge/Version-7.7.8-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.7/charts/argo-cd) deployment, reset and validation.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.8/charts/argo-cd) deployment, reset and validation.
 
 ## Role Dependencies
 
