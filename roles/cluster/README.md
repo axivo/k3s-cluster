@@ -1,6 +1,6 @@
 # cluster
 
-![Type: distribution](https://img.shields.io/badge/Type-distribution-informational?style=flat-square) ![Version: 24.04](https://img.shields.io/badge/Version-24.04-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 24.04](https://img.shields.io/badge/Version-24.04-informational?style=flat-square)
 
 The role performs various tasks related to Ubuntu LTS OS based [cluster](https://ubuntu.com/server) deployment, reset and validation.
 

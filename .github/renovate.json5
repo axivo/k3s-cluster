@@ -179,7 +179,8 @@
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "debian"
     },
     {
       "customType": "regex",
@@ -206,7 +207,8 @@
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "helm"
     },
     {
       "customType": "regex",
