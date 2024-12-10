@@ -14,7 +14,6 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.default_settings.backup.target | string | `"cifs://192.168.1.8/backup"` | See Longhorn [documentation](https://longhorn.io/docs/latest/snapshots-and-backups/backup-and-restore/set-backup-target), for more details |
 | longhorn_vars.kubernetes.default_settings.collect_usage_metrics | bool | `false` |  |
 | longhorn_vars.kubernetes.default_settings.data_locality | string | `"strict-local"` |  |
-| longhorn_vars.kubernetes.default_settings.data_path | string | `"/var/lib/longhorn"` |  |
 | longhorn_vars.kubernetes.default_settings.log_level | string | `"Warn"` |  |
 | longhorn_vars.kubernetes.default_settings.pod_deletion_policy | string | `"delete-both-statefulset-and-deployment-pod"` |  |
 | longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance | string | `"least-effort"` |  |

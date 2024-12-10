@@ -5,6 +5,8 @@
       credentials:
         backup:
           secret: '{{ longhorn_vars.kubernetes.helm.chart.name }}-backup-credentials'
+      directory:
+        data: /var/lib/longhorn
       helm:
         chart:
           reference: '{{ longhorn_vars.kubernetes.helm.repository.org }}/{{ longhorn_vars.kubernetes.helm.chart.name }}'
