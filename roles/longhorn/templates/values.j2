@@ -10,7 +10,7 @@ defaultSettings:
 {% endif %}
 {% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
-  defaultDataPath: {{ longhorn_vars.kubernetes.default_settings.data_path }}
+  defaultDataPath: {{ longhorn_map.directory.data }}
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}
   defaultReplicaCount: 2
 {% else %}
