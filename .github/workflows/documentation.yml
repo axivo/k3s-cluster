@@ -31,7 +31,12 @@ jobs:
         run: |
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
+          git fetch
+          git stash
+          git switch ${{ github.event.pull_request.head.ref }}
+          git add .
+          git stash apply
           git commit -am 'docs(github-action): update documentation'
-          git push origin ${{ github.head_ref }}
+          git push origin ${{ github.event.pull_request.head.ref }}
 permissions:
   contents: write
