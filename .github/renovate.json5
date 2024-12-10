@@ -82,7 +82,7 @@
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -110,7 +110,7 @@
         "roles/certmanager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -138,7 +138,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -152,7 +152,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -166,7 +166,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -220,7 +220,7 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -249,7 +249,7 @@
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
