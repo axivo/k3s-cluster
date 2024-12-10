@@ -1,6 +1,6 @@
 apiVersion: v2
 name: cluster
-type: distribution
+type: application
 version: 24.04
 appVersion: 1.0.0
 description: Documentation generator for cluster Ansible role
