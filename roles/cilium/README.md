@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/cilium/cilium-cli | cilium-cli | 0.16.20 |
+| https://github.com/cilium/cilium-cli | cilium-cli | 0.16.21 |
 | https://github.com/cilium/hubble | hubble | 1.16.4 |
 | https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.2.1 |
 
