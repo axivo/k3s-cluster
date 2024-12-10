@@ -32,7 +32,7 @@ jobs:
           git fetch
           git switch ${{ github.head_ref }}
           helm-docs --values-file=./defaults/main.yaml
-          if [[ $(git status --porcelain) ]]; then
+          if [ -n "$(git status --porcelain)" ]; then
             git commit -am 'docs(github-action): update documentation'
           fi
           git push origin ${{ github.head_ref }}
