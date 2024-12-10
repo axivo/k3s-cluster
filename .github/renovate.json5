@@ -68,7 +68,7 @@
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -82,7 +82,7 @@
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -96,7 +96,7 @@
         "roles/certmanager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -110,7 +110,7 @@
         "roles/certmanager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -124,7 +124,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -138,7 +138,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -152,7 +152,7 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -166,19 +166,19 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
       "customType": "regex",
       "datasourceTemplate": "custom.cluster",
-      "depNameTemplate": "cluster/ubuntu",
+      "depNameTemplate": "canonical/ubuntu",
       "fileMatch": [
         "roles/cluster/Chart.yaml"
       ],
       "matchStrings": [
-        "version:\\s+(?<currentValue>.+)"
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)"
       ]
     },
     {
@@ -191,7 +191,7 @@
         "roles/externaldns/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -204,7 +204,7 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -218,7 +218,7 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -232,9 +232,10 @@
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
-      ]
+      ],
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?<compatibility>\\+k3s)(?<build>\\d+)$"
     },
     {
       "customType": "regex",
@@ -246,7 +247,7 @@
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "home:[\\s\\S]+dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
@@ -260,7 +261,7 @@
         "roles/kured/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "kubereboot/charts"
@@ -275,7 +276,7 @@
         "roles/longhorn/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "longhorn/charts"
@@ -290,7 +291,7 @@
         "roles/victorialogs/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
@@ -305,7 +306,7 @@
         "roles/victoriametrics/defaults/main.yaml"
       ],
       "matchStrings": [
-        "^version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
         "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
