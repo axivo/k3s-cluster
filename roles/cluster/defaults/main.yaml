@@ -5,9 +5,11 @@ cluster_vars:
     id: '2:2'
     name: 'ASMedia Technology'
   hardware:
-    # -- To determine the hardware architecture, run:
-    # -- `arch`
+    # -- Run `arch`, to determine the hardware architecture
     architecture: aarch64
+    # -- Run `lshw -class system -quiet | grep product`,
+    #
+    # to determine the hardware product
     product: 'Raspberry Pi'
   service:
     bluetooth:
