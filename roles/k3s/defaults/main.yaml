@@ -3,7 +3,6 @@ k3s_vars:
   cluster:
     controlplane:
       tainted: true
-    dns: 10.43.0.10
     domain: cluster.local
     kubeconfig:
       local: true
