@@ -18,17 +18,17 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.device.name | string | `"ASMedia Technology"` |  |
 | cluster_vars.hardware.architecture | string | `"aarch64"` | Run `arch`, to determine the hardware architecture |
 | cluster_vars.hardware.product | string | `"Raspberry Pi"` | Run `lshw -class system -quiet \| grep product`, to determine the hardware product |
-| cluster_vars.service.bluetooth.enabled | bool | `false` |  |
+| cluster_vars.service.bluetooth.enabled | bool | `false` | By default, related `apt` packages are not installed |
 | cluster_vars.service.cloud_init.enabled | bool | `false` |  |
 | cluster_vars.service.postfix.enabled | bool | `true` |  |
 | cluster_vars.service.postfix.protocols | string | `"ipv4"` |  |
-| cluster_vars.service.postfix.relay.host | string | `"smtp.mail.me.com"` |  |
+| cluster_vars.service.postfix.relay.host | string | `"smtp.mail.me.com"` | iCloud mail server relay host |
 | cluster_vars.service.postfix.relay.port | int | `587` |  |
 | cluster_vars.service.postfix.user | string | Set values into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | Postfix user credentials, set at global level |
 | cluster_vars.service.snapd.enabled | bool | `false` |  |
-| cluster_vars.service.unattended_upgrades.enabled | bool | `true` |  |
+| cluster_vars.service.unattended_upgrades.enabled | bool | `true` | See [`documentation`](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details |
 | cluster_vars.service.unattended_upgrades.mail_report | string | `"only-on-error"` |  |
 | cluster_vars.service.unattended_upgrades.remove_deps | string | `"true"` |  |
-| cluster_vars.service.wifi.enabled | bool | `false` |  |
-| cluster_vars.ssh.key | string | `"id_ed25519.pub"` |  |
-| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"` |  |
+| cluster_vars.service.wifi.enabled | bool | `false` | By default, related `apt` packages are not installed |
+| cluster_vars.ssh.key | string | `"id_ed25519.pub"` | Public `.ssh` key, generated with `ed25519` algorithm |
+| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"` | Full path to `.ssh` directory, a hardcoded value can be used |
