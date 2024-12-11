@@ -5,6 +5,8 @@ cluster_vars:
     id: '2:2'
     name: 'ASMedia Technology'
   hardware:
+    # -- To determine the hardware architecture, run:
+    # -- `arch`
     architecture: aarch64
     product: 'Raspberry Pi'
   service:
