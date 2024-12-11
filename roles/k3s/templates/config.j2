@@ -1,6 +1,5 @@
-{% if k3s_service_type | lower == 'server' %}
-bind-address: {{ k3s_map_server.default_ip }}
-cluster-dns: {{ k3s_vars.cluster.dns }}
+{% if k3s_node.service | lower == 'server' %}
+bind-address: {{ k3s_node.ip }}
 cluster-domain: {{ k3s_vars.cluster.domain }}
 {% if k3s_map.server.ha and not k3s_config_postinstall and ansible_host == k3s_map.server.default_host %}
 cluster-init: true
@@ -17,32 +16,35 @@ embedded-registry: true
 etcd-expose-metrics: true
 {% endif %}
 flannel-backend: none
-kube-controller-manager-arg: bind-address={{ k3s_map_server.default_ip }}
-kube-scheduler-arg: bind-address={{ k3s_map_server.default_ip }}
+kube-controller-manager-arg: bind-address={{ k3s_node.ip }}
+kube-scheduler-arg: bind-address={{ k3s_node.ip }}
 {% endif %}
 kubelet-arg:
   {{ k3s_resources.node.kubelet.args | to_nice_yaml | indent(2) }}
+{%- if k3s_node.service | lower == 'agent' %}
+node-ip: {{ k3s_node.ip }}
+{% endif %}
 {%- if
   (k3s_resources.node.taint.agent | length > 0) or
-  (k3s_vars.cluster.controlplane.tainted and k3s_service_type | lower == 'server' and k3s_resources.node.taint.server | length > 0)
+  (k3s_vars.cluster.controlplane.tainted and k3s_node.service | lower == 'server' and k3s_resources.node.taint.server | length > 0)
 %}
 node-taint:
 {% if k3s_resources.node.taint.agent | length > 0 %}
   {{ k3s_resources.node.taint.agent | to_nice_yaml | indent(2) }}
 {%- endif %}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_service_type | lower == 'server' and k3s_resources.node.taint.server | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted and k3s_node.service | lower == 'server' and k3s_resources.node.taint.server | length > 0 %}
   {{ k3s_resources.node.taint.server | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% endif %}
-{% if k3s_map.server.ha and (k3s_config_postinstall or k3s_service_type | lower == 'agent') %}
+{% if k3s_map.server.ha and (k3s_config_postinstall or k3s_node.service | lower == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
-  (ansible_host != k3s_map.server.default_host and k3s_service_type | lower == 'server') or
-  (k3s_map.server.non_ha and k3s_service_type | lower == 'agent')
+  (ansible_host != k3s_map.server.default_host and k3s_node.service | lower == 'server') or
+  (k3s_map.server.non_ha and k3s_node.service | lower == 'agent')
 %}
 server: https://{{ k3s_map.server.default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
-{% if k3s_map.server.ha and k3s_service_type | lower == 'server' %}
+{% if k3s_map.server.ha and k3s_node.service | lower == 'server' %}
 tls-san:
   {{ k3s_vars.cluster.tls_san | to_nice_yaml | indent(2) }}
 {%- endif %}
