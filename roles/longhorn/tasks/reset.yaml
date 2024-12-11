@@ -1,8 +1,13 @@
 ---
 - name: Role Facts
-  ansible.builtin.import_role:
-    name: k3s
+  ansible.builtin.include_role:
+    name: '{{ role }}'
     tasks_from: facts
+  loop:
+    - longhorn
+    - k3s
+  loop_control:
+    loop_var: role
 
 - name: Role Reset
   block:
