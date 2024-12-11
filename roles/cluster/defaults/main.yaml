@@ -7,9 +7,7 @@ cluster_vars:
   hardware:
     # -- Run `arch`, to determine the hardware architecture
     architecture: aarch64
-    # -- Run `lshw -class system -quiet | grep product`,
-    #
-    # to determine the hardware product
+    # -- Run `lshw -class system -quiet (|) grep product`, to determine the hardware product
     product: 'Raspberry Pi'
   service:
     bluetooth:
