@@ -4,6 +4,7 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
+    - externaldns
     - longhorn
     - k3s
   loop_control:
