@@ -4,6 +4,9 @@
 
 The role performs various tasks related to Ubuntu LTS OS based [cluster](https://ubuntu.com/server) deployment, reset and validation.
 
+> [!IMPORTANT]
+> Read the [Ubuntu Server](https://axivo.com/k3s-cluster/tutorials/handbook/server/) tutorial, on bare-metal infrastructure.
+
 ## Role Variables
 
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
