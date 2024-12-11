@@ -1,11 +1,11 @@
 apiVersion: v2
 name: helm
-type: application
-version: 3.16.2-1
-appVersion: 1.0.0
 description: Documentation generator for helm Ansible role
 home: https://helm.baltorepo.com/stable/debian/packages/helm/releases
 dependencies:
   - name: diff
     repository: https://github.com/databus23/helm-diff
     version: 3.9.12
+type: application
+version: 3.16.2-1
+appVersion: 1.0.0
