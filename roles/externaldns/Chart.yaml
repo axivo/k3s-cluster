@@ -1,7 +1,7 @@
 apiVersion: v2
 name: external-dns
+description: Documentation generator for externaldns Ansible role
+home: https://github.com/kubernetes-sigs/external-dns
 type: application
 version: 1.15.0
 appVersion: 1.0.0
-description: Documentation generator for externaldns Ansible role
-home: https://github.com/kubernetes-sigs/external-dns
