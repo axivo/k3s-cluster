@@ -1,7 +1,7 @@
 ---
 cluster_vars:
   device:
-    # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#deviceenabled), for details
+    # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#storage-devices), for details
     enabled: true
     id: '2:2'
     name: 'ASMedia Technology'
