@@ -29,7 +29,7 @@ cluster_vars:
     snapd:
       enabled: false
     unattended_upgrades:
-      # -- See [`documentation`](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details
+      # -- See [documentation](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details
       enabled: true
       mail_report: only-on-error
       remove_deps: 'true'
