@@ -11,6 +11,7 @@ cluster_vars:
     product: 'Raspberry Pi'
   service:
     bluetooth:
+      # -- By default, related `apt` packages are not installed
       enabled: false
     cloud_init:
       enabled: false
@@ -18,6 +19,7 @@ cluster_vars:
       enabled: true
       protocols: ipv4
       relay:
+        # -- iCloud mail server relay host
         host: smtp.mail.me.com
         port: 587
       # -- (string) Postfix user credentials, set at global level
@@ -26,11 +28,15 @@ cluster_vars:
     snapd:
       enabled: false
     unattended_upgrades:
+      # -- See [`documentation`](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details
       enabled: true
       mail_report: only-on-error
       remove_deps: 'true'
     wifi:
+      # -- By default, related `apt` packages are not installed
       enabled: false
   ssh:
+    # -- Public `.ssh` key, generated with `ed25519` algorithm
     key: id_ed25519.pub
+    # -- Full path to `.ssh` directory, a hardcoded value can be used
     path: "{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"
