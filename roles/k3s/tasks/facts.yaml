@@ -59,9 +59,14 @@
 - name: Set map server fact
   ansible.builtin.set_fact:
     k3s_map_server:
-      default_ip: '{{ ansible_default_ipv4.address }}'
       ips: "{{ k3s_map.server.hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
   when: ansible_host in k3s_map.server.hosts
+
+- name: Set node fact
+  ansible.builtin.set_fact:
+    k3s_node:
+      ip: '{{ ansible_default_ipv4.address }}'
+      service: "{{ 'agent' if ansible_host not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set project fact
   ansible.builtin.set_fact:
@@ -109,10 +114,6 @@
           agent: "{{ k3s_project_taints | select('search', 'agent-not-ready') | default('') }}"
           server: "{{ k3s_project_taints | select('search', 'control-plane') | default('') }}"
   run_once: true
-
-- name: Set service type fact
-  ansible.builtin.set_fact:
-    k3s_service_type: "{{ 'agent' if ansible_host not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set variables fact
   ansible.builtin.set_fact:
