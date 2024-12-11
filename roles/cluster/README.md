@@ -13,7 +13,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| cluster_vars.device.enabled | bool | `true` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#deviceenabled), for details |
+| cluster_vars.device.enabled | bool | `true` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#storage-devices), for details |
 | cluster_vars.device.id | string | `"2:2"` |  |
 | cluster_vars.device.name | string | `"ASMedia Technology"` |  |
 | cluster_vars.hardware.architecture | string | `"aarch64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
