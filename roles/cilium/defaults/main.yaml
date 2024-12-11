@@ -135,7 +135,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.16.21
+      version: v0.16.22
     gateway_api:
       # -- See Cilium [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/),
       # for implementation details
