@@ -26,7 +26,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.service.postfix.relay.port | int | `587` |  |
 | cluster_vars.service.postfix.user | string | Set values into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | Postfix user credentials, set at global level |
 | cluster_vars.service.snapd.enabled | bool | `false` |  |
-| cluster_vars.service.unattended_upgrades.enabled | bool | `true` | See [`documentation`](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details |
+| cluster_vars.service.unattended_upgrades.enabled | bool | `true` | See [documentation](https://help.ubuntu.com/community/AutomaticSecurityUpdates), for details |
 | cluster_vars.service.unattended_upgrades.mail_report | string | `"only-on-error"` |  |
 | cluster_vars.service.unattended_upgrades.remove_deps | string | `"true"` |  |
 | cluster_vars.service.wifi.enabled | bool | `false` | By default, related `apt` packages are not installed |
