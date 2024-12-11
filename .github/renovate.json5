@@ -68,8 +68,9 @@
         "roles/argocd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "/^version:\\s+(?<currentValue>.+)/",
-        "/helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)/"
+        "!dependencies:[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
