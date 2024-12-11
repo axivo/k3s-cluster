@@ -19,7 +19,6 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | k3s_vars.cluster.controlplane.tainted | bool | `true` |  |
-| k3s_vars.cluster.dns | string | `"10.43.0.10"` |  |
 | k3s_vars.cluster.domain | string | `"cluster.local"` |  |
 | k3s_vars.cluster.kubeconfig.local | bool | `true` |  |
 | k3s_vars.cluster.kubeconfig.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') + '/.kube' }}"` | Local `/.kube` directory path |
