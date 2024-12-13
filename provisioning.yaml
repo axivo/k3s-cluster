@@ -49,6 +49,7 @@
         - externaldns
         - kured
         - longhorn
+        - metrics-server
         - victorialogs
         - victoriametrics
       loop_control:
@@ -60,6 +61,7 @@
     - argocd
     - kured
     - longhorn
+    - metrics-server
     - victorialogs
     - victoriametrics
   tags: charts

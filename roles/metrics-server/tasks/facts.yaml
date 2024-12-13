@@ -1,0 +1,27 @@
+---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    metricsserver_map:
+      helm:
+        chart:
+          reference: '{{ metricsserver_vars.kubernetes.helm.repository.name }}/{{ metricsserver_vars.kubernetes.helm.chart.name }}'
+          version: '{{ metricsserver_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ metricsserver_vars.kubernetes.helm.repository.org }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
+          url: '{{ metricsserver_vars.kubernetes.helm.repository.url }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
+        timeout: 5m0s
+      server:
+        default_args:
+          - --cert-dir=/tmp
+          - --kubelet-preferred-address-types=InternalDNS,InternalIP,Hostname,ExternalDNS,ExternalIP
+          - --kubelet-request-timeout=5s
+          - --kubelet-use-node-status-port
+          - --metric-resolution=15s
+  run_once: true
+
+- name: Set project fact
+  ansible.builtin.set_fact:
+    metricsserver_project:
+      tag: '{{ metricsserver_vars.kubernetes.helm.chart.name }}-helm-chart-{{ metricsserver_map.helm.chart.version }}'
+      url: https://github.com/{{ metricsserver_map.helm.repository.name }}/releases/tag
+  run_once: true

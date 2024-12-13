@@ -1,0 +1,39 @@
+{% if metricsserver_vars.kubernetes.server.args is iterable and metricsserver_vars.kubernetes.server.args | length > 0 %}
+args:
+  {{ metricsserver_vars.kubernetes.server.args | to_nice_yaml | indent(2) }}
+{% endif %}
+{% if metricsserver_map.server.default_args is iterable and metricsserver_map.server.default_args | length > 0 %}
+defaultArgs:
+  {{ metricsserver_map.server.default_args | to_nice_yaml | indent(2) }}
+{% endif %}
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+replicas: {{ metricsserver_vars.kubernetes.replicas }}
+service:
+  labels:
+    kubernetes.io/cluster-service: 'true'
+    kubernetes.io/name: {{ metricsserver_vars.kubernetes.helm.chart.name }}
+tls:
+{% if metricsserver_vars.kubernetes.server.tls.type | lower == 'cert-manager' %}
+  certManager:
+    existingIssuer:
+      enabled: true
+      kind: ClusterIssuer
+      name: {{ certmanager_map.ca.cluster.issuer.name }}
+{% endif %}
+  clusterDomain: {{ k3s_vars.cluster.domain }}
+  type: {{ metricsserver_vars.kubernetes.server.tls.type }}
+{% if metricsserver_postinstall | bool %}
+metrics:
+  enabled: true
+serviceMonitor:
+  enabled: true
+resources:
+  limits:
+    cpu: {{ metricsserver_vars.kubernetes.resources.limits.cpu }}
+    memory: {{ metricsserver_vars.kubernetes.resources.limits.memory }}
+  requests:
+    cpu: {{ metricsserver_vars.kubernetes.resources.requests.cpu }}
+    memory: {{ metricsserver_vars.kubernetes.resources.requests.memory }}
+{% endif %}

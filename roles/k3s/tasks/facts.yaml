@@ -13,20 +13,7 @@
         directory:
           bin: /usr/local/bin
           config: /etc/rancher/k3s
-          lib: /var/lib/rancher/k3s
-        kubelet:
-          - arg: eviction-hard
-            value: imagefs.available<15%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
-          - arg: eviction-max-pod-grace-period
-            value: 60
-          - arg: eviction-minimum-reclaim
-            value: imagefs.available=15%,imagefs.inodesFree=5%,memory.available=500Mi,nodefs.available=10%,nodefs.inodesFree=5%
-          - arg: eviction-soft
-            value: imagefs.available<30%,imagefs.inodesFree<10%,memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<10%
-          - arg: eviction-soft-grace-period
-            value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
-          - arg: system-reserved
-            value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
+          data: /var/lib/rancher/k3s
         tolerations:
           - key: node.cilium.io/agent-not-ready
             operator: Exists
@@ -66,6 +53,21 @@
   ansible.builtin.set_fact:
     k3s_node:
       ip: '{{ ansible_default_ipv4.address }}'
+      kubelet:
+        - arg: anonymous-auth
+          value: true
+        - arg: eviction-hard
+          value: imagefs.available<15%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
+        - arg: eviction-max-pod-grace-period
+          value: 60
+        - arg: eviction-minimum-reclaim
+          value: imagefs.available=15%,imagefs.inodesFree=5%,memory.available=500Mi,nodefs.available=10%,nodefs.inodesFree=5%
+        - arg: eviction-soft
+          value: imagefs.available<30%,imagefs.inodesFree<10%,memory.available<1Gi,nodefs.available<30%,nodefs.inodesFree<10%
+        - arg: eviction-soft-grace-period
+          value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
+        - arg: system-reserved
+          value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
       service: "{{ 'agent' if ansible_host not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set project fact
@@ -91,7 +93,7 @@
 - name: Set project kubelet arguments fact
   ansible.builtin.set_fact:
     k3s_project_kubelet_args: "{{ k3s_project_kubelet_args | default([]) | union(['='.join((kubelet.arg | string, kubelet.value | string))]) | sort }}"
-  loop: '{{ k3s_map.node.kubelet }}'
+  loop: '{{ k3s_node.kubelet }}'
   loop_control:
     loop_var: kubelet
   run_once: true

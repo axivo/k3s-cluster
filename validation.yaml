@@ -18,6 +18,7 @@
         - helm
         - kured
         - longhorn
+        - metrics-server
         - victorialogs
         - victoriametrics
       loop_control:
