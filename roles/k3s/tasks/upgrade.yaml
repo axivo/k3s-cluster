@@ -34,7 +34,7 @@
         dest: '{{ k3s_project.node.binary }}'
         owner: root
         group: root
-        mode: '0755'
+        mode: '755'
       register: result
       delay: 1
       retries: 3
@@ -57,7 +57,7 @@
         dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
     - name: Update service file
       ansible.builtin.template:
@@ -65,7 +65,7 @@
         dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
 
     - name: Role Configuration
       ansible.builtin.import_tasks:
@@ -81,7 +81,7 @@
         dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
     - name: Get revised configuration file status
       ansible.builtin.stat:
@@ -97,7 +97,7 @@
         state: touch
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
       when: >
         (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or
         (k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version)

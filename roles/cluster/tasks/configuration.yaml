@@ -41,7 +41,7 @@
             dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
             owner: root
             group: root
-            mode: '0644'
+            mode: '644'
 
     - name: USB Device Configuration
       when: cluster_vars.device.enabled
@@ -80,7 +80,7 @@
                     regexp: ^ACTION
                     owner: root
                     group: root
-                    mode: '0644'
+                    mode: '644'
                     create: true
 
     - name: Mounted Filesystem
@@ -147,7 +147,7 @@
         state: touch
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
       notify: Reboot
       when: not cluster_vars.service.cloud_init.enabled
 
@@ -183,7 +183,7 @@
         dest: /etc/modules-load.d/kubernetes.conf
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
       notify: Reboot
 
     - name: Unattended Upgrades
@@ -290,7 +290,7 @@
         dest: /etc/postfix/generic
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
     - name: Set sasl password fact
       ansible.builtin.set_fact:
@@ -305,7 +305,7 @@
         dest: /etc/postfix/sasl/password
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
     - name: Initialize map database
       ansible.builtin.command:
@@ -320,7 +320,7 @@
         path: '{{ item }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
       loop:
         - /etc/postfix/generic.db
         - /etc/postfix/sasl/password.db
