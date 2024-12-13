@@ -45,11 +45,11 @@
       block:
         - name: Wait for token creation
           ansible.builtin.wait_for:
-            path: '{{ k3s_map.node.directory.lib }}/server/node-token'
+            path: '{{ k3s_map.node.directory.data }}/server/node-token'
 
         - name: Read token
           ansible.builtin.slurp:
-            path: '{{ k3s_map.node.directory.lib }}/server/node-token'
+            path: '{{ k3s_map.node.directory.data }}/server/node-token'
           register: node_token
 
         - name: Set project token

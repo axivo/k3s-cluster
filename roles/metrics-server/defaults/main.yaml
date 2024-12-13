@@ -1,0 +1,28 @@
+---
+metricsserver_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: metrics-server
+        version: v3.12.2
+      repository:
+        name: metrics-server
+        org: kubernetes-sigs
+        url: https://kubernetes-sigs.github.io
+    # -- See [documentation](https://google.github.io/glog/stable/logging/#verbose-logging), for details
+    namespace: kube-system
+    replicas: 1
+    resources:
+      limits:
+        cpu: null
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 128Mi
+    server:
+      # -- Additional server arguments, set log level verbosity
+      args:
+        - --v=1
+      tls:
+        # -- Available options are `cert-manager`, `helm` and `metrics-server`
+        type: cert-manager

@@ -30,6 +30,9 @@ repos:
       - id: longhorn
         args:
           - --chart-search-root=./roles/longhorn
+      - id: metrics-server
+        args:
+          - --chart-search-root=./roles/metrics-server
       - id: victoria-logs-single
         args:
           - --chart-search-root=./roles/victorialogs

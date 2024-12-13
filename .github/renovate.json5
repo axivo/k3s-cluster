@@ -286,6 +286,20 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubernetes-sigs/metrics-server",
+      "extractVersionTemplate": "^metrics-server-helm-chart-(?<version>.+)$",
+      "fileMatch": [
+        "roles/metrics-server/Chart.yaml",
+        "roles/metrics-server/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "VictoriaMetrics/victoria-logs-single",
       "extractVersionTemplate": "^victoria-logs-single-(?<version>.+)$",
       "fileMatch": [
