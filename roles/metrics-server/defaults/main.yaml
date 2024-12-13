@@ -9,7 +9,6 @@ metricsserver_vars:
         name: metrics-server
         org: kubernetes-sigs
         url: https://kubernetes-sigs.github.io
-    # -- See [documentation](https://google.github.io/glog/stable/logging/#verbose-logging), for details
     namespace: kube-system
     replicas: 1
     resources:
@@ -20,7 +19,8 @@ metricsserver_vars:
         cpu: 10m
         memory: 128Mi
     server:
-      # -- Additional server arguments, set log level verbosity
+      # -- Additional server arguments,
+      # set log level [verbosity](https://google.github.io/glog/stable/logging/#verbose-logging)
       args:
         - --v=1
       tls:
