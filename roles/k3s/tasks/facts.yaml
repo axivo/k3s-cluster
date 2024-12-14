@@ -54,8 +54,6 @@
     k3s_node:
       ip: '{{ ansible_default_ipv4.address }}'
       kubelet:
-        - arg: anonymous-auth
-          value: true
         - arg: eviction-hard
           value: imagefs.available<15%,imagefs.inodesFree<5%,memory.available<500Mi,nodefs.available<10%,nodefs.inodesFree<5%
         - arg: eviction-max-pod-grace-period
