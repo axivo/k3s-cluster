@@ -23,7 +23,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.application_set.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.application_set.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.application_set.resources.requests.memory | string | `"128Mi"` |  |
+| argocd_vars.kubernetes.configs.cm.admin.enabled | bool | `false` |  |
 | argocd_vars.kubernetes.configs.cm.exec.enabled | bool | `true` |  |
+| argocd_vars.kubernetes.configs.cm.status_badge.enabled | bool | `true` |  |
 | argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` |  |
 | argocd_vars.kubernetes.controller.replicas | int | `1` |  |
 | argocd_vars.kubernetes.controller.resources.limits.cpu | string | `nil` |  |

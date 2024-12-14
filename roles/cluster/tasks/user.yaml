@@ -10,4 +10,4 @@
     dest: '/etc/sudoers.d/{{ ansible_user }}'
     owner: root
     group: root
-    mode: '0440'
+    mode: '440'

@@ -13,7 +13,7 @@
         dest: '{{ k3s_project.node.binary }}'
         owner: root
         group: root
-        mode: '0755'
+        mode: '755'
       register: result
       delay: 1
       retries: 3
@@ -25,7 +25,7 @@
         state: directory
         owner: root
         group: root
-        mode: '0755'
+        mode: '755'
 
     - name: Set server configuration postinstall fact
       ansible.builtin.set_fact:
@@ -37,7 +37,7 @@
         dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
     - name: Create service file
       ansible.builtin.template:
@@ -45,7 +45,7 @@
         dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
 
     - name: Create service environment file
       ansible.builtin.file:
@@ -55,7 +55,7 @@
         state: touch
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
@@ -78,4 +78,4 @@
         dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'

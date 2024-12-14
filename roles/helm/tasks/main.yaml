@@ -50,7 +50,7 @@
             dest: /tmp/{{ helm_vars.release.repository.key }}
             owner: root
             group: root
-            mode: '0644'
+            mode: '644'
           register: result
           delay: 1
           retries: 3
@@ -99,7 +99,7 @@
             dest: /etc/systemd/system/helm-cache.service
             owner: root
             group: root
-            mode: '0644'
+            mode: '644'
 
         - name: Create service timer file
           ansible.builtin.template:
@@ -107,7 +107,7 @@
             dest: /etc/systemd/system/helm-cache.timer
             owner: root
             group: root
-            mode: '0644'
+            mode: '644'
 
     - name: Helm Plugins
       ansible.builtin.import_tasks:

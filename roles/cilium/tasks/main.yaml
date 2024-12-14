@@ -32,7 +32,7 @@
         dest: /tmp
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
       loop: '{{ cilium_resources.release }}'
       register: result
       delay: 1
@@ -46,7 +46,7 @@
         dest: '{{ k3s_map.node.directory.bin }}'
         owner: root
         group: root
-        mode: '0755'
+        mode: '755'
         remote_src: true
       loop: '{{ cilium_resources.release }}'
 
