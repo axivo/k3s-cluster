@@ -23,9 +23,6 @@ kube-scheduler-arg: bind-address={{ k3s_node.ip }}
 {% endif %}
 kubelet-arg:
   {{ k3s_resources.node.kubelet.args | to_nice_yaml | indent(2) }}
-{%- if k3s_node.service | lower == 'agent' %}
-node-ip: {{ k3s_node.ip }}
-{% endif %}
 {%- if
   (k3s_resources.node.taint.agent | length > 0) or
   (k3s_vars.cluster.controlplane.tainted | bool and k3s_node.service | lower == 'server' and k3s_resources.node.taint.server | length > 0)
