@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/argoproj/argo-cd | argocd | 2.13.1 |
+| https://github.com/argoproj/argo-cd | argocd | 2.13.2 |
 
 ## Role Variables
 
@@ -88,4 +88,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` |  |
 | argocd_vars.release.repository.name | string | `"argo-cd"` |  |
 | argocd_vars.release.repository.org | string | `"argoproj"` |  |
-| argocd_vars.release.version | string | `"v2.13.1"` |  |
+| argocd_vars.release.version | string | `"v2.13.2"` |  |
