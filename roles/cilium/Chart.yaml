@@ -5,7 +5,7 @@ home: https://github.com/cilium/cilium
 dependencies:
   - name: cilium-cli
     repository: https://github.com/cilium/cilium-cli
-    version: 0.16.21
+    version: 0.16.22
   - name: gateway-api
     repository: https://github.com/kubernetes-sigs/gateway-api
     version: 1.2.1
