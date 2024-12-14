@@ -35,7 +35,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
             git commit -m 'docs(github-action): update documentation'
+            git push origin ${{ github.head_ref }}
           fi
-          git push origin ${{ github.head_ref }}
 permissions:
   contents: write
