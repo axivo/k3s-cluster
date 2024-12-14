@@ -24,9 +24,9 @@
       retries: 3
       until: result is not failed
 
-    - name: Update server user name
+    - name: Update server users
       kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'username.j2') | from_yaml }}"
+        definition: "{{ lookup('ansible.builtin.template', 'users.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         wait: true
 
@@ -35,9 +35,4 @@
         definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
         kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         wait: true
-
-    - name: Update server rbac policy
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'policy.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-        wait: true
+      no_log: true

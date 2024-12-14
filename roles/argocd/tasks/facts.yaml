@@ -38,3 +38,14 @@
       tag: '{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_map.helm.chart.version }}'
       url: 'https://github.com/{{ argocd_map.helm.repository.name }}/releases/tag'
   run_once: true
+
+- name: Set resources fact
+  ansible.builtin.set_fact:
+    argocd_resources:
+      server:
+        users:
+          - name: '{{ argocd_map.credentials.server.user.name }}'
+            password: '{{ argocd_map.credentials.server.user.password }}'
+            permissions: 'apiKey, login'
+            role: admin
+            enabled: true

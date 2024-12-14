@@ -20,10 +20,14 @@ applicationSet:
   replicas: {{ argocd_vars.kubernetes.application_set.replicas }}
 configs:
   cm:
+    admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled }}
     exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
+    statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled }}
   params:
     application.namespaces: {{ argocd_vars.kubernetes.server.application.namespaces | join(', ') }}
     server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
+  rbac:
+    {{ lookup('ansible.builtin.template', 'rbac.j2') | indent(4) }}
   secret:
     argocdServerAdminPassword: {{ argocd_map.credentials.server.admin.password }}
 controller:

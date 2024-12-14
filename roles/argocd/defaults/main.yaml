@@ -12,7 +12,11 @@ argocd_vars:
           memory: 128Mi
     configs:
       cm:
+        admin:
+          enabled: false
         exec:
+          enabled: true
+        status_badge:
           enabled: true
       params:
         server:

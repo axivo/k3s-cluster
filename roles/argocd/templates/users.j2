@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: {{ argocd_vars.kubernetes.namespace }}
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+{% for user in argocd_resources.server.users %}
+  {{ '.'.join(['accounts', user.name]) | indent(2) }}: {{ user.permissions }}
+  {{ '.'.join(['accounts', user.name, 'enabled']) | indent(2) }}: '{{ user.enabled | lower }}'
+{% endfor %}
