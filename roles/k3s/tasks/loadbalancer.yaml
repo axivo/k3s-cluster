@@ -45,7 +45,7 @@
         dest: /etc/keepalived/keepalived.conf
         owner: root
         group: root
-        mode: '0644'
+        mode: '644'
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

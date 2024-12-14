@@ -12,7 +12,11 @@ argocd_vars:
           memory: 128Mi
     configs:
       cm:
+        admin:
+          enabled: false
         exec:
+          enabled: true
+        status_badge:
           enabled: true
       params:
         server:
@@ -45,7 +49,7 @@ argocd_vars:
     helm:
       chart:
         name: argo-cd
-        version: v7.7.8
+        version: v7.7.10
       repository:
         name: argo-helm
         org: argoproj
@@ -137,4 +141,4 @@ argocd_vars:
     repository:
       name: argo-cd
       org: argoproj
-    version: v2.13.1
+    version: v2.13.2

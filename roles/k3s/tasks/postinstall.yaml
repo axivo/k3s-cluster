@@ -19,7 +19,7 @@
         dest: '{{ k3s_project.cluster.config }}'
         owner: root
         group: root
-        mode: '0600'
+        mode: '600'
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

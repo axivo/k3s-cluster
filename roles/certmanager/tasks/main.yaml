@@ -46,7 +46,7 @@
         dest: '{{ k3s_map.node.directory.bin }}/cmctl'
         owner: root
         group: root
-        mode: '0755'
+        mode: '755'
       register: result
       delay: 1
       retries: 3

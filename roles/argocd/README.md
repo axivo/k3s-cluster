@@ -1,8 +1,8 @@
 # argo-cd
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.8](https://img.shields.io/badge/Version-7.7.8-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.10](https://img.shields.io/badge/Version-7.7.10-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.8/charts/argo-cd) deployment, reset and validation.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.10/charts/argo-cd) deployment, reset and validation.
 
 ## Role Dependencies
 
@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/argoproj/argo-cd | argocd | 2.13.1 |
+| https://github.com/argoproj/argo-cd | argocd | 2.13.2 |
 
 ## Role Variables
 
@@ -23,7 +23,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.application_set.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.application_set.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.application_set.resources.requests.memory | string | `"128Mi"` |  |
+| argocd_vars.kubernetes.configs.cm.admin.enabled | bool | `false` |  |
 | argocd_vars.kubernetes.configs.cm.exec.enabled | bool | `true` |  |
+| argocd_vars.kubernetes.configs.cm.status_badge.enabled | bool | `true` |  |
 | argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` |  |
 | argocd_vars.kubernetes.controller.replicas | int | `1` |  |
 | argocd_vars.kubernetes.controller.resources.limits.cpu | string | `nil` |  |
@@ -40,7 +42,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` |  |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v7.7.8"` |  |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v7.7.10"` |  |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` |  |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` |  |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` |  |
@@ -86,4 +88,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` |  |
 | argocd_vars.release.repository.name | string | `"argo-cd"` |  |
 | argocd_vars.release.repository.org | string | `"argoproj"` |  |
-| argocd_vars.release.version | string | `"v2.13.1"` |  |
+| argocd_vars.release.version | string | `"v2.13.2"` |  |
