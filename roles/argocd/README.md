@@ -1,8 +1,8 @@
 # argo-cd
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.8](https://img.shields.io/badge/Version-7.7.8-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.10](https://img.shields.io/badge/Version-7.7.10-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.8/charts/argo-cd) deployment, reset and validation.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.10/charts/argo-cd) deployment, reset and validation.
 
 ## Role Dependencies
 
@@ -42,7 +42,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` |  |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v7.7.8"` |  |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v7.7.10"` |  |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` |  |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` |  |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` |  |
