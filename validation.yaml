@@ -12,14 +12,14 @@
         - cluster
         - k3s
         - argo-cd
-        - certmanager
+        - cert-manager
         - cilium
-        - externaldns
+        - external-dns
         - helm
         - kured
         - longhorn
         - metrics-server
-        - victorialogs
-        - victoriametrics
+        - victoria-logs
+        - victoria-metrics
       loop_control:
         loop_var: validation

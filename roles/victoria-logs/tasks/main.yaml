@@ -4,8 +4,7 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
-    - certmanager
-    - externaldns
+    - external-dns
     - k3s
   loop_control:
     loop_var: role
@@ -26,31 +25,24 @@
 
     - name: Add repository
       kubernetes.core.helm_repository:
-        name: '{{ item.org }}'
-        repo_url: '{{ item.url }}/{{ item.name }}'
-      loop: '{{ victoriametrics_map.helm.repository }}'
+        name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ victorialogs_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
       block:
-        - name: Create grafana user credentials secret
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
-            victoriametrics_postinstall: false
+            victorialogs_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ victoriametrics_project.helm.chart.reference }}'
-            chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
+            chart_ref: '{{ victorialogs_map.helm.chart.reference }}'
+            chart_version: '{{ victorialogs_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
-            namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
-            timeout: '{{ victoriametrics_map.helm.timeout }}'
+            name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}'
+            namespace: '{{ victorialogs_vars.kubernetes.namespace }}'
+            timeout: '{{ victorialogs_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true

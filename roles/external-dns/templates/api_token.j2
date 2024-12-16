@@ -4,5 +4,5 @@ metadata:
   name: {{ externaldns_map.cloudflare.api.token.name }}
   namespace: {{ externaldns_vars.kubernetes.namespace }}
 stringData:
-  {{ externaldns_map.cloudflare.api.token.key }}: {{ global_map.credentials[role_name].cloudflare.api.token }}
+  {{ externaldns_map.cloudflare.api.token.key }}: {{ global_map.credentials.externaldns.cloudflare.api.token }}
 type: Opaque

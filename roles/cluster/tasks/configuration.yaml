@@ -205,7 +205,7 @@
             - regexp: ^(?:.*)(\"\${distro_id}:\${distro_codename}-updates\";)$
               replace: \t\g<1>
             - regexp: ^(?:.*)(Unattended-Upgrade::Mail)\s.*;$
-              replace: '\g<1> "{{ global_map.credentials[role_name].postfix.user.alias }}";'
+              replace: '\g<1> "{{ global_map.credentials.cluster.postfix.user.alias }}";'
             - regexp: ^(?:.*)(Unattended-Upgrade::MailReport)\s.*;$
               replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.mail_report }}";'
             - regexp: ^(?:.*)(Unattended-Upgrade::Remove-Unused-Dependencies)\s.*;$
@@ -286,7 +286,7 @@
 
     - name: Create generic map
       ansible.builtin.copy:
-        content: "root@{{ cluster_host['fqdn'] }} {{ global_map.credentials[role_name].postfix.user.alias }}\n"
+        content: "root@{{ cluster_host['fqdn'] }} {{ global_map.credentials.cluster.postfix.user.alias }}\n"
         dest: /etc/postfix/generic
         owner: root
         group: root
@@ -296,8 +296,8 @@
       ansible.builtin.set_fact:
         sasl_password:
           - '[{{ cluster_vars.service.postfix.relay.host }}]'
-          - '{{ cluster_vars.service.postfix.relay.port }} {{ global_map.credentials[role_name].postfix.user.name }}'
-          - '{{ global_map.credentials[role_name].postfix.user.password }}'
+          - '{{ cluster_vars.service.postfix.relay.port }} {{ global_map.credentials.cluster.postfix.user.name }}'
+          - '{{ global_map.credentials.cluster.postfix.user.password }}'
 
     - name: Create sasl password map
       ansible.builtin.copy:

@@ -26,14 +26,14 @@
         - cluster
         - k3s
         - argo-cd
-        - certmanager
+        - cert-manager
         - cilium
-        - externaldns
+        - external-dns
         - kured
         - longhorn
         - metrics-server
-        - victorialogs
-        - victoriametrics
+        - victoria-logs
+        - victoria-metrics
         - helm
       loop_control:
         loop_var: reset
