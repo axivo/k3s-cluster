@@ -5,10 +5,10 @@
       credentials:
         server:
           admin:
-            password: "{{ global_map.credentials[role_name].server.admin.password | string | password_hash('blowfish') }}"
+            password: "{{ global_map.credentials.argocd.server.admin.password | string | password_hash('blowfish') }}"
           user:
-            name: '{{ global_map.credentials[role_name].server.user.name }}'
-            password: "{{ global_map.credentials[role_name].server.user.password | string | password_hash('blowfish') }}"
+            name: '{{ global_map.credentials.argocd.server.user.name }}'
+            password: "{{ global_map.credentials.argocd.server.user.password | string | password_hash('blowfish') }}"
       gateway:
         server:
           annotations:

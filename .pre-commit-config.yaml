@@ -5,7 +5,7 @@ repos:
     hooks:
       - id: argo-cd
         args:
-          - --chart-search-root=./roles/argocd
+          - --chart-search-root=./roles/argo-cd
       - id: cert-manager
         args:
           - --chart-search-root=./roles/certmanager

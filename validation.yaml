@@ -11,7 +11,7 @@
       loop:
         - cluster
         - k3s
-        - argocd
+        - argo-cd
         - certmanager
         - cilium
         - externaldns

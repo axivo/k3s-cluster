@@ -5,7 +5,7 @@
     tasks_from: facts
   loop:
     - externaldns
-    - argocd
+    - argo-cd
   loop_control:
     loop_var: role
 

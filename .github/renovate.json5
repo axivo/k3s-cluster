@@ -64,8 +64,8 @@
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/Chart.yaml",
-        "roles/argocd/defaults/main.yaml"
+        "roles/argo-cd/Chart.yaml",
+        "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
@@ -78,8 +78,8 @@
       "depNameTemplate": "argoproj/argo-cd",
       "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/Chart.yaml",
-        "roles/argocd/defaults/main.yaml"
+        "roles/argo-cd/Chart.yaml",
+        "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
         "dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",

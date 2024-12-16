@@ -43,7 +43,7 @@
         name: '{{ postinstall }}'
         tasks_from: postinstall
       loop:
-        - argocd
+        - argo-cd
         - certmanager
         - cilium
         - externaldns
@@ -58,7 +58,7 @@
     - cilium
     - certmanager
     - externaldns
-    - argocd
+    - argo-cd
     - kured
     - longhorn
     - metrics-server

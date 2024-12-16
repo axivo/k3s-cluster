@@ -101,7 +101,7 @@
           ansible.builtin.lineinfile:
             line: '{{ password.results[0].user_input }}'
             path: '{{ vault_file.path }}'
-            mode: '644'
+            mode: '0644'
           no_log: true
 
         - name: Update global password

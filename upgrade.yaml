@@ -11,7 +11,7 @@
         name: '{{ upgrade }}'
         tasks_from: upgrade
       loop:
-        - argocd
+        - argo-cd
         - certmanager
         - cilium
         - cluster
