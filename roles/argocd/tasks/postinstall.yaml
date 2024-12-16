@@ -24,12 +24,6 @@
       retries: 3
       until: result is not failed
 
-    - name: Update server users
-      kubernetes.core.k8s:
-        definition: "{{ lookup('ansible.builtin.template', 'users.j2') | from_yaml }}"
-        kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-        wait: true
-
     - name: Update server user credentials
       kubernetes.core.k8s:
         definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
