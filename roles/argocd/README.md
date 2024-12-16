@@ -25,13 +25,24 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.application_set.resources.requests.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.configs.cm.admin.enabled | bool | `false` |  |
 | argocd_vars.kubernetes.configs.cm.exec.enabled | bool | `true` |  |
-| argocd_vars.kubernetes.configs.cm.status_badge.enabled | bool | `true` |  |
-| argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` |  |
-| argocd_vars.kubernetes.controller.replicas | int | `1` |  |
+| argocd_vars.kubernetes.configs.cm.status_badge.enabled | bool | `false` | See [documentation](https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/), for details |
+| argocd_vars.kubernetes.configs.params.application.namespaces | list | `["kube-system"]` | Namespaces where applications may be created |
+| argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.new_file_globbing.enabled | bool | `true` | See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git-File-Globbing/), for details |
+| argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.submodule.enabled | bool | `true` | Enable git submodule support |
+| argocd_vars.kubernetes.configs.params.applicationsetcontroller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.configs.params.applicationsetcontroller.progressive_syncs.enabled | bool | `true` | Enable use of Progressive Syncs |
+| argocd_vars.kubernetes.configs.params.controller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.configs.params.controller.sharding.algorithm | string | `"consistent-hashing"` | Available options are `legacy`, `round-robin` and `consistent-hashing`, see [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/) for details |
+| argocd_vars.kubernetes.configs.params.dexserver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.configs.params.notificationscontroller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.configs.params.reposerver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` | Run server without TLS, needed for HTTPRoute |
+| argocd_vars.kubernetes.configs.params.server.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
+| argocd_vars.kubernetes.controller.replicas | int | `2` |  |
 | argocd_vars.kubernetes.controller.resources.limits.cpu | string | `nil` |  |
-| argocd_vars.kubernetes.controller.resources.limits.memory | string | `"128Mi"` |  |
+| argocd_vars.kubernetes.controller.resources.limits.memory | string | `"256Mi"` |  |
 | argocd_vars.kubernetes.controller.resources.requests.cpu | string | `"10m"` |  |
-| argocd_vars.kubernetes.controller.resources.requests.memory | string | `"128Mi"` |  |
+| argocd_vars.kubernetes.controller.resources.requests.memory | string | `"256Mi"` |  |
 | argocd_vars.kubernetes.dex.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.dex.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.dex.resources.requests.cpu | string | `"10m"` |  |
@@ -69,7 +80,6 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.repo_server.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.repo_server.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.repo_server.resources.requests.memory | string | `"128Mi"` |  |
-| argocd_vars.kubernetes.server.application.namespaces[0] | string | `"kube-system"` |  |
 | argocd_vars.kubernetes.server.autoscaling.enabled | bool | `true` | If `false`, `replicas` value is set from `min_replicas` value |
 | argocd_vars.kubernetes.server.autoscaling.max_replicas | int | `3` |  |
 | argocd_vars.kubernetes.server.autoscaling.min_replicas | int | `1` |  |
