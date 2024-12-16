@@ -1,0 +1,180 @@
+global:
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
+  domain: {{ argocd_map.gateway.server.hostname }}
+{% endif %}
+  logging:
+    level: {{ argocd_vars.kubernetes.global.logging.level }}
+applicationSet:
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.application_set.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.application_set.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.application_set.resources.requests.memory }}
+{% endif %}
+  replicas: {{ argocd_vars.kubernetes.application_set.replicas }}
+configs:
+  cm:
+{% for user in argocd_resources.server.users %}
+    {{ '.'.join(['accounts', user.name]) | indent(4) }}: {{ user.permissions }}
+    {{ '.'.join(['accounts', user.name, 'enabled']) | indent(4) }}: '{{ user.enabled | lower }}'
+{% endfor %}
+    admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled }}
+    exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
+    statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled }}
+  params:
+    application.namespaces: {{ argocd_vars.kubernetes.configs.params.application.namespaces | join(', ') }}
+    applicationsetcontroller.enable.git.submodule: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.submodule.enabled }}
+    applicationsetcontroller.enable.new.git.file.globbing: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.new_file_globbing.enabled }}
+    applicationsetcontroller.enable.progressive.syncs: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.progressive_syncs.enabled }}
+    applicationsetcontroller.log.level: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.log_level }}
+    controller.log.level: {{ argocd_vars.kubernetes.configs.params.controller.log_level }}
+    controller.sharding.algorithm: {{ argocd_vars.kubernetes.configs.params.controller.sharding.algorithm }}
+    dexserver.log.level: {{ argocd_vars.kubernetes.configs.params.dexserver.log_level }}
+    notificationscontroller.log.level: {{ argocd_vars.kubernetes.configs.params.notificationscontroller.log_level }}
+    reposerver.log.level: {{ argocd_vars.kubernetes.configs.params.reposerver.log_level }}
+    server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
+    server.log.level: {{ argocd_vars.kubernetes.configs.params.server.log_level }}
+  rbac:
+    {{ lookup('ansible.builtin.template', 'rbac.j2') | indent(4) }}
+  secret:
+    argocdServerAdminPassword: {{ argocd_map.credentials.server.admin.password }}
+controller:
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.controller.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.controller.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.controller.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.controller.resources.requests.memory }}
+{% endif %}
+  replicas: {{ argocd_vars.kubernetes.controller.replicas }}
+dex:
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.dex.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.dex.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.dex.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.dex.resources.requests.memory }}
+{% endif %}
+notifications:
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.notifications.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.notifications.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.notifications.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.notifications.resources.requests.memory }}
+{% endif %}
+{% if argocd_vars.kubernetes.redis.ha.enabled and k3s_map.agent.ha %}
+redis:
+  enabled: false
+redis-ha:
+  enabled: true
+  podDisruptionBudget:
+    minAvailable: 1
+{% if argocd_postinstall %}
+  haproxy:
+    resources:
+      limits:
+        cpu: {{ argocd_vars.kubernetes.haproxy.resources.limits.cpu }}
+        memory: {{ argocd_vars.kubernetes.haproxy.resources.limits.memory }}
+      requests:
+        cpu: {{ argocd_vars.kubernetes.haproxy.resources.requests.cpu }}
+        memory: {{ argocd_vars.kubernetes.haproxy.resources.requests.memory }}
+{% if argocd_vars.kubernetes.redis.ha.storage.enabled %}
+  persistentVolume:
+    enabled: true
+    storageClass: {{ argocd_vars.kubernetes.redis.ha.storage.class }}
+    accessModes:
+      {{ argocd_vars.kubernetes.redis.ha.storage.access_modes | to_nice_yaml | indent(6) }}
+    size: {{ argocd_vars.kubernetes.redis.ha.storage.size }}
+{% endif %}
+  redis:
+    resources:
+      limits:
+        cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+        memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
+      requests:
+        cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
+        memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
+{% endif %}
+{% else %}
+redis:
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
+{% endif %}
+{% endif %}
+repoServer:
+{% if argocd_vars.kubernetes.repo_server.autoscaling.enabled %}
+  autoscaling:
+    enabled: true
+    maxReplicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.max_replicas }}
+    minReplicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}
+    targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.utilization_percentage.cpu }}
+    targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.repo_server.autoscaling.target.utilization_percentage.memory }}
+{% else %}
+  replicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}
+{% endif %}
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.repo_server.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}
+{% endif %}
+server:
+{% if argocd_vars.kubernetes.server.autoscaling.enabled %}
+  autoscaling:
+    enabled: true
+    maxReplicas: {{ argocd_vars.kubernetes.server.autoscaling.max_replicas }}
+    minReplicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
+    targetCPUUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.utilization_percentage.cpu }}
+    targetMemoryUtilizationPercentage: {{ argocd_vars.kubernetes.server.autoscaling.target.utilization_percentage.memory }}
+{% else %}
+  replicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
+{% endif %}
+  pdb:
+    enabled: true
+    minAvailable: 1
+{% if argocd_postinstall %}
+  resources:
+    limits:
+      cpu: {{ argocd_vars.kubernetes.server.resources.limits.cpu }}
+      memory: {{ argocd_vars.kubernetes.server.resources.limits.memory }}
+    requests:
+      cpu: {{ argocd_vars.kubernetes.server.resources.requests.cpu }}
+      memory: {{ argocd_vars.kubernetes.server.resources.requests.memory }}
+{% endif %}

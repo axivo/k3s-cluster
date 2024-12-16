@@ -5,10 +5,10 @@ repos:
     hooks:
       - id: argo-cd
         args:
-          - --chart-search-root=./roles/argocd
+          - --chart-search-root=./roles/argo-cd
       - id: cert-manager
         args:
-          - --chart-search-root=./roles/certmanager
+          - --chart-search-root=./roles/cert-manager
       - id: cilium
         args:
           - --chart-search-root=./roles/cilium
@@ -17,7 +17,7 @@ repos:
           - --chart-search-root=./roles/cluster
       - id: external-dns
         args:
-          - --chart-search-root=./roles/externaldns
+          - --chart-search-root=./roles/external-dns
       - id: helm
         args:
           - --chart-search-root=./roles/helm
@@ -35,7 +35,7 @@ repos:
           - --chart-search-root=./roles/metrics-server
       - id: victoria-logs-single
         args:
-          - --chart-search-root=./roles/victorialogs
+          - --chart-search-root=./roles/victoria-logs
       - id: victoria-metrics-k8s-stack
         args:
-          - --chart-search-root=./roles/victoriametrics
+          - --chart-search-root=./roles/victoria-metrics

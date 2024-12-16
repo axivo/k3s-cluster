@@ -43,25 +43,25 @@
         name: '{{ postinstall }}'
         tasks_from: postinstall
       loop:
-        - argocd
-        - certmanager
+        - argo-cd
+        - cert-manager
         - cilium
-        - externaldns
+        - external-dns
         - kured
         - longhorn
         - metrics-server
-        - victorialogs
-        - victoriametrics
+        - victoria-logs
+        - victoria-metrics
       loop_control:
         loop_var: postinstall
   roles:
     - cilium
-    - certmanager
-    - externaldns
-    - argocd
+    - cert-manager
+    - external-dns
+    - argo-cd
     - kured
     - longhorn
     - metrics-server
-    - victorialogs
-    - victoriametrics
+    - victoria-logs
+    - victoria-metrics
   tags: charts

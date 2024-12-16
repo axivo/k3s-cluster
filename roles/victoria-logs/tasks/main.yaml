@@ -6,7 +6,6 @@
   loop:
     - external-dns
     - k3s
-    - victoria-metrics
   loop_control:
     loop_var: role
 
@@ -26,24 +25,24 @@
 
     - name: Add repository
       kubernetes.core.helm_repository:
-        name: '{{ kured_vars.kubernetes.helm.repository.org }}'
-        repo_url: '{{ kured_map.helm.repository.url }}'
+        name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}'
+        repo_url: '{{ victorialogs_map.helm.repository.url }}'
 
     - name: Chart Setup
       run_once: true
       block:
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
-            kured_postinstall: false
+            victorialogs_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ kured_map.helm.chart.reference }}'
-            chart_version: '{{ kured_vars.kubernetes.helm.chart.version }}'
+            chart_ref: '{{ victorialogs_map.helm.chart.reference }}'
+            chart_version: '{{ victorialogs_vars.kubernetes.helm.chart.version }}'
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            name: '{{ kured_vars.kubernetes.helm.chart.name }}'
-            namespace: '{{ kured_vars.kubernetes.namespace }}'
-            timeout: '{{ kured_map.helm.timeout }}'
+            name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}'
+            namespace: '{{ victorialogs_vars.kubernetes.namespace }}'
+            timeout: '{{ victorialogs_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             create_namespace: true
             update_repo_cache: true

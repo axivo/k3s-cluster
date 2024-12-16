@@ -64,8 +64,8 @@
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/Chart.yaml",
-        "roles/argocd/defaults/main.yaml"
+        "roles/argo-cd/Chart.yaml",
+        "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
@@ -78,8 +78,8 @@
       "depNameTemplate": "argoproj/argo-cd",
       "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
-        "roles/argocd/Chart.yaml",
-        "roles/argocd/defaults/main.yaml"
+        "roles/argo-cd/Chart.yaml",
+        "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
         "dependencies:[\\s\\S]+?name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
@@ -92,8 +92,8 @@
       "depNameTemplate": "cert-manager/cert-manager",
       "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
-        "roles/certmanager/Chart.yaml",
-        "roles/certmanager/defaults/main.yaml"
+        "roles/cert-manager/Chart.yaml",
+        "roles/cert-manager/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
@@ -106,8 +106,8 @@
       "depNameTemplate": "cert-manager/cmctl",
       "extractVersionTemplate": "^v(?<version>.+)$",
       "fileMatch": [
-        "roles/certmanager/Chart.yaml",
-        "roles/certmanager/defaults/main.yaml"
+        "roles/cert-manager/Chart.yaml",
+        "roles/cert-manager/defaults/main.yaml"
       ],
       "matchStrings": [
         "dependencies:[\\s\\S]+?name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
@@ -188,8 +188,8 @@
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
       "fileMatch": [
-        "roles/externaldns/Chart.yaml",
-        "roles/externaldns/defaults/main.yaml"
+        "roles/external-dns/Chart.yaml",
+        "roles/external-dns/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
@@ -303,8 +303,8 @@
       "depNameTemplate": "VictoriaMetrics/victoria-logs-single",
       "extractVersionTemplate": "^victoria-logs-single-(?<version>.+)$",
       "fileMatch": [
-        "roles/victorialogs/Chart.yaml",
-        "roles/victorialogs/defaults/main.yaml"
+        "roles/victoria-logs/Chart.yaml",
+        "roles/victoria-logs/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
@@ -318,8 +318,8 @@
       "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
       "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
       "fileMatch": [
-        "roles/victoriametrics/Chart.yaml",
-        "roles/victoriametrics/defaults/main.yaml"
+        "roles/victoria-metrics/Chart.yaml",
+        "roles/victoria-metrics/defaults/main.yaml"
       ],
       "matchStrings": [
         "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",

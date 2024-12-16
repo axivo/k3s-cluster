@@ -25,15 +25,15 @@
       loop:
         - cluster
         - k3s
-        - argocd
-        - certmanager
+        - argo-cd
+        - cert-manager
         - cilium
-        - externaldns
+        - external-dns
         - kured
         - longhorn
         - metrics-server
-        - victorialogs
-        - victoriametrics
+        - victoria-logs
+        - victoria-metrics
         - helm
       loop_control:
         loop_var: reset

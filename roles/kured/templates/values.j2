@@ -8,7 +8,7 @@ configuration:
   messageTemplateReboot: {{ kured_vars.kubernetes.configuration.slack.messages.reboot }}
   messageTemplateUncordon: {{ kured_vars.kubernetes.configuration.slack.messages.uncordon }}
 {% endif %}
-  notifyUrl: {{ global_map.credentials[role_name].slack.notify.url }}
+  notifyUrl: {{ global_map.credentials.kured.slack.notify.url }}
 {% endif %}
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}

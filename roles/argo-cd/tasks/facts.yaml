@@ -1,0 +1,51 @@
+---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    argocd_map:
+      credentials:
+        server:
+          admin:
+            password: "{{ global_map.credentials.argocd.server.admin.password | string | password_hash('blowfish') }}"
+          user:
+            name: '{{ global_map.credentials.argocd.server.user.name }}'
+            password: "{{ global_map.credentials.argocd.server.user.password | string | password_hash('blowfish') }}"
+      gateway:
+        server:
+          annotations:
+            cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+          hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
+          http_route:
+            insecure: '{{ argocd_vars.kubernetes.server.gateway.service }}-http'
+            secure: '{{ argocd_vars.kubernetes.server.gateway.service }}-https'
+      helm:
+        chart:
+          reference: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
+          version: '{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
+        repository:
+          name: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+          url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
+        timeout: 10m0s
+      release:
+        url: 'https://github.com/{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}/releases'
+  run_once: true
+
+- name: Set project fact
+  ansible.builtin.set_fact:
+    argocd_project:
+      release:
+        checksum: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksum }}'
+        file: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+      tag: '{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_map.helm.chart.version }}'
+      url: 'https://github.com/{{ argocd_map.helm.repository.name }}/releases/tag'
+  run_once: true
+
+- name: Set resources fact
+  ansible.builtin.set_fact:
+    argocd_resources:
+      server:
+        users:
+          - name: '{{ argocd_map.credentials.server.user.name }}'
+            password: '{{ argocd_map.credentials.server.user.password }}'
+            permissions: 'apiKey, login'
+            role: admin
+            enabled: true

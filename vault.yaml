@@ -31,7 +31,7 @@
                       alias: '{{ global_map.credentials.cluster.postfix.user.alias }}'
                       name: '{{ global_map.credentials.cluster.postfix.user.name }}'
                       password: '{{ global_map.credentials.cluster.postfix.user.password }}'
-              - externaldns:
+              - external-dns:
                   cloudflare:
                     api:
                       token: '{{ global_map.credentials.externaldns.cloudflare.api.token }}'
@@ -43,7 +43,7 @@
                   backup:
                     user:
                       password: '{{ global_map.credentials.longhorn.backup.user.password }}'
-              - victoriametrics:
+              - victoria-metrics:
                   grafana:
                     user:
                       password: '{{ global_map.credentials.victoriametrics.grafana.user.password }}'
@@ -101,7 +101,7 @@
           ansible.builtin.lineinfile:
             line: '{{ password.results[0].user_input }}'
             path: '{{ vault_file.path }}'
-            mode: '644'
+            mode: '0644'
           no_log: true
 
         - name: Update global password

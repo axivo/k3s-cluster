@@ -11,18 +11,18 @@
         name: '{{ upgrade }}'
         tasks_from: upgrade
       loop:
-        - argocd
-        - certmanager
+        - argo-cd
+        - cert-manager
         - cilium
         - cluster
-        - externaldns
+        - external-dns
         - helm
         - k3s
         - kured
         - longhorn
         - metrics-server
-        - victorialogs
-        - victoriametrics
+        - victoria-logs
+        - victoria-metrics
       loop_control:
         loop_var: upgrade
       tags: always
