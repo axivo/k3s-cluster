@@ -141,7 +141,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory | string | `"2560Mi"` |  |
 | victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
 | victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.class | string | `"longhorn"` |  |
-| victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled | bool | `false` |  |
+| victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled | bool | `true` |  |
 | victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size | string | `"20Gi"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.ingress.enabled | bool | `true` |  |
 | victoriametrics_vars.kubernetes.vmsingle.ingress.subdomain | string | `"metrics"` |  |

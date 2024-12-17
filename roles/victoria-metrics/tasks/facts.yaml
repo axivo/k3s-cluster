@@ -63,6 +63,40 @@
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.vmsingle.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
           name: vmsingle-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+      spec:
+        alertmanager:
+          extra_args: {}
+          extra_envs: []
+        global:
+          scrape_interval: 30s
+          scrape_timeout: 15s
+        vmagent:
+          extra_args: {}
+          extra_envs:
+            # Reduce CPU usage, in favor of memory usage
+            - name: GOGC
+              # Default value is `30`
+              value: '90'
+        vmalert:
+          extra_args: {}
+          extra_envs: []
+        vmcluster:
+          vminsert:
+            extra_args: {}
+            extra_envs: []
+          vmselect:
+            extra_args: {}
+            extra_envs: []
+          vmstorage:
+            extra_args: {}
+            extra_envs: []
+        vmsingle:
+          extra_args: {}
+          extra_envs:
+            # Reduce CPU usage, in favor of memory usage
+            - name: GOGC
+              # Default value is `30`
+              value: '60'
   run_once: true
 
 - name: Set project fact

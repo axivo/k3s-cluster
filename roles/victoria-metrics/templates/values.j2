@@ -21,7 +21,17 @@ alertmanager:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
-    logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
+{% if victoriametrics_map.spec.alertmanager.extra_args is mapping and victoriametrics_map.spec.alertmanager.extra_args.keys() | length > 0 %}
+    extraArgs:
+{% for key, value in victoriametrics_map.spec.alertmanager.extra_args.items() %}
+      {{ key | indent(6) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.alertmanager.extra_envs is iterable and victoriametrics_map.spec.alertmanager.extra_envs | length > 0 %}
+    extraEnvs:
+      {{ victoriametrics_map.spec.alertmanager.extra_envs | to_nice_yaml | indent(6) }}
+{% endif %}
+    logLevel: {{ victoriametrics_vars.kubernetes.alertmanager.log_level }}
     podDisruptionBudget:
       minAvailable: 1
     storage:
@@ -156,6 +166,16 @@ kubeEtcd:
       endpoints:
         - port: http-metrics
           scheme: http
+kubelet:
+  vmScrape:
+    spec:
+      interval: {{ victoriametrics_map.spec.global.scrape_interval }}
+      scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
+  vmScrapes:
+    kubelet:
+      spec:
+        scrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+        scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
 kubeScheduler:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
@@ -222,6 +242,16 @@ vmagent:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
 {% endif %}
   spec:
+{% if victoriametrics_map.spec.vmagent.extra_args is mapping and victoriametrics_map.spec.vmagent.extra_args.keys() | length > 0 %}
+    extraArgs:
+{% for key, value in victoriametrics_map.spec.vmagent.extra_args.items() %}
+      {{ key | indent(6) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.vmagent.extra_envs is iterable and victoriametrics_map.spec.vmagent.extra_envs | length > 0 %}
+    extraEnvs:
+      {{ victoriametrics_map.spec.vmagent.extra_envs | to_nice_yaml | indent(6) }}
+{% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
       minAvailable: 1
@@ -242,6 +272,8 @@ vmagent:
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
 {% endif %}
+    scrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+    scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
     storage:
 {% if victoriametrics_vars.kubernetes.vmagent.storage.enabled %}
       volumeClaimTemplate:
@@ -346,6 +378,16 @@ vmcluster:
     replicationFactor: {{ victoriametrics_vars.kubernetes.vmcluster.replication_factor }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmcluster.retention_period }}
     vminsert:
+{% if victoriametrics_map.spec.vmcluster.vminsert.extra_args is mapping and victoriametrics_map.spec.vmcluster.vminsert.extra_args.keys() | length > 0 %}
+      extraArgs:
+{% for key, value in victoriametrics_map.spec.vmcluster.vminsert.extra_args.items() %}
+        {{ key | indent(8) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.vmcluster.vminsert.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vminsert.extra_envs | length > 0 %}
+      extraEnvs:
+        {{ victoriametrics_map.spec.vmcluster.vminsert.extra_envs | to_nice_yaml | indent(8) }}
+{% endif %}
 {% if victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
       hpa:
         maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.max_replicas }}
@@ -374,6 +416,17 @@ vmcluster:
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
 {% endif %}
     vmselect:
+      extraArgs:
+        dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+{% if victoriametrics_map.spec.vmcluster.vmselect.extra_args is mapping and victoriametrics_map.spec.vmcluster.vmselect.extra_args.keys() | length > 0 %}
+{% for key, value in victoriametrics_map.spec.vmcluster.vmselect.extra_args.items() %}
+        {{ key | indent(8) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.vmcluster.vmselect.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vmselect.extra_envs | length > 0 %}
+      extraEnvs:
+        {{ victoriametrics_map.spec.vmcluster.vmselect.extra_envs | to_nice_yaml | indent(8) }}
+{% endif %}
 {% if victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
       hpa:
         maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.max_replicas }}
@@ -416,6 +469,17 @@ vmcluster:
           sizeLimit: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.size }}
 {% endif %}
     vmstorage:
+      extraArgs:
+        dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+{% if victoriametrics_map.spec.vmcluster.vmstorage.extra_args is mapping and victoriametrics_map.spec.vmcluster.vmstorage.extra_args.keys() | length > 0 %}
+{% for key, value in victoriametrics_map.spec.vmcluster.vmstorage.extra_args.items() %}
+        {{ key | indent(8) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.vmcluster.vmstorage.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | length > 0 %}
+      extraEnvs:
+        {{ victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | to_nice_yaml | indent(8) }}
+{% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       podDisruptionBudget:
         minAvailable: 1
@@ -463,6 +527,17 @@ vmsingle:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmsingle.name }}
 {% endif %}
   spec:
+    extraArgs:
+      dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+{% if victoriametrics_map.spec.vmsingle.extra_args is mapping and victoriametrics_map.spec.vmsingle.extra_args.keys() | length > 0 %}
+{% for key, value in victoriametrics_map.spec.vmsingle.extra_args.items() %}
+      {{ key | indent(6) }}: '{{ value }}'
+{% endfor %}
+{% endif %}
+{% if victoriametrics_map.spec.vmsingle.extra_envs is iterable and victoriametrics_map.spec.vmsingle.extra_envs | length > 0 %}
+    extraEnvs:
+      {{ victoriametrics_map.spec.vmsingle.extra_envs | to_nice_yaml | indent(6) }}
+{% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmsingle.log_level }}
     replicaCount: {{ victoriametrics_vars.kubernetes.vmsingle.replicas }}
 {% if victoriametrics_postinstall %}
