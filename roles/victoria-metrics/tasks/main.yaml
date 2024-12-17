@@ -38,6 +38,7 @@
             definition: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
+          no_log: true
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
