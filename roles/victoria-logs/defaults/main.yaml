@@ -19,10 +19,10 @@ victorialogs_vars:
       resources:
         limits:
           cpu: null
-          memory: 512Mi
+          memory: 256Mi
         requests:
           cpu: 10m
-          memory: 512Mi
+          memory: 256Mi
       storage:
         enabled: true
         access_modes:
@@ -46,7 +46,7 @@ victorialogs_vars:
       resources:
         limits:
           cpu: null
-          memory: 256Mi
+          memory: 128Mi
         requests:
           cpu: 10m
-          memory: 256Mi
+          memory: 128Mi
