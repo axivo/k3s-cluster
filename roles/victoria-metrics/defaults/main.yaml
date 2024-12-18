@@ -128,10 +128,10 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 640Mi
+          memory: 1024Mi
         requests:
           cpu: 10m
-          memory: 640Mi
+          memory: 1024Mi
       storage:
         enabled: false
         access_modes:
