@@ -22,9 +22,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victorialogs_vars.kubernetes.server.log_level | string | `"WARN"` |  |
 | victorialogs_vars.kubernetes.server.replicas | int | `1` |  |
 | victorialogs_vars.kubernetes.server.resources.limits.cpu | string | `nil` |  |
-| victorialogs_vars.kubernetes.server.resources.limits.memory | string | `"512Mi"` |  |
+| victorialogs_vars.kubernetes.server.resources.limits.memory | string | `"256Mi"` |  |
 | victorialogs_vars.kubernetes.server.resources.requests.cpu | string | `"10m"` |  |
-| victorialogs_vars.kubernetes.server.resources.requests.memory | string | `"512Mi"` |  |
+| victorialogs_vars.kubernetes.server.resources.requests.memory | string | `"256Mi"` |  |
 | victorialogs_vars.kubernetes.server.retention_period | string | `"7d"` |  |
 | victorialogs_vars.kubernetes.server.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
 | victorialogs_vars.kubernetes.server.storage.class | string | `"longhorn"` |  |
@@ -38,6 +38,6 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victorialogs_vars.kubernetes.vector.enabled | bool | `true` |  |
 | victorialogs_vars.kubernetes.vector.log_level | string | `"warn"` |  |
 | victorialogs_vars.kubernetes.vector.resources.limits.cpu | string | `nil` |  |
-| victorialogs_vars.kubernetes.vector.resources.limits.memory | string | `"256Mi"` |  |
+| victorialogs_vars.kubernetes.vector.resources.limits.memory | string | `"128Mi"` |  |
 | victorialogs_vars.kubernetes.vector.resources.requests.cpu | string | `"10m"` |  |
-| victorialogs_vars.kubernetes.vector.resources.requests.memory | string | `"256Mi"` |  |
+| victorialogs_vars.kubernetes.vector.resources.requests.memory | string | `"128Mi"` |  |
