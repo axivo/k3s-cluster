@@ -42,7 +42,7 @@
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
-            cloudflare_postinstall: false
+            externaldns_postinstall: false
 
         - name: Install chart
           kubernetes.core.helm:

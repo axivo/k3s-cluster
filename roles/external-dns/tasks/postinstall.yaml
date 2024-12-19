@@ -5,7 +5,7 @@
   block:
     - name: Set chart postinstall fact
       ansible.builtin.set_fact:
-        cloudflare_postinstall: true
+        externaldns_postinstall: true
 
     - name: Update chart postinstall values
       kubernetes.core.helm:
