@@ -8,7 +8,7 @@ logLevel: {{ externaldns_vars.kubernetes.log_level }}
 policy: {{ externaldns_vars.kubernetes.policy }}
 provider:
   name: cloudflare
-{% if cloudflare_postinstall %}
+{% if externaldns_postinstall %}
 serviceMonitor:
   enabled: true
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
