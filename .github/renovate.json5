@@ -185,6 +185,20 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
+      "depNameTemplate": "coredns/coredns",
+      "extractVersionTemplate": "^coredns-(?<version>.+)$",
+      "fileMatch": [
+        "roles/coredns/Chart.yaml",
+        "roles/coredns/defaults/main.yaml"
+      ],
+      "matchStrings": [
+        "type:[\\s\\S]+version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
       "fileMatch": [

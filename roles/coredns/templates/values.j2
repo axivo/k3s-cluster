@@ -1,0 +1,53 @@
+{% if coredns_map.config.extra is truthy %}
+extraConfig: {{ coredns_map.config.extra }}
+{% endif %}
+{% if coredns_vars.kubernetes.hpa.enabled %}
+hpa:
+  enabled: true
+  maxReplicas: {{ coredns_vars.kubernetes.hpa.max_replicas }}
+  minReplicas: {{ coredns_vars.kubernetes.hpa.min_replicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: {{ coredns_vars.kubernetes.hpa.resource.name }}
+        target:
+          type: Utilization
+          averageUtilization: {{ coredns_vars.kubernetes.hpa.resource.target.utilization }}
+{% else %}
+replicaCount: {{ coredns_vars.kubernetes.hpa.min_replicas }}
+{% endif %}
+{% if coredns_vars.kubernetes.deployment.legacy %}
+k8sAppLabelOverride: kube-dns
+{% endif %}
+podDisruptionBudget:
+  minAvailable: 1
+{% if coredns_postinstall %}
+prometheus:
+  monitor:
+    enabled: true
+    interval: {{ coredns_map.metrics.service.monitor.scrape.interval }}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+  service:
+    enabled: true
+{% endif %}
+resources:
+  limits:
+{% if coredns_vars.kubernetes.resources.limits.cpu is truthy %}
+    cpu: {{ coredns_vars.kubernetes.resources.limits.cpu }}
+{% endif %}
+    memory: {{ coredns_vars.kubernetes.resources.limits.memory }}
+  requests:
+    cpu: {{ coredns_vars.kubernetes.resources.requests.cpu }}
+    memory: {{ coredns_vars.kubernetes.resources.requests.memory }}
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
+servers:
+  {{ lookup('ansible.builtin.template', 'config_zones.j2') | indent(2) }}
+service:
+  clusterIP: {{ k3s_map.cluster.dns }}
+serviceAccount:
+  create: true
+{% if coredns_map.zone.files is truthy %}
+zoneFiles: {{ coredns_map.zone.files }}
+{% endif %}

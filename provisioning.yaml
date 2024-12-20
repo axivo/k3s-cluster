@@ -46,6 +46,7 @@
         - argo-cd
         - cert-manager
         - cilium
+        - coredns
         - external-dns
         - kured
         - longhorn
@@ -56,6 +57,7 @@
         loop_var: postinstall
   roles:
     - cilium
+    - coredns
     - cert-manager
     - external-dns
     - argo-cd

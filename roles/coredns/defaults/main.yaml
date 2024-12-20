@@ -1,0 +1,32 @@
+---
+coredns_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: coredns
+        version: v1.37.0
+      repository:
+        name: helm
+        org: coredns
+        url: https://coredns.github.io
+    hpa:
+      # -- If `false`, `replicas` value is set from `min_replicas` value
+      enabled: true
+      min_replicas: 1
+      max_replicas: 3
+      resource:
+        name: memory
+        target:
+          # -- Average utilization percentage
+          utilization: 80
+    deployment:
+      # -- Legacy deployment, using `kube-dns` label selectors
+      legacy: false
+    namespace: kube-system
+    resources:
+      limits:
+        cpu: null
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 128Mi
