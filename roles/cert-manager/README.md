@@ -34,6 +34,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | certmanager_vars.kubernetes.helm.repository.org | string | `"jetstack"` |  |
 | certmanager_vars.kubernetes.helm.repository.url | string | `"https://charts.jetstack.io"` |  |
 | certmanager_vars.kubernetes.namespace | string | `"kube-system"` |  |
+| certmanager_vars.kubernetes.webhook.replicas | int | `1` |  |
 | certmanager_vars.kubernetes.webhook.resources.limits.cpu | string | `nil` |  |
 | certmanager_vars.kubernetes.webhook.resources.limits.memory | string | `"128Mi"` |  |
 | certmanager_vars.kubernetes.webhook.resources.requests.cpu | string | `"10m"` |  |
