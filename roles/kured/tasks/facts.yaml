@@ -10,11 +10,16 @@
           name: '{{ kured_vars.kubernetes.helm.repository.org }}/{{ kured_vars.kubernetes.helm.repository.name }}'
           url: '{{ kured_vars.kubernetes.helm.repository.url }}/{{ kured_vars.kubernetes.helm.repository.name }}'
         timeout: 5m0s
-      service:
-        annotations:
-          prometheus.io/path: /metrics
-          prometheus.io/port: 8080
-          prometheus.io/scrape: 'true'
+      metrics:
+        service:
+          annotations:
+            prometheus.io/path: /metrics
+            prometheus.io/port: 8080
+            prometheus.io/scrape: 'true'
+          monitor:
+            scrape:
+              interval: 60s
+              timeout: 15s
   run_once: true
 
 - name: Set project fact

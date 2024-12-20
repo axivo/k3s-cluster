@@ -21,6 +21,12 @@
           name: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
           url: '{{ externaldns_vars.kubernetes.helm.repository.url }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
         timeout: 5m0s
+      metrics:
+        service:
+          monitor:
+            scrape:
+              interval: 30s
+              timeout: 15s
   run_once: true
 
 - name: Set project fact

@@ -21,6 +21,12 @@
           http_route:
             insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
             secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'
+      metrics:
+        service:
+          monitor:
+            scrape:
+              interval: 60s
+              timeout: 15s
   run_once: true
 
 - name: Set project fact

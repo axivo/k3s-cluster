@@ -39,6 +39,9 @@ longhornManager:
 metrics:
   serviceMonitor:
     enabled: true
+    interval: {{ longhorn_map.metrics.service.monitor.scrape.interval }}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+    scrapeTimeout: {{ longhorn_map.metrics.service.monitor.scrape.timeout }}
 {% endif %}
 persistence:
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}

@@ -11,10 +11,39 @@ bpf:
     {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) }}
 {% endif %}
 bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe }}
+cgroup:
+  resources:
+    limits:
+{% if cilium_vars.kubernetes.cgroup.resources.limits.cpu is truthy %}
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.limits.cpu }}
+{% endif %}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cgroup.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cgroup.resources.requests.memory }}
 ciliumEndpointSlice:
   enabled: true
+cni:
+  resources:
+    limits:
+{% if cilium_vars.kubernetes.cni.resources.limits.cpu is truthy %}
+      cpu: {{ cilium_vars.kubernetes.cni.resources.limits.cpu }}
+{% endif %}
+      memory: {{ cilium_vars.kubernetes.cni.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.cni.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.cni.resources.requests.memory }}
 envoy:
   enabled: true
+  resources:
+    limits:
+{% if cilium_vars.kubernetes.envoy.resources.limits.cpu is truthy %}
+      cpu: {{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}
+{% endif %}
+      memory: {{ cilium_vars.kubernetes.envoy.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.envoy.resources.requests.memory }}
   rollOutPods: true
 envoyConfig:
   enabled: true
@@ -33,52 +62,37 @@ ipMasqAgent:
       {{ cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs | to_nice_yaml | indent(6) }}
   enabled: true
 {% endif %}
-hubble:
-  peerService:
-    clusterDomain: {{ k3s_vars.cluster.domain }}
-  relay:
-    enabled: true
-    podDisruptionBudget:
-      enabled: true
-    replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
-    retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
-    rollOutPods: true
-{% if cilium_vars.kubernetes.hubble.ui.enabled %}
-  ui:
-    enabled: true
-    podDisruptionBudget:
-      enabled: true
-    replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
-    rollOutPods: true
-{% endif %}
 k8sClientRateLimit:
   burst: {{ cilium_vars.kubernetes.client.rate_limit.burst }}
   qps: {{ cilium_vars.kubernetes.client.rate_limit.qps }}
 k8sServiceHost: {{ k3s_vars.cluster.service.host }}
 k8sServicePort: {{ k3s_vars.cluster.service.port }}
 kubeProxyReplacement: true
+kubeProxyReplacementHealthzBindAddr: '{{ cilium_vars.kubernetes.kube_proxy.bind.address }}:{{ cilium_vars.kubernetes.kube_proxy.bind.port }}'
 logOptions:
   level: {{ cilium_vars.kubernetes.log_options.level }}
 operator:
+  resources:
+    limits:
+{% if cilium_vars.kubernetes.operator.resources.limits.cpu is truthy %}
+      cpu: {{ cilium_vars.kubernetes.operator.resources.limits.cpu }}
+{% endif %}
+      memory: {{ cilium_vars.kubernetes.operator.resources.limits.memory }}
+    requests:
+      cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
+      memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
   rollOutPods: true
+resources:
+  limits:
+{% if cilium_vars.kubernetes.agent.resources.limits.cpu is truthy %}
+    cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
+{% endif %}
+    memory: {{ cilium_vars.kubernetes.agent.resources.limits.memory }}
+  requests:
+    cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
+    memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 rollOutCiliumPods: true
 {% elif cilium_postinstall %}
-cgroup:
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.cgroup.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.cgroup.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.cgroup.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.cgroup.resources.requests.memory }}
-cni:
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.cni.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.cni.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.cni.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.cni.resources.requests.memory }}
 dashboards:
   enabled: true
 envoy:
@@ -86,13 +100,6 @@ envoy:
     serviceMonitor:
       enabled: true
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.envoy.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.envoy.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.envoy.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.envoy.resources.requests.memory }}
 hubble:
   metrics:
     dashboards:
@@ -108,24 +115,38 @@ hubble:
     serviceMonitor:
       enabled: true
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+  peerService:
+    clusterDomain: {{ k3s_vars.cluster.domain }}
   relay:
+    enabled: true
+    podDisruptionBudget:
+      enabled: true
     prometheus:
       enabled: true
       serviceMonitor:
         enabled: true
         namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+    replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
     resources:
       limits:
+{% if cilium_vars.kubernetes.hubble.relay.resources.limits.cpu is truthy %}
         cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.cpu }}
+{% endif %}
         memory: {{ cilium_vars.kubernetes.hubble.relay.resources.limits.memory }}
       requests:
         cpu: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.cpu }}
         memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
+    retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
+    rollOutPods: true
+{% if cilium_vars.kubernetes.hubble.ui.enabled %}
   ui:
+    enabled: true
     backend:
       resources:
         limits:
+{% if cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu is truthy %}
           cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu }}
+{% endif %}
           memory: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory }}
         requests:
           cpu: {{ cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu }}
@@ -133,11 +154,18 @@ hubble:
     frontend:
       resources:
         limits:
+{% if cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu is truthy %}
           cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu }}
+{% endif %}
           memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory }}
         requests:
           cpu: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu }}
           memory: {{ cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.memory }}
+    podDisruptionBudget:
+      enabled: true
+    replicas: {{ cilium_vars.kubernetes.hubble.ui.replicas }}
+    rollOutPods: true
+{% endif %}
 {% if cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager' %}
   tls:
     auto:
@@ -153,25 +181,11 @@ operator:
     serviceMonitor:
       enabled: true
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-  resources:
-    limits:
-      cpu: {{ cilium_vars.kubernetes.operator.resources.limits.cpu }}
-      memory: {{ cilium_vars.kubernetes.operator.resources.limits.memory }}
-    requests:
-      cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
-      memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
 prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
     namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-resources:
-  limits:
-    cpu: {{ cilium_vars.kubernetes.agent.resources.limits.cpu }}
-    memory: {{ cilium_vars.kubernetes.agent.resources.limits.memory }}
-  requests:
-    cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
-    memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 {% else %}
 autoDirectNodeRoutes: true
 directRoutingSkipUnreachable: true

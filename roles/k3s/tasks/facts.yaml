@@ -5,6 +5,7 @@
       agent:
         ha: '{{ groups.agent | length > 2 }}'
       cluster:
+        dns: 10.43.0.10
         label: default
       loadbalancer:
         hosts: '{{ groups.server[-2:] }}'

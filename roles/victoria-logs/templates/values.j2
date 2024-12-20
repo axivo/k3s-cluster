@@ -33,16 +33,21 @@ server:
     storageClassName: {{ victorialogs_vars.kubernetes.server.storage.class }}
 {% endif %}
   replicaCount: {{ victorialogs_vars.kubernetes.server.replicas }}
-{% if victorialogs_postinstall %}
   resources:
     limits:
+{% if victorialogs_vars.kubernetes.server.resources.limits.cpu is truthy %}
       cpu: {{ victorialogs_vars.kubernetes.server.resources.limits.cpu }}
+{% endif %}
       memory: {{ victorialogs_vars.kubernetes.server.resources.limits.memory }}
     requests:
       cpu: {{ victorialogs_vars.kubernetes.server.resources.requests.cpu }}
       memory: {{ victorialogs_vars.kubernetes.server.resources.requests.memory }}
+{% if victorialogs_postinstall %}
   serviceMonitor:
     enabled: true
+    interval: {{ victorialogs_map.metrics.service.monitor.scrape.interval }}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+    scrapeTimeout: {{ victorialogs_map.metrics.service.monitor.scrape.timeout }}
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
 {% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
@@ -66,19 +71,15 @@ vector:
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
-{% if victorialogs_postinstall %}
-  podMonitor:
-    enabled: true
   resources:
     limits:
+{% if victorialogs_vars.kubernetes.vector.resources.limits.cpu is truthy %}
       cpu: {{ victorialogs_vars.kubernetes.vector.resources.limits.cpu }}
+{% endif %}
       memory: {{ victorialogs_vars.kubernetes.vector.resources.limits.memory }}
     requests:
       cpu: {{ victorialogs_vars.kubernetes.vector.resources.requests.cpu }}
       memory: {{ victorialogs_vars.kubernetes.vector.resources.requests.memory }}
-  serviceMonitor:
-    enabled: true
-{% endif %}
 {% endif %}
 {% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:

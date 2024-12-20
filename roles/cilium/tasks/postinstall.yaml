@@ -3,27 +3,6 @@
   when: ansible_host in k3s_map.server.hosts
   run_once: true
   block:
-    - name: Gateway Setup
-      when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
-      block:
-        - name: Create hubble ui gateway
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create hubble ui http insecure route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create hubble ui http secure route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
     - name: Hubble TLS
       when: cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager'
       block:
@@ -63,3 +42,24 @@
       delay: 1
       retries: 3
       until: result is not failed
+
+    - name: Gateway Setup
+      when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
+      block:
+        - name: Create hubble ui gateway
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            wait: true
+
+        - name: Create hubble ui http insecure route
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            wait: true
+
+        - name: Create hubble ui http secure route
+          kubernetes.core.k8s:
+            definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            wait: true

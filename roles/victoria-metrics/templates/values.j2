@@ -21,6 +21,15 @@ alertmanager:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
+    configReloaderResources:
+      limits:
+{% if victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu is truthy %}
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu }}
+{% endif %}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.memory }}
 {% if victoriametrics_map.spec.alertmanager.extra_args is mapping and victoriametrics_map.spec.alertmanager.extra_args.keys() | length > 0 %}
     extraArgs:
 {% for key, value in victoriametrics_map.spec.alertmanager.extra_args.items() %}
@@ -53,22 +62,15 @@ alertmanager:
 {% else %}
     replicaCount: {{ victoriametrics_vars.kubernetes.alertmanager.replicas }}
 {% endif %}
-{% if victoriametrics_postinstall %}
-    configReloaderResources:
-      limits:
-        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.memory }}
-      requests:
-        cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.memory }}
     resources:
       limits:
+{% if victoriametrics_vars.kubernetes.alertmanager.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
-{% endif %}
 defaultDashboards:
   dashboards:
     victoriametrics-operator:
@@ -98,10 +100,11 @@ grafana:
   podDisruptionBudget:
     minAvailable: 1
   replicas: {{ victoriametrics_vars.kubernetes.grafana.replicas }}
-{% if victoriametrics_postinstall %}
   resources:
     limits:
+{% if victoriametrics_vars.kubernetes.grafana.resources.limits.cpu is truthy %}
       cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.cpu }}
+{% endif %}
       memory: {{ victoriametrics_vars.kubernetes.grafana.resources.limits.memory }}
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.cpu }}
@@ -109,49 +112,29 @@ grafana:
   sidecar:
     resources:
       limits:
+{% if victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
-{% endif %}
 kube-state-metrics:
   podDisruptionBudget:
     minAvailable: 1
   replicas: {{ victoriametrics_vars.kubernetes.kube_state_metrics.replicas }}
-{% if victoriametrics_postinstall %}
   resources:
     limits:
+{% if victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.cpu is truthy %}
       cpu: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.cpu }}
+{% endif %}
       memory: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.limits.memory }}
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.memory }}
-{% endif %}
-kubeApiServer:
-  vmScrape:
-    spec:
-      endpoints:
-        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-          port: https
-          scheme: https
-          tlsConfig:
-            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecureSkipVerify: true
-            serverName: localhost
 kubeControllerManager:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
-  vmScrape:
-    spec:
-      endpoints:
-        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-          port: http-metrics
-          scheme: https
-          tlsConfig:
-            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecureSkipVerify: true
-            serverName: localhost
 kubeEtcd:
 {% if not k3s_map.server.ha %}
   enabled: false
@@ -169,36 +152,26 @@ kubeEtcd:
 kubelet:
   vmScrape:
     spec:
-      interval: {{ victoriametrics_map.spec.global.scrape_interval }}
-      scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
+      interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+      scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
   vmScrapes:
     kubelet:
       spec:
-        scrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
-        scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
+        scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+        scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
 kubeScheduler:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
-  vmScrape:
-    spec:
-      endpoints:
-        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-          port: http-metrics
-          scheme: https
-          tlsConfig:
-            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecureSkipVerify: true
-            serverName: localhost
-{% if victoriametrics_postinstall %}
 prometheus-node-exporter:
   resources:
     limits:
+{% if victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.limits.cpu is truthy %}
       cpu: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.limits.cpu }}
+{% endif %}
       memory: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.limits.memory }}
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.memory }}
-{% endif %}
 prometheus-operator-crds:
   enabled: true
 victoria-metrics-operator:
@@ -216,15 +189,15 @@ victoria-metrics-operator:
     enabled: true
     minAvailable: 1
   replicaCount: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas }}
-{% if victoriametrics_postinstall %}
   resources:
     limits:
+{% if victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.cpu is truthy %}
       cpu: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.cpu }}
+{% endif %}
       memory: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.limits.memory }}
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.resources.requests.memory }}
-{% endif %}
 vmagent:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
@@ -242,6 +215,15 @@ vmagent:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmagent.name }}
 {% endif %}
   spec:
+    configReloaderResources:
+      limits:
+{% if victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu is truthy %}
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu }}
+{% endif %}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.memory }}
+      requests:
+        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.cpu }}
+        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.memory }}
 {% if victoriametrics_map.spec.vmagent.extra_args is mapping and victoriametrics_map.spec.vmagent.extra_args.keys() | length > 0 %}
     extraArgs:
 {% for key, value in victoriametrics_map.spec.vmagent.extra_args.items() %}
@@ -256,24 +238,17 @@ vmagent:
     podDisruptionBudget:
       minAvailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
-{% if victoriametrics_postinstall %}
-    configReloaderResources:
-      limits:
-        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.limits.memory }}
-      requests:
-        cpu: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.cpu }}
-        memory: {{ victoriametrics_vars.kubernetes.vmagent.config_reloader.resources.requests.memory }}
     resources:
       limits:
+{% if victoriametrics_vars.kubernetes.vmagent.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
-{% endif %}
-    scrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
-    scrapeTimeout: {{ victoriametrics_map.spec.global.scrape_timeout }}
+    scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+    scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
     storage:
 {% if victoriametrics_vars.kubernetes.vmagent.storage.enabled %}
       volumeClaimTemplate:
@@ -305,14 +280,11 @@ vmalert:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmalert.name }}
 {% endif %}
   spec:
-    logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
-    podDisruptionBudget:
-      minAvailable: 1
-    replicaCount: {{ victoriametrics_vars.kubernetes.vmalert.replicas }}
-{% if victoriametrics_postinstall %}
     configReloaderResources:
       limits:
+{% if victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.config_reloader.resources.requests.cpu }}
@@ -321,14 +293,19 @@ vmalert:
     extraArgs:
       external.url: https://{{ victoriametrics_map.ingress.vmalert.hostname }}
 {% endif %}
+    logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
+    podDisruptionBudget:
+      minAvailable: 1
+    replicaCount: {{ victoriametrics_vars.kubernetes.vmalert.replicas }}
     resources:
       limits:
+{% if victoriametrics_vars.kubernetes.vmalert.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
-{% endif %}
 {% if k3s_map.server.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
 vmcluster:
   enabled: true
@@ -399,25 +376,24 @@ vmcluster:
               target:
                 type: Utilization
                 averageUtilization: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.resource.target.utilization }}
+{% else %}
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.log_level }}
       podDisruptionBudget:
         minAvailable: 1
-{% if not victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
-      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
-{% endif %}
-{% if victoriametrics_postinstall %}
       resources:
         limits:
+{% if victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.cpu is truthy %}
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.cpu }}
+{% endif %}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.memory }}
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
-{% endif %}
     vmselect:
       extraArgs:
-        dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+        dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmcluster.vmselect.extra_args is mapping and victoriametrics_map.spec.vmcluster.vmselect.extra_args.keys() | length > 0 %}
 {% for key, value in victoriametrics_map.spec.vmcluster.vmselect.extra_args.items() %}
         {{ key | indent(8) }}: '{{ value }}'
@@ -438,22 +414,21 @@ vmcluster:
               target:
                 type: Utilization
                 averageUtilization: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.resource.target.utilization }}
+{% else %}
+      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.log_level }}
       podDisruptionBudget:
         minAvailable: 1
-{% if not victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
-      replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
-{% endif %}
-{% if victoriametrics_postinstall %}
       resources:
         limits:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.cpu is truthy %}
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.cpu }}
+{% endif %}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.memory }}
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory }}
-{% endif %}
       storage:
 {% if victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.enabled %}
         volumeClaimTemplate:
@@ -470,7 +445,7 @@ vmcluster:
 {% endif %}
     vmstorage:
       extraArgs:
-        dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+        dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmcluster.vmstorage.extra_args is mapping and victoriametrics_map.spec.vmcluster.vmstorage.extra_args.keys() | length > 0 %}
 {% for key, value in victoriametrics_map.spec.vmcluster.vmstorage.extra_args.items() %}
         {{ key | indent(8) }}: '{{ value }}'
@@ -484,15 +459,15 @@ vmcluster:
       podDisruptionBudget:
         minAvailable: 1
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
-{% if victoriametrics_postinstall %}
       resources:
         limits:
+{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.cpu is truthy %}
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.cpu }}
+{% endif %}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.limits.memory }}
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
-{% endif %}
       storage:
 {% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled %}
         volumeClaimTemplate:
@@ -528,7 +503,7 @@ vmsingle:
 {% endif %}
   spec:
     extraArgs:
-      dedup.minScrapeInterval: {{ victoriametrics_map.spec.global.scrape_interval }}
+      dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmsingle.extra_args is mapping and victoriametrics_map.spec.vmsingle.extra_args.keys() | length > 0 %}
 {% for key, value in victoriametrics_map.spec.vmsingle.extra_args.items() %}
       {{ key | indent(6) }}: '{{ value }}'
@@ -540,15 +515,15 @@ vmsingle:
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmsingle.log_level }}
     replicaCount: {{ victoriametrics_vars.kubernetes.vmsingle.replicas }}
-{% if victoriametrics_postinstall %}
     resources:
       limits:
+{% if victoriametrics_vars.kubernetes.vmsingle.resources.limits.cpu is truthy %}
         cpu: {{ victoriametrics_vars.kubernetes.vmsingle.resources.limits.cpu }}
+{% endif %}
         memory: {{ victoriametrics_vars.kubernetes.vmsingle.resources.limits.memory }}
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmsingle.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmsingle.resources.requests.memory }}
-{% endif %}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmsingle.retention_period }}
     storage:
 {% if victoriametrics_vars.kubernetes.vmsingle.storage.enabled %}

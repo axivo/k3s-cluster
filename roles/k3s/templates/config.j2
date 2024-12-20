@@ -6,6 +6,7 @@ cluster-domain: {{ k3s_vars.cluster.domain }}
 cluster-init: true
 {% endif %}
 disable:
+  - coredns
   - local-storage
   - metrics-server
   - servicelb

@@ -8,15 +8,15 @@ applicationSet:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.application_set.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.application_set.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.application_set.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.application_set.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.application_set.resources.requests.memory }}
-{% endif %}
   replicas: {{ argocd_vars.kubernetes.application_set.replicas }}
 configs:
   cm:
@@ -48,42 +48,42 @@ controller:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.controller.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.controller.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.controller.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.controller.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.controller.resources.requests.memory }}
-{% endif %}
   replicas: {{ argocd_vars.kubernetes.controller.replicas }}
 dex:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.dex.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.dex.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.dex.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.dex.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.dex.resources.requests.memory }}
-{% endif %}
 notifications:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.notifications.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.notifications.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.notifications.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.notifications.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.notifications.resources.requests.memory }}
-{% endif %}
 {% if argocd_vars.kubernetes.redis.ha.enabled and k3s_map.agent.ha %}
 redis:
   enabled: false
@@ -91,11 +91,12 @@ redis-ha:
   enabled: true
   podDisruptionBudget:
     minAvailable: 1
-{% if argocd_postinstall %}
   haproxy:
     resources:
       limits:
+{% if argocd_vars.kubernetes.haproxy.resources.limits.cpu is truthy %}
         cpu: {{ argocd_vars.kubernetes.haproxy.resources.limits.cpu }}
+{% endif %}
         memory: {{ argocd_vars.kubernetes.haproxy.resources.limits.memory }}
       requests:
         cpu: {{ argocd_vars.kubernetes.haproxy.resources.requests.cpu }}
@@ -111,26 +112,27 @@ redis-ha:
   redis:
     resources:
       limits:
+{% if argocd_vars.kubernetes.redis.resources.limits.cpu is truthy %}
         cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+{% endif %}
         memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
       requests:
         cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
         memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
-{% endif %}
 {% else %}
 redis:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.redis.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
-{% endif %}
 {% endif %}
 repoServer:
 {% if argocd_vars.kubernetes.repo_server.autoscaling.enabled %}
@@ -146,15 +148,15 @@ repoServer:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.repo_server.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.repo_server.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.repo_server.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}
-{% endif %}
 server:
 {% if argocd_vars.kubernetes.server.autoscaling.enabled %}
   autoscaling:
@@ -169,12 +171,12 @@ server:
   pdb:
     enabled: true
     minAvailable: 1
-{% if argocd_postinstall %}
   resources:
     limits:
+{% if argocd_vars.kubernetes.server.resources.limits.cpu is truthy %}
       cpu: {{ argocd_vars.kubernetes.server.resources.limits.cpu }}
+{% endif %}
       memory: {{ argocd_vars.kubernetes.server.resources.limits.memory }}
     requests:
       cpu: {{ argocd_vars.kubernetes.server.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.server.resources.requests.memory }}
-{% endif %}

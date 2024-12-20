@@ -18,6 +18,12 @@
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victorialogs_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
           name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}-{{ victorialogs_vars.kubernetes.helm.chart.name }}-server'
+      metrics:
+        service:
+          monitor:
+            scrape:
+              interval: 30s
+              timeout: 15s
   run_once: true
 
 - name: Set project fact

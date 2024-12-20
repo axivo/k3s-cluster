@@ -30,6 +30,7 @@ certmanager_vars:
       log_level: 2
     namespace: kube-system
     webhook:
+      replicas: 1
       resources:
         limits:
           cpu: null
