@@ -14,7 +14,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) tasks file.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

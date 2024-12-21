@@ -14,7 +14,7 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) tasks file.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
