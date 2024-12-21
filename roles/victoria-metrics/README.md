@@ -1,8 +1,8 @@
 # victoria-metrics-k8s-stack
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.31.3](https://img.shields.io/badge/Version-0.31.3-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.33.0](https://img.shields.io/badge/Version-0.33.0-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.31.3/charts/victoria-metrics-k8s-stack) deployment, reset and validation.
+The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.33.0/charts/victoria-metrics-k8s-stack) deployment, reset and validation.
 
 ## Role Variables
 
