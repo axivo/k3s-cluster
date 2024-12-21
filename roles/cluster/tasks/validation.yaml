@@ -5,7 +5,7 @@
     lsusb -s {{ cluster_vars.device.id }} | grep {{ cluster_vars.device.name | quote }}
   args:
     executable: /bin/bash
-  changed_when: device_info.rc == 0
+  changed_when: false
   register: device_info
   when: cluster_vars.device.enabled
 
@@ -15,7 +15,7 @@
     lshw -class system -quiet | grep {{ cluster_vars.hardware.product | quote }}
   args:
     executable: /bin/bash
-  changed_when: hardware_product.rc == 0
+  changed_when: false
   register: hardware_product
 
 - name: Set valid hardware product fact
