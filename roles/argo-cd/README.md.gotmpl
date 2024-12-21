@@ -2,7 +2,7 @@
 {{- printf "%s/tree/%s-%s/charts/%s" .Home .Name .Version .Name -}}
 {{- end -}}
 {{- define "role.map" -}}
-{{- printf "%s_map" .Name | trimAll "-" -}}
+{{- printf "%s_map" .Name | replace "-" "" -}}
 {{- end -}}
 # {{ template "chart.name" . }}
 
