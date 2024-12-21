@@ -6,7 +6,7 @@ The role performs various tasks related to `metrics-server` [chart](https://gith
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `metricsserver_map` collection.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
