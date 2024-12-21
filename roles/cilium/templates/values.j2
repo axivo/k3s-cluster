@@ -72,6 +72,8 @@ kubeProxyReplacementHealthzBindAddr: '{{ cilium_vars.kubernetes.kube_proxy.bind.
 logOptions:
   level: {{ cilium_vars.kubernetes.log_options.level }}
 operator:
+  podDisruptionBudget:
+    enabled: true
   resources:
     limits:
 {% if cilium_vars.kubernetes.operator.resources.limits.cpu is truthy %}
