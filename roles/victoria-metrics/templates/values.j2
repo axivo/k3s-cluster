@@ -159,6 +159,10 @@ kubelet:
       spec:
         scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
         scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+kubeProxy:
+  enabled: true
+  endpoints:
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
 kubeScheduler:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
