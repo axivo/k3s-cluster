@@ -52,7 +52,6 @@
         - longhorn
         - metrics-server
         - victoria-logs
-        - victoria-metrics
       loop_control:
         loop_var: postinstall
   roles:
