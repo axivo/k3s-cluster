@@ -24,7 +24,7 @@ k3s_vars:
       repository:
         name: k3s
         org: k3s-io
-      version: v1.31.3+k3s1
+      version: v1.31.4+k3s1
     kubepug:
       checksum: checksums.txt
       file: kubepug_linux_arm64.tar.gz
