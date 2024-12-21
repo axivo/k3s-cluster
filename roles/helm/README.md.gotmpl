@@ -1,6 +1,9 @@
 {{- define "chart.url" -}}
 {{- printf "%s/%s" .Home .Version -}}
 {{- end -}}
+{{- define "role.map" -}}
+{{- printf "%s_map" .Name -}}
+{{- end -}}
 # {{ template "chart.name" . }}
 
 {{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
@@ -15,6 +18,6 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `role_map` collection.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
 
 {{ template "chart.valuesTable" . }}

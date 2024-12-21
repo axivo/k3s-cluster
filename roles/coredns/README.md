@@ -6,7 +6,7 @@ The role performs various tasks related to `coredns` [chart](https://github.com/
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `role_map` collection.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
