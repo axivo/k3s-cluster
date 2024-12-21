@@ -1,6 +1,9 @@
 {{- define "chart.url" -}}
 {{- printf "%s/tree/%s-%s/charts/%s" .Home .Name .Version .Name -}}
 {{- end -}}
+{{- define "role.map" -}}
+{{- printf "%s_map" .Name | trimAll "-" -}}
+{{- end -}}
 # {{ template "chart.name" . }}
 
 {{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
@@ -15,6 +18,6 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) tasks file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
 
 {{ template "chart.valuesTable" . }}
