@@ -27,10 +27,8 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | kured_vars.kubernetes.helm.repository.name | string | `"charts"` |  |
 | kured_vars.kubernetes.helm.repository.org | string | `"kubereboot"` |  |
 | kured_vars.kubernetes.helm.repository.url | string | `"https://kubereboot.github.io"` |  |
-| kured_vars.kubernetes.metrics.create | bool | `true` |  |
 | kured_vars.kubernetes.namespace | string | `"kube-system"` |  |
 | kured_vars.kubernetes.resources.limits.cpu | string | `nil` |  |
 | kured_vars.kubernetes.resources.limits.memory | string | `"128Mi"` |  |
 | kured_vars.kubernetes.resources.requests.cpu | string | `"10m"` |  |
 | kured_vars.kubernetes.resources.requests.memory | string | `"128Mi"` |  |
-| kured_vars.kubernetes.service.create | bool | `true` |  |
