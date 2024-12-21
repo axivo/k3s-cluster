@@ -132,9 +132,30 @@ kube-state-metrics:
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.kube_state_metrics.resources.requests.memory }}
+kubeApiServer:
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: https
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecureSkipVerify: true
+            serverName: localhost
 kubeControllerManager:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecureSkipVerify: true
+            serverName: localhost
 kubeEtcd:
 {% if not k3s_map.server.ha %}
   enabled: false
@@ -166,6 +187,16 @@ kubeProxy:
 kubeScheduler:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecureSkipVerify: true
+            serverName: localhost
 prometheus-node-exporter:
   resources:
     limits:
