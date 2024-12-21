@@ -10,6 +10,15 @@
           name: '{{ metricsserver_vars.kubernetes.helm.repository.org }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
           url: '{{ metricsserver_vars.kubernetes.helm.repository.url }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
         timeout: 5m0s
+      metrics:
+        service:
+          monitor:
+            enabled: true
+            scrape:
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
       server:
         default_args:
           - --cert-dir=/tmp

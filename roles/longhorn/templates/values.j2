@@ -35,10 +35,21 @@ longhornManager:
     {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
 {% endif %}
 {% endif %}
-{% if longhorn_postinstall %}
+{% if longhorn_postinstall and longhorn_map.metrics.service.monitor.enabled %}
 metrics:
   serviceMonitor:
     enabled: true
+{% if longhorn_map.metrics.service.monitor.scrape.interval is falsy %}
+    interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+    interval: {{ longhorn_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
+    namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if longhorn_map.metrics.service.monitor.scrape.timeout is falsy %}
+    scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
+    scrapeTimeout: {{ longhorn_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
 persistence:
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}

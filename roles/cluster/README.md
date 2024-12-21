@@ -9,7 +9,10 @@ The role performs various tasks related to Ubuntu LTS OS based [cluster](https:/
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `cluster_map` collection.
+
+> [!TIP]
+> This repository uses [Renovate](https://docs.renovatebot.com), to track any new release versions and generate related pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

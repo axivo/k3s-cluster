@@ -105,6 +105,10 @@ cilium_vars:
     ipam:
       operator:
         cluster_pool: 10.42.0.0/16
+    kube_proxy:
+      bind:
+        address: 0.0.0.0
+        port: 10256
     loadbalancer:
       algorithm: maglev
       ip_pool:

@@ -14,7 +14,10 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `certmanager_map` collection.
+
+> [!TIP]
+> This repository uses [Renovate](https://docs.renovatebot.com), to track any new release versions and generate related pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -34,6 +37,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | certmanager_vars.kubernetes.helm.repository.org | string | `"jetstack"` |  |
 | certmanager_vars.kubernetes.helm.repository.url | string | `"https://charts.jetstack.io"` |  |
 | certmanager_vars.kubernetes.namespace | string | `"kube-system"` |  |
+| certmanager_vars.kubernetes.webhook.replicas | int | `1` |  |
 | certmanager_vars.kubernetes.webhook.resources.limits.cpu | string | `nil` |  |
 | certmanager_vars.kubernetes.webhook.resources.limits.memory | string | `"128Mi"` |  |
 | certmanager_vars.kubernetes.webhook.resources.requests.cpu | string | `"10m"` |  |

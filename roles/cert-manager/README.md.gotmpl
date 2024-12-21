@@ -1,6 +1,9 @@
 {{- define "chart.url" -}}
 {{- printf "%s/tree/v%s/deploy/charts/%s" .Home .Version .Name -}}
 {{- end -}}
+{{- define "role.map" -}}
+{{- printf "%s_map" .Name | replace "-" "" -}}
+{{- end -}}
 # {{ template "chart.name" . }}
 
 {{ template "chart.typeBadge" . }}{{ template "chart.versionBadge" . }}
@@ -15,6 +18,9 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
+
+> [!TIP]
+> This repository uses [Renovate](https://docs.renovatebot.com), to track any new release versions and generate related pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
 
 {{ template "chart.valuesTable" . }}

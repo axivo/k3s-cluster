@@ -13,6 +13,15 @@
           name: '{{ certmanager_vars.kubernetes.helm.repository.name }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
           url: '{{ certmanager_vars.kubernetes.helm.repository.url }}/{{ certmanager_vars.kubernetes.helm.repository.name }}'
         timeout: 5m0s
+      metrics:
+        service:
+          monitor:
+            enabled: true
+            scrape:
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
       release:
         url: 'https://github.com/{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}/releases'
   run_once: true

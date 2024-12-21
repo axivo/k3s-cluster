@@ -40,10 +40,6 @@
             wait: true
           no_log: true
 
-        - name: Set chart postinstall fact
-          ansible.builtin.set_fact:
-            victoriametrics_postinstall: false
-
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ victoriametrics_project.helm.chart.reference }}'

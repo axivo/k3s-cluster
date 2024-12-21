@@ -16,7 +16,10 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `cilium_map` collection.
+
+> [!TIP]
+> This repository uses [Renovate](https://docs.renovatebot.com), to track any new release versions and generate related pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -73,6 +76,8 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs[0] | string | `"10.0.0.0/8"` |  |
 | cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs[1] | string | `"192.168.0.0/16"` |  |
 | cilium_vars.kubernetes.ipam.operator.cluster_pool | string | `"10.42.0.0/16"` |  |
+| cilium_vars.kubernetes.kube_proxy.bind.address | string | `"0.0.0.0"` |  |
+| cilium_vars.kubernetes.kube_proxy.bind.port | int | `10256` |  |
 | cilium_vars.kubernetes.loadbalancer.algorithm | string | `"maglev"` |  |
 | cilium_vars.kubernetes.loadbalancer.ip_pool.blocks.start | string | `"192.168.4.20"` | `CiliumLoadBalancerIPPool` blocks start address |
 | cilium_vars.kubernetes.loadbalancer.ip_pool.blocks.stop | string | `"192.168.4.100"` | `CiliumLoadBalancerIPPool` blocks stop address |

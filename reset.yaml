@@ -28,6 +28,7 @@
         - argo-cd
         - cert-manager
         - cilium
+        - coredns
         - external-dns
         - kured
         - longhorn

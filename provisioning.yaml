@@ -46,16 +46,17 @@
         - argo-cd
         - cert-manager
         - cilium
+        - coredns
         - external-dns
         - kured
         - longhorn
         - metrics-server
         - victoria-logs
-        - victoria-metrics
       loop_control:
         loop_var: postinstall
   roles:
     - cilium
+    - coredns
     - cert-manager
     - external-dns
     - argo-cd

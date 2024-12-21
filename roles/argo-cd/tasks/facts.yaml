@@ -25,6 +25,15 @@
           name: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
           url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
         timeout: 10m0s
+      metrics:
+        service:
+          monitor:
+            enabled: true
+            scrape:
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
       release:
         url: 'https://github.com/{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}/releases'
   run_once: true

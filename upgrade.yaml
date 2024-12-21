@@ -15,6 +15,7 @@
         - cert-manager
         - cilium
         - cluster
+        - coredns
         - external-dns
         - helm
         - k3s

@@ -162,11 +162,11 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
-        - name: Set chart setup fact
+        - name: Update chart setup fact
           ansible.builtin.set_fact:
             cilium_setup: false
 
-        - name: Update chart values
+        - name: Update chart setup values
           kubernetes.core.helm:
             chart_ref: '{{ cilium_map.helm.chart.reference }}'
             chart_version: '{{ cilium_vars.kubernetes.helm.chart.version }}'

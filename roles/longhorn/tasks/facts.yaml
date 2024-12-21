@@ -21,6 +21,15 @@
           http_route:
             insecure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-http'
             secure: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}-https'
+      metrics:
+        service:
+          monitor:
+            enabled: true
+            scrape:
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
   run_once: true
 
 - name: Set project fact

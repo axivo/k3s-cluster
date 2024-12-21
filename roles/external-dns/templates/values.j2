@@ -8,17 +8,29 @@ logLevel: {{ externaldns_vars.kubernetes.log_level }}
 policy: {{ externaldns_vars.kubernetes.policy }}
 provider:
   name: cloudflare
-{% if externaldns_postinstall %}
-serviceMonitor:
-  enabled: true
-  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 resources:
   limits:
+{% if externaldns_vars.kubernetes.resources.limits.cpu is truthy %}
     cpu: {{ externaldns_vars.kubernetes.resources.limits.cpu }}
+{% endif %}
     memory: {{ externaldns_vars.kubernetes.resources.limits.memory }}
   requests:
     cpu: {{ externaldns_vars.kubernetes.resources.requests.cpu }}
     memory: {{ externaldns_vars.kubernetes.resources.requests.memory }}
+{% if externaldns_postinstall and externaldns_map.metrics.service.monitor.enabled %}
+serviceMonitor:
+  enabled: true
+{% if externaldns_map.metrics.service.monitor.scrape.interval is falsy %}
+  interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+  interval: {{ externaldns_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if certmanager_map.metrics.service.monitor.scrape.timeout is falsy %}
+  scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
+  scrapeTimeout: {{ externaldns_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
 sources:
   - gateway-grpcroute

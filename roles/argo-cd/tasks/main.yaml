@@ -1,8 +1,14 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: k3s
+    name: '{{ role }}'
     tasks_from: facts
+  loop:
+    - external-dns
+    - k3s
+    - victoria-metrics
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
@@ -74,24 +80,3 @@
           delay: 1
           retries: 3
           until: result is not failed
-
-        - name: Gateway Setup
-          when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
-          block:
-            - name: Create server gateway
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-                wait: true
-
-            - name: Create insecure http route
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-                wait: true
-
-            - name: Create secure http route
-              kubernetes.core.k8s:
-                definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
-                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-                wait: true

@@ -15,6 +15,9 @@ repos:
       - id: cluster
         args:
           - --chart-search-root=./roles/cluster
+      - id: coredns
+        args:
+          - --chart-search-root=./roles/coredns
       - id: external-dns
         args:
           - --chart-search-root=./roles/external-dns

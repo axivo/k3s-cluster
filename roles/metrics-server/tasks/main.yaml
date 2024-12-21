@@ -5,7 +5,9 @@
     tasks_from: facts
   loop:
     - cert-manager
+    - external-dns
     - k3s
+    - victoria-metrics
   loop_control:
     loop_var: role
 

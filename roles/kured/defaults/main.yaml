@@ -27,8 +27,6 @@ kured_vars:
         name: charts
         org: kubereboot
         url: https://kubereboot.github.io
-    metrics:
-      create: true
     namespace: kube-system
     resources:
       limits:
@@ -37,5 +35,3 @@ kured_vars:
       requests:
         cpu: 10m
         memory: 128Mi
-    service:
-      create: true

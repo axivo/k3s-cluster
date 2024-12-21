@@ -9,7 +9,7 @@
     - k3s_map.server.ha
     - ansible_host in k3s_map.server.hosts
   block:
-    - name: Set server configuration postinstall fact
+    - name: Update server configuration postinstall fact
       ansible.builtin.set_fact:
         k3s_config_postinstall: true
 
