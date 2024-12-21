@@ -7,7 +7,7 @@ The role performs various tasks related to [Cloudflare](https://github.com/kuber
 
 ## Role Variables
 
-See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) tasks file.
+See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `role_map` collection.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
