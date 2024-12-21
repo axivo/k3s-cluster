@@ -1,8 +1,8 @@
 # k3s
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.31.3+k3s1](https://img.shields.io/badge/Version-1.31.3+k3s1-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.31.4+k3s1](https://img.shields.io/badge/Version-1.31.4+k3s1-informational?style=flat-square)
 
-The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.31.3+k3s1) deployment, reset and validation.
+The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.31.4+k3s1) deployment, reset and validation.
 
 ## Role Dependencies
 
@@ -34,7 +34,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | k3s_vars.release.k3s.name | string | `"k3s"` |  |
 | k3s_vars.release.k3s.repository.name | string | `"k3s"` |  |
 | k3s_vars.release.k3s.repository.org | string | `"k3s-io"` |  |
-| k3s_vars.release.k3s.version | string | `"v1.31.3+k3s1"` |  |
+| k3s_vars.release.k3s.version | string | `"v1.31.4+k3s1"` |  |
 | k3s_vars.release.kubepug.checksum | string | `"checksums.txt"` |  |
 | k3s_vars.release.kubepug.file | string | `"kubepug_linux_arm64.tar.gz"` |  |
 | k3s_vars.release.kubepug.name | string | `"kubepug"` |  |
