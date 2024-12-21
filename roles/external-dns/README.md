@@ -10,7 +10,7 @@ The role performs various tasks related to [Cloudflare](https://github.com/kuber
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `externaldns_map` collection.
 
 > [!TIP]
-> This repository uses [Renovate](https://docs.renovatebot.com), to track any new release versions and generate related pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
+> This repository uses [Renovate](https://docs.renovatebot.com), to automate new release pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
