@@ -49,7 +49,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.version | string | `"v0.31.3"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.version | string | `"v0.33.0"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |
