@@ -24,9 +24,12 @@
       metrics:
         service:
           monitor:
+            enabled: true
             scrape:
-              interval: 30s
-              timeout: 15s
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
   run_once: true
 
 - name: Set project fact

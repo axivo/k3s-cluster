@@ -20,13 +20,21 @@ extraArgs:
 podDisruptionBudget:
   enabled: true
   minAvailable: 1
-{% if certmanager_postinstall %}
+{% if certmanager_postinstall and certmanager_map.metrics.service.monitor.enabled %}
 prometheus:
   servicemonitor:
     enabled: true
+{% if certmanager_map.metrics.service.monitor.scrape.interval is falsy %}
+    interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
     interval: {{ certmanager_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
     namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if certmanager_map.metrics.service.monitor.scrape.timeout is falsy %}
+    scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
     scrapeTimeout: {{ certmanager_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
 resources:
   limits:

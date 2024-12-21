@@ -16,9 +16,12 @@
       metrics:
         service:
           monitor:
+            enabled: true
             scrape:
-              interval: 60s
-              timeout: 15s
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
       release:
         url: 'https://github.com/{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}/releases'
   run_once: true

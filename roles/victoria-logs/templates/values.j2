@@ -42,12 +42,20 @@ server:
     requests:
       cpu: {{ victorialogs_vars.kubernetes.server.resources.requests.cpu }}
       memory: {{ victorialogs_vars.kubernetes.server.resources.requests.memory }}
-{% if victorialogs_postinstall %}
+{% if victorialogs_postinstall and victorialogs_map.metrics.service.monitor.enabled %}
   serviceMonitor:
     enabled: true
+{% if victorialogs_map.metrics.service.monitor.scrape.interval is falsy %}
+    interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
     interval: {{ victorialogs_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
     namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if victorialogs_map.metrics.service.monitor.scrape.timeout is falsy %}
+    scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
     scrapeTimeout: {{ victorialogs_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
 {% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}

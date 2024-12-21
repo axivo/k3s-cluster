@@ -21,11 +21,15 @@ k8sAppLabelOverride: kube-dns
 {% endif %}
 podDisruptionBudget:
   minAvailable: 1
-{% if coredns_postinstall %}
+{% if coredns_postinstall and coredns_map.metrics.service.monitor.enabled %}
 prometheus:
   monitor:
     enabled: true
+{% if coredns_map.metrics.service.monitor.scrape.interval is falsy %}
+    interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
     interval: {{ coredns_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
     namespace: {{ victoriametrics_vars.kubernetes.namespace }}
   service:
     enabled: true
@@ -43,7 +47,7 @@ rollingUpdate:
   maxSurge: 1
   maxUnavailable: 0
 servers:
-  {{ lookup('ansible.builtin.template', 'config_servers.j2') | indent(2) }}
+  {{ lookup('ansible.builtin.template', 'config_zones.j2') | indent(2) }}
 service:
   clusterIP: {{ k3s_map.cluster.dns }}
 serviceAccount:

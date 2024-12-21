@@ -24,14 +24,22 @@ tls:
 {% endif %}
   clusterDomain: {{ k3s_vars.cluster.domain }}
   type: {{ metricsserver_vars.kubernetes.server.tls.type }}
-{% if metricsserver_postinstall %}
+{% if metricsserver_postinstall and metricsserver_map.metrics.service.monitor.enabled %}
 metrics:
   enabled: true
 serviceMonitor:
   enabled: true
+{% if metricsserver_map.metrics.service.monitor.scrape.interval is falsy %}
+  interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
   interval: {{ metricsserver_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if metricsserver_map.metrics.service.monitor.scrape.timeout is falsy %}
+  scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
   scrapeTimeout: {{ metricsserver_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
 resources:
   limits:

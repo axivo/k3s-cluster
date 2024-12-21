@@ -95,11 +95,18 @@ rollOutCiliumPods: true
 {% elif cilium_postinstall %}
 dashboards:
   enabled: true
+{% if cilium_map.metrics.service.monitor.enabled %}
 envoy:
   prometheus:
     serviceMonitor:
       enabled: true
+{% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
+      interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+      interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
 hubble:
   metrics:
     dashboards:
@@ -112,20 +119,34 @@ hubble:
       - icmp
       - port-distribution
       - tcp
+{% if cilium_map.metrics.service.monitor.enabled %}
     serviceMonitor:
       enabled: true
+{% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
+      interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+      interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
   peerService:
     clusterDomain: {{ k3s_vars.cluster.domain }}
   relay:
     enabled: true
     podDisruptionBudget:
       enabled: true
+{% if cilium_map.metrics.service.monitor.enabled %}
     prometheus:
       enabled: true
       serviceMonitor:
         enabled: true
+{% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
+        interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+        interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
         namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
     replicas: {{ cilium_vars.kubernetes.hubble.relay.replicas }}
     resources:
       limits:
@@ -175,17 +196,31 @@ hubble:
         name: {{ cilium_map.ca.hubble.cluster.issuer.name }}
       method: {{ cilium_vars.kubernetes.hubble.tls.auto.method }}
 {% endif %}
+{% if cilium_map.metrics.service.monitor.enabled %}
 operator:
   prometheus:
     enabled: true
     serviceMonitor:
       enabled: true
+{% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
+      interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+      interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
+        namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
+{% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
+    interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+    interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
     namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% endif %}
 {% else %}
 autoDirectNodeRoutes: true
 directRoutingSkipUnreachable: true

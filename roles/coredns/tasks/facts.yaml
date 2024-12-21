@@ -16,8 +16,10 @@
       metrics:
         service:
           monitor:
+            enabled: true
             scrape:
-              interval: 60s
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
       zone:
         # Custom zone files, see https://coredns.io/2017/05/08/custom-dns-entries-for-kubernetes/
         files: []

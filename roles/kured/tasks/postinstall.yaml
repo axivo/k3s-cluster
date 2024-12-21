@@ -1,9 +1,11 @@
 ---
 - name: Role Post-Install
-  when: ansible_host in k3s_map.server.hosts
+  when:
+    - ansible_host in k3s_map.server.hosts
+    - kured_map.metrics.service.monitor.enabled
   run_once: true
   block:
-    - name: Set chart postinstall fact
+    - name: Update chart postinstall fact
       ansible.builtin.set_fact:
         kured_postinstall: true
 

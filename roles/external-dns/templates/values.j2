@@ -17,12 +17,20 @@ resources:
   requests:
     cpu: {{ externaldns_vars.kubernetes.resources.requests.cpu }}
     memory: {{ externaldns_vars.kubernetes.resources.requests.memory }}
-{% if externaldns_postinstall %}
+{% if externaldns_postinstall and externaldns_map.metrics.service.monitor.enabled %}
 serviceMonitor:
   enabled: true
+{% if externaldns_map.metrics.service.monitor.scrape.interval is falsy %}
+  interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
   interval: {{ externaldns_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if certmanager_map.metrics.service.monitor.scrape.timeout is falsy %}
+  scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
   scrapeTimeout: {{ externaldns_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
 {% endif %}
 sources:
   - gateway-grpcroute

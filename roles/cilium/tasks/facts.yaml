@@ -28,6 +28,13 @@
             http_route:
               insecure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-http'
               secure: '{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}-https'
+      metrics:
+        service:
+          monitor:
+            enabled: true
+            scrape:
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: 15s
       release:
         cli:
           url: https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases

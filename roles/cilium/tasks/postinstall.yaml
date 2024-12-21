@@ -3,7 +3,7 @@
   when: ansible_host in k3s_map.server.hosts
   run_once: true
   block:
-    - name: Hubble TLS
+    - name: Hubble TLS Setup
       when: cilium_vars.kubernetes.hubble.tls.auto.method | lower == 'certmanager'
       block:
         - name: Create hubble certificate
@@ -18,11 +18,11 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
 
-    - name: Set chart setup fact
+    - name: Update chart setup fact
       ansible.builtin.set_fact:
         cilium_setup: false
 
-    - name: Set chart postinstall fact
+    - name: Update chart postinstall fact
       ansible.builtin.set_fact:
         cilium_postinstall: true
 

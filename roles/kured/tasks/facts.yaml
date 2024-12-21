@@ -17,9 +17,12 @@
             prometheus.io/port: 8080
             prometheus.io/scrape: 'true'
           monitor:
+            enabled: true
             scrape:
-              interval: 60s
-              timeout: 15s
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
+              interval: null
+              # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
+              timeout: null
   run_once: true
 
 - name: Set project fact

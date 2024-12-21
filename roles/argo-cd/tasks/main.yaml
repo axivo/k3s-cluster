@@ -1,8 +1,14 @@
 ---
 - name: Role Facts
   ansible.builtin.include_role:
-    name: k3s
+    name: '{{ role }}'
     tasks_from: facts
+  loop:
+    - external-dns
+    - k3s
+    - victoria-metrics
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
   ansible.builtin.import_tasks:
@@ -54,6 +60,10 @@
     - name: Chart Setup
       run_once: true
       block:
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            argocd_postinstall: false
+
         - name: Install chart
           kubernetes.core.helm:
             chart_ref: '{{ argocd_map.helm.chart.reference }}'
