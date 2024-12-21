@@ -27,7 +27,6 @@ jobs:
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
       - name: Update documentation
         run: |
-          git config commit.gpgsign true
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
           git fetch
