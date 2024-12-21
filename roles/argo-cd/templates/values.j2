@@ -161,6 +161,22 @@ redis-ha:
   podDisruptionBudget:
     minAvailable: 1
   haproxy:
+{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+    metrics:
+      serviceMonitor:
+        enabled: true
+{% if argocd_map.metrics.service.monitor.scrape.interval is falsy %}
+        interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
+{% else %}
+        interval: {{ argocd_map.metrics.service.monitor.scrape.interval }}
+{% endif %}
+        namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+{% if argocd_map.metrics.service.monitor.scrape.timeout is falsy %}
+        timeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
+{% else %}
+        timeout: {{ argocd_map.metrics.service.monitor.scrape.timeout }}
+{% endif %}
+{% endif %}
     resources:
       limits:
 {% if argocd_vars.kubernetes.haproxy.resources.limits.cpu is truthy %}
