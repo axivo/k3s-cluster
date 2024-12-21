@@ -209,8 +209,6 @@ operator:
 {% else %}
       interval: {{ cilium_map.metrics.service.monitor.scrape.interval }}
 {% endif %}
-        namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-{% endif %}
       namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 prometheus:
   enabled: true
