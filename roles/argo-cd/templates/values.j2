@@ -94,23 +94,6 @@ controller:
       memory: {{ argocd_vars.kubernetes.controller.resources.requests.memory }}
   replicas: {{ argocd_vars.kubernetes.controller.replicas }}
 dex:
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-{% if argocd_map.metrics.service.monitor.scrape.interval is falsy %}
-      interval: {{ victoriametrics_map.service.monitor.scrape.interval }}
-{% else %}
-      interval: {{ argocd_map.metrics.service.monitor.scrape.interval }}
-{% endif %}
-      namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-{% if argocd_map.metrics.service.monitor.scrape.timeout is falsy %}
-      scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
-{% else %}
-      scrapeTimeout: {{ argocd_map.metrics.service.monitor.scrape.timeout }}
-{% endif %}
-{% endif %}
   pdb:
     enabled: true
     minAvailable: 1
