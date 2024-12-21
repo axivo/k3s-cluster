@@ -7,5 +7,5 @@ dependencies:
     repository: https://github.com/kubepug/kubepug
     version: 1.7.1
 type: application
-version: 1.31.3+k3s1
+version: 1.31.4+k3s1
 appVersion: 1.0.0
