@@ -84,9 +84,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.vmagent.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.vmagent.replicas | int | `1` |  |
 | victoriametrics_vars.kubernetes.vmagent.resources.limits.cpu | string | `nil` |  |
-| victoriametrics_vars.kubernetes.vmagent.resources.limits.memory | string | `"1024Mi"` |  |
+| victoriametrics_vars.kubernetes.vmagent.resources.limits.memory | string | `"768Mi"` |  |
 | victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu | string | `"10m"` |  |
-| victoriametrics_vars.kubernetes.vmagent.resources.requests.memory | string | `"1024Mi"` |  |
+| victoriametrics_vars.kubernetes.vmagent.resources.requests.memory | string | `"768Mi"` |  |
 | victoriametrics_vars.kubernetes.vmagent.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
 | victoriametrics_vars.kubernetes.vmagent.storage.class | string | `"longhorn"` |  |
 | victoriametrics_vars.kubernetes.vmagent.storage.enabled | bool | `false` |  |
