@@ -34,7 +34,7 @@ jobs:
           helm-docs --values-file=./defaults/main.yaml
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
-            git commit -Sm 'docs(github-action): update documentation'
+            git commit -m 'docs(github-action): update documentation'
             git push origin ${{ github.head_ref }}
           fi
 permissions:
