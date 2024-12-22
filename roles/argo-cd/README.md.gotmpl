@@ -21,6 +21,9 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `{{ template "role.map" . }}` collection.
 
 > [!TIP]
-> This repository uses [Renovate](https://docs.renovatebot.com), to automate new release pull requests. See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), for more details.
+> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate new release pull requests
+> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize the cluster resources allocation
+
+{{ template "chart.variablesTable" . }}
 
 {{ template "chart.valuesTable" . }}
