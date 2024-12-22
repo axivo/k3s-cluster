@@ -18,5 +18,5 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 
 > [!TIP]
 > - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate new release pull requests
-> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize the cluster resources allocation
+> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize your cluster resources allocation
 
