@@ -26,37 +26,16 @@ jobs:
           sudo wget -qP /tmp $HELM_DOCS_URL/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
       - name: Update documentation
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
           git config user.name '${{ github.actor }}'
           git fetch
           git switch ${{ github.head_ref }}
           helm-docs --values-file=./defaults/main.yaml
-          if [ -n "$(git diff --name-only)" ]; then
-            declare -a params
-            params+=("-F repository='${{ github.repository }}'")
-            params+=("-F branchName='${{ github.head_ref }}'")
-            params+=("-F oid='${{ github.sha }}'")
-            params+=("-F message='docs(github-action): update documentation'")
-            mapfile -t clips < <(git ls-files -d --deduplicate)
-            mapfile -t files < <(git ls-files -om --deduplicate)
-            for file in "${files[@]}"; do
-              type='addition'
-              for clip in "${clips[@]}"; do
-                if [ "$clip" == "$file" ]; then
-                  type='deletion'
-                fi
-              done
-              params+=("-F fileChanges[][type]='$type'")
-              params+=("-F fileChanges[][path]='$file'")
-              if [ "$type" == 'addition' ]; then
-                params+=("-F fileChanges[][contents]='$(base64 -w 0 $file)'")
-              fi
-            done
-            params+=("-F 'query=@.github/api/commit.gql'")
-            gh api graphql "${params[@]}"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m 'docs(github-action): update documentation'
+            git push origin ${{ github.head_ref }}
           fi
 permissions:
   contents: write
