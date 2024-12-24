@@ -5,7 +5,6 @@
 ## WHAT
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] Enhancement fix (non-breaking change which enhances an existing feature)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality not working as expected)
 - [ ] This change requires a documentation update
