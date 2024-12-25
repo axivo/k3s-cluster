@@ -1,23 +1,31 @@
 name: Update Documentation
+
 on:
   pull_request:
     paths:
       - 'roles/*/defaults/main.yaml'
       - 'roles/*/Chart.yaml'
       - 'roles/*/README.md.gotmpl'
+
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
+
 defaults:
   run:
     shell: bash
+
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Documentation
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Install package
         env:
           HELM_DOCS_URL: https://github.com/norwoodj/helm-docs/releases/download
@@ -25,17 +33,61 @@ jobs:
         run: |
           sudo wget -qP /tmp $HELM_DOCS_URL/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
           sudo apt-get -y install /tmp/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.deb
+
       - name: Update documentation
+        id: update
         run: |
-          git config user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
-          git config user.name '${{ github.actor }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch
           git switch ${{ github.head_ref }}
           helm-docs --values-file=./defaults/main.yaml
-          if [ -n "$(git status --porcelain)" ]; then
-            git add -A
-            git commit -m 'docs(github-action): update documentation'
-            git push origin ${{ github.head_ref }}
+          additions="$(git ls-files -om --deduplicate | tr '\n' ',')"
+          if [ -n "$additions" ]; then
+            echo "additions=$additions" >> $GITHUB_OUTPUT
           fi
-permissions:
-  contents: write
+          deletions="$(git ls-files -d --deduplicate | tr '\n' ',')"
+          if [ -n "$deletions" ]; then
+            echo "deletions=$deletions" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create commit
+        if: steps.update.outputs.additions != '' || steps.update.outputs.deletions != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const mutation = `
+              mutation CreateCommitOnBranch($input: CreateCommitOnBranchInput!) {
+                createCommitOnBranch(input: $input) { commit { oid } }
+              }
+            `;
+            const fileChanges = {};
+            const additions = '${{ steps.update.outputs.additions }}'.split(',').filter(Boolean);
+            if (additions.length > 0) {
+              fileChanges.additions = additions.map(file => ({
+                path: file,
+                contents: Buffer.from(require('fs').readFileSync(file, 'utf-8')).toString('base64')
+              }));
+            }
+            const deletions = '${{ steps.update.outputs.deletions }}'.split(',').filter(Boolean);
+            if (deletions.length > 0) {
+              fileChanges.deletions = deletions.map(file => ({
+                path: file
+              }));
+            }
+            const input = {
+              branch: {
+                repositoryNameWithOwner: context.payload.repository.full_name,
+                branchName: context.payload.pull_request.head.ref,
+              },
+              message: { headline: 'docs(github-action): update documentation' },
+              fileChanges: fileChanges,
+              expectedHeadOid: context.payload.pull_request.head.sha
+            };
+            try {
+              const result = await github.graphql(mutation, { input });
+              console.log('Commit created with OID:', result.createCommitOnBranch.commit.oid);
+            } catch (error) {
+              core.setFailed(error.message.trim());
+            }
