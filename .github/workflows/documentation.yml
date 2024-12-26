@@ -42,7 +42,7 @@ jobs:
           git fetch
           git switch ${{ github.head_ref }}
           helm-docs --values-file=./defaults/main.yaml
-          additions="$(git ls-files -om --deduplicate | tr '\n' ',')"
+          additions="$(git ls-files -om --deduplicate | grep -vf <(git ls-files -d --deduplicate) | tr '\n' ',')"
           if [ -n "$additions" ]; then
             echo "additions=$additions" >> $GITHUB_OUTPUT
           fi
