@@ -350,6 +350,9 @@
     ":semanticCommitTypeAll(chore)",
     "config:recommended"
   ],
+  "gitIgnoredAuthors": [
+    "github-actions[bot]@users.noreply.github.com"
+  ],
   "labels": [
     "dependency"
   ],
