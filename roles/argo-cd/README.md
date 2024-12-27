@@ -44,9 +44,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.configs.params.server.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.controller.replicas | int | `2` |  |
 | argocd_vars.kubernetes.controller.resources.limits.cpu | string | `nil` |  |
-| argocd_vars.kubernetes.controller.resources.limits.memory | string | `"256Mi"` |  |
+| argocd_vars.kubernetes.controller.resources.limits.memory | string | `"384Mi"` |  |
 | argocd_vars.kubernetes.controller.resources.requests.cpu | string | `"10m"` |  |
-| argocd_vars.kubernetes.controller.resources.requests.memory | string | `"256Mi"` |  |
+| argocd_vars.kubernetes.controller.resources.requests.memory | string | `"384Mi"` |  |
 | argocd_vars.kubernetes.dex.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.dex.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.dex.resources.requests.cpu | string | `"10m"` |  |

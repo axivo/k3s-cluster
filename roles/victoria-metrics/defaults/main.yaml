@@ -128,10 +128,10 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 768Mi
+          memory: 1024Mi
         requests:
           cpu: 10m
-          memory: 768Mi
+          memory: 1024Mi
       storage:
         enabled: false
         access_modes:
@@ -228,7 +228,7 @@ victoriametrics_vars:
           access_modes:
             - ReadWriteOnce
           class: longhorn
-          size: 20Gi
+          size: 50Gi
     vmsingle:
       ingress:
         enabled: true
@@ -238,14 +238,14 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 2048Mi
+          memory: 2560Mi
         requests:
           cpu: 10m
-          memory: 2048Mi
+          memory: 2560Mi
       retention_period: 72h
       storage:
         enabled: true
         access_modes:
           - ReadWriteOnce
         class: longhorn
-        size: 20Gi
+        size: 50Gi
