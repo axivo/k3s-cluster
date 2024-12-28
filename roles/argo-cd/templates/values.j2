@@ -63,6 +63,7 @@ configs:
   secret:
     argocdServerAdminPassword: {{ argocd_map.credentials.server.admin.password }}
 controller:
+  dynamicClusterDistribution: {{ argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled }}
 {% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
   metrics:
     enabled: true
