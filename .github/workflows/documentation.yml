@@ -92,11 +92,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs/promises');
-            const mutation = `
-              mutation CreateCommitOnBranch($input: CreateCommitOnBranchInput!) {
-                createCommitOnBranch(input: $input) { commit { oid } }
-              }
-            `;
             const parseFiles = async (files, type) =>
               Promise.all(files.split(',').filter(Boolean).map(async file => (type === 'add')
                 ? { path: file, contents: Buffer.from(await fs.readFile(file, 'utf-8')).toString('base64') }
@@ -114,6 +109,11 @@ jobs:
               },
               message: { headline: 'docs(github-action): update documentation' }
             };
+            const mutation = `
+              mutation CreateCommitOnBranch($input: CreateCommitOnBranchInput!) {
+                createCommitOnBranch(input: $input) { commit { oid } }
+              }
+            `;
             try {
               const { createCommitOnBranch } = await github.graphql(mutation, { input });
               console.log('Commit created with OID:', createCommitOnBranch.commit.oid);
