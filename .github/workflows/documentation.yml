@@ -55,16 +55,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs/promises');
             const runGit = async (args) => (await exec.getExecOutput('git', args)).stdout.trim();
-            const excludeList = async () => (await Promise.all([
-              fs.readFile('.git/info/exclude', 'utf-8'),
-              runGit(['ls-files', '-d', '--deduplicate'])
-            ])).flatMap(str => str.split('\n').filter(Boolean));
+            const excludeList = async () =>
+              (await runGit(['ls-files', '-d', '--deduplicate', '--exclude-standard'])).trim().split('\n');
             const processFiles = async (flag, label, exclusions) => {
-              const files = (await runGit(['ls-files', '-' + flag, '--deduplicate']))
+              const files = (await runGit(['ls-files', '-' + flag, '--deduplicate', '--exclude-standard']))
                 .split('\n')
-                .filter(file => file && (flag === 'd' || !exclusions.includes(file)));
+                .filter(file => file && (flag === 'om' && !exclusions.includes(file)));
               core.setOutput(label, files.join(','));
               return files.length;
             };
