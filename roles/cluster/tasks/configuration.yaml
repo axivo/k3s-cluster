@@ -9,7 +9,7 @@
           ansible.builtin.service_facts:
 
         - name: Bluetooth Configuration
-          when: not cluster_vars.service.bluetooth.enabled
+          when: cluster_vars.service.bluetooth.enabled is falsy
           block:
             - name: Disable bluetooth service
               ansible.builtin.systemd_service:
@@ -26,7 +26,7 @@
               when: ansible_facts.services['hciuart.service'] is defined
 
         - name: WiFi Configuration
-          when: not cluster_vars.service.wifi.enabled
+          when: cluster_vars.service.wifi.enabled is falsy
           block:
             - name: Disable wifi service
               ansible.builtin.systemd_service:
@@ -44,7 +44,7 @@
             mode: '644'
 
     - name: USB Device Configuration
-      when: cluster_vars.device.enabled
+      when: cluster_vars.device.enabled is truthy
       block:
         - name: Set device id
           ansible.builtin.command:
@@ -149,7 +149,7 @@
         group: root
         mode: '644'
       notify: Reboot
-      when: not cluster_vars.service.cloud_init.enabled
+      when: cluster_vars.service.cloud_init.enabled is falsy
 
     - name: Disable firewall service
       ansible.builtin.systemd_service:
@@ -167,7 +167,7 @@
         - snapd.service
         - snapd.seeded.service
         - snapd.socket
-      when: not cluster_vars.service.snapd.enabled
+      when: cluster_vars.service.snapd.enabled is falsy
 
     - name: Install cifs utilities package
       ansible.builtin.apt:
@@ -188,7 +188,7 @@
 
     - name: Unattended Upgrades
       notify: Restart unattended upgrades service
-      when: cluster_vars.service.unattended_upgrades.enabled
+      when: cluster_vars.service.unattended_upgrades.enabled is truthy
       block:
         - name: Install history notification package
           ansible.builtin.apt:
@@ -213,7 +213,7 @@
 
 - name: Mail Configuration
   notify: Reload mail service
-  when: cluster_vars.service.postfix.enabled
+  when: cluster_vars.service.postfix.enabled is truthy
   block:
     - name: Set mail configuration
       ansible.builtin.debconf:
@@ -221,7 +221,7 @@
         question: postfix/{{ item.question }}
         value: '{{ item.value }}'
         vtype: '{{ item.vtype }}'
-      when: item.enabled
+      when: item.enabled is truthy
       loop:
         # General mail configuration type
         - question: main_mailer_type

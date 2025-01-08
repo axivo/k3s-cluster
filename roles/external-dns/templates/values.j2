@@ -17,7 +17,7 @@ resources:
   requests:
     cpu: {{ externaldns_vars.kubernetes.resources.requests.cpu }}
     memory: {{ externaldns_vars.kubernetes.resources.requests.memory }}
-{% if externaldns_postinstall and externaldns_map.metrics.service.monitor.enabled %}
+{% if externaldns_postinstall is truthy and externaldns_map.metrics.service.monitor.enabled is truthy %}
 serviceMonitor:
   enabled: true
 {% if externaldns_map.metrics.service.monitor.scrape.interval is falsy %}

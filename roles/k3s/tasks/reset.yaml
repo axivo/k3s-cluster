@@ -104,7 +104,7 @@
         - cache
         - config
         - http-cache
-      when: k3s_vars.cluster.kubeconfig.local
+      when: k3s_vars.cluster.kubeconfig.local is truthy
       become: false
       run_once: true
 

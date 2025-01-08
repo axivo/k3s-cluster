@@ -1,10 +1,10 @@
 {% if metricsserver_vars.kubernetes.server.args is iterable and metricsserver_vars.kubernetes.server.args | length > 0 %}
 args:
-  {{ metricsserver_vars.kubernetes.server.args | to_nice_yaml | indent(2) }}
+  {{ metricsserver_vars.kubernetes.server.args | to_nice_yaml | indent(2) -}}
 {% endif %}
 {% if metricsserver_map.server.default_args is iterable and metricsserver_map.server.default_args | length > 0 %}
 defaultArgs:
-  {{ metricsserver_map.server.default_args | to_nice_yaml | indent(2) }}
+  {{ metricsserver_map.server.default_args | to_nice_yaml | indent(2) -}}
 {% endif %}
 podDisruptionBudget:
   enabled: true
@@ -15,7 +15,7 @@ service:
     kubernetes.io/cluster-service: 'true'
     kubernetes.io/name: {{ metricsserver_vars.kubernetes.helm.chart.name }}
 tls:
-{% if metricsserver_vars.kubernetes.server.tls.type | lower == 'cert-manager' %}
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' and metricsserver_vars.kubernetes.server.tls.type | lower == 'cert-manager' %}
   certManager:
     existingIssuer:
       enabled: true
@@ -24,7 +24,7 @@ tls:
 {% endif %}
   clusterDomain: {{ k3s_vars.cluster.domain }}
   type: {{ metricsserver_vars.kubernetes.server.tls.type }}
-{% if metricsserver_postinstall and metricsserver_map.metrics.service.monitor.enabled %}
+{% if metricsserver_postinstall is truthy and metricsserver_map.metrics.service.monitor.enabled is truthy %}
 metrics:
   enabled: true
 serviceMonitor:

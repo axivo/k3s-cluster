@@ -4,6 +4,7 @@
     file: facts.yaml
 
 - name: Role Validation
+  when: ('validation' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate release key url
@@ -35,4 +36,4 @@
       delay: 1
       retries: 3
       until: result is not failed
-      when: release.enabled
+      when: release.enabled is truthy

@@ -5,7 +5,7 @@ global:
   logging:
     level: {{ argocd_vars.kubernetes.global.logging.level }}
 applicationSet:
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:
@@ -41,30 +41,30 @@ configs:
     {{ '.'.join(['accounts', user.name]) | indent(4) }}: {{ user.permissions }}
     {{ '.'.join(['accounts', user.name, 'enabled']) | indent(4) }}: '{{ user.enabled | lower }}'
 {% endfor %}
-    admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled }}
-    exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled }}
-    statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled }}
+    admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled | lower }}
+    exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled | lower }}
+    statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled | lower }}
   params:
     application.namespaces: {{ argocd_vars.kubernetes.configs.params.application.namespaces | join(', ') }}
-    applicationsetcontroller.enable.git.submodule: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.submodule.enabled }}
-    applicationsetcontroller.enable.new.git.file.globbing: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.new_file_globbing.enabled }}
-    applicationsetcontroller.enable.progressive.syncs: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.progressive_syncs.enabled }}
+    applicationsetcontroller.enable.git.submodule: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.submodule.enabled | lower }}
+    applicationsetcontroller.enable.new.git.file.globbing: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.new_file_globbing.enabled | lower }}
+    applicationsetcontroller.enable.progressive.syncs: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.progressive_syncs.enabled | lower }}
     applicationsetcontroller.log.level: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.log_level }}
     controller.log.level: {{ argocd_vars.kubernetes.configs.params.controller.log_level }}
     controller.sharding.algorithm: {{ argocd_vars.kubernetes.configs.params.controller.sharding.algorithm }}
     dexserver.log.level: {{ argocd_vars.kubernetes.configs.params.dexserver.log_level }}
     notificationscontroller.log.level: {{ argocd_vars.kubernetes.configs.params.notificationscontroller.log_level }}
     reposerver.log.level: {{ argocd_vars.kubernetes.configs.params.reposerver.log_level }}
-    server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure }}
+    server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure | lower }}
     server.log.level: {{ argocd_vars.kubernetes.configs.params.server.log_level }}
-    {{ lookup('ansible.builtin.template', 'config_params.j2') | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_params.j2').splitlines() | select('match', '.*\\S') | join('\n') | indent(4) }}
   rbac:
-    {{ lookup('ansible.builtin.template', 'config_rbac.j2') | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_rbac.j2').splitlines() | select('match', '.*\\S') | join('\n') | indent(4) }}
   secret:
     argocdServerAdminPassword: {{ argocd_map.credentials.server.admin.password }}
 controller:
-  dynamicClusterDistribution: {{ argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled }}
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+  dynamicClusterDistribution: {{ argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled | lower }}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:
@@ -108,7 +108,7 @@ dex:
       cpu: {{ argocd_vars.kubernetes.dex.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.dex.resources.requests.memory }}
 notifications:
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:
@@ -145,7 +145,7 @@ redis-ha:
   podDisruptionBudget:
     minAvailable: 1
   haproxy:
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
     metrics:
       serviceMonitor:
         enabled: true
@@ -170,7 +170,7 @@ redis-ha:
       requests:
         cpu: {{ argocd_vars.kubernetes.haproxy.resources.requests.cpu }}
         memory: {{ argocd_vars.kubernetes.haproxy.resources.requests.memory }}
-{% if argocd_vars.kubernetes.redis.ha.storage.enabled %}
+{% if argocd_vars.kubernetes.redis.ha.storage.enabled is truthy %}
   persistentVolume:
     enabled: true
     storageClass: {{ argocd_vars.kubernetes.redis.ha.storage.class }}
@@ -190,7 +190,7 @@ redis-ha:
         memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
 {% else %}
 redis:
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:
@@ -221,7 +221,7 @@ redis:
       memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
 {% endif %}
 repoServer:
-{% if argocd_vars.kubernetes.repo_server.autoscaling.enabled %}
+{% if argocd_vars.kubernetes.repo_server.autoscaling.enabled is truthy %}
   autoscaling:
     enabled: true
     maxReplicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.max_replicas }}
@@ -231,7 +231,7 @@ repoServer:
 {% else %}
   replicas: {{ argocd_vars.kubernetes.repo_server.autoscaling.min_replicas }}
 {% endif %}
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:
@@ -261,7 +261,7 @@ repoServer:
       cpu: {{ argocd_vars.kubernetes.repo_server.resources.requests.cpu }}
       memory: {{ argocd_vars.kubernetes.repo_server.resources.requests.memory }}
 server:
-{% if argocd_vars.kubernetes.server.autoscaling.enabled %}
+{% if argocd_vars.kubernetes.server.autoscaling.enabled is truthy %}
   autoscaling:
     enabled: true
     maxReplicas: {{ argocd_vars.kubernetes.server.autoscaling.max_replicas }}
@@ -271,7 +271,25 @@ server:
 {% else %}
   replicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
 {% endif %}
-{% if argocd_postinstall and argocd_map.metrics.service.monitor.enabled %}
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy and externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
+  certificate:
+    enabled: true
+    issuer:
+      group: cert-manager.io
+      kind: ClusterIssuer
+      name: {{ certmanager_map.ca.cluster.issuer.name }}
+    privateKey:
+      rotationPolicy: Always
+  ingress:
+    annotations:
+{% for key, value in argocd_map.ingress.server.annotations.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
+    enabled: true
+    ingressClassName: {{ argocd_map.ingress.class.name }}
+    tls: true
+{% endif %}
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
     enabled: true
     serviceMonitor:

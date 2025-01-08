@@ -2,7 +2,7 @@
 - name: Role Post-Install
   when:
     - ansible_host in k3s_map.server.hosts
-    - externaldns_map.metrics.service.monitor.enabled
+    - externaldns_map.metrics.service.monitor.enabled is truthy
   run_once: true
   block:
     - name: Update chart postinstall fact

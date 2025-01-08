@@ -4,7 +4,7 @@
   run_once: true
   block:
     - name: Metrics Setup
-      when: argocd_map.metrics.service.monitor.enabled
+      when: argocd_map.metrics.service.monitor.enabled is truthy
       block:
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -33,24 +33,3 @@
         kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
         wait: true
       no_log: true
-
-    - name: Gateway Setup
-      when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
-      block:
-        - name: Create server gateway
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create insecure http route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create secure http route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true

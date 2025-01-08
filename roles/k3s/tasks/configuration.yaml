@@ -9,7 +9,7 @@
         group: root
         mode: '600'
       when:
-        - k3s_vars.cluster.controlplane.tainted
+        - k3s_vars.cluster.controlplane.tainted is truthy
         - ansible_host not in k3s_map.server.hosts
 
 - name: Server Configuration
@@ -112,7 +112,7 @@
 
 - name: Local Configuration
   when:
-    - k3s_vars.cluster.kubeconfig.local
+    - k3s_vars.cluster.kubeconfig.local is truthy
     - ansible_host in ['localhost', k3s_map.server.default_host]
   no_log: true
   run_once: true

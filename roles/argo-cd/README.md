@@ -40,10 +40,10 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.configs.params.dexserver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.notificationscontroller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.reposerver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
-| argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` | Run server without TLS, needed for HTTPRoute |
+| argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` | If `true`, HTTPRoute is used, otherwise Ingress |
 | argocd_vars.kubernetes.configs.params.server.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled | bool | `true` | See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution), for details |
-| argocd_vars.kubernetes.controller.replicas | int | `2` |  |
+| argocd_vars.kubernetes.controller.replicas | int | `1` |  |
 | argocd_vars.kubernetes.controller.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.controller.resources.limits.memory | string | `"512Mi"` |  |
 | argocd_vars.kubernetes.controller.resources.requests.cpu | string | `"10m"` |  |
@@ -52,7 +52,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.dex.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.dex.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.dex.resources.requests.memory | string | `"128Mi"` |  |
-| argocd_vars.kubernetes.global.logging.level | string | `"warn"` |  |
+| argocd_vars.kubernetes.global.logging.level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.haproxy.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.haproxy.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` |  |
@@ -94,11 +94,11 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.server.credentials.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user name, set at global level |
 | argocd_vars.kubernetes.server.credentials.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user password, set at global level |
 | argocd_vars.kubernetes.server.gateway.service | string | `"argo-cd-argocd-server"` |  |
-| argocd_vars.kubernetes.server.gateway.subdomain | string | `"argocd"` |  |
 | argocd_vars.kubernetes.server.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.server.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.server.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.server.resources.requests.memory | string | `"128Mi"` |  |
+| argocd_vars.kubernetes.server.subdomain | string | `"argocd"` |  |
 | argocd_vars.release.checksum | string | `"cli_checksums.txt"` |  |
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` |  |
 | argocd_vars.release.repository.name | string | `"argo-cd"` |  |

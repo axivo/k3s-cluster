@@ -4,12 +4,16 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
+    - cert-manager
     - external-dns
+    - k3s
+    - victoria-metrics
     - argo-cd
   loop_control:
     loop_var: role
 
 - name: Role Validation
+  when: ('validation' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
@@ -38,3 +42,45 @@
       delay: 1
       retries: 3
       until: result is not failed
+
+    - name: Chart Validation
+      block:
+        - name: Validate configuration params values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') }}"
+
+        - name: Validate configuration rbac values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'config_rbac.j2') }}"
+
+        - name: Validate credentials values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'credentials.j2') }}"
+
+        - name: Validate gateway values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'gateway.j2') }}"
+
+        - name: Validate insecure http route values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') }}"
+
+        - name: Validate secure http route values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') }}"
+
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            argocd_postinstall: false
+
+        - name: Validate chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Update chart postinstall fact
+          ansible.builtin.set_fact:
+            argocd_postinstall: true
+
+        - name: Validate postinstall chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"

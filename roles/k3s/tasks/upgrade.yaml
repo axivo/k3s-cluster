@@ -2,6 +2,7 @@
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
+  any_errors_fatal: true
 
 - name: Cluster Validation
   when: ansible_host == k3s_map.server.default_host

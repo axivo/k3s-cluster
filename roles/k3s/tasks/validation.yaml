@@ -4,11 +4,12 @@
     file: facts.yaml
 
 - name: Role Validation
+  when: ('validation' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate inventory
       ansible.builtin.assert:
-        that: k3s_map.server.ha or k3s_map.server.non_ha
+        that: k3s_map.server.ha is truthy or k3s_map.server.non_ha is truthy
         fail_msg: |-
           ERROR: Invalid number of 'server' type nodes.
             - Defined nodes: {{ k3s_map.server.hosts | length }} ({{ k3s_map.server.hosts | join(', ') }})

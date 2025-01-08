@@ -86,7 +86,8 @@
 
         - name: Install helm package
           ansible.builtin.apt:
-            name: helm
+            name: helm={{ helm_map.release.version }}
+            allow_downgrade: true
             autoremove: true
             update_cache: true
 

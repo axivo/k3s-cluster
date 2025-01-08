@@ -22,13 +22,13 @@
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/canonical/ubuntu.com/main/releases.yaml",
       "format": "yaml",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $$.(lts.full_version)}], \"homepage\": \"https://ubuntu.com\", \"sourceUrl\": \"https://github.com/canonical/ubuntu.com\"}"
+        "{\"releases\": [{\"version\": $.lts.full_version}], \"homepage\": \"https://ubuntu.com\", \"sourceUrl\": \"https://github.com/canonical/ubuntu.com\"}"
       ]
     },
     "helm": {
       "defaultRegistryUrlTemplate": "https://helm.baltorepo.com/stable/debian/packages/helm/badge/latest.json",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $string(status)}], \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://helm.baltorepo.com/stable/debian/packages/helm/\"}"
+        "{\"releases\": [{\"version\": $.status}], \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://helm.baltorepo.com/stable/debian/packages/helm/\"}"
       ]
     },
     "hubble": {
@@ -351,7 +351,7 @@
     "config:recommended"
   ],
   "gitIgnoredAuthors": [
-    "github-actions[bot]@users.noreply.github.com"
+    "41898282+github-actions[bot]@users.noreply.github.com"
   ],
   "labels": [
     "dependency"

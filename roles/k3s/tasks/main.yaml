@@ -2,6 +2,7 @@
 - name: Role Validation
   ansible.builtin.import_tasks:
     file: validation.yaml
+  any_errors_fatal: true
 
 - name: Role Provisioning
   notify: Start service

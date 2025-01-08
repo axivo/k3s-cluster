@@ -2,8 +2,8 @@ configuration:
   concurrency: {{ kured_vars.kubernetes.configuration.concurrency }}
   period: {{ kured_vars.kubernetes.configuration.period }}
   rebootDelay: {{ kured_vars.kubernetes.configuration.reboot_delay }}
-{% if kured_vars.kubernetes.configuration.slack.enabled %}
-{% if kured_vars.kubernetes.configuration.slack.messages.enabled %}
+{% if kured_vars.kubernetes.configuration.slack.enabled is truthy %}
+{% if kured_vars.kubernetes.configuration.slack.messages.enabled is truthy %}
   messageTemplateDrain: {{ kured_vars.kubernetes.configuration.slack.messages.drain }}
   messageTemplateReboot: {{ kured_vars.kubernetes.configuration.slack.messages.reboot }}
   messageTemplateUncordon: {{ kured_vars.kubernetes.configuration.slack.messages.uncordon }}
@@ -13,7 +13,7 @@ configuration:
   startTime: {{ kured_vars.kubernetes.configuration.time.start }}
   endTime: {{ kured_vars.kubernetes.configuration.time.end }}
   timeZone: {{ kured_vars.kubernetes.configuration.time.zone }}
-{% if kured_postinstall and kured_map.metrics.service.monitor.enabled %}
+{% if kured_postinstall is truthy and kured_map.metrics.service.monitor.enabled is truthy %}
 metrics:
   create: true
 {% if kured_map.metrics.service.monitor.scrape.interval is falsy %}
@@ -46,7 +46,7 @@ resources:
   requests:
     cpu: {{ kured_vars.kubernetes.resources.requests.cpu }}
     memory: {{ kured_vars.kubernetes.resources.requests.memory }}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
 tolerations:
-  {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(2) }}
+  {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(2) }}
 {% endif %}

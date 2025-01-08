@@ -34,7 +34,7 @@
     loop_var: plugin
   run_once: true
   when:
-    - plugin.enabled
+    - plugin.enabled is truthy
     - plugin.packages is defined
 
 - name: Set plugin packages disabled fact
@@ -45,5 +45,5 @@
     loop_var: plugin
   run_once: true
   when:
-    - not plugin.enabled
+    - plugin.enabled is falsy
     - plugin.packages is defined

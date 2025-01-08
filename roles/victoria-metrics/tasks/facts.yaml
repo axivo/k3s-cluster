@@ -67,7 +67,7 @@
         monitor:
           scrape:
             interval: 30s
-            timeout: 15s
+            timeout: 25s
       spec:
         alertmanager:
           extra_args: {}
@@ -78,7 +78,7 @@
             # Reduce CPU usage, in favor of memory usage
             - name: GOGC
               # Default value is `30`
-              value: '90'
+              value: '60'
         vmalert:
           extra_args: {}
           extra_envs: []

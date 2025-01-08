@@ -20,7 +20,7 @@ extraArgs:
 podDisruptionBudget:
   enabled: true
   minAvailable: 1
-{% if certmanager_postinstall and certmanager_map.metrics.service.monitor.enabled %}
+{% if certmanager_postinstall is truthy and certmanager_map.metrics.service.monitor.enabled is truthy %}
 prometheus:
   servicemonitor:
     enabled: true

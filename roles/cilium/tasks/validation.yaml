@@ -1,44 +1,115 @@
 ---
 - name: Role Facts
-  ansible.builtin.import_tasks:
-    file: facts.yaml
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - cert-manager
+    - external-dns
+    - k3s
+    - victoria-metrics
+    - cilium
+  loop_control:
+    loop_var: role
 
-- name: Validate project url
-  ansible.builtin.uri:
-    url: '{{ cilium_project.url }}/{{ cilium_project.tag }}'
-    timeout: 5
+- name: Role Validation
+  when: ('validation' in ansible_run_tags)
   run_once: true
-  register: result
-  delay: 1
-  retries: 3
-  until: result is not failed
+  block:
+    - name: Validate project url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.url }}/{{ cilium_project.tag }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
 
-- name: Validate cli release file url
-  ansible.builtin.uri:
-    url: '{{ cilium_project.release.cli.file }}'
-    timeout: 5
-  run_once: true
-  register: result
-  delay: 1
-  retries: 3
-  until: result is not failed
+    - name: Validate cli release file url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.release.cli.file }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
 
-- name: Validate gateway-api release file url
-  ansible.builtin.uri:
-    url: '{{ cilium_project.release.gateway_api.file }}'
-    timeout: 5
-  run_once: true
-  register: result
-  delay: 1
-  retries: 3
-  until: result is not failed
+    - name: Validate gateway-api release file url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.release.gateway_api.file }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
 
-- name: Validate hubble release file url
-  ansible.builtin.uri:
-    url: '{{ cilium_project.release.hubble.file }}'
-    timeout: 5
-  run_once: true
-  register: result
-  delay: 1
-  retries: 3
-  until: result is not failed
+    - name: Validate hubble release file url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.release.hubble.file }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+
+    - name: Chart Validation
+      block:
+        - name: Validate certificate values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'certificate.j2') }}"
+
+        - name: Validate cluster issuer values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') }}"
+
+        - name: Validate gateway values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'gateway.j2') }}"
+
+        - name: Validate insecure http route values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') }}"
+
+        - name: Validate secure http route values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') }}"
+
+        - name: Validate l2 announcement policy values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'l2_announcement_policy.j2') }}"
+
+        - name: Validate loadbalancer ip pool values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'loadbalancer_ip_pool.j2') }}"
+
+        - name: Set chart setup fact
+          ansible.builtin.set_fact:
+            cilium_setup: true
+
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            cilium_postinstall: false
+
+        - name: Validate setup chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Update chart setup fact
+          ansible.builtin.set_fact:
+            cilium_setup: false
+
+        - name: Validate post-setup chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Update chart postinstall fact
+          ansible.builtin.set_fact:
+            cilium_postinstall: true
+
+        - name: Validate postinstall chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"

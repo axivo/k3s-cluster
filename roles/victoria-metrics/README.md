@@ -152,9 +152,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.vmsingle.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.replicas | int | `1` |  |
 | victoriametrics_vars.kubernetes.vmsingle.resources.limits.cpu | string | `nil` |  |
-| victoriametrics_vars.kubernetes.vmsingle.resources.limits.memory | string | `"2560Mi"` |  |
+| victoriametrics_vars.kubernetes.vmsingle.resources.limits.memory | string | `"2048Mi"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.resources.requests.cpu | string | `"10m"` |  |
-| victoriametrics_vars.kubernetes.vmsingle.resources.requests.memory | string | `"2560Mi"` |  |
+| victoriametrics_vars.kubernetes.vmsingle.resources.requests.memory | string | `"2048Mi"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.retention_period | string | `"72h"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
 | victoriametrics_vars.kubernetes.vmsingle.storage.class | string | `"longhorn"` |  |

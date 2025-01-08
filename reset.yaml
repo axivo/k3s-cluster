@@ -39,7 +39,7 @@
       loop_control:
         loop_var: reset
       tags: always
-      when: (reset in ansible_run_tags) or (ansible_run_tags == ['all'])
+      when: (ansible_run_tags == ['all']) or (reset in ansible_run_tags)
   vars_prompt:
     - name: prompt_remove_packages
       prompt: Remove installed apt packages? [Y/n]
