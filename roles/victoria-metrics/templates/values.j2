@@ -81,6 +81,19 @@ defaultDashboards:
 grafana:
   admin:
     existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
+    userKey: admin-user
+    passwordKey: admin-password
+  grafana.ini:
+    security:
+      admin_email: {{ global_map.credentials.cluster.postfix.user.alias }}
+      cookie_secure: true
+      strict_transport_security: true
+    smtp:
+      enabled: true
+      from_address: {{ global_map.credentials.cluster.postfix.user.alias }}
+      from_name: {{ global_map.credentials.victoriametrics.grafana.user.name }}
+      host: {{ cluster_vars.service.postfix.relay.host }}:{{ cluster_vars.service.postfix.relay.port }}
+      startTLS_policy: MandatoryStartTLS
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
@@ -110,6 +123,7 @@ grafana:
       cpu: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.grafana.resources.requests.memory }}
   sidecar:
+    logLevel: {{ victoriametrics_vars.kubernetes.grafana.sidecar.log_level }}
     resources:
       limits:
 {% if victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu is truthy %}
@@ -119,6 +133,10 @@ grafana:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
+  smtp:
+    existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
+    userKey: smtp-user
+    passwordKey: smtp-password
 kube-state-metrics:
   podDisruptionBudget:
     minAvailable: 1

@@ -68,6 +68,7 @@ victoriametrics_vars:
           cpu: 10m
           memory: 128Mi
       sidecar:
+        log_level: WARN
         resources:
           limits:
             cpu: null

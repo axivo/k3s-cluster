@@ -42,6 +42,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.requests.cpu | string | `"10m"` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.requests.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.sidecar.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu | string | `nil` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu | string | `"10m"` |  |
