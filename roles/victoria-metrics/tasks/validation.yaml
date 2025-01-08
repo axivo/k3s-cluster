@@ -5,6 +5,7 @@
     tasks_from: facts
   loop:
     - cert-manager
+    - cluster
     - external-dns
     - k3s
     - victoria-metrics
@@ -34,8 +35,10 @@
         - name: Set string data fact
           ansible.builtin.set_fact:
             string_data:
-              user: "{{ credentials.stringData['admin-user'] | b64encode }}"
-              password: "{{ credentials.stringData['admin-password'] | b64encode }}"
+              admin_password: "{{ credentials.stringData['admin-password'] | b64encode }}"
+              admin_user: "{{ credentials.stringData['admin-user'] | b64encode }}"
+              smtp_password: "{{ credentials.stringData['smtp-password'] | b64encode }}"
+              smtp_user: "{{ credentials.stringData['smtp-user'] | b64encode }}"
           no_log: true
 
         - name: Validate alertmanager configuration values
@@ -44,7 +47,15 @@
 
         - name: Validate credentials values
           ansible.builtin.debug:
-            msg: "{{ credentials | combine({'stringData': {'admin-password': string_data.password, 'admin-user': string_data.user}}) }}"
+            msg: >
+              {{ credentials | combine({
+                'stringData': {
+                  'admin-password': string_data.admin_password,
+                  'admin-user': string_data.admin_user,
+                  'smtp-password': string_data.smtp_password,
+                  'smtp-user': string_data.smtp_user
+                }})
+              }}
 
         - name: Validate chart values
           ansible.builtin.debug:
