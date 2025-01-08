@@ -1,8 +1,8 @@
 # victoria-logs-single
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.8.11](https://img.shields.io/badge/Version-0.8.11-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.8.12](https://img.shields.io/badge/Version-0.8.12-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-logs-single` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-logs-single-0.8.11/charts/victoria-logs-single) deployment, reset and validation.
+The role performs various tasks related to `victoria-logs-single` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-logs-single-0.8.12/charts/victoria-logs-single) deployment, reset and validation.
 
 ## Role Variables
 
@@ -16,7 +16,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 |-----|------|---------|-------------|
 | victorialogs_vars.kubernetes.helm.chart.alias | string | `"vls"` |  |
 | victorialogs_vars.kubernetes.helm.chart.name | string | `"victoria-logs-single"` |  |
-| victorialogs_vars.kubernetes.helm.chart.version | string | `"v0.8.11"` |  |
+| victorialogs_vars.kubernetes.helm.chart.version | string | `"v0.8.12"` |  |
 | victorialogs_vars.kubernetes.helm.repository.name | string | `"helm-charts"` |  |
 | victorialogs_vars.kubernetes.helm.repository.org | string | `"VictoriaMetrics"` |  |
 | victorialogs_vars.kubernetes.helm.repository.url | string | `"https://victoriametrics.github.io"` |  |
