@@ -1,4 +1,4 @@
-{% if victorialogs_postinstall %}
+{% if victorialogs_postinstall is truthy %}
 dashboards:
   enabled: true
 {% endif %}
@@ -12,19 +12,19 @@ server:
 {% for key, value in victorialogs_map.ingress.server.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victorialogs_vars.kubernetes.server.ingress.enabled }}
+    enabled: {{ victorialogs_vars.kubernetes.server.ingress.enabled | lower }}
     hosts:
       - name: {{ victorialogs_map.ingress.server.hostname }}
         path:
           - /
         port: http
-    ingressClassName: cilium
+    ingressClassName: {{ victorialogs_map.ingress.class.name }}
     tls:
       - hosts:
           - {{ victorialogs_map.ingress.server.hostname }}
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victorialogs_map.ingress.server.name }}
 {% endif %}
-{% if victorialogs_vars.kubernetes.server.storage.enabled %}
+{% if victorialogs_vars.kubernetes.server.storage.enabled is truthy %}
   persistentVolume:
     accessModes:
       {{ victorialogs_vars.kubernetes.server.storage.access_modes | to_nice_yaml | indent(6) }}
@@ -42,7 +42,7 @@ server:
     requests:
       cpu: {{ victorialogs_vars.kubernetes.server.resources.requests.cpu }}
       memory: {{ victorialogs_vars.kubernetes.server.resources.requests.memory }}
-{% if victorialogs_postinstall and victorialogs_map.metrics.service.monitor.enabled %}
+{% if victorialogs_postinstall is truthy and victorialogs_map.metrics.service.monitor.enabled is truthy %}
   serviceMonitor:
     enabled: true
 {% if victorialogs_map.metrics.service.monitor.scrape.interval is falsy %}
@@ -58,15 +58,15 @@ server:
 {% endif %}
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
 {% endif %}
-{% if victorialogs_vars.kubernetes.vector.enabled %}
+{% if victorialogs_vars.kubernetes.vector.enabled is truthy %}
 vector:
   enabled: true
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
-{% if victorialogs_vars.kubernetes.vector.autoscaling.enabled %}
+{% if victorialogs_vars.kubernetes.vector.autoscaling.enabled is truthy %}
   autoscaling:
     enabled: true
     maxReplicas: {{ victorialogs_vars.kubernetes.vector.autoscaling.max_replicas }}
@@ -89,7 +89,7 @@ vector:
       cpu: {{ victorialogs_vars.kubernetes.vector.resources.requests.cpu }}
       memory: {{ victorialogs_vars.kubernetes.vector.resources.requests.memory }}
 {% endif %}
-{% if k3s_vars.cluster.controlplane.tainted and k3s_project.cluster.tolerations | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml | indent(4) }}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
 {% endif %}

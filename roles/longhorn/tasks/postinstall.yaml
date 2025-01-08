@@ -4,7 +4,7 @@
   run_once: true
   block:
     - name: Metrics Setup
-      when: longhorn_map.metrics.service.monitor.enabled
+      when: longhorn_map.metrics.service.monitor.enabled is truthy
       block:
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -26,24 +26,3 @@
           delay: 1
           retries: 3
           until: result is not failed
-
-    - name: Gateway Setup
-      when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
-      block:
-        - name: Create frontend gateway
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create frontend http insecure route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true
-
-        - name: Create frontend http secure route
-          kubernetes.core.k8s:
-            definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
-            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            wait: true

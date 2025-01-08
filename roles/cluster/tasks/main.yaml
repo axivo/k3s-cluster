@@ -8,7 +8,7 @@
     file: user.yaml
 
 - name: Cluster Provisioning
-  when: valid_hardware_product
+  when: valid_hardware_product is truthy
   block:
     - name: Cluster Configuration
       ansible.builtin.import_tasks:

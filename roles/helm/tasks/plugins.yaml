@@ -35,4 +35,4 @@
       delay: 1
       retries: 3
       until: result is not failed
-      when: item.enabled
+      when: item.enabled is truthy

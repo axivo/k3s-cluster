@@ -54,7 +54,7 @@ argocd_vars:
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn
         server:
-          # -- Run server without TLS, needed for HTTPRoute
+          # -- If `true`, HTTPRoute is used, otherwise Ingress
           insecure: true
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn
@@ -62,7 +62,7 @@ argocd_vars:
       dynamic_cluster_distribution:
         # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution), for details
         enabled: true
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpu: null
@@ -96,6 +96,7 @@ argocd_vars:
         url: https://argoproj.github.io
     global:
       logging:
+        # -- Available options are `debug`, `info', `warn` and `error`
         level: warn
     namespace: kube-system
     notifications:
@@ -164,7 +165,6 @@ argocd_vars:
           password:
       gateway:
         service: argo-cd-argocd-server
-        subdomain: argocd
       resources:
         limits:
           cpu: null
@@ -172,6 +172,7 @@ argocd_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+      subdomain: argocd
   release:
     checksum: cli_checksums.txt
     file: argocd-linux-arm64

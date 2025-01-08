@@ -1,9 +1,18 @@
 ---
 - name: Role Facts
-  ansible.builtin.import_tasks:
-    file: facts.yaml
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - external-dns
+    - k3s
+    - victoria-metrics
+    - cert-manager
+  loop_control:
+    loop_var: role
 
 - name: Role Validation
+  when: ('validation' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
@@ -32,3 +41,25 @@
       delay: 1
       retries: 3
       until: result is not failed
+
+    - name: Chart Validation
+      block:
+        - name: Validate cluster issuer values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'cluster_issuer.j2') }}"
+
+        - name: Set chart postinstall fact
+          ansible.builtin.set_fact:
+            certmanager_postinstall: false
+
+        - name: Validate chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Update chart postinstall fact
+          ansible.builtin.set_fact:
+            certmanager_postinstall: true
+
+        - name: Validate postinstall chart values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"

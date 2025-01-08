@@ -6,7 +6,7 @@
 - name: Role Post-Install
   notify: Restart service
   when:
-    - k3s_map.server.ha
+    - k3s_map.server.ha is truthy
     - ansible_host in k3s_map.server.hosts
   block:
     - name: Update server configuration postinstall fact

@@ -1,16 +1,16 @@
-{% if cilium_setup %}
+{% if cilium_setup is truthy %}
 bandwidthManager:
   enabled: true
 bpf:
   datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
-  lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access }}
-  masquerade: {{ cilium_vars.kubernetes.bpf.masquerade }}
-  tproxy: {{ cilium_vars.kubernetes.bpf.tproxy }}
+  lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access | lower }}
+  masquerade: {{ cilium_vars.kubernetes.bpf.masquerade | lower }}
+  tproxy: {{ cilium_vars.kubernetes.bpf.tproxy | lower }}
 {% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
   vlanBypass:
-    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) }}
+    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) -}}
 {% endif %}
-bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe }}
+bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe | lower }}
 cgroup:
   resources:
     limits:
@@ -55,7 +55,7 @@ gatewayAPI:
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
-{% if cilium_vars.kubernetes.ip_masq_agent.enabled %}
+{% if cilium_vars.kubernetes.ip_masq_agent.enabled is truthy %}
 ipMasqAgent:
   config:
     nonMasqueradeCIDRs:
@@ -94,10 +94,10 @@ resources:
     cpu: {{ cilium_vars.kubernetes.agent.resources.requests.cpu }}
     memory: {{ cilium_vars.kubernetes.agent.resources.requests.memory }}
 rollOutCiliumPods: true
-{% elif cilium_postinstall %}
+{% elif cilium_postinstall is truthy %}
 dashboards:
   enabled: true
-{% if cilium_map.metrics.service.monitor.enabled %}
+{% if cilium_map.metrics.service.monitor.enabled is truthy %}
 envoy:
   prometheus:
     serviceMonitor:
@@ -121,7 +121,7 @@ hubble:
       - icmp
       - port-distribution
       - tcp
-{% if cilium_map.metrics.service.monitor.enabled %}
+{% if cilium_map.metrics.service.monitor.enabled is truthy %}
     serviceMonitor:
       enabled: true
 {% if cilium_map.metrics.service.monitor.scrape.interval is falsy %}
@@ -137,7 +137,7 @@ hubble:
     enabled: true
     podDisruptionBudget:
       enabled: true
-{% if cilium_map.metrics.service.monitor.enabled %}
+{% if cilium_map.metrics.service.monitor.enabled is truthy %}
     prometheus:
       enabled: true
       serviceMonitor:
@@ -161,7 +161,7 @@ hubble:
         memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
     retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
     rollOutPods: true
-{% if cilium_vars.kubernetes.hubble.ui.enabled %}
+{% if cilium_vars.kubernetes.hubble.ui.enabled is truthy %}
   ui:
     enabled: true
     backend:
@@ -198,7 +198,7 @@ hubble:
         name: {{ cilium_map.ca.hubble.cluster.issuer.name }}
       method: {{ cilium_vars.kubernetes.hubble.tls.auto.method }}
 {% endif %}
-{% if cilium_map.metrics.service.monitor.enabled %}
+{% if cilium_map.metrics.service.monitor.enabled is truthy %}
 operator:
   prometheus:
     enabled: true

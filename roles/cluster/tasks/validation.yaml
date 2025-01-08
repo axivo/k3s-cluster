@@ -1,4 +1,9 @@
 ---
+- name: Role Facts
+  ansible.builtin.import_role:
+    name: cluster
+    tasks_from: facts
+
 - name: Check device info
   ansible.builtin.shell: |
     set -eo pipefail
@@ -7,7 +12,7 @@
     executable: /bin/bash
   changed_when: false
   register: device_info
-  when: cluster_vars.device.enabled
+  when: cluster_vars.device.enabled is truthy
 
 - name: Get hardware product
   ansible.builtin.shell: |

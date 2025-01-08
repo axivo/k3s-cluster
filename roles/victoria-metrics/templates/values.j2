@@ -4,14 +4,14 @@ global:
   clusterLabel: {{ k3s_map.cluster.label }}
 alertmanager:
   config:
-    {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_alertmanager.j2').splitlines() | select('match', '.*\\S') | join('\n') | indent(4) }}
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
 {% for key, value in victoriametrics_map.ingress.alertmanager.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victoriametrics_vars.kubernetes.alertmanager.ingress.enabled }}
+    enabled: {{ victoriametrics_vars.kubernetes.alertmanager.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.alertmanager.hostname }}
     ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -38,13 +38,13 @@ alertmanager:
 {% endif %}
 {% if victoriametrics_map.spec.alertmanager.extra_envs is iterable and victoriametrics_map.spec.alertmanager.extra_envs | length > 0 %}
     extraEnvs:
-      {{ victoriametrics_map.spec.alertmanager.extra_envs | to_nice_yaml | indent(6) }}
+      {{ victoriametrics_map.spec.alertmanager.extra_envs | to_nice_yaml(indent=2) | indent(6) -}}
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.alertmanager.log_level }}
     podDisruptionBudget:
       minAvailable: 1
     storage:
-{% if victoriametrics_vars.kubernetes.alertmanager.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.alertmanager.storage.enabled is truthy %}
       volumeClaimTemplate:
         spec:
           accessModes:
@@ -87,7 +87,7 @@ grafana:
 {% for key, value in victoriametrics_map.ingress.grafana.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victoriametrics_vars.kubernetes.grafana.ingress.enabled }}
+    enabled: {{ victoriametrics_vars.kubernetes.grafana.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.grafana.hostname }}
     ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -157,7 +157,7 @@ kubeControllerManager:
             insecureSkipVerify: true
             serverName: localhost
 kubeEtcd:
-{% if not k3s_map.server.ha %}
+{% if k3s_map.server.ha is falsy %}
   enabled: false
 {% endif %}
   endpoints:
@@ -180,10 +180,6 @@ kubelet:
       spec:
         scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
         scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
-kubeProxy:
-  enabled: true
-  endpoints:
-    {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
 kubeScheduler:
   endpoints:
     {{ k3s_map_server.ips | to_nice_yaml | indent(4) }}
@@ -240,7 +236,7 @@ vmagent:
 {% for key, value in victoriametrics_map.ingress.vmagent.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victoriametrics_vars.kubernetes.vmagent.ingress.enabled }}
+    enabled: {{ victoriametrics_vars.kubernetes.vmagent.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmagent.hostname }}
     ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -267,7 +263,7 @@ vmagent:
 {% endif %}
 {% if victoriametrics_map.spec.vmagent.extra_envs is iterable and victoriametrics_map.spec.vmagent.extra_envs | length > 0 %}
     extraEnvs:
-      {{ victoriametrics_map.spec.vmagent.extra_envs | to_nice_yaml | indent(6) }}
+      {{ victoriametrics_map.spec.vmagent.extra_envs | to_nice_yaml(indent=2) | indent(6) -}}
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
@@ -285,7 +281,7 @@ vmagent:
     scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
     scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
     storage:
-{% if victoriametrics_vars.kubernetes.vmagent.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.vmagent.storage.enabled is truthy %}
       volumeClaimTemplate:
         spec:
           accessModes:
@@ -305,7 +301,7 @@ vmalert:
 {% for key, value in victoriametrics_map.ingress.vmalert.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victoriametrics_vars.kubernetes.vmalert.ingress.enabled }}
+    enabled: {{ victoriametrics_vars.kubernetes.vmalert.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmalert.hostname }}
     ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -341,17 +337,17 @@ vmalert:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
-{% if k3s_map.server.ha and victoriametrics_vars.kubernetes.vmcluster.enabled %}
+{% if k3s_map.server.ha is truthy and victoriametrics_vars.kubernetes.vmcluster.enabled is truthy %}
 vmcluster:
   enabled: true
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     insert:
-      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.enabled }}
       annotations:
 {% for key, value in victoriametrics_map.ingress.vmcluster.vminsert.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
 {% endfor %}
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
       ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -360,11 +356,11 @@ vmcluster:
             - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
           secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
     select:
-      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled }}
       annotations:
 {% for key, value in victoriametrics_map.ingress.vmcluster.vmselect.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
 {% endfor %}
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
       ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -373,11 +369,11 @@ vmcluster:
             - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
           secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
     storage:
-      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled }}
       annotations:
 {% for key, value in victoriametrics_map.ingress.vmcluster.vmstorage.annotations.items() %}
         {{ key | indent(8) }}: {{ value }}
 {% endfor %}
+      enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
       ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -398,9 +394,9 @@ vmcluster:
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vminsert.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vminsert.extra_envs | length > 0 %}
       extraEnvs:
-        {{ victoriametrics_map.spec.vmcluster.vminsert.extra_envs | to_nice_yaml | indent(8) }}
+        {{ victoriametrics_map.spec.vmcluster.vminsert.extra_envs | to_nice_yaml(indent=2) | indent(8) -}}
 {% endif %}
-{% if victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled %}
+{% if victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.enabled is truthy %}
       hpa:
         maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.max_replicas }}
         minReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.hpa.min_replicas }}
@@ -436,9 +432,9 @@ vmcluster:
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vmselect.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vmselect.extra_envs | length > 0 %}
       extraEnvs:
-        {{ victoriametrics_map.spec.vmcluster.vmselect.extra_envs | to_nice_yaml | indent(8) }}
+        {{ victoriametrics_map.spec.vmcluster.vmselect.extra_envs | to_nice_yaml(indent=2) | indent(8) -}}
 {% endif %}
-{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled %}
+{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.enabled is truthy %}
       hpa:
         maxReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.max_replicas }}
         minReplicas: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.hpa.min_replicas }}
@@ -465,7 +461,7 @@ vmcluster:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory }}
       storage:
-{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.enabled is truthy %}
         volumeClaimTemplate:
           spec:
             accessModes:
@@ -488,7 +484,7 @@ vmcluster:
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vmstorage.extra_envs is iterable and victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | length > 0 %}
       extraEnvs:
-        {{ victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | to_nice_yaml | indent(8) }}
+        {{ victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | to_nice_yaml(indent=2) | indent(8) -}}
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       podDisruptionBudget:
@@ -504,7 +500,7 @@ vmcluster:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
       storage:
-{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled is truthy %}
         volumeClaimTemplate:
           spec:
             accessModes:
@@ -527,7 +523,7 @@ vmsingle:
 {% for key, value in victoriametrics_map.ingress.vmsingle.annotations.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: {{ victoriametrics_vars.kubernetes.vmsingle.ingress.enabled }}
+    enabled: {{ victoriametrics_vars.kubernetes.vmsingle.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmsingle.hostname }}
     ingressClassName: {{ victoriametrics_map.ingress.class.name }}
@@ -546,7 +542,7 @@ vmsingle:
 {% endif %}
 {% if victoriametrics_map.spec.vmsingle.extra_envs is iterable and victoriametrics_map.spec.vmsingle.extra_envs | length > 0 %}
     extraEnvs:
-      {{ victoriametrics_map.spec.vmsingle.extra_envs | to_nice_yaml | indent(6) }}
+      {{ victoriametrics_map.spec.vmsingle.extra_envs | to_nice_yaml(indent=2) | indent(6) -}}
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmsingle.log_level }}
     replicaCount: {{ victoriametrics_vars.kubernetes.vmsingle.replicas }}
@@ -561,7 +557,7 @@ vmsingle:
         memory: {{ victoriametrics_vars.kubernetes.vmsingle.resources.requests.memory }}
     retentionPeriod: {{ victoriametrics_vars.kubernetes.vmsingle.retention_period }}
     storage:
-{% if victoriametrics_vars.kubernetes.vmsingle.storage.enabled %}
+{% if victoriametrics_vars.kubernetes.vmsingle.storage.enabled is truthy %}
       volumeClaimTemplate:
         spec:
           accessModes:

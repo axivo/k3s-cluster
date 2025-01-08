@@ -1,7 +1,7 @@
 {% if coredns_map.config.extra is truthy %}
 extraConfig: {{ coredns_map.config.extra }}
 {% endif %}
-{% if coredns_vars.kubernetes.hpa.enabled %}
+{% if coredns_vars.kubernetes.hpa.enabled is truthy %}
 hpa:
   enabled: true
   maxReplicas: {{ coredns_vars.kubernetes.hpa.max_replicas }}
@@ -16,12 +16,12 @@ hpa:
 {% else %}
 replicaCount: {{ coredns_vars.kubernetes.hpa.min_replicas }}
 {% endif %}
-{% if coredns_vars.kubernetes.deployment.legacy %}
+{% if coredns_vars.kubernetes.deployment.legacy is truthy %}
 k8sAppLabelOverride: kube-dns
 {% endif %}
 podDisruptionBudget:
   minAvailable: 1
-{% if coredns_postinstall and coredns_map.metrics.service.monitor.enabled %}
+{% if coredns_postinstall is truthy and coredns_map.metrics.service.monitor.enabled is truthy %}
 prometheus:
   monitor:
     enabled: true
@@ -47,7 +47,7 @@ rollingUpdate:
   maxSurge: 1
   maxUnavailable: 0
 servers:
-  {{ lookup('ansible.builtin.template', 'config_zones.j2') | indent(2) }}
+  {{ lookup('ansible.builtin.template', 'config_zones.j2').splitlines() | select('match', '.*\\S') | join('\n') | indent(2) }}
 service:
   clusterIP: {{ k3s_map.cluster.dns }}
 serviceAccount:

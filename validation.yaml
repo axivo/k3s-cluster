@@ -6,6 +6,8 @@
   tasks:
     - name: Validate global settings
       ansible.builtin.include_role:
+        apply:
+          tags: '{{ validation }}'
         name: '{{ validation }}'
         tasks_from: validation
       loop:
@@ -24,3 +26,5 @@
         - victoria-metrics
       loop_control:
         loop_var: validation
+      tags: always
+      when: (ansible_run_tags == ['all']) or (validation in ansible_run_tags)
