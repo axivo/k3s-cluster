@@ -29,10 +29,10 @@ defaultSettings:
 {% if k3s_project.cluster.tolerations | length > 0 %}
 longhornDriver:
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
 longhornManager:
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
 {% endif %}
 {% endif %}
 {% if longhorn_postinstall is truthy and longhorn_map.metrics.service.monitor.enabled is truthy %}

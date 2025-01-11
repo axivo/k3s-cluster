@@ -8,7 +8,7 @@ bpf:
   tproxy: {{ cilium_vars.kubernetes.bpf.tproxy | lower }}
 {% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
   vlanBypass:
-    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | indent(4) -}}
+    {{ cilium_vars.kubernetes.bpf.vlan_bypass_ids | to_nice_yaml | trim | indent(4) }}
 {% endif %}
 bpfClockProbe: {{ cilium_vars.kubernetes.bpf.clock_probe | lower }}
 cgroup:
