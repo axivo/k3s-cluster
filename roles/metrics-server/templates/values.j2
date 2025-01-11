@@ -1,10 +1,10 @@
 {% if metricsserver_vars.kubernetes.server.args is iterable and metricsserver_vars.kubernetes.server.args | length > 0 %}
 args:
-  {{ metricsserver_vars.kubernetes.server.args | to_nice_yaml | indent(2) -}}
+  {{ metricsserver_vars.kubernetes.server.args | to_nice_yaml | trim | indent(2) }}
 {% endif %}
 {% if metricsserver_map.server.default_args is iterable and metricsserver_map.server.default_args | length > 0 %}
 defaultArgs:
-  {{ metricsserver_map.server.default_args | to_nice_yaml | indent(2) -}}
+  {{ metricsserver_map.server.default_args | to_nice_yaml | trim | indent(2) }}
 {% endif %}
 podDisruptionBudget:
   enabled: true

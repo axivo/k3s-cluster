@@ -47,7 +47,7 @@ rollingUpdate:
   maxSurge: 1
   maxUnavailable: 0
 servers:
-  {{ lookup('ansible.builtin.template', 'config_zones.j2').splitlines() | select('match', '.*\\S') | join('\n') | indent(2) }}
+  {{ lookup('ansible.builtin.template', 'config_zones.j2') | trim | indent(2) }}
 service:
   clusterIP: {{ k3s_map.cluster.dns }}
 serviceAccount:
