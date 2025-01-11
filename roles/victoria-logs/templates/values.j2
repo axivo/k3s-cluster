@@ -31,6 +31,9 @@ server:
     enabled: true
     size: {{ victorialogs_vars.kubernetes.server.storage.size }}
     storageClassName: {{ victorialogs_vars.kubernetes.server.storage.class }}
+{% else %}
+  emptyDir:
+    sizeLimit: {{ victorialogs_vars.kubernetes.server.storage.size }}
 {% endif %}
   replicaCount: {{ victorialogs_vars.kubernetes.server.replicas }}
   resources:
@@ -60,7 +63,7 @@ server:
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
 {% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
 {% endif %}
 {% if victorialogs_vars.kubernetes.vector.enabled is truthy %}
 vector:
@@ -91,5 +94,5 @@ vector:
 {% endif %}
 {% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
   tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | indent(4) -}}
+    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
 {% endif %}
