@@ -17,6 +17,7 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: alertmanager
       log_level: WARN
       # -- Minimum accepted value is `2`
@@ -57,6 +58,7 @@ victoriametrics_vars:
     grafana:
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: grafana
       log_level: WARN
       replicas: 1
@@ -123,6 +125,7 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: agent
       log_level: WARN
       replicas: 1
@@ -150,6 +153,7 @@ victoriametrics_vars:
             memory: 128Mi
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: alert
       log_level: WARN
       replicas: 1
@@ -176,6 +180,7 @@ victoriametrics_vars:
               utilization: 80
         ingress:
           enabled: false
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
           subdomain: insert
         log_level: WARN
         resources:
@@ -196,6 +201,7 @@ victoriametrics_vars:
               utilization: 80
         ingress:
           enabled: true
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
           subdomain: metrics
         log_level: WARN
         resources:
@@ -214,6 +220,7 @@ victoriametrics_vars:
       vmstorage:
         ingress:
           enabled: false
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
           subdomain: storage
         log_level: WARN
         replicas: 1
@@ -233,6 +240,7 @@ victoriametrics_vars:
     vmsingle:
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: metrics
       log_level: WARN
       replicas: 1

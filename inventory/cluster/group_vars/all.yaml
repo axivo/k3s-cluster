@@ -14,6 +14,7 @@ global_map:
     argocd:
       server:
         admin:
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/argocd/#credentials), for details
           password: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             34393938613865616665666136616561313166303463366665313630383439343035356161663963
@@ -23,6 +24,7 @@ global_map:
             62333838313937393162373537353632613866313161343366343361653738366265
         user:
           name: floren
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/argocd/#credentials), for details
           password: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             64633339333736643362666261326638663532663037666334366366626236316235316566323730
@@ -33,7 +35,7 @@ global_map:
     cluster:
       postfix:
         user:
-          # -- Use `alias@domain.com` format, see [details](https://support.apple.com/guide/icloud/mm6b1a490a)
+          # -- Use `alias@icloud.com` format, see [details](https://support.apple.com/guide/icloud/mm6b1a490a)
           alias: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             33653866643135633461353232646435313431303639373362616235653864326664383538303733
@@ -41,7 +43,7 @@ global_map:
             62343830383865353437643466663639653336316538393734663164373332323636633465306539
             6535316437366232310a393030616365336131346462366231303765346162636133366366366666
             61666133396237643736323039656431666539316466613537353566653434343335
-          # -- Use `username@domain.com` format, see [details](https://support.apple.com/guide/icloud/mmdd8d1c5c)
+          # -- Use `username@icloud.com` format, see [details](https://support.apple.com/guide/icloud/mmdd8d1c5c)
           name: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             33613533663061316461353063333966646463386130316230383566643465653363653535656136
@@ -60,6 +62,7 @@ global_map:
     externaldns:
       cloudflare:
         api:
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#cloudflare), for details
           token: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             31393030336132653638356333626264653665653336613361356265366164333539393665386131
@@ -71,6 +74,7 @@ global_map:
     kured:
       slack:
         notify:
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/kured/#slack), for details
           url: !vault |
             $ANSIBLE_VAULT;1.1;AES256
             65346138646335313333393731396164323561333538653835656436306164353735376332373364
