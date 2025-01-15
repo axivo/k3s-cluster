@@ -6,6 +6,7 @@ externaldns_vars:
       # and [`staging`](https://letsencrypt.org/docs/staging-environment/)
       server: staging
     host:
+      # -- See [documentation](k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
       domain: noty.cc
     prefix: cloudflare
   kubernetes:

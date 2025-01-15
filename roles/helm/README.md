@@ -2,7 +2,7 @@
 
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 3.16.2-1](https://img.shields.io/badge/Version-3.16.2--1-informational?style=flat-square)
 
-The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.16.2-1) deployment, reset and validation.
+The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.16.2-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
 
 ## Helm Plugins
 
@@ -17,7 +17,7 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `helm_map` collection.
 
 > [!TIP]
-> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate the release pull requests and keep dependencies up-to-date
+> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#renovate), to automate the release pull requests and keep dependencies up-to-date
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
