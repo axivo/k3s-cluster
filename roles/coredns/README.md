@@ -2,15 +2,15 @@
 
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.37.0](https://img.shields.io/badge/Version-1.37.0-informational?style=flat-square)
 
-The role performs various tasks related to `coredns` [chart](https://github.com/coredns/helm/tree/coredns-1.37.0/charts/coredns) deployment, reset and validation.
+The role performs various tasks related to `coredns` [chart](https://github.com/coredns/helm/tree/coredns-1.37.0/charts/coredns) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/coredns), for additional details.
 
 ## Role Variables
 
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `coredns_map` collection.
 
 > [!TIP]
-> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate the release pull requests and keep dependencies up-to-date
-> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize the cluster resources allocation
+> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#renovate), to automate the release pull requests and keep dependencies up-to-date
+> - Use [Robusta KRR](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#robusta-krr), to optimize the cluster resources allocation
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

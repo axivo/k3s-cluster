@@ -2,7 +2,7 @@
 
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.31.4+k3s1](https://img.shields.io/badge/Version-1.31.4+k3s1-informational?style=flat-square)
 
-The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.31.4+k3s1) deployment, reset and validation.
+The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.31.4+k3s1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/k3s), for additional details.
 
 ## Role Dependencies
 
@@ -17,8 +17,8 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `k3s_map` collection.
 
 > [!TIP]
-> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate the release pull requests and keep dependencies up-to-date
-> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize the cluster resources allocation
+> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#renovate), to automate the release pull requests and keep dependencies up-to-date
+> - Use [Robusta KRR](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#robusta-krr), to optimize the cluster resources allocation
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

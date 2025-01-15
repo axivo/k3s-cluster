@@ -2,7 +2,7 @@
 
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 7.7.15](https://img.shields.io/badge/Version-7.7.15-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.15/charts/argo-cd) deployment, reset and validation.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.15/charts/argo-cd) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/argocd), for additional details.
 
 ## Role Dependencies
 
@@ -17,8 +17,8 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `argocd_map` collection.
 
 > [!TIP]
-> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/renovate/), to automate the release pull requests and keep dependencies up-to-date
-> - Use [Robusta KRR](https://github.com/robusta-dev/krr), to optimize the cluster resources allocation
+> - Use [Renovate](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#renovate), to automate the release pull requests and keep dependencies up-to-date
+> - Use [Robusta KRR](https://axivo.com/k3s-cluster/tutorials/handbook/tools/#robusta-krr), to optimize the cluster resources allocation
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
