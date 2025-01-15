@@ -247,10 +247,10 @@ victoriametrics_vars:
       resources:
         limits:
           cpu: null
-          memory: 2048Mi
+          memory: 2560Mi
         requests:
           cpu: 10m
-          memory: 2048Mi
+          memory: 2560Mi
       retention_period: 72h
       storage:
         enabled: true
