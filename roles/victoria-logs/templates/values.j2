@@ -61,10 +61,6 @@ server:
 {% endif %}
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
-{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_project.cluster.tolerations | length > 0 %}
-  tolerations:
-    {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
-{% endif %}
 {% if victorialogs_vars.kubernetes.vector.enabled is truthy %}
 vector:
   enabled: true
