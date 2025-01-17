@@ -24,6 +24,7 @@ longhorn_vars:
     frontend:
       gateway:
         service: longhorn-frontend
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: longhorn
     helm:
       chart:
