@@ -14,6 +14,7 @@ victorialogs_vars:
     server:
       ingress:
         enabled: true
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: logs
       log_level: WARN
       resources:

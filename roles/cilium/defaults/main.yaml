@@ -86,6 +86,7 @@ cilium_vars:
               memory: 128Mi
         gateway:
           service: hubble-ui
+          # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
           subdomain: hubble
         # -- Related to [cilium/cilium#33109](https://github.com/cilium/cilium/issues/33109)
         replicas: 1

@@ -15,7 +15,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | externaldns_vars.cloudflare.acme.server | string | `"staging"` | Available options are [`production`](https://letsencrypt.org/docs/rate-limits/) and [`staging`](https://letsencrypt.org/docs/staging-environment/) |
-| externaldns_vars.cloudflare.host.domain | string | `"noty.cc"` | See [documentation](k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
+| externaldns_vars.cloudflare.host.domain | string | `"noty.cc"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | externaldns_vars.cloudflare.prefix | string | `"cloudflare"` |  |
 | externaldns_vars.kubernetes.helm.chart.name | string | `"external-dns"` |  |
 | externaldns_vars.kubernetes.helm.chart.version | string | `"v1.15.0"` |  |

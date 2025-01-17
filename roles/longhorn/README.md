@@ -23,7 +23,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance | string | `"least-effort"` |  |
 | longhorn_vars.kubernetes.default_settings.volume.replicas | int | `2` | Minimum replicas accepted value is `2` |
 | longhorn_vars.kubernetes.frontend.gateway.service | string | `"longhorn-frontend"` |  |
-| longhorn_vars.kubernetes.frontend.gateway.subdomain | string | `"longhorn"` |  |
+| longhorn_vars.kubernetes.frontend.gateway.subdomain | string | `"longhorn"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | longhorn_vars.kubernetes.helm.chart.name | string | `"longhorn"` |  |
 | longhorn_vars.kubernetes.helm.chart.version | string | `"v1.7.2"` |  |
 | longhorn_vars.kubernetes.helm.repository.name | string | `"longhorn"` |  |
