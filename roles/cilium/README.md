@@ -70,7 +70,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.gateway.service | string | `"hubble-ui"` |  |
-| cilium_vars.kubernetes.hubble.ui.gateway.subdomain | string | `"hubble"` |  |
+| cilium_vars.kubernetes.hubble.ui.gateway.subdomain | string | `"hubble"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | cilium_vars.kubernetes.hubble.ui.replicas | int | `1` | Related to [cilium/cilium#33109](https://github.com/cilium/cilium/issues/33109) |
 | cilium_vars.kubernetes.ingress_controller.service.ip | string | `"192.168.4.20"` | Assign the `CiliumLoadBalancerIPPool` blocks start address |
 | cilium_vars.kubernetes.ip_masq_agent.enabled | bool | `false` |  |

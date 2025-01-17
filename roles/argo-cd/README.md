@@ -98,7 +98,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.server.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.server.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.server.resources.requests.memory | string | `"128Mi"` |  |
-| argocd_vars.kubernetes.server.subdomain | string | `"argocd"` |  |
+| argocd_vars.kubernetes.server.subdomain | string | `"argocd"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | argocd_vars.release.checksum | string | `"cli_checksums.txt"` |  |
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` |  |
 | argocd_vars.release.repository.name | string | `"argo-cd"` |  |

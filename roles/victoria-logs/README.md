@@ -22,7 +22,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victorialogs_vars.kubernetes.helm.repository.url | string | `"https://victoriametrics.github.io"` |  |
 | victorialogs_vars.kubernetes.namespace | string | `"kube-system"` |  |
 | victorialogs_vars.kubernetes.server.ingress.enabled | bool | `true` |  |
-| victorialogs_vars.kubernetes.server.ingress.subdomain | string | `"logs"` |  |
+| victorialogs_vars.kubernetes.server.ingress.subdomain | string | `"logs"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | victorialogs_vars.kubernetes.server.log_level | string | `"WARN"` |  |
 | victorialogs_vars.kubernetes.server.replicas | int | `1` |  |
 | victorialogs_vars.kubernetes.server.resources.limits.cpu | string | `nil` |  |
