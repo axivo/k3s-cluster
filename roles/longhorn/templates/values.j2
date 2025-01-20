@@ -19,6 +19,7 @@ defaultSettings:
   disableSchedulingOnCordonedNode: true
   logLevel: {{ longhorn_vars.kubernetes.default_settings.log_level }}
   nodeDownPodDeletionPolicy: {{ longhorn_vars.kubernetes.default_settings.pod_deletion_policy }}
+  nodeDrainPolicy: {{ longhorn_vars.kubernetes.default_settings.node_drain_policy }}
   orphanAutoDeletion: true
   removeSnapshotsDuringFilesystemTrim: true
   replicaAutoBalance: {{ longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance }}

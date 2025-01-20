@@ -20,7 +20,7 @@ replicaCount: {{ coredns_vars.kubernetes.hpa.min_replicas }}
 k8sAppLabelOverride: kube-dns
 {% endif %}
 podDisruptionBudget:
-  minAvailable: 1
+  maxUnavailable: 1
 {% if coredns_postinstall is truthy and coredns_map.metrics.service.monitor.enabled is truthy %}
 prometheus:
   monitor:

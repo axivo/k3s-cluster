@@ -42,7 +42,8 @@ alertmanager:
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.alertmanager.log_level }}
     podDisruptionBudget:
-      minAvailable: 1
+      maxUnavailable: 1
+    rollingUpdateStrategy: RollingUpdate
     storage:
 {% if victoriametrics_vars.kubernetes.alertmanager.storage.enabled is truthy %}
       volumeClaimTemplate:
@@ -83,6 +84,11 @@ grafana:
     existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
     userKey: admin-user
     passwordKey: admin-password
+  deploymentStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
   grafana.ini:
     security:
       admin_email: {{ global_map.credentials.cluster.postfix.user.alias }}
@@ -111,7 +117,7 @@ grafana:
 {% endif %}
   logLevel: {{ victoriametrics_vars.kubernetes.grafana.log_level }}
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 1
   replicas: {{ victoriametrics_vars.kubernetes.grafana.replicas }}
   resources:
     limits:
@@ -139,7 +145,7 @@ grafana:
     passwordKey: smtp-password
 kube-state-metrics:
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 1
   replicas: {{ victoriametrics_vars.kubernetes.kube_state_metrics.replicas }}
   resources:
     limits:
@@ -236,7 +242,7 @@ victoria-metrics-operator:
     enable_converter_ownership: true
   podDisruptionBudget:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   replicaCount: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.replicas }}
   resources:
     limits:
@@ -285,7 +291,7 @@ vmagent:
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
-      minAvailable: 1
+      maxUnavailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
     resources:
       limits:
@@ -296,6 +302,9 @@ vmagent:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmagent.resources.requests.memory }}
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
     scrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
     scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
     storage:
@@ -344,7 +353,7 @@ vmalert:
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
     podDisruptionBudget:
-      minAvailable: 1
+      maxUnavailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmalert.replicas }}
     resources:
       limits:
@@ -355,6 +364,9 @@ vmalert:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.vmalert.resources.requests.memory }}
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
 {% if k3s_map.server.ha is truthy and victoriametrics_vars.kubernetes.vmcluster.enabled is truthy %}
 vmcluster:
   enabled: true
@@ -430,7 +442,7 @@ vmcluster:
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.log_level }}
       podDisruptionBudget:
-        minAvailable: 1
+        maxUnavailable: 1
       resources:
         limits:
 {% if victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.limits.cpu is truthy %}
@@ -440,6 +452,9 @@ vmcluster:
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.resources.requests.memory }}
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
     vmselect:
       extraArgs:
         dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
@@ -468,7 +483,7 @@ vmcluster:
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.log_level }}
       podDisruptionBudget:
-        minAvailable: 1
+        maxUnavailable: 1
       resources:
         limits:
 {% if victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.limits.cpu is truthy %}
@@ -478,6 +493,7 @@ vmcluster:
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.resources.requests.memory }}
+      rollingUpdateStrategy: RollingUpdate
       storage:
 {% if victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.enabled is truthy %}
         volumeClaimTemplate:
@@ -506,7 +522,7 @@ vmcluster:
 {% endif %}
       logLevel: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.log_level }}
       podDisruptionBudget:
-        minAvailable: 1
+        maxUnavailable: 1
       replicaCount: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.replicas }}
       resources:
         limits:
@@ -517,6 +533,7 @@ vmcluster:
         requests:
           cpu: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.cpu }}
           memory: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.resources.requests.memory }}
+      rollingUpdateStrategy: RollingUpdate
       storage:
 {% if victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled is truthy %}
         volumeClaimTemplate:
