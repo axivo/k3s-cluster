@@ -1,3 +1,8 @@
+{#
+  ArgoCD RBAC
+  Manual: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-rbac-cm.yaml
+#}
+
 policy.csv: |
 {% for user in argocd_resources.server.users %}
   {{ ', '.join(['g', user.name, 'role']) | indent(2) }}:{{ user.role }}

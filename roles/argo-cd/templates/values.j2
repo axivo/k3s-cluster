@@ -1,4 +1,9 @@
 global:
+  deploymentStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   domain: {{ argocd_map.gateway.server.hostname }}
 {% endif %}
@@ -24,7 +29,7 @@ applicationSet:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.application_set.resources.limits.cpu is truthy %}
@@ -41,22 +46,8 @@ configs:
     {{ '.'.join(['accounts', user.name]) | indent(4) }}: {{ user.permissions }}
     {{ '.'.join(['accounts', user.name, 'enabled']) | indent(4) }}: '{{ user.enabled | lower }}'
 {% endfor %}
-    admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled | lower }}
-    exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled | lower }}
-    statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled | lower }}
+    {{ lookup('ansible.builtin.template', 'config_cm.j2') | trim | indent(4) }}
   params:
-    application.namespaces: {{ argocd_vars.kubernetes.configs.params.application.namespaces | join(', ') }}
-    applicationsetcontroller.enable.git.submodule: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.submodule.enabled | lower }}
-    applicationsetcontroller.enable.new.git.file.globbing: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.git.new_file_globbing.enabled | lower }}
-    applicationsetcontroller.enable.progressive.syncs: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.progressive_syncs.enabled | lower }}
-    applicationsetcontroller.log.level: {{ argocd_vars.kubernetes.configs.params.applicationsetcontroller.log_level }}
-    controller.log.level: {{ argocd_vars.kubernetes.configs.params.controller.log_level }}
-    controller.sharding.algorithm: {{ argocd_vars.kubernetes.configs.params.controller.sharding.algorithm }}
-    dexserver.log.level: {{ argocd_vars.kubernetes.configs.params.dexserver.log_level }}
-    notificationscontroller.log.level: {{ argocd_vars.kubernetes.configs.params.notificationscontroller.log_level }}
-    reposerver.log.level: {{ argocd_vars.kubernetes.configs.params.reposerver.log_level }}
-    server.insecure: {{ argocd_vars.kubernetes.configs.params.server.insecure | lower }}
-    server.log.level: {{ argocd_vars.kubernetes.configs.params.server.log_level }}
     {{ lookup('ansible.builtin.template', 'config_params.j2') | trim | indent(4) }}
   rbac:
     {{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim | indent(4) }}
@@ -83,7 +74,7 @@ controller:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.controller.resources.limits.cpu is truthy %}
@@ -97,7 +88,7 @@ controller:
 dex:
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.dex.resources.limits.cpu is truthy %}
@@ -127,7 +118,7 @@ notifications:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.notifications.resources.limits.cpu is truthy %}
@@ -143,7 +134,7 @@ redis:
 redis-ha:
   enabled: true
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 1
   haproxy:
 {% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
     metrics:
@@ -209,7 +200,7 @@ redis:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.redis.resources.limits.cpu is truthy %}
@@ -250,7 +241,7 @@ repoServer:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.repo_server.resources.limits.cpu is truthy %}
@@ -308,7 +299,7 @@ server:
 {% endif %}
   pdb:
     enabled: true
-    minAvailable: 1
+    maxUnavailable: 1
   resources:
     limits:
 {% if argocd_vars.kubernetes.server.resources.limits.cpu is truthy %}

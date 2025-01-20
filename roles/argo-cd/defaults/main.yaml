@@ -21,7 +21,7 @@ argocd_vars:
           enabled: false
       params:
         application:
-          # -- Namespaces where applications may be created
+          # -- Namespaces where `Application` resources may be created
           namespaces:
             - kube-system
         applicationsetcontroller:
@@ -165,6 +165,8 @@ argocd_vars:
           password:
       gateway:
         service: argo-cd-argocd-server
+        # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
+        subdomain: argocd
       resources:
         limits:
           cpu: null
@@ -172,8 +174,6 @@ argocd_vars:
         requests:
           cpu: 10m
           memory: 128Mi
-      # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
-      subdomain: argocd
   release:
     checksum: cli_checksums.txt
     file: argocd-linux-arm64
