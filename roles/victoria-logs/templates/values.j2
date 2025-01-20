@@ -4,7 +4,7 @@ dashboards:
 {% endif %}
 podDisruptionBudget:
   enabled: true
-  minAvailable: 1
+  maxUnavailable: 1
 server:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
@@ -62,6 +62,12 @@ server:
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
 {% if victorialogs_vars.kubernetes.vector.enabled is truthy %}
+statefulSet:
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
 vector:
   enabled: true
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
@@ -92,3 +98,8 @@ vector:
   tolerations:
     {{ k3s_project.cluster.tolerations | to_nice_yaml(indent=2) | trim | indent(4) }}
 {% endif %}
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate

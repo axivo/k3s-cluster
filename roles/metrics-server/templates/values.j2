@@ -8,22 +8,21 @@ defaultArgs:
 {% endif %}
 podDisruptionBudget:
   enabled: true
-  minAvailable: 1
+  maxUnavailable: 1
 replicas: {{ metricsserver_vars.kubernetes.replicas }}
+resources:
+  limits:
+{% if metricsserver_vars.kubernetes.resources.limits.cpu is truthy %}
+    cpu: {{ metricsserver_vars.kubernetes.resources.limits.cpu }}
+{% endif %}
+    memory: {{ metricsserver_vars.kubernetes.resources.limits.memory }}
+  requests:
+    cpu: {{ metricsserver_vars.kubernetes.resources.requests.cpu }}
+    memory: {{ metricsserver_vars.kubernetes.resources.requests.memory }}
 service:
   labels:
     kubernetes.io/cluster-service: 'true'
     kubernetes.io/name: {{ metricsserver_vars.kubernetes.helm.chart.name }}
-tls:
-{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' and metricsserver_vars.kubernetes.server.tls.type | lower == 'cert-manager' %}
-  certManager:
-    existingIssuer:
-      enabled: true
-      kind: ClusterIssuer
-      name: {{ certmanager_map.ca.cluster.issuer.name }}
-{% endif %}
-  clusterDomain: {{ k3s_vars.cluster.domain }}
-  type: {{ metricsserver_vars.kubernetes.server.tls.type }}
 {% if metricsserver_postinstall is truthy and metricsserver_map.metrics.service.monitor.enabled is truthy %}
 metrics:
   enabled: true
@@ -41,12 +40,18 @@ serviceMonitor:
   scrapeTimeout: {{ metricsserver_map.metrics.service.monitor.scrape.timeout }}
 {% endif %}
 {% endif %}
-resources:
-  limits:
-{% if metricsserver_vars.kubernetes.resources.limits.cpu is truthy %}
-    cpu: {{ metricsserver_vars.kubernetes.resources.limits.cpu }}
+tls:
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' and metricsserver_vars.kubernetes.server.tls.type | lower == 'cert-manager' %}
+  certManager:
+    existingIssuer:
+      enabled: true
+      kind: ClusterIssuer
+      name: {{ certmanager_map.ca.cluster.issuer.name }}
 {% endif %}
-    memory: {{ metricsserver_vars.kubernetes.resources.limits.memory }}
-  requests:
-    cpu: {{ metricsserver_vars.kubernetes.resources.requests.cpu }}
-    memory: {{ metricsserver_vars.kubernetes.resources.requests.memory }}
+  clusterDomain: {{ k3s_vars.cluster.domain }}
+  type: {{ metricsserver_vars.kubernetes.server.tls.type }}
+updateStrategy:
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+  type: RollingUpdate

@@ -3,6 +3,9 @@ global:
     namespace: {{ certmanager_vars.kubernetes.namespace }}
   logLevel: {{ certmanager_vars.kubernetes.global.log_level }}
 cainjector:
+  podDisruptionBudget:
+    enabled: true
+    maxUnavailable: 1
   resources:
     limits:
 {% if certmanager_vars.kubernetes.cainjector.resources.limits.cpu is truthy %}
@@ -12,6 +15,11 @@ cainjector:
     requests:
       cpu: {{ certmanager_vars.kubernetes.cainjector.resources.requests.cpu }}
       memory: {{ certmanager_vars.kubernetes.cainjector.resources.requests.memory }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
 crds:
   enabled: true
   keep: false
@@ -19,7 +27,7 @@ extraArgs:
   - --enable-gateway-api
 podDisruptionBudget:
   enabled: true
-  minAvailable: 1
+  maxUnavailable: 1
 {% if certmanager_postinstall is truthy and certmanager_map.metrics.service.monitor.enabled is truthy %}
 prometheus:
   servicemonitor:
@@ -52,11 +60,9 @@ strategy:
     maxUnavailable: 0
   type: RollingUpdate
 webhook:
-{% if certmanager_vars.kubernetes.webhook.replicas > 1 %}
   podDisruptionBudget:
     enabled: true
-    minAvailable: 1
-{% endif %}
+    maxUnavailable: 1
   replicaCount: {{ certmanager_vars.kubernetes.webhook.replicas }}
   resources:
     limits:
@@ -67,3 +73,8 @@ webhook:
     requests:
       cpu: {{ certmanager_vars.kubernetes.webhook.resources.requests.cpu }}
       memory: {{ certmanager_vars.kubernetes.webhook.resources.requests.memory }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
