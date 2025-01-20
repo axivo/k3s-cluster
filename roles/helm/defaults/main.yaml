@@ -9,7 +9,7 @@ helm_vars:
         - python3-jsonpatch
       repository:
         url: https://github.com/databus23/helm-diff
-      version: v3.9.13
+      version: v3.9.14
   release:
     distro:
       name: debian
@@ -19,4 +19,4 @@ helm_vars:
       channel: stable
       key: signing.asc
       url: https://baltocdn.com/helm
-    version: v3.16.2-1
+    version: v3.16.3-1
