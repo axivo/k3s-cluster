@@ -20,7 +20,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.default_settings.data_locality | string | `"strict-local"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details |
 | longhorn_vars.kubernetes.default_settings.log_level | string | `"Warn"` |  |
 | longhorn_vars.kubernetes.default_settings.node_drain_policy | string | `"block-for-eviction"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#node-drain-policy), for details |
-| longhorn_vars.kubernetes.default_settings.pod_deletion_policy | string | `"delete-both-statefulset-and-deployment-pod"` |  |
+| longhorn_vars.kubernetes.default_settings.pod_deletion_policy | string | `"delete-both-statefulset-and-deployment-pod"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#pod-deletion-policy-when-node-is-down), for details |
 | longhorn_vars.kubernetes.default_settings.volume.replica_auto_balance | string | `"least-effort"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#replica-auto-balance), for details |
 | longhorn_vars.kubernetes.default_settings.volume.replicas | int | `2` | See [documentation](https://longhorn.io/docs/latest/references/settings/#default-replica-count), for details |
 | longhorn_vars.kubernetes.frontend.gateway.service | string | `"longhorn-frontend"` |  |
