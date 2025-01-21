@@ -13,7 +13,7 @@ longhorn_vars:
       log_level: Warn
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#node-drain-policy), for details
       node_drain_policy: block-for-eviction
-      # - See [documentation](https://longhorn.io/docs/latest/references/settings/#pod-deletion-policy-when-node-is-down), for details
+      # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#pod-deletion-policy-when-node-is-down), for details
       pod_deletion_policy: delete-both-statefulset-and-deployment-pod
       volume:
         # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#replica-auto-balance), for details
