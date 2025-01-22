@@ -28,7 +28,7 @@ longhorn_vars:
     helm:
       chart:
         name: longhorn
-        version: v1.7.2
+        version: v1.8.0
       repository:
         name: longhorn
         org: longhorn
