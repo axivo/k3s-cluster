@@ -154,4 +154,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.16.5
+      version: v1.16.6
