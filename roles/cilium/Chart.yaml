@@ -13,5 +13,5 @@ dependencies:
     repository: https://github.com/cilium/hubble
     version: 1.16.5
 type: application
-version: 1.16.5
+version: 1.16.6
 appVersion: 1.0.0
