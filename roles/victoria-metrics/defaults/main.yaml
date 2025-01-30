@@ -41,7 +41,7 @@ victoriametrics_vars:
       chart:
         alias: vmks
         name: victoria-metrics-k8s-stack
-        version: v0.33.5
+        version: v0.35.0
       repository:
         grafana:
           name: helm-charts
