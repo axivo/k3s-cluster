@@ -18,7 +18,9 @@ k3s_vars:
     interface: eth0
   release:
     k3s:
+      # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details
       checksum: sha256sum-arm64.txt
+      # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details
       file: k3s-arm64
       name: k3s
       repository:
@@ -27,6 +29,7 @@ k3s_vars:
       version: v1.31.5+k3s1
     kubepug:
       checksum: checksums.txt
+      # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details
       file: kubepug_linux_arm64.tar.gz
       name: kubepug
       repository:

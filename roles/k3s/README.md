@@ -30,14 +30,14 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | k3s_vars.cluster.service.port | int | `6444` |  |
 | k3s_vars.cluster.tls_san | list | `["192.168.4.10"]` | Related to `server.api.host` key |
 | k3s_vars.network.interface | string | `"eth0"` |  |
-| k3s_vars.release.k3s.checksum | string | `"sha256sum-arm64.txt"` |  |
-| k3s_vars.release.k3s.file | string | `"k3s-arm64"` |  |
+| k3s_vars.release.k3s.checksum | string | `"sha256sum-arm64.txt"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
+| k3s_vars.release.k3s.file | string | `"k3s-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | k3s_vars.release.k3s.name | string | `"k3s"` |  |
 | k3s_vars.release.k3s.repository.name | string | `"k3s"` |  |
 | k3s_vars.release.k3s.repository.org | string | `"k3s-io"` |  |
 | k3s_vars.release.k3s.version | string | `"v1.31.5+k3s1"` |  |
 | k3s_vars.release.kubepug.checksum | string | `"checksums.txt"` |  |
-| k3s_vars.release.kubepug.file | string | `"kubepug_linux_arm64.tar.gz"` |  |
+| k3s_vars.release.kubepug.file | string | `"kubepug_linux_arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | k3s_vars.release.kubepug.name | string | `"kubepug"` |  |
 | k3s_vars.release.kubepug.repository.name | string | `"kubepug"` |  |
 | k3s_vars.release.kubepug.repository.org | string | `"kubepug"` |  |
