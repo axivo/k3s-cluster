@@ -21,7 +21,7 @@ certmanager_vars:
     helm:
       chart:
         name: cert-manager
-        version: v1.16.3
+        version: v1.17.0
       repository:
         name: cert-manager
         org: jetstack
