@@ -142,8 +142,7 @@ cilium_vars:
         org: cilium
       version: v0.16.24
     gateway_api:
-      # -- See Cilium [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/),
-      # for implementation details
+      # -- See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details
       file: experimental-install.yaml
       repository:
         name: gateway-api
