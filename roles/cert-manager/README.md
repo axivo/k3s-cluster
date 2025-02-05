@@ -44,7 +44,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | certmanager_vars.kubernetes.webhook.resources.requests.cpu | string | `"10m"` |  |
 | certmanager_vars.kubernetes.webhook.resources.requests.memory | string | `"128Mi"` |  |
 | certmanager_vars.release.checksum | string | `"checksums.txt"` |  |
-| certmanager_vars.release.file | string | `"cmctl_linux_arm64"` |  |
+| certmanager_vars.release.file | string | `"cmctl_linux_arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | certmanager_vars.release.repository.name | string | `"cmctl"` |  |
 | certmanager_vars.release.repository.org | string | `"cert-manager"` |  |
 | certmanager_vars.release.version | string | `"v2.1.1"` |  |
