@@ -72,6 +72,7 @@ alertmanager:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
+  useManagedConfig: true
 defaultDashboards:
   dashboards:
     victoriametrics-operator:
