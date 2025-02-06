@@ -1,8 +1,8 @@
 # victoria-metrics-k8s-stack
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.35.6](https://img.shields.io/badge/Version-0.35.6-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 0.35.7](https://img.shields.io/badge/Version-0.35.7-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.35.6/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
+The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.35.7/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
 
 ## Role Variables
 
@@ -51,7 +51,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.version | string | `"v0.35.6"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.version | string | `"v0.35.7"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |
