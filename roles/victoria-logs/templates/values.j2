@@ -62,12 +62,6 @@ server:
 {% endif %}
   retentionPeriod: {{ victorialogs_vars.kubernetes.server.retention_period }}
 {% if victorialogs_vars.kubernetes.vector.enabled is truthy %}
-statefulSet:
-  updateStrategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
 vector:
   enabled: true
   logLevel: {{ victorialogs_vars.kubernetes.vector.log_level }}
