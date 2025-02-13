@@ -11,7 +11,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 | Repository | Name | Version |
 |------------|------|---------|
 | https://github.com/cilium/cilium-cli | cilium-cli | 0.16.24 |
-| https://github.com/cilium/hubble | hubble | 1.16.6 |
+| https://github.com/cilium/hubble | hubble | 1.17.1 |
 | https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.2.1 |
 
 ## Role Variables
@@ -102,4 +102,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.release.hubble.file | string | `"hubble-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.hubble.repository.name | string | `"hubble"` |  |
 | cilium_vars.release.hubble.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.hubble.version | string | `"v1.16.6"` |  |
+| cilium_vars.release.hubble.version | string | `"v1.17.1"` |  |
