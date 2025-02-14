@@ -13,7 +13,7 @@ externaldns_vars:
     helm:
       chart:
         name: external-dns
-        version: v1.15.1
+        version: v1.15.2
       repository:
         name: external-dns
         org: kubernetes-sigs
