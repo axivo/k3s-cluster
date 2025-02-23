@@ -26,7 +26,7 @@ serviceMonitor:
   interval: {{ externaldns_map.metrics.service.monitor.scrape.interval }}
 {% endif %}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
-{% if certmanager_map.metrics.service.monitor.scrape.timeout is falsy %}
+{% if externaldns_map.metrics.service.monitor.scrape.timeout is falsy %}
   scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
 {% else %}
   scrapeTimeout: {{ externaldns_map.metrics.service.monitor.scrape.timeout }}
