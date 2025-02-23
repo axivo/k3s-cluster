@@ -4,7 +4,6 @@
     name: '{{ role }}'
     tasks_from: facts
   loop:
-    - cert-manager
     - cluster
     - external-dns
     - k3s
