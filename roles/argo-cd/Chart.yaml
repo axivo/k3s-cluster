@@ -7,5 +7,5 @@ dependencies:
     repository: https://github.com/argoproj/argo-cd
     version: 2.14.2
 type: application
-version: 7.8.5
+version: 7.8.7
 appVersion: 1.0.0
