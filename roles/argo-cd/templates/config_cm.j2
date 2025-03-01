@@ -6,6 +6,7 @@
 admin.enabled: {{ argocd_vars.kubernetes.configs.cm.admin.enabled | lower }}
 exec.enabled: {{ argocd_vars.kubernetes.configs.cm.exec.enabled | lower }}
 statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled | lower }}
+ui.theme: auto
 resource.exclusions: |
   - apiGroups:
       - cilium.io
