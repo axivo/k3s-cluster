@@ -47,11 +47,11 @@
       block:
         - name: Validate configuration params values
           ansible.builtin.debug:
-            msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') }}"
+            msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') | trim }}"
 
         - name: Validate configuration rbac values
           ansible.builtin.debug:
-            msg: "{{ lookup('ansible.builtin.template', 'config_rbac.j2') }}"
+            msg: "{{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim }}"
 
         - name: Validate credentials values
           ansible.builtin.debug:
