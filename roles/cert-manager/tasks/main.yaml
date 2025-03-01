@@ -19,6 +19,9 @@
         url: '{{ certmanager_project.release.checksum }}'
         return_content: true
       register: checksums
+      delay: 1
+      retries: 3
+      until: checksums is not failed
       check_mode: false
       run_once: true
 
