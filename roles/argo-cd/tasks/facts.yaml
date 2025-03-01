@@ -10,8 +10,6 @@
             name: '{{ global_map.credentials.argocd.server.user.name }}'
             password: "{{ global_map.credentials.argocd.server.user.password | string | password_hash('blowfish') }}"
       gateway:
-        cli:
-          grpc_route: '{{ argocd_vars.kubernetes.server.gateway.service }}-grpc'
         server:
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
