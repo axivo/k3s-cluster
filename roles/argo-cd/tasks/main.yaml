@@ -82,6 +82,12 @@
                 kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
                 wait: true
 
+            - name: Create grpc route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'grpc_route.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+                wait: true
+
             - name: Create insecure http route
               kubernetes.core.k8s:
                 definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"

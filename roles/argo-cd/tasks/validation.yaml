@@ -61,6 +61,10 @@
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'gateway.j2') }}"
 
+        - name: Validate grpc route values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'grpc_route.j2') }}"
+
         - name: Validate insecure http route values
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') }}"
