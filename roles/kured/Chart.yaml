@@ -3,5 +3,5 @@ name: kured
 description: Documentation generator for kured Ansible role
 home: https://github.com/kubereboot/charts
 type: application
-version: 5.6.0
+version: 5.6.1
 appVersion: 1.0.0
