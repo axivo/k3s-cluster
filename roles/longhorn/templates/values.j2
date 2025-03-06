@@ -1,14 +1,15 @@
+{% if longhorn_vars.kubernetes.backup.enabled is truthy %}
+defaultBackupStore:
+  backupTarget: {{ longhorn_vars.kubernetes.backup.target }}
+{% if longhorn_vars.kubernetes.backup.target[:4] | lower == 'cifs' %}
+  backupTargetCredentialSecret: {{ longhorn_map.credentials.backup.secret }}
+{% endif %}
+{% endif %}
 defaultSettings:
   allowCollectingLonghornUsageMetrics: {{ longhorn_vars.kubernetes.default_settings.collect_usage_metrics | lower }}
   autoCleanupRecurringJobBackupSnapshot: true
   autoCleanupSnapshotWhenDeleteBackup: true
   autoCleanupSystemGeneratedSnapshot: true
-{% if longhorn_vars.kubernetes.default_settings.backup.enabled is truthy %}
-  backupTarget: {{ longhorn_vars.kubernetes.default_settings.backup.target }}
-{% if longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs' %}
-  backupTargetCredentialSecret: {{ longhorn_map.credentials.backup.secret }}
-{% endif %}
-{% endif %}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
   defaultDataPath: {{ longhorn_map.directory.data }}
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}

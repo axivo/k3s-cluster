@@ -5,10 +5,10 @@
       directory:
         share: /usr/local/share/helm
       release:
-        channel: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.channel }}'
-        key: '{{ helm_vars.release.repository.url }}/{{ helm_vars.release.repository.key }}'
-        url: '{{ helm_vars.release.distro.url }}/{{ helm_vars.release.repository.channel }}/{{ helm_vars.release.distro.name }}'
-        version: '{{ helm_vars.release.version[1:] }}'
+        channel: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.channel }}'
+        key: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.key }}'
+        url: '{{ helm_vars.release.helm.distro.url }}/{{ helm_vars.release.helm.repository.channel }}/{{ helm_vars.release.helm.distro.name }}'
+        version: '{{ helm_vars.release.helm.version[1:] }}'
   run_once: true
 
 - name: Set project fact

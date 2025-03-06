@@ -12,7 +12,8 @@ spec:
   listeners:
     - allowedRoutes:
         kinds:
-          - kind: HTTPRoute
+          - group: gateway.networking.k8s.io
+            kind: HTTPRoute
         namespaces:
           from: Same
       hostname: {{ cilium_map.gateway.hubble.ui.hostname }}
@@ -21,7 +22,8 @@ spec:
       protocol: HTTP
     - allowedRoutes:
         kinds:
-          - kind: HTTPRoute
+          - group: gateway.networking.k8s.io
+            kind: HTTPRoute
         namespaces:
           from: Same
       hostname: {{ cilium_map.gateway.hubble.ui.hostname }}
@@ -32,3 +34,4 @@ spec:
         certificateRefs:
           - kind: Secret
             name: {{ externaldns_vars.cloudflare.prefix }}-{{ cilium_vars.kubernetes.hubble.ui.gateway.service }}
+        mode: Terminate

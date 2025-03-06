@@ -12,7 +12,8 @@ spec:
   listeners:
     - allowedRoutes:
         kinds:
-          - kind: HTTPRoute
+          - group: gateway.networking.k8s.io
+            kind: HTTPRoute
         namespaces:
           from: Same
       hostname: {{ longhorn_map.gateway.frontend.hostname }}
@@ -21,7 +22,8 @@ spec:
       protocol: HTTP
     - allowedRoutes:
         kinds:
-          - kind: HTTPRoute
+          - group: gateway.networking.k8s.io
+            kind: HTTPRoute
         namespaces:
           from: Same
       hostname: {{ longhorn_map.gateway.frontend.hostname }}
@@ -32,3 +34,4 @@ spec:
         certificateRefs:
           - kind: Secret
             name: {{ externaldns_vars.cloudflare.prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}
+        mode: Terminate

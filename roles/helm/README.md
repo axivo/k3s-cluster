@@ -27,10 +27,10 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.plugins[0].packages[0] | string | `"python3-jsonpatch"` |  |
 | helm_vars.plugins[0].repository.url | string | `"https://github.com/databus23/helm-diff"` |  |
 | helm_vars.plugins[0].version | string | `"v3.10.0"` |  |
-| helm_vars.release.distro.name | string | `"debian"` |  |
-| helm_vars.release.distro.url | string | `"https://helm.baltorepo.com"` |  |
-| helm_vars.release.key | string | `"helm-archive-keyring.gpg"` |  |
-| helm_vars.release.repository.channel | string | `"stable"` |  |
-| helm_vars.release.repository.key | string | `"signing.asc"` |  |
-| helm_vars.release.repository.url | string | `"https://baltocdn.com/helm"` |  |
-| helm_vars.release.version | string | `"v3.16.3-1"` |  |
+| helm_vars.release.helm.distro.name | string | `"debian"` |  |
+| helm_vars.release.helm.distro.url | string | `"https://helm.baltorepo.com"` |  |
+| helm_vars.release.helm.key | string | `"helm-archive-keyring.gpg"` |  |
+| helm_vars.release.helm.repository.channel | string | `"stable"` |  |
+| helm_vars.release.helm.repository.key | string | `"signing.asc"` |  |
+| helm_vars.release.helm.repository.url | string | `"https://baltocdn.com/helm"` |  |
+| helm_vars.release.helm.version | string | `"v3.16.3-1"` |  |

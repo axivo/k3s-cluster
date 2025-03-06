@@ -14,3 +14,4 @@ spec:
             apiTokenSecretRef:
               key: {{ externaldns_map.cloudflare.api.token.key }}
               name: {{ externaldns_map.cloudflare.api.token.name }}
+          txtOwnerId: {{ k3s_map.cluster.label }}

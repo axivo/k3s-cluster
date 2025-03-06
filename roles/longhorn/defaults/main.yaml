@@ -1,11 +1,11 @@
 ---
 longhorn_vars:
   kubernetes:
+    backup:
+      enabled: true
+      # -- See [documentation](https://longhorn.io/docs/latest/snapshots-and-backups/backup-and-restore/set-backup-target), for details
+      target: cifs://192.168.1.8/backup
     default_settings:
-      backup:
-        enabled: true
-        # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#backup-target), for details
-        target: cifs://192.168.1.8/backup
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
       collect_usage_metrics: false
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
