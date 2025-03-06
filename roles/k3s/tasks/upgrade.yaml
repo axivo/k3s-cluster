@@ -48,9 +48,9 @@
         path: '{{ k3s_project.cluster.config }}'
       register: k3s_file
 
-    - name: Set server configuration postinstall fact
+    - name: Set role postinstall fact
       ansible.builtin.set_fact:
-        k3s_config_postinstall: false
+        k3s_postinstall: false
 
     - name: Update configuration file
       ansible.builtin.template:
@@ -72,9 +72,9 @@
       ansible.builtin.import_tasks:
         file: configuration.yaml
 
-    - name: Set configuration postinstall fact
+    - name: Set role postinstall fact
       ansible.builtin.set_fact:
-        k3s_config_postinstall: true
+        k3s_postinstall: true
 
     - name: Update configuration file
       ansible.builtin.template:

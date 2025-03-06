@@ -50,10 +50,10 @@
             state: absent
           loop:
             - '{{ helm_map.directory.share }}'
-            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.repository.channel }}.sources
+            - /etc/apt/sources.list.d/helm-{{ helm_vars.release.helm.repository.channel }}.sources
             - /etc/systemd/system/helm-cache.service
             - /etc/systemd/system/helm-cache.timer
-            - /usr/share/keyrings/{{ helm_vars.release.key }}
+            - /usr/share/keyrings/{{ helm_vars.release.helm.key }}
 
         - name: Reset systemd
           ansible.builtin.command:

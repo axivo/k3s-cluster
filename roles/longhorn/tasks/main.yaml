@@ -28,8 +28,8 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             wait: true
           when:
-            - longhorn_vars.kubernetes.default_settings.backup.enabled is truthy
-            - longhorn_vars.kubernetes.default_settings.backup.target[:4] | lower == 'cifs'
+            - longhorn_vars.kubernetes.backup.enabled is truthy
+            - longhorn_vars.kubernetes.backup.target[:4] | lower == 'cifs'
           no_log: true
 
         - name: Set chart postinstall fact

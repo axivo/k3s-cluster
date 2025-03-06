@@ -2,7 +2,7 @@ data-dir: {{ k3s_map.node.directory.data }}
 {% if k3s_node.service | lower == 'server' %}
 bind-address: {{ k3s_node.ip }}
 cluster-domain: {{ k3s_vars.cluster.domain }}
-{% if k3s_map.server.ha is truthy and k3s_config_postinstall is falsy and ansible_host == k3s_map.server.default_host %}
+{% if k3s_map.server.ha is truthy and k3s_postinstall is falsy and ansible_host == k3s_map.server.default_host %}
 cluster-init: true
 {% endif %}
 disable:
@@ -36,7 +36,7 @@ node-taint:
   {{ k3s_resources.node.taint.server | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% endif %}
-{% if k3s_map.server.ha is truthy and (k3s_config_postinstall is truthy or k3s_node.service | lower == 'agent') %}
+{% if k3s_map.server.ha is truthy and (k3s_postinstall is truthy or k3s_node.service | lower == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
   (ansible_host != k3s_map.server.default_host and k3s_node.service | lower == 'server') or

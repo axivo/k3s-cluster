@@ -37,7 +37,7 @@
 
     - name: Get file status
       ansible.builtin.stat:
-        path: /usr/share/keyrings/{{ helm_vars.release.key }}
+        path: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
       changed_when: not gpg_key.stat.exists
       register: gpg_key
 
@@ -47,7 +47,7 @@
         - name: Download key
           ansible.builtin.get_url:
             url: '{{  helm_map.release.key }}'
-            dest: /tmp/{{ helm_vars.release.repository.key }}
+            dest: /tmp/{{ helm_vars.release.helm.repository.key }}
             owner: root
             group: root
             mode: '644'
@@ -58,13 +58,13 @@
 
         - name: Dearmor key
           ansible.builtin.command:
-            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.key }} /tmp/{{ helm_vars.release.repository.key }}
+            cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.helm.key }} /tmp/{{ helm_vars.release.helm.repository.key }}
           changed_when: dearmor_key.rc == 0
           register: dearmor_key
 
         - name: Remove key
           ansible.builtin.file:
-            path: /tmp/{{ helm_vars.release.repository.key }}
+            path: /tmp/{{ helm_vars.release.helm.repository.key }}
             state: absent
 
         - name: Get architecture
@@ -77,10 +77,10 @@
           ansible.builtin.deb822_repository:
             architectures: '{{ architecture.stdout }}'
             components: main
-            name: helm-{{ helm_vars.release.repository.channel }}
-            signed_by: /usr/share/keyrings/{{ helm_vars.release.key }}
+            name: helm-{{ helm_vars.release.helm.repository.channel }}
+            signed_by: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
             suites: all
-            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.distro.name }}/'
+            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.helm.distro.name }}/'
             enabled: true
             trusted: true
 

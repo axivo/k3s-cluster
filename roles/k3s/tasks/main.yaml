@@ -28,9 +28,9 @@
         group: root
         mode: '755'
 
-    - name: Set server configuration postinstall fact
+    - name: Set role postinstall fact
       ansible.builtin.set_fact:
-        k3s_config_postinstall: false
+        k3s_postinstall: false
 
     - name: Create configuration file
       ansible.builtin.template:
@@ -69,9 +69,9 @@
   notify: Restart service
   when: ansible_host in k3s_map.server.hosts
   block:
-    - name: Set server configuration postinstall fact
+    - name: Set role postinstall fact
       ansible.builtin.set_fact:
-        k3s_config_postinstall: true
+        k3s_postinstall: true
 
     - name: Update server configuration file
       ansible.builtin.template:
