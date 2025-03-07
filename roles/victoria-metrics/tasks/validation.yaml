@@ -60,3 +60,28 @@
         - name: Validate chart values
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Add repository
+          kubernetes.core.helm_repository:
+            name: '{{ item.org }}'
+            repo_url: '{{ item.url }}/{{ item.name }}'
+          loop: '{{ victoriametrics_map.helm.repository }}'
+
+        - name: Simulate chart deployment
+          ansible.builtin.command:
+            cmd: >-
+              helm diff upgrade {{ victoriametrics_vars.kubernetes.helm.chart.alias }} {{ victoriametrics_project.helm.chart.reference }}
+                --kubeconfig {{ k3s_project.cluster.kubeconfig }}
+                --namespace {{ victoriametrics_vars.kubernetes.namespace }}
+                --version {{ victoriametrics_vars.kubernetes.helm.chart.version }}
+                --context 3 --values -
+            stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+          changed_when: false
+
+        - name: Chart deployment simulation result
+          ansible.builtin.debug:
+            msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"

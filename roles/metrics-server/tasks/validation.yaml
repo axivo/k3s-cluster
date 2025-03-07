@@ -42,3 +42,27 @@
         - name: Validate postinstall chart values
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Add repository
+          kubernetes.core.helm_repository:
+            name: '{{ metricsserver_vars.kubernetes.helm.repository.name }}'
+            repo_url: '{{ metricsserver_map.helm.repository.url }}'
+
+        - name: Simulate chart deployment
+          ansible.builtin.command:
+            cmd: >-
+              helm diff upgrade {{ metricsserver_vars.kubernetes.helm.chart.name }} {{ metricsserver_map.helm.chart.reference }}
+                --kubeconfig {{ k3s_project.cluster.kubeconfig }}
+                --namespace {{ metricsserver_vars.kubernetes.namespace }}
+                --version {{ metricsserver_vars.kubernetes.helm.chart.version }}
+                --context 3 --values -
+            stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+          changed_when: false
+
+        - name: Chart deployment simulation result
+          ansible.builtin.debug:
+            msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
