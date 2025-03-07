@@ -42,6 +42,10 @@
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
 
+        - name: Set chart values fact
+          ansible.builtin.set_fact:
+            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
             externaldns_postinstall: true
@@ -49,6 +53,10 @@
         - name: Validate postinstall chart values
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+
+        - name: Update chart values fact
+          ansible.builtin.set_fact:
+            chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
 
         - name: Add repository
           kubernetes.core.helm_repository:
@@ -63,7 +71,7 @@
                 --namespace {{ externaldns_vars.kubernetes.namespace }}
                 --version {{ externaldns_vars.kubernetes.helm.chart.version }}
                 --context 3 --values -
-            stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+            stdin: '{{ chart_values | to_yaml }}'
           register: result
           delay: 1
           retries: 3
