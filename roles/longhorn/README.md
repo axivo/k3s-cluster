@@ -1,8 +1,8 @@
 # longhorn
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.8.0](https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.8.1](https://img.shields.io/badge/Version-1.8.1-informational?style=flat-square)
 
-The role performs various tasks related to `longhorn` [chart](https://github.com/longhorn/charts/tree/longhorn-1.8.0/charts/longhorn) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/longhorn), for additional details.
+The role performs various tasks related to `longhorn` [chart](https://github.com/longhorn/charts/tree/longhorn-1.8.1/charts/longhorn) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/longhorn), for additional details.
 
 ## Role Variables
 
@@ -26,7 +26,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.frontend.gateway.service | string | `"longhorn-frontend"` |  |
 | longhorn_vars.kubernetes.frontend.gateway.subdomain | string | `"longhorn"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | longhorn_vars.kubernetes.helm.chart.name | string | `"longhorn"` |  |
-| longhorn_vars.kubernetes.helm.chart.version | string | `"v1.8.0"` |  |
+| longhorn_vars.kubernetes.helm.chart.version | string | `"v1.8.1"` |  |
 | longhorn_vars.kubernetes.helm.repository.name | string | `"longhorn"` |  |
 | longhorn_vars.kubernetes.helm.repository.org | string | `"longhorn"` |  |
 | longhorn_vars.kubernetes.helm.repository.url | string | `"https://charts.longhorn.io"` |  |
