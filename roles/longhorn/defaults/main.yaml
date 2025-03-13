@@ -8,6 +8,8 @@ longhorn_vars:
     default_settings:
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
       collect_usage_metrics: false
+      # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#concurrent-automatic-engine-upgrade-per-node-limit), for details
+      concurrent_automatic_engine_upgrade_limit: 1
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
       data_locality: strict-local
       log_level: Warn

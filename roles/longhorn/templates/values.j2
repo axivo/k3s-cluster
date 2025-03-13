@@ -10,6 +10,7 @@ defaultSettings:
   autoCleanupRecurringJobBackupSnapshot: true
   autoCleanupSnapshotWhenDeleteBackup: true
   autoCleanupSystemGeneratedSnapshot: true
+  concurrentAutomaticEngineUpgradePerNodeLimit: {{ longhorn_vars.kubernetes.default_settings.concurrent_automatic_engine_upgrade_limit }}
   defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
   defaultDataPath: {{ longhorn_map.directory.data }}
 {% if longhorn_vars.kubernetes.default_settings.volume.replicas < 2 %}

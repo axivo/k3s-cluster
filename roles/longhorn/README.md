@@ -17,6 +17,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.backup.enabled | bool | `true` |  |
 | longhorn_vars.kubernetes.backup.target | string | `"cifs://192.168.1.8/backup"` | See [documentation](https://longhorn.io/docs/latest/snapshots-and-backups/backup-and-restore/set-backup-target), for details |
 | longhorn_vars.kubernetes.default_settings.collect_usage_metrics | bool | `false` | See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details |
+| longhorn_vars.kubernetes.default_settings.concurrent_automatic_engine_upgrade_limit | int | `1` | See [documentation](https://longhorn.io/docs/latest/references/settings/#concurrent-automatic-engine-upgrade-per-node-limit), for details |
 | longhorn_vars.kubernetes.default_settings.data_locality | string | `"strict-local"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details |
 | longhorn_vars.kubernetes.default_settings.log_level | string | `"Warn"` |  |
 | longhorn_vars.kubernetes.default_settings.node_drain_policy | string | `"block-for-eviction"` | See [documentation](https://longhorn.io/docs/latest/references/settings/#node-drain-policy), for details |
