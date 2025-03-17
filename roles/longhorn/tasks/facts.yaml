@@ -10,6 +10,10 @@
       helm:
         chart:
           reference: '{{ longhorn_vars.kubernetes.helm.repository.org }}/{{ longhorn_vars.kubernetes.helm.chart.name }}'
+          version: '{{ longhorn_vars.kubernetes.helm.chart.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ longhorn_vars.kubernetes.helm.repository.org }}/{{ longhorn_vars.kubernetes.helm.repository.name }}'
         timeout: 5m0s
@@ -35,6 +39,13 @@
 - name: Set project fact
   ansible.builtin.set_fact:
     longhorn_project:
+      release:
+        file: '{{ longhorn_vars.release.version }}/{{ longhorn_vars.release.file }}'
+        url: "{{
+          '/'.join([longhorn_map.helm.platform.key,
+            longhorn_vars.release.repository.org,
+            longhorn_vars.release.repository.name, 'releases', 'download'])
+          }}"
       tag: '{{ longhorn_vars.kubernetes.helm.chart.version }}'
-      url: 'https://github.com/{{ longhorn_map.helm.repository.name }}/releases/tag'
+      url: '{{ longhorn_map.helm.platform.key }}/{{ longhorn_map.helm.repository.name }}/releases/tag'
   run_once: true

@@ -10,7 +10,6 @@
     - name: Validate service state
       ansible.builtin.wait_for:
         port: '{{ k3s_vars.server.api.port }}'
-        state: drained
         timeout: 30
       any_errors_fatal: true
 
@@ -30,16 +29,31 @@
             wait: true
           no_log: true
 
+        - name: Install dependency chart
+          kubernetes.core.helm:
+            chart_ref: '{{ victoriametrics_project.helm.chart.prometheus.reference }}'
+            chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.version }}'
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            name: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.name }}'
+            namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
+            timeout: '{{ victoriametrics_map.helm.timeout }}'
+            create_namespace: true
+            update_repo_cache: true
+            wait: true
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
+
         - name: Install chart
           kubernetes.core.helm:
-            chart_ref: '{{ victoriametrics_project.helm.chart.reference }}'
-            chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.version }}'
+            chart_ref: '{{ victoriametrics_project.helm.chart.victoriametrics.reference }}'
+            chart_version: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version }}'
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}'
+            name: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}'
             namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
             timeout: '{{ victoriametrics_map.helm.timeout }}'
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
-            create_namespace: true
             update_repo_cache: true
             wait: true
           register: result

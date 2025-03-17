@@ -228,8 +228,6 @@ prometheus-node-exporter:
     requests:
       cpu: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.memory }}
-prometheus-operator-crds:
-  enabled: true
 victoria-metrics-operator:
   logLevel: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.log_level }}
   operator:

@@ -4,10 +4,16 @@
     victoriametrics_map:
       credentials:
         grafana:
-          secret: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana-credentials'
+          secret: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}-grafana-credentials'
       helm:
         chart:
-          version: '{{ victoriametrics_vars.kubernetes.helm.chart.version[1:] }}'
+          - name: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.name }}'
+            version: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.version[1:] }}'
+          - name: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name }}'
+            version: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           - name: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.name }}'
             org: '{{ victoriametrics_vars.kubernetes.helm.repository.grafana.org }}'
@@ -24,45 +30,73 @@
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          name: alertmanager-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+          name: "{{
+            '-'.join(['alertmanager',
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+            }}"
         class:
           name: cilium
         grafana:
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.grafana.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          name: '{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-grafana'
+          name: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}-grafana'
         vmagent:
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.vmagent.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          name: vmagent-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+          name: "{{
+            '-'.join(['vmagent',
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+            }}"
         vmalert:
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.vmalert.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          name: vmalert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+          name: "{{
+            '-'.join(['vmalert',
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+            }}"
         vmcluster:
           vminsert:
             annotations:
               cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
             hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-            name: vminsert-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+            name: "{{
+              '-'.join(['vminsert',
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+              }}"
           vmselect:
             annotations:
               cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
             hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-            name: vmselect-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+            name: "{{
+              '-'.join(['vmselect',
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+              }}"
           vmstorage:
             annotations:
               cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
             hostname: '{{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-            name: vmstorage-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+            name: "{{
+              '-'.join(['vmstorage',
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+              }}"
         vmsingle:
           annotations:
             cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
           hostname: '{{ victoriametrics_vars.kubernetes.vmsingle.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          name: vmsingle-{{ victoriametrics_vars.kubernetes.helm.chart.alias }}-{{ victoriametrics_vars.kubernetes.helm.chart.name }}
+          name: "{{
+              '-'.join(['vmsingle',
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+                victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+              }}"
       service:
         monitor:
           scrape:
@@ -106,9 +140,22 @@
     victoriametrics_project:
       helm:
         chart:
-          reference: '{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_vars.kubernetes.helm.chart.name }}'
-      tag: '{{ victoriametrics_vars.kubernetes.helm.chart.name }}-{{ victoriametrics_map.helm.chart.version }}'
-      url: https://github.com/{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_map.helm.repository[2].name }}/releases/tag
+          prometheus:
+            reference: '{{ victoriametrics_map.helm.repository[1].org }}/{{ victoriametrics_map.helm.chart[0].name }}'
+            tag: '{{ victoriametrics_map.helm.chart[0].name }}-{{ victoriametrics_map.helm.chart[0].version }}'
+            url: "{{
+              '/'.join([victoriametrics_map.helm.platform.key,
+                victoriametrics_map.helm.repository[1].org,
+                victoriametrics_map.helm.repository[1].name, 'releases', 'tag'])
+              }}"
+          victoriametrics:
+            reference: '{{ victoriametrics_map.helm.repository[2].org }}/{{ victoriametrics_map.helm.chart[1].name }}'
+            tag: '{{ victoriametrics_map.helm.chart[1].name }}-{{ victoriametrics_map.helm.chart[1].version }}'
+            url: "{{
+              '/'.join([victoriametrics_map.helm.platform.key,
+                victoriametrics_map.helm.repository[2].org,
+                victoriametrics_map.helm.repository[2].name, 'releases', 'tag'])
+              }}"
   run_once: true
 
 - name: Set variables fact

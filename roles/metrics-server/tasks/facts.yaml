@@ -6,6 +6,9 @@
         chart:
           reference: '{{ metricsserver_vars.kubernetes.helm.repository.name }}/{{ metricsserver_vars.kubernetes.helm.chart.name }}'
           version: '{{ metricsserver_vars.kubernetes.helm.chart.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ metricsserver_vars.kubernetes.helm.repository.org }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
           url: '{{ metricsserver_vars.kubernetes.helm.repository.url }}/{{ metricsserver_vars.kubernetes.helm.repository.name }}'
@@ -32,5 +35,5 @@
   ansible.builtin.set_fact:
     metricsserver_project:
       tag: '{{ metricsserver_vars.kubernetes.helm.chart.name }}-helm-chart-{{ metricsserver_map.helm.chart.version }}'
-      url: https://github.com/{{ metricsserver_map.helm.repository.name }}/releases/tag
+      url: '{{ metricsserver_map.helm.platform.key }}/{{ metricsserver_map.helm.repository.name }}/releases/tag'
   run_once: true

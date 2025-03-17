@@ -10,9 +10,21 @@
     - name: Validate service state
       ansible.builtin.wait_for:
         port: '{{ k3s_vars.server.api.port }}'
-        state: drained
         timeout: 30
       any_errors_fatal: true
+
+    - name: Install binary
+      ansible.builtin.get_url:
+        url: '{{ longhorn_project.release.url }}/{{ longhorn_project.release.file }}'
+        checksum: sha256:{{ longhorn_project.release.url }}/{{ longhorn_project.release.file }}.sha256
+        dest: '{{ k3s_map.node.directory.bin }}/longhornctl'
+        owner: root
+        group: root
+        mode: '755'
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
 
     - name: Add repository
       kubernetes.core.helm_repository:
@@ -29,8 +41,45 @@
             wait: true
           when:
             - longhorn_vars.kubernetes.backup.enabled is truthy
-            - longhorn_vars.kubernetes.backup.target[:4] | lower == 'cifs'
+            - longhorn_vars.kubernetes.backup.target[:3] | lower != 'nfs'
           no_log: true
+
+        - name: Get gateway info
+          kubernetes.core.k8s_info:
+            kind: Gateway
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            name: '{{ longhorn_vars.kubernetes.frontend.gateway.service }}'
+            namespace: '{{ longhorn_vars.kubernetes.namespace }}'
+            wait_timeout: 10
+            wait: true
+          register: gateway
+
+        - name: Ingress Setup
+          when:
+            - externaldns_vars.cloudflare.host.domain | lower != 'disabled'
+            - gateway.resources is iterable and gateway.resources | length > 0
+            - longhorn_vars.kubernetes.frontend.ingress.enabled is truthy
+          block:
+            - name: Delete gateway
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'gateway.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+                state: absent
+                wait: true
+
+            - name: Delete insecure http route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_insecure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+                state: absent
+                wait: true
+
+            - name: Delete secure http route
+              kubernetes.core.k8s:
+                definition: "{{ lookup('ansible.builtin.template', 'http_route_secure.j2') | from_yaml }}"
+                kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+                state: absent
+                wait: true
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
@@ -54,7 +103,9 @@
           until: result is not failed
 
         - name: Gateway Setup
-          when: externaldns_vars.cloudflare.host.domain | lower != 'disabled'
+          when:
+            - externaldns_vars.cloudflare.host.domain | lower != 'disabled'
+            - longhorn_vars.kubernetes.frontend.ingress.enabled is falsy
           block:
             - name: Create gateway
               kubernetes.core.k8s:

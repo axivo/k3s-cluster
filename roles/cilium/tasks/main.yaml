@@ -10,7 +10,6 @@
     - name: Validate service state
       ansible.builtin.wait_for:
         port: '{{ k3s_vars.server.api.port }}'
-        state: drained
         timeout: 30
       any_errors_fatal: true
 
@@ -54,10 +53,14 @@
     - name: Chart Setup
       run_once: true
       block:
-        - name: Apply gateway api crds manifest
+        - name: Apply gateway-api crds manifest
           kubernetes.core.k8s:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            src: '{{ cilium_project.release.gateway_api.file }}'
+            src: '{{ cilium_project.release.gateway_api.url }}/{{ cilium_project.release.gateway_api.file }}'
+          register: result
+          delay: 1
+          retries: 3
+          until: result is not failed
 
         - name: Set chart setup fact
           ansible.builtin.set_fact:

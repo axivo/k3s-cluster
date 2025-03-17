@@ -3,15 +3,16 @@ longhorn_vars:
   kubernetes:
     backup:
       enabled: true
-      # -- See [documentation](https://longhorn.io/docs/latest/snapshots-and-backups/backup-and-restore/set-backup-target), for details
-      target: cifs://192.168.1.8/backup
+      poll_interval: 300
+      # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/longhorn/#backup), for details
+      target: cifs://nas.noty.cc/backup
     default_settings:
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
       collect_usage_metrics: false
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#concurrent-automatic-engine-upgrade-per-node-limit), for details
       concurrent_automatic_engine_upgrade_limit: 1
-      # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#allow-collecting-longhorn-usage-metrics), for details
-      data_locality: strict-local
+      # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#default-data-locality), for details
+      data_locality: best-effort
       log_level: Warn
       # -- See [documentation](https://longhorn.io/docs/latest/references/settings/#node-drain-policy), for details
       node_drain_policy: block-for-eviction
@@ -27,6 +28,9 @@ longhorn_vars:
         service: longhorn-frontend
         # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: longhorn
+      ingress:
+        # -- If `false`, HTTPRoute is used, otherwise Ingress
+        enabled: false
     helm:
       chart:
         name: longhorn
@@ -36,3 +40,10 @@ longhorn_vars:
         org: longhorn
         url: https://charts.longhorn.io
     namespace: kube-system
+  release:
+    # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details
+    file: longhornctl-linux-arm64
+    repository:
+      name: cli
+      org: longhorn
+    version: v1.8.1

@@ -5,3 +5,7 @@ home: https://github.com/VictoriaMetrics/helm-charts
 type: application
 version: 0.38.3
 appVersion: 1.0.0
+dependencies:
+  - name: prometheus-operator-crds
+    repository: https://prometheus-community.github.io/helm-charts
+    version: 18.0.1

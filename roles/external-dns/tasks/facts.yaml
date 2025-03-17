@@ -17,6 +17,9 @@
         chart:
           reference: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.chart.name }}'
           version: '{{ externaldns_vars.kubernetes.helm.chart.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ externaldns_vars.kubernetes.helm.repository.org }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
           url: '{{ externaldns_vars.kubernetes.helm.repository.url }}/{{ externaldns_vars.kubernetes.helm.repository.name }}'
@@ -42,7 +45,7 @@
         cluster:
           issuer: '{{ externaldns_map.cloudflare.ca.cluster.issuer.name }}{{ externaldns_map.cloudflare.acme.server }}'
       tag: '{{ externaldns_vars.kubernetes.helm.chart.name }}-helm-chart-{{ externaldns_map.helm.chart.version }}'
-      url: https://github.com/{{ externaldns_map.helm.repository.name }}/releases/tag
+      url: '{{ externaldns_map.helm.platform.key }}//{{ externaldns_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set variables fact

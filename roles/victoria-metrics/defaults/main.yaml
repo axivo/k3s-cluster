@@ -39,9 +39,13 @@ victoriametrics_vars:
       timezone: utc
     helm:
       chart:
-        alias: vmks
-        name: victoria-metrics-k8s-stack
-        version: v0.38.3
+        prometheus:
+          name: prometheus-operator-crds
+          version: v18.0.0
+        victoriametrics:
+          alias: vmks
+          name: victoria-metrics-k8s-stack
+          version: v0.38.3
       repository:
         grafana:
           name: helm-charts
