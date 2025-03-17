@@ -351,7 +351,7 @@
       ],
       "matchStrings": [
         "dependencies:[\\s\\S]+?name:\\s+prometheus-operator-crds[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+prometheus[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+prometheus:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     },
@@ -366,7 +366,7 @@
       ],
       "matchStrings": [
         "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)$",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+victoriametrics[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+victoriametrics:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     }
