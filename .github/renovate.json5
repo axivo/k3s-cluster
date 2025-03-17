@@ -68,8 +68,8 @@
         "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -82,8 +82,8 @@
         "roles/argo-cd/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+name:\\s+argocd[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+argocd[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -96,8 +96,8 @@
         "roles/cert-manager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:\\s+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:\\s+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -110,8 +110,8 @@
         "roles/cert-manager/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+name:\\s+cmctl[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+cmctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -124,8 +124,8 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -138,8 +138,8 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+name:\\s+cilium-cli[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+cli:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+cilium-cli[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+cli:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -152,8 +152,8 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+name:\\s+gateway-api[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+gateway_api:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+gateway-api[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+gateway_api:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -166,8 +166,8 @@
         "roles/cilium/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+name:\\s+hubble[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+hubble:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+hubble[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+hubble:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -178,7 +178,7 @@
         "roles/cluster/Chart.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ],
       "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
     },
@@ -192,8 +192,8 @@
         "roles/coredns/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -206,8 +206,8 @@
         "roles/external-dns/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -219,8 +219,8 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+helm:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+helm:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
     },
@@ -234,8 +234,8 @@
         "roles/helm/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+?name:\\s+diff[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "plugins:[\\s\\S]+name:\\s+diff[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -248,8 +248,8 @@
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+k3s:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+k3s:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?<compatibility>\\+k3s)(?<build>\\d+)$"
     },
@@ -263,8 +263,8 @@
         "roles/k3s/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+kubepug:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+?name:\\s+kubepug[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+kubepug:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -277,8 +277,8 @@
         "roles/kured/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "kubereboot/charts"
     },
@@ -292,8 +292,8 @@
         "roles/longhorn/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+?name:\\s+longhornctl[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "release:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+?name:\\s+longhornctl[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "release:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -306,8 +306,8 @@
         "roles/longhorn/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "longhorn/charts"
     },
@@ -321,8 +321,8 @@
         "roles/metrics-server/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ]
     },
     {
@@ -335,8 +335,8 @@
         "roles/victoria-logs/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     },
@@ -350,8 +350,8 @@
         "roles/victoria-metrics/defaults/main.yaml"
       ],
       "matchStrings": [
-        "dependencies:[\\s\\S]+?name:\\s+prometheus-operator-crds[\\s\\S]+version:\\s+(?<currentValue>.+)",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+prometheus:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "dependencies:[\\s\\S]+name:\\s+prometheus-operator-crds[\\s\\S]+?version:\\s+(?<currentValue>.+)",
+        "helm:[\\s\\S]+chart:[\\s\\S]+prometheus:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     },
@@ -365,8 +365,8 @@
         "roles/victoria-metrics/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+version:\\s+(?<currentValue>.+)$",
-        "kubernetes:[\\s\\S]+helm:[\\s\\S]+chart:[\\s\\S]+victoriametrics:[\\s\\S]+version:\\s+v(?<currentValue>.+)"
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)$",
+        "helm:[\\s\\S]+chart:[\\s\\S]+victoriametrics:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     }
