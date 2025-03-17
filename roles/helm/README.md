@@ -1,8 +1,8 @@
 # helm
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 3.16.3-1](https://img.shields.io/badge/Version-3.16.3--1-informational?style=flat-square)
+![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 3.17.1-1](https://img.shields.io/badge/Version-3.17.1--1-informational?style=flat-square)
 
-The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.16.3-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
+The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.17.1-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
 
 ## Helm Plugins
 
@@ -33,4 +33,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.release.helm.repository.channel | string | `"stable"` |  |
 | helm_vars.release.helm.repository.key | string | `"signing.asc"` |  |
 | helm_vars.release.helm.repository.url | string | `"https://baltocdn.com/helm"` |  |
-| helm_vars.release.helm.version | string | `"v3.16.3-1"` |  |
+| helm_vars.release.helm.version | string | `"v3.17.1-1"` |  |
