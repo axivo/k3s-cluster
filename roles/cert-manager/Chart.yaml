@@ -2,10 +2,10 @@ apiVersion: v2
 name: cert-manager
 description: Documentation generator for cert-manager Ansible role
 home: https://github.com/cert-manager/cert-manager
+type: application
+version: 1.17.1
+appVersion: 1.0.0
 dependencies:
   - name: cmctl
     repository: https://github.com/cert-manager/cmctl
     version: 2.1.1
-type: application
-version: 1.17.1
-appVersion: 1.0.0

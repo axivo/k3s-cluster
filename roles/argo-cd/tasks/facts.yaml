@@ -27,6 +27,9 @@
         chart:
           reference: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
           version: '{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
           url: '{{ argocd_vars.kubernetes.helm.repository.url }}/{{ argocd_vars.kubernetes.helm.repository.name }}'
@@ -40,18 +43,21 @@
               interval: null
               # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
               timeout: null
-      release:
-        url: 'https://github.com/{{ argocd_vars.release.repository.org }}/{{ argocd_vars.release.repository.name }}/releases'
   run_once: true
 
 - name: Set project fact
   ansible.builtin.set_fact:
     argocd_project:
       release:
-        checksum: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksum }}'
-        file: '{{ argocd_map.release.url }}/download/{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+        checksum: '{{ argocd_vars.release.version }}/{{ argocd_vars.release.checksum }}'
+        file: '{{ argocd_vars.release.version }}/{{ argocd_vars.release.file }}'
+        url: "{{
+          '/'.join([argocd_map.helm.platform.key,
+            argocd_vars.release.repository.org,
+            argocd_vars.release.repository.name, 'releases', 'download'])
+          }}"
       tag: '{{ argocd_vars.kubernetes.helm.chart.name }}-{{ argocd_map.helm.chart.version }}'
-      url: 'https://github.com/{{ argocd_map.helm.repository.name }}/releases/tag'
+      url: '{{ argocd_map.helm.platform.key }}/{{ argocd_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set resources fact

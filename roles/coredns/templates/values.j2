@@ -1,6 +1,3 @@
-{% if coredns_map.config.extra is truthy %}
-extraConfig: {{ coredns_map.config.extra }}
-{% endif %}
 {% if coredns_vars.kubernetes.hpa.enabled is truthy %}
 hpa:
   enabled: true
@@ -47,11 +44,8 @@ rollingUpdate:
   maxSurge: 1
   maxUnavailable: 0
 servers:
-  {{ lookup('ansible.builtin.template', 'config_zones.j2') | trim | indent(2) }}
+  {{ lookup('ansible.builtin.template', 'config_servers.j2') | trim | indent(2) }}
 service:
   clusterIP: {{ k3s_map.cluster.dns }}
 serviceAccount:
   create: true
-{% if coredns_map.zone.files is truthy %}
-zoneFiles: {{ coredns_map.zone.files }}
-{% endif %}

@@ -15,6 +15,9 @@
       helm:
         chart:
           reference: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.repository.name }}'
           url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
@@ -35,13 +38,6 @@
             scrape:
               # If `null`, default value is `victoriametrics_map.service.monitor.scrape.interval`
               interval: 15s
-      release:
-        cli:
-          url: https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases
-        gateway_api:
-          url: https://github.com/{{ cilium_vars.release.gateway_api.repository.org }}/{{ cilium_vars.release.gateway_api.repository.name }}/releases
-        hubble:
-          url: https://github.com/{{ cilium_vars.release.hubble.repository.org }}/{{ cilium_vars.release.hubble.repository.name }}/releases
   run_once: true
 
 - name: Set project fact
@@ -49,13 +45,28 @@
     cilium_project:
       release:
         cli:
-          file: '{{ cilium_map.release.cli.url }}/download/{{ cilium_vars.release.cli.version }}/{{ cilium_vars.release.cli.file }}'
+          file: '{{ cilium_vars.release.cli.version }}/{{ cilium_vars.release.cli.file }}'
+          url: "{{
+            '/'.join([cilium_map.helm.platform.key,
+              cilium_vars.release.cli.repository.org,
+              cilium_vars.release.cli.repository.name, 'releases', 'download'])
+            }}"
         gateway_api:
-          file: '{{ cilium_map.release.gateway_api.url }}/download/{{ cilium_vars.release.gateway_api.version }}/{{ cilium_vars.release.gateway_api.file }}'
+          file: '{{ cilium_vars.release.gateway_api.version }}/{{ cilium_vars.release.gateway_api.file }}'
+          url: "{{
+            '/'.join([cilium_map.helm.platform.key,
+              cilium_vars.release.gateway_api.repository.org,
+              cilium_vars.release.gateway_api.repository.name, 'releases', 'download'])
+            }}"
         hubble:
-          file: '{{ cilium_map.release.hubble.url }}/download/{{ cilium_vars.release.hubble.version }}/{{ cilium_vars.release.hubble.file }}'
+          file: '{{ cilium_vars.release.hubble.version }}/{{ cilium_vars.release.hubble.file }}'
+          url: "{{
+            '/'.join([cilium_map.helm.platform.key,
+              cilium_vars.release.hubble.repository.org,
+              cilium_vars.release.hubble.repository.name, 'releases', 'download'])
+            }}"
       tag: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-      url: https://github.com/{{ cilium_map.helm.repository.name }}/releases/tag
+      url: '{{ cilium_map.helm.platform.key }}/{{ cilium_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set resources fact
@@ -63,7 +74,7 @@
     cilium_resources:
       release:
         - file: '{{ cilium_vars.release.cli.file }}'
-          url: '{{ cilium_project.release.cli.file }}'
+          url: '{{ cilium_project.release.cli.url }}/{{ cilium_project.release.cli.file }}'
         - file: '{{ cilium_vars.release.hubble.file }}'
-          url: '{{ cilium_project.release.hubble.file }}'
+          url: '{{ cilium_project.release.hubble.url }}/{{ cilium_project.release.hubble.file }}'
   run_once: true

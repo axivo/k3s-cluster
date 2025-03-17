@@ -1,4 +1,7 @@
 data-dir: {{ k3s_map.node.directory.data }}
+{% if k3s_map.node.default_registry_endpoint.enabled is falsy %}
+disable-default-registry-endpoint: true
+{% endif %}
 {% if k3s_node.service | lower == 'server' %}
 bind-address: {{ k3s_node.ip }}
 cluster-domain: {{ k3s_vars.cluster.domain }}

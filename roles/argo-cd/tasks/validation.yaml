@@ -27,7 +27,7 @@
 
     - name: Validate release checksum url
       ansible.builtin.uri:
-        url: '{{ argocd_project.release.checksum }}'
+        url: '{{ argocd_project.release.url }}/{{ argocd_project.release.checksum }}'
         timeout: 5
       register: result
       delay: 1
@@ -36,7 +36,7 @@
 
     - name: Validate release file url
       ansible.builtin.uri:
-        url: '{{ argocd_project.release.file }}'
+        url: '{{ argocd_project.release.url }}/{{ argocd_project.release.file }}'
         timeout: 5
       register: result
       delay: 1
@@ -45,6 +45,25 @@
 
     - name: Chart Validation
       block:
+        - name: Add repository
+          kubernetes.core.helm_repository:
+            name: '{{ argocd_vars.kubernetes.helm.repository.org }}'
+            repo_url: '{{ argocd_map.helm.repository.url }}'
+
+        - name: Get deployed chart release info
+          kubernetes.core.helm_info:
+            kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
+            name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
+            namespace: '{{ argocd_vars.kubernetes.namespace }}'
+          register: release
+          changed_when: false
+
+        - name: Set comparison fact
+          ansible.builtin.set_fact:
+            comparison:
+              chart: '{{ argocd_map.helm.chart.version }}'
+              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+
         - name: Validate configuration params values
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') | trim }}"
@@ -80,6 +99,9 @@
         - name: Set chart values fact
           ansible.builtin.set_fact:
             chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+          when:
+            - comparison.release | float > 0
+            - comparison.release != comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -89,30 +111,59 @@
           ansible.builtin.debug:
             msg: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
 
-        - name: Update chart values fact
-          ansible.builtin.set_fact:
-            chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+        - name: Chart Deployment Simulation
+          when:
+            - comparison.release | float > 0
+            - comparison.release != comparison.chart
+          block:
+            - name: Update chart values fact
+              ansible.builtin.set_fact:
+                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
 
-        - name: Add repository
-          kubernetes.core.helm_repository:
-            name: '{{ argocd_vars.kubernetes.helm.repository.org }}'
-            repo_url: '{{ argocd_map.helm.repository.url }}'
+            - name: Simulate chart deployment
+              ansible.builtin.command:
+                cmd: >-
+                  helm diff upgrade
+                    {{ argocd_vars.kubernetes.helm.chart.name }}
+                    {{ argocd_map.helm.chart.reference }}
+                    --kubeconfig {{ k3s_project.cluster.kubeconfig }}
+                    --namespace {{ argocd_vars.kubernetes.namespace }}
+                    --version {{ argocd_vars.kubernetes.helm.chart.version }}
+                    --context 3 --values -
+                stdin: '{{ chart_values | to_yaml }}'
+              register: result
+              delay: 1
+              retries: 3
+              until: result is not failed
+              changed_when: false
 
-        - name: Simulate chart deployment
-          ansible.builtin.command:
-            cmd: >-
-              helm diff upgrade {{ argocd_vars.kubernetes.helm.chart.name }} {{ argocd_map.helm.chart.reference }}
-                --kubeconfig {{ k3s_project.cluster.kubeconfig }}
-                --namespace {{ argocd_vars.kubernetes.namespace }}
-                --version {{ argocd_vars.kubernetes.helm.chart.version }}
-                --context 3 --values -
-            stdin: '{{ chart_values | to_yaml }}'
-          register: result
-          delay: 1
-          retries: 3
-          until: result is not failed
-          changed_when: false
+            - name: Chart deployment simulation result
+              ansible.builtin.debug:
+                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
-        - name: Chart deployment simulation result
-          ansible.builtin.debug:
-            msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+            - name: Compare chart values
+              ansible.builtin.command:
+                cmd: bash -c "{{
+                  ' '.join(['diff', '-u', '<(curl', '-s ' +
+                    '/'.join([argocd_map.helm.platform.raw,
+                      argocd_vars.kubernetes.helm.repository.org,
+                      argocd_vars.kubernetes.helm.repository.name, 'refs', 'tags',
+                      '-'.join([argocd_vars.kubernetes.helm.chart.name, comparison.release]), 'charts',
+                      argocd_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
+                  '<(curl', '-s ' +
+                    '/'.join([argocd_map.helm.platform.raw,
+                      argocd_vars.kubernetes.helm.repository.org,
+                      argocd_vars.kubernetes.helm.repository.name, 'refs', 'tags',
+                      '-'.join([argocd_vars.kubernetes.helm.chart.name, comparison.chart]), 'charts',
+                      argocd_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
+                  }}"
+              register: result
+              delay: 1
+              retries: 3
+              until: result is not failed
+              changed_when: false
+              failed_when: result.rc > 1
+
+            - name: Chart values comparison result
+              ansible.builtin.debug:
+                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"

@@ -2,6 +2,9 @@ apiVersion: v2
 name: cilium
 description: Documentation generator for cilium Ansible role
 home: https://github.com/cilium/cilium
+type: application
+version: 1.17.1
+appVersion: 1.0.0
 dependencies:
   - name: cilium-cli
     repository: https://github.com/cilium/cilium-cli
@@ -12,6 +15,3 @@ dependencies:
   - name: hubble
     repository: https://github.com/cilium/hubble
     version: 1.17.1
-type: application
-version: 1.17.1
-appVersion: 1.0.0

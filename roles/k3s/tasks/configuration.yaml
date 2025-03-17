@@ -8,9 +8,6 @@
         owner: root
         group: root
         mode: '600'
-      when:
-        - k3s_vars.cluster.controlplane.tainted is truthy
-        - ansible_host not in k3s_map.server.hosts
 
 - name: Server Configuration
   when: ansible_host in k3s_map.server.hosts
@@ -34,7 +31,6 @@
     - name: Validate service state
       ansible.builtin.wait_for:
         port: '{{ k3s_vars.server.api.port }}'
-        state: drained
         timeout: 30
       any_errors_fatal: true
 

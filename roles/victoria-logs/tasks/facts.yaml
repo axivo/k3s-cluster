@@ -6,6 +6,9 @@
         chart:
           reference: '{{ victorialogs_vars.kubernetes.helm.repository.org }}/{{ victorialogs_vars.kubernetes.helm.chart.name }}'
           version: '{{ victorialogs_vars.kubernetes.helm.chart.version[1:] }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
           url: '{{ victorialogs_vars.kubernetes.helm.repository.url }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
@@ -33,5 +36,5 @@
   ansible.builtin.set_fact:
     victorialogs_project:
       tag: '{{ victorialogs_vars.kubernetes.helm.chart.name }}-{{ victorialogs_map.helm.chart.version }}'
-      url: 'https://github.com/{{ victorialogs_map.helm.repository.name }}/releases/tag'
+      url: '{{ victorialogs_map.helm.platform.key }}/{{ victorialogs_map.helm.repository.name }}/releases/tag'
   run_once: true

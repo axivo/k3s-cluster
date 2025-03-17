@@ -9,6 +9,9 @@
       helm:
         chart:
           reference: '{{ certmanager_vars.kubernetes.helm.repository.org }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
+        platform:
+          key: https://github.com
+          raw: https://raw.githubusercontent.com
         repository:
           name: '{{ certmanager_vars.kubernetes.helm.repository.name }}/{{ certmanager_vars.kubernetes.helm.chart.name }}'
           url: '{{ certmanager_vars.kubernetes.helm.repository.url }}/{{ certmanager_vars.kubernetes.helm.repository.name }}'
@@ -22,18 +25,21 @@
               interval: null
               # If `null`, default value is `victoriametrics_map.service.monitor.scrape.timeout`
               timeout: null
-      release:
-        url: 'https://github.com/{{ certmanager_vars.release.repository.org }}/{{ certmanager_vars.release.repository.name }}/releases'
   run_once: true
 
 - name: Set project fact
   ansible.builtin.set_fact:
     certmanager_project:
       release:
-        checksum: '{{ certmanager_map.release.url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.checksum }}'
-        file: '{{ certmanager_map.release.url }}/download/{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.file }}'
+        checksum: '{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.checksum }}'
+        file: '{{ certmanager_vars.release.version }}/{{ certmanager_vars.release.file }}'
+        url: "{{
+          '/'.join([certmanager_map.helm.platform.key,
+            certmanager_vars.release.repository.org,
+            certmanager_vars.release.repository.name, 'releases', 'download'])
+          }}"
       tag: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
-      url: 'https://github.com/{{ certmanager_map.helm.repository.name }}/releases/tag'
+      url: '{{ certmanager_map.helm.platform.key }}/{{ certmanager_map.helm.repository.name }}/releases/tag'
   run_once: true
 
 - name: Set variables fact

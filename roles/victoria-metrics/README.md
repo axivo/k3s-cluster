@@ -4,6 +4,14 @@
 
 The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.38.3/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
 
+## Role Dependencies
+
+See the installed role dependencies listed below, defined into [main.yaml](./defaults/main.yaml) `kubernetes.helm.chart` collection.
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.1 |
+
 ## Role Variables
 
 See the related role variables listed below, defined into [main.yaml](./defaults/main.yaml) defaults file. Advanced user role variables are defined into [facts.yaml](./tasks/facts.yaml) `victoriametricsk8sstack_map` collection.
@@ -49,9 +57,11 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User name used to access Grafana UI |
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
-| victoriametrics_vars.kubernetes.helm.chart.alias | string | `"vmks"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.version | string | `"v0.38.3"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.prometheus.name | string | `"prometheus-operator-crds"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v18.0.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias | string | `"vmks"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name | string | `"victoria-metrics-k8s-stack"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.38.3"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |

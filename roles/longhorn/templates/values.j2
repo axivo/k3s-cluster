@@ -1,9 +1,10 @@
 {% if longhorn_vars.kubernetes.backup.enabled is truthy %}
 defaultBackupStore:
   backupTarget: {{ longhorn_vars.kubernetes.backup.target }}
-{% if longhorn_vars.kubernetes.backup.target[:4] | lower == 'cifs' %}
+{% if longhorn_vars.kubernetes.backup.target[:3] | lower != 'nfs' %}
   backupTargetCredentialSecret: {{ longhorn_map.credentials.backup.secret }}
 {% endif %}
+  pollInterval: {{ longhorn_vars.kubernetes.backup.poll_interval }}
 {% endif %}
 defaultSettings:
   allowCollectingLonghornUsageMetrics: {{ longhorn_vars.kubernetes.default_settings.collect_usage_metrics | lower }}
@@ -28,6 +29,19 @@ defaultSettings:
 {% if k3s_vars.cluster.controlplane.tainted is truthy %}
 {% if k3s_resources.node.taint.server | length > 0 %}
   taintToleration: {{ k3s_resources.node.taint.server | join | trim }}
+{% endif %}
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' and longhorn_vars.kubernetes.frontend.ingress.enabled is truthy %}
+ingress:
+  annotations:
+{% for key, value in longhorn_map.gateway.frontend.annotations.items() %}
+    {{ key | indent(4) }}: {{ value }}
+{% endfor %}
+  enabled: true
+  host: {{ longhorn_map.gateway.frontend.hostname }}
+  ingressClassName: cilium
+  pathType: Prefix
+  tls: true
+  tlsSecret: {{ externaldns_vars.cloudflare.prefix }}-{{ longhorn_vars.kubernetes.frontend.gateway.service }}
 {% endif %}
 {% if k3s_project.cluster.tolerations | length > 0 %}
 longhornDriver:
@@ -60,3 +74,5 @@ persistence:
 {% else %}
   defaultClassReplicaCount: {{ longhorn_vars.kubernetes.default_settings.volume.replicas }}
 {% endif %}
+  defaultDataLocality: {{ longhorn_vars.kubernetes.default_settings.data_locality }}
+  migratable: true

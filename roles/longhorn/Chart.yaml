@@ -5,3 +5,7 @@ home: https://github.com/longhorn/charts
 type: application
 version: 1.8.1
 appVersion: 1.0.0
+dependencies:
+  - name: longhornctl
+    repository: https://github.com/longhorn/cli
+    version: 1.8.1

@@ -22,7 +22,7 @@ metrics:
   interval: {{ kured_map.metrics.service.monitor.scrape.interval }}
 {% endif %}
   labels:
-    release: {{ victoriametrics_vars.kubernetes.helm.chart.alias }}
+    release: {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}
   namespace: {{ victoriametrics_vars.kubernetes.namespace }}
 {% if kured_map.metrics.service.monitor.scrape.timeout is falsy %}
   scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}

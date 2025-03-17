@@ -58,7 +58,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` |  |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` |  |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v7.8.8"` |  |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v7.8.11"` |  |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` |  |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` |  |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` |  |
@@ -103,4 +103,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | argocd_vars.release.repository.name | string | `"argo-cd"` |  |
 | argocd_vars.release.repository.org | string | `"argoproj"` |  |
-| argocd_vars.release.version | string | `"v2.14.4"` |  |
+| argocd_vars.release.version | string | `"v2.14.5"` |  |

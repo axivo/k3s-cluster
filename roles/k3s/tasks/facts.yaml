@@ -11,6 +11,8 @@
         hosts: '{{ groups.server[-2:] }}'
         password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=8) }}"
       node:
+        default_registry_endpoint:
+          enabled: true
         directory:
           bin: /usr/local/bin
           config: /etc/rancher/k3s
