@@ -343,7 +343,7 @@
     {
       "customType": "regex",
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "prometheus-community/helm-charts",
+      "depNameTemplate": "prometheus-community/prometheus-operator-crds",
       "extractVersionTemplate": "^prometheus-operator-crds-(?<version>.+)$",
       "fileMatch": [
         "roles/victoria-metrics/Chart.yaml",
@@ -353,7 +353,7 @@
         "dependencies:[\\s\\S]+name:\\s+prometheus-operator-crds[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "helm:[\\s\\S]+chart:[\\s\\S]+prometheus:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
-      "packageNameTemplate": "VictoriaMetrics/helm-charts"
+      "packageNameTemplate": "prometheus-community/helm-charts"
     },
     {
       "customType": "regex",
