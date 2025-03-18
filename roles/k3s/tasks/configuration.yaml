@@ -145,25 +145,33 @@
                 server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha else k3s_node.ip }}:{{ k3s_vars.server.api.port }}
               name: '{{ datasource.clusters[0].name }}'
 
-    - name: Update kubeconfig file
+    - name: Create local .kube directory
+      ansible.builtin.file:
+        path: '{{ k3s_vars.cluster.kubeconfig.path }}'
+        mode: '755'
+        state: directory
+      delegate_to: localhost
+      become: false
+
+    - name: Update remote .kube/config file
       ansible.builtin.copy:
         content: '{{ datasource | to_nice_yaml(indent=2) }}'
         dest: '{{ kubeconfig.path }}'
         mode: preserve
         remote_src: true
 
-    - name: Copy kubeconfig file locally
+    - name: Copy remote .kube/config file locally
       ansible.builtin.fetch:
         src: '{{ kubeconfig.path }}'
         dest: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
         flat: true
 
-    - name: Remove kubeconfig file
+    - name: Remove remote .kube/config file
       ansible.builtin.file:
         path: '{{ kubeconfig.path }}'
         state: absent
 
-    - name: Set local kubeconfig file permissions
+    - name: Set local .kube/config file permissions
       ansible.builtin.file:
         path: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
         mode: '600'
