@@ -13,7 +13,7 @@
   notify: Restart loadbalancer services
   when:
     - k3s_map.server.ha is truthy
-    - ansible_host in k3s_map.loadbalancer.hosts
+    - inventory_hostname in k3s_map.loadbalancer.hosts
   block:
     - name: Set sysctl token value
       ansible.posix.sysctl:

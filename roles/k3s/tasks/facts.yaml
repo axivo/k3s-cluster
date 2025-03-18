@@ -37,20 +37,20 @@
         hosts: '{{ groups.server }}'
         non_ha: '{{ groups.server | length == 1 }}'
       service:
-        name: "k3s{{ '-agent' if ansible_host not in groups.server }}"
+        name: "k3s{{ '-agent' if inventory_hostname not in groups.server }}"
   run_once: true
 
 - name: Set map loadbalancer fact
   ansible.builtin.set_fact:
     k3s_map_loadbalancer:
       ips: "{{ k3s_map.loadbalancer.hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
-  when: ansible_host in k3s_map.loadbalancer.hosts
+  when: inventory_hostname in k3s_map.loadbalancer.hosts
 
 - name: Set map server fact
   ansible.builtin.set_fact:
     k3s_map_server:
       ips: "{{ k3s_map.server.hosts | map('extract', hostvars, ['ansible_default_ipv4', 'address']) }}"
-  when: ansible_host in k3s_map.server.hosts
+  when: inventory_hostname in k3s_map.server.hosts
 
 - name: Set node fact
   ansible.builtin.set_fact:
@@ -69,7 +69,7 @@
           value: imagefs.available=2m,imagefs.inodesFree=2m,memory.available=1m30s,nodefs.available=2m,nodefs.inodesFree=2m
         - arg: system-reserved
           value: cpu=1,ephemeral-storage=5Gi,memory=1Gi
-      service: "{{ 'agent' if ansible_host not in k3s_map.server.hosts else 'server' }}"
+      service: "{{ 'agent' if inventory_hostname not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set project fact
   ansible.builtin.set_fact:

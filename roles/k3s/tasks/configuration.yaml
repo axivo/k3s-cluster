@@ -10,7 +10,7 @@
         mode: '600'
 
 - name: Server Configuration
-  when: ansible_host in k3s_map.server.hosts
+  when: inventory_hostname in k3s_map.server.hosts
   block:
     - name: Add variable to environment file
       ansible.builtin.lineinfile:
@@ -109,7 +109,7 @@
 - name: Local Configuration
   when:
     - k3s_vars.cluster.kubeconfig.local is truthy
-    - ansible_host in ['localhost', k3s_map.server.default_host]
+    - inventory_hostname in ['localhost', k3s_map.server.default_host]
   no_log: true
   run_once: true
   block:

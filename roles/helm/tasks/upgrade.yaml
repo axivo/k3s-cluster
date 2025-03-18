@@ -9,7 +9,7 @@
     file: validation.yaml
 
 - name: Role Upgrade
-  when: ansible_host in k3s_map.server.hosts
+  when: inventory_hostname in k3s_map.server.hosts
   block:
     - name: Upgrade helm package
       ansible.builtin.apt:

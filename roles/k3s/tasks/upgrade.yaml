@@ -5,7 +5,7 @@
   any_errors_fatal: true
 
 - name: Cluster Validation
-  when: ansible_host == k3s_map.server.default_host
+  when: inventory_hostname == k3s_map.server.default_host
   run_once: true
   block:
     - name: Get binary status

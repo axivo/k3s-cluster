@@ -1,7 +1,7 @@
 ---
 - name: Role Post-Install
   when:
-    - ansible_host in k3s_map.server.hosts
+    - inventory_hostname in k3s_map.server.hosts
     - certmanager_map.metrics.service.monitor.enabled
   run_once: true
   block:

@@ -7,7 +7,7 @@
   block:
     - name: Loadbalancer Reset
       when:
-        - ansible_host in k3s_map.loadbalancer.hosts
+        - inventory_hostname in k3s_map.loadbalancer.hosts
         - prompt_remove_packages in ['y', 'Y']
       block:
         - name: Remove loadbalancer packages
@@ -66,7 +66,7 @@
       register: result
 
     - name: Server Reset
-      when: ansible_host in k3s_map.server.hosts
+      when: inventory_hostname in k3s_map.server.hosts
       block:
         - name: Remove server files
           ansible.builtin.file:

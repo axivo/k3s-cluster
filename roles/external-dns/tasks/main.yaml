@@ -6,7 +6,7 @@
 
 - name: Role Provisioning
   when:
-    - ansible_host in k3s_map.server.hosts
+    - inventory_hostname in k3s_map.server.hosts
     - externaldns_vars.cloudflare.host.domain | lower != 'disabled'
   block:
     - name: Validate service state
