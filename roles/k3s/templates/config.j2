@@ -5,7 +5,7 @@ disable-default-registry-endpoint: true
 {% if k3s_node.service | lower == 'server' %}
 bind-address: {{ k3s_node.ip }}
 cluster-domain: {{ k3s_vars.cluster.domain }}
-{% if k3s_map.server.ha is truthy and k3s_postinstall is falsy and ansible_host == k3s_map.server.default_host %}
+{% if k3s_map.server.ha is truthy and k3s_postinstall is falsy and inventory_hostname == k3s_map.server.default_host %}
 cluster-init: true
 {% endif %}
 disable:
@@ -42,7 +42,7 @@ node-taint:
 {% if k3s_map.server.ha is truthy and (k3s_postinstall is truthy or k3s_node.service | lower == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
-  (ansible_host != k3s_map.server.default_host and k3s_node.service | lower == 'server') or
+  (inventory_hostname != k3s_map.server.default_host and k3s_node.service | lower == 'server') or
   (k3s_map.server.non_ha is truthy and k3s_node.service | lower == 'agent')
 %}
 server: https://{{ k3s_map.server.default_host }}:{{ k3s_vars.server.api.port }}

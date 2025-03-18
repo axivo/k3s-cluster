@@ -21,7 +21,7 @@ vrrp_instance haproxy-vip {
         auth_pass {{ k3s_map.loadbalancer.password }}
     }
     interface {{ k3s_vars.network.interface }}
-{% if ansible_host == k3s_map.loadbalancer.hosts[0] %}
+{% if inventory_hostname == k3s_map.loadbalancer.hosts[0] %}
     priority 200
     state MASTER 
     unicast_peer {

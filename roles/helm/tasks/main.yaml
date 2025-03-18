@@ -9,7 +9,7 @@
     file: validation.yaml
 
 - name: Role Provisioning
-  when: ansible_host in k3s_map.server.hosts
+  when: inventory_hostname in k3s_map.server.hosts
   block:
     - name: Install packages
       ansible.builtin.apt:
