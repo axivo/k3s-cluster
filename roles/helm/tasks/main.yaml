@@ -41,7 +41,7 @@
       changed_when: not gpg_key.stat.exists
       register: gpg_key
 
-    - name: Helm Package
+    - name: Helm Repository
       when: not gpg_key.stat.exists
       block:
         - name: Download key
@@ -84,12 +84,12 @@
             enabled: true
             trusted: true
 
-        - name: Install helm package
-          ansible.builtin.apt:
-            name: helm={{ helm_map.release.version }}
-            allow_downgrade: true
-            autoremove: true
-            update_cache: true
+    - name: Install helm package
+      ansible.builtin.apt:
+        name: helm={{ helm_map.release.version }}
+        allow_downgrade: true
+        autoremove: true
+        update_cache: true
 
     - name: Helm Cache
       notify: Start service
