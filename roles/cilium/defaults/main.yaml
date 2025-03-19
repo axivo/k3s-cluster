@@ -104,6 +104,9 @@ cilium_vars:
           # -- Available options are `certmanager` and `helm`
           method: certmanager
     ingress_controller:
+      loadbalancer:
+        # -- Available options are `dedicated` and `shared`
+        mode: shared
       service:
         # -- Assign the `CiliumLoadBalancerIPPool` blocks start address
         ip: 192.168.4.20
