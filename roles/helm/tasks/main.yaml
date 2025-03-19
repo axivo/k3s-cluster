@@ -33,7 +33,7 @@
         source /etc/environment
       args:
         executable: /bin/bash
-      changed_when: true
+      changed_when: false
 
     - name: Get file status
       ansible.builtin.stat:

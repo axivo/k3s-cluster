@@ -16,5 +16,5 @@
     - name: Disable firewall
       ansible.builtin.command:
         cmd: ufw disable
-      changed_when: true
+      changed_when: false
       when: firewall_status.stdout.find('Status":" active') != -1

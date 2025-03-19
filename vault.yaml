@@ -68,7 +68,7 @@
               ansible-vault encrypt_string {{ variable.user_input | split('|') | last | quote }}
                 -n {{ variable.user_input | split('|') | first | quote }}
           register: encrypted_variable
-          changed_when: true
+          changed_when: false
           no_log: true
 
         - name: List encrypted variable
@@ -132,7 +132,7 @@
             - key: global_map.credentials.victoriametrics.grafana.user.password
               value: '{{ global_map.credentials.victoriametrics.grafana.user.password }}'
           register: encrypted_variables
-          changed_when: true
+          changed_when: false
           no_log: true
 
         - name: Remove password file
