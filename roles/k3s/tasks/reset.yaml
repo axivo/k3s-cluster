@@ -34,7 +34,7 @@
       ansible.builtin.assert:
         quiet: true
         that: true
-      changed_when: false
+      changed_when: true
       notify:
         - Stop service
         - Reboot
@@ -48,15 +48,11 @@
         if [[ -d {{ item }} ]]; then
           while read -r process; do
             kill -KILL "$process" || true
-          done < <(ps -eo pid= -o args= | grep {{ item }} | grep -v grep | tr -s ' ' | cut -d ' ' -f 2)
+          done < <(ps -eo pid= -o args= | grep {{ item }} | grep -v $$ | awk '{print $1}')
           while read -r mount; do
-            if mountpoint -q "$mount"; then
-              umount -f "$mount" || true
-            fi
-          done < <(grep {{ item }} /proc/self/mounts | cut -d ' ' -f 2)
-          for type in c s p l f d; do
-            find {{ item }} -type "$type" -delete || true
-          done
+            umount -lf "$mount" || true
+          done < <(findmnt -no TARGET | grep {{ item }} | sort -r)
+          rm -rf {{ item }} || true
         fi
       args:
         executable: /bin/bash
