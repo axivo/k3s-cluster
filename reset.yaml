@@ -10,7 +10,7 @@
     - name: Remove archived journal files
       ansible.builtin.command:
         cmd: journalctl --rotate --vacuum-time=1s
-      changed_when: true
+      changed_when: false
   tasks:
     - name: Get packages information
       ansible.builtin.package_facts:

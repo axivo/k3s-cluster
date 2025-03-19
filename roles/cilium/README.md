@@ -32,6 +32,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.bpf.datapath_mode | string | `"netkit"` |  |
 | cilium_vars.kubernetes.bpf.external_access | bool | `false` |  |
 | cilium_vars.kubernetes.bpf.masquerade | bool | `true` |  |
+| cilium_vars.kubernetes.bpf.monitor.aggregation | string | `"maximum"` | Available options are `none`, `low`, `medium` and `maximum` |
+| cilium_vars.kubernetes.bpf.monitor.interval | string | `"15s"` |  |
+| cilium_vars.kubernetes.bpf.preallocate_maps | bool | `true` | If `true`, memory usage is increased and latency reduced |
 | cilium_vars.kubernetes.bpf.tproxy | bool | `true` |  |
 | cilium_vars.kubernetes.bpf.vlan_bypass_ids | list | `[1,4]` | `1` for Longhorn CIFS backup, `4` for Cilium IP pool |
 | cilium_vars.kubernetes.cgroup.resources.limits.cpu | string | `nil` |  |
@@ -53,6 +56,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |
+| cilium_vars.kubernetes.hubble.relay.enabled | bool | `false` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
 | cilium_vars.kubernetes.hubble.relay.replicas | int | `2` |  |
 | cilium_vars.kubernetes.hubble.relay.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.hubble.relay.resources.limits.memory | string | `"128Mi"` |  |
@@ -64,7 +68,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.requests.memory | string | `"128Mi"` |  |
-| cilium_vars.kubernetes.hubble.ui.enabled | bool | `true` |  |
+| cilium_vars.kubernetes.hubble.ui.enabled | bool | `false` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu | string | `"10m"` |  |
@@ -72,6 +76,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.hubble.ui.gateway.service | string | `"hubble-ui"` |  |
 | cilium_vars.kubernetes.hubble.ui.gateway.subdomain | string | `"hubble"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | cilium_vars.kubernetes.hubble.ui.replicas | int | `1` | Related to [cilium/cilium#33109](https://github.com/cilium/cilium/issues/33109) |
+| cilium_vars.kubernetes.ingress_controller.loadbalancer.mode | string | `"shared"` | Available options are `dedicated` and `shared` |
 | cilium_vars.kubernetes.ingress_controller.service.ip | string | `"192.168.4.20"` | Assign the `CiliumLoadBalancerIPPool` blocks start address |
 | cilium_vars.kubernetes.ip_masq_agent.enabled | bool | `false` |  |
 | cilium_vars.kubernetes.ip_masq_agent.non_masquerade_cidrs[0] | string | `"10.0.0.0/8"` |  |

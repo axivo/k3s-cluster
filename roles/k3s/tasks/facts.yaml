@@ -17,6 +17,44 @@
           bin: /usr/local/bin
           config: /etc/rancher/k3s
           data: /var/lib/rancher/k3s
+        sysctl_parameters:
+          fs.file-max: 1048576
+          fs.inotify.max_user_watches: 262144
+          fs.inotify.max_user_instances: 256
+          kernel.panic: 10
+          kernel.panic_on_oops: 1
+          net.core.bpf_jit_kallsyms: 1
+          net.core.default_qdisc: fq
+          net.core.netdev_max_backlog: 8192
+          net.core.optmem_max: 262144
+          net.core.somaxconn: 8192
+          net.core.rmem_max: 8388608
+          net.core.wmem_max: 8388608
+          net.ipv4.ip_nonlocal_bind: 1
+          net.ipv4.ip_forward: 1
+          net.ipv4.ip_local_port_range: 1024 65535
+          net.ipv4.neigh.default.gc_thresh1: 4096
+          net.ipv4.neigh.default.gc_thresh2: 8192
+          net.ipv4.neigh.default.gc_thresh3: 16384
+          net.ipv4.tcp_congestion_control: bbr
+          net.ipv4.tcp_fin_timeout: 30
+          net.ipv4.tcp_keepalive_time: 600
+          net.ipv4.tcp_keepalive_intvl: 30
+          net.ipv4.tcp_keepalive_probes: 10
+          net.ipv4.tcp_max_syn_backlog: 8192
+          net.ipv4.tcp_rmem: 4096 6291456 8388608
+          net.ipv4.tcp_wmem: 4096 6291456 8388608
+          net.ipv4.tcp_tw_reuse: 1
+          net.ipv6.conf.all.forwarding: 1
+          net.netfilter.nf_conntrack_buckets: 262144
+          net.netfilter.nf_conntrack_max: 262144
+          net.netfilter.nf_conntrack_tcp_timeout_established: 86400
+          vm.dirty_background_ratio: 5
+          vm.dirty_ratio: 10
+          vm.max_map_count: 262144
+          vm.min_free_kbytes: 131072
+          vm.overcommit_memory: 1
+          vm.swappiness: 1
         tolerations:
           - key: node.cilium.io/agent-not-ready
             operator: Exists

@@ -328,7 +328,7 @@
     - name: Update mail configuration
       ansible.builtin.command:
         cmd: postconf -e '{{ item.name }} = {{ item.value }}'
-      changed_when: true
+      changed_when: false
       loop:
         - name: mydestination
           value: $myhostname, {{ cluster_host['name'] }}, localhost.{{ cluster_host['extension'] }}, localhost

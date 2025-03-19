@@ -34,7 +34,7 @@
       ansible.builtin.assert:
         quiet: true
         that: true
-      changed_when: true
+      changed_when: false
       notify:
         - Stop service
         - Reboot
@@ -92,6 +92,8 @@
         - '{{ k3s_map.node.directory.bin }}/ctr'
         - '{{ k3s_map.node.directory.bin }}/kubectl'
         - '{{ k3s_map.node.directory.config }}'
+        - /etc/sysctl.d/90-kubernetes-node.conf
+        - /etc/sysctl.d/99-zzz-override_cilium.conf
         - /etc/systemd/system/{{ k3s_map.service.name }}.service
         - /etc/systemd/system/{{ k3s_map.service.name }}.service.env
 
@@ -111,7 +113,7 @@
     - name: Reset systemd
       ansible.builtin.command:
         cmd: systemctl '{{ item }}' # noqa command-instead-of-module
-      changed_when: true
+      changed_when: false
       loop:
         - daemon-reload
         - reset-failed

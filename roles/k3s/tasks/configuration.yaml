@@ -1,6 +1,18 @@
 ---
 - name: Node Configuration
   block:
+    - name: Set sysctl parameters
+      ansible.builtin.copy:
+        content: |
+          {% for key, value in k3s_map.node.sysctl_parameters.items() %}
+          {{ key }} = {{ value }}
+          {% endfor %}
+        dest: /etc/sysctl.d/90-kubernetes-node.conf
+        owner: root
+        group: root
+        mode: '644'
+      notify: Reload sysctl parameters
+
     - name: Create registries file
       ansible.builtin.template:
         src: registries.j2
@@ -8,6 +20,9 @@
         owner: root
         group: root
         mode: '600'
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Server Configuration
   when: inventory_hostname in k3s_map.server.hosts

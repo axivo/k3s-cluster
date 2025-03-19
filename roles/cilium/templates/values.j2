@@ -1,10 +1,14 @@
 {% if cilium_setup is truthy %}
 bandwidthManager:
   enabled: true
+  bbr: true
 bpf:
   datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
   lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access | lower }}
   masquerade: {{ cilium_vars.kubernetes.bpf.masquerade | lower }}
+  monitorAggregation: {{ cilium_vars.kubernetes.bpf.monitor.aggregation }}
+  monitorInterval: {{ cilium_vars.kubernetes.bpf.monitor.interval }}
+  preallocateMaps: {{ cilium_vars.kubernetes.bpf.preallocate_maps | lower }}
   tproxy: {{ cilium_vars.kubernetes.bpf.tproxy | lower }}
 {% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
   vlanBypass:
@@ -84,6 +88,7 @@ operator:
       cpu: {{ cilium_vars.kubernetes.operator.resources.requests.cpu }}
       memory: {{ cilium_vars.kubernetes.operator.resources.requests.memory }}
   rollOutPods: true
+priorityClassName: system-node-critical
 resources:
   limits:
 {% if cilium_vars.kubernetes.agent.resources.limits.cpu is truthy %}
@@ -133,6 +138,7 @@ hubble:
 {% endif %}
   peerService:
     clusterDomain: {{ k3s_vars.cluster.domain }}
+{% if cilium_vars.kubernetes.hubble.relay.enabled is truthy %}
   relay:
     enabled: true
     podDisruptionBudget:
@@ -161,6 +167,7 @@ hubble:
         memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
     retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
     rollOutPods: true
+{% endif %}
 {% if cilium_vars.kubernetes.hubble.ui.enabled is truthy %}
   ui:
     enabled: true
@@ -226,6 +233,7 @@ autoDirectNodeRoutes: true
 directRoutingSkipUnreachable: true
 ingressController:
   enabled: true
+  loadbalancerMode: {{ cilium_vars.kubernetes.ingress_controller.loadbalancer.mode }}
   service:
     loadBalancerIP: {{ cilium_vars.kubernetes.ingress_controller.service.ip }}
 ipv4NativeRoutingCIDR: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
