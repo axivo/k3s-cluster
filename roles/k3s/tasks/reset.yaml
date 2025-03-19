@@ -92,6 +92,8 @@
         - '{{ k3s_map.node.directory.bin }}/ctr'
         - '{{ k3s_map.node.directory.bin }}/kubectl'
         - '{{ k3s_map.node.directory.config }}'
+        - /etc/sysctl.d/90-kubernetes-node.conf
+        - /etc/sysctl.d/99-zzz-override_cilium.conf
         - /etc/systemd/system/{{ k3s_map.service.name }}.service
         - /etc/systemd/system/{{ k3s_map.service.name }}.service.env
 
