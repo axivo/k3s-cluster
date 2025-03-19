@@ -2,6 +2,11 @@
 - name: Reboot
   ansible.builtin.reboot:
 
+- name: Reload sysctl parameters
+  ansible.builtin.command:
+    cmd: sysctl --system
+  changed_when: false
+
 - name: Restart loadbalancer services
   ansible.builtin.systemd_service:
     name: '{{ services_item }}.service'
