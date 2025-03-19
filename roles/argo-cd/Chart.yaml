@@ -3,7 +3,7 @@ name: argo-cd
 description: Documentation generator for argo-cd Ansible role
 home: https://github.com/argoproj/argo-helm
 type: application
-version: 7.8.12
+version: 7.8.13
 appVersion: 1.0.0
 dependencies:
   - name: argocd
