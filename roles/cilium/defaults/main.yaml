@@ -64,7 +64,7 @@ cilium_vars:
     hubble:
       relay:
         # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
-        enabled: false
+        enabled: true
         replicas: 2
         resources:
           limits:
@@ -76,7 +76,7 @@ cilium_vars:
         retry_timeout: 10s
       ui:
         # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
-        enabled: false
+        enabled: true
         backend:
           resources:
             limits:

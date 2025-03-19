@@ -56,7 +56,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |
-| cilium_vars.kubernetes.hubble.relay.enabled | bool | `false` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
+| cilium_vars.kubernetes.hubble.relay.enabled | bool | `true` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
 | cilium_vars.kubernetes.hubble.relay.replicas | int | `2` |  |
 | cilium_vars.kubernetes.hubble.relay.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.hubble.relay.resources.limits.memory | string | `"128Mi"` |  |
@@ -68,7 +68,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.requests.memory | string | `"128Mi"` |  |
-| cilium_vars.kubernetes.hubble.ui.enabled | bool | `false` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
+| cilium_vars.kubernetes.hubble.ui.enabled | bool | `true` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.frontend.resources.requests.cpu | string | `"10m"` |  |

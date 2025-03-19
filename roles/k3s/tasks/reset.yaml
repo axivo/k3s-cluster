@@ -45,6 +45,7 @@
     - name: Remove cluster files
       ansible.builtin.shell: |
         set -eo pipefail
+        kill -KILL -f {{ k3s_project.node.binary }} || true
         if [[ -d {{ item }} ]]; then
           while read -r process; do
             kill -KILL "$process" || true
