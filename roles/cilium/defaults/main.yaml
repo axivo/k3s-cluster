@@ -65,7 +65,7 @@ cilium_vars:
       relay:
         # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
         enabled: true
-        replicas: 2
+        replicas: 1
         resources:
           limits:
             cpu: null
