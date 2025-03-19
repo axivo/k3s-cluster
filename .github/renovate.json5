@@ -365,7 +365,7 @@
         "roles/victoria-metrics/defaults/main.yaml"
       ],
       "matchStrings": [
-        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)$",
+        "type:\\s+application[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "helm:[\\s\\S]+chart:[\\s\\S]+victoriametrics:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
