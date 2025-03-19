@@ -57,6 +57,8 @@ cilium_vars:
         url: https://helm.cilium.io
     hubble:
       relay:
+        # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
+        enabled: false
         replicas: 2
         resources:
           limits:
@@ -67,7 +69,8 @@ cilium_vars:
             memory: 128Mi
         retry_timeout: 10s
       ui:
-        enabled: true
+        # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
+        enabled: false
         backend:
           resources:
             limits:

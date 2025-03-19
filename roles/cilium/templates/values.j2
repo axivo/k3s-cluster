@@ -133,6 +133,7 @@ hubble:
 {% endif %}
   peerService:
     clusterDomain: {{ k3s_vars.cluster.domain }}
+{% if cilium_vars.kubernetes.hubble.relay.enabled is truthy %}
   relay:
     enabled: true
     podDisruptionBudget:
@@ -161,6 +162,7 @@ hubble:
         memory: {{ cilium_vars.kubernetes.hubble.relay.resources.requests.memory }}
     retryTimeout: {{ cilium_vars.kubernetes.hubble.relay.retry_timeout }}
     rollOutPods: true
+{% endif %}
 {% if cilium_vars.kubernetes.hubble.ui.enabled is truthy %}
   ui:
     enabled: true
