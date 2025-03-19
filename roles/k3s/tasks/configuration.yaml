@@ -1,6 +1,11 @@
 ---
 - name: Node Configuration
   block:
+    - name: Remove sysctl parameters file
+      ansible.builtin.file:
+        path: /etc/sysctl.d/90-kubernetes-node.conf
+        state: absent
+
     - name: Set sysctl parameters
       ansible.posix.sysctl:
         name: '{{ item.key }}'
