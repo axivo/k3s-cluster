@@ -14,6 +14,12 @@ cilium_vars:
       datapath_mode: netkit
       external_access: false
       masquerade: true
+      monitor:
+        # -- Available options are `none`, `low`, `medium` and `maximum`
+        aggregation: maximum
+        interval: 15s
+      # -- If `true`, memory usage is increased and latency reduced
+      preallocate_maps: true
       tproxy: true
       # -- `1` for Longhorn CIFS backup, `4` for Cilium IP pool
       vlan_bypass_ids:

@@ -5,6 +5,9 @@ bpf:
   datapathMode: {{ cilium_vars.kubernetes.bpf.datapath_mode }}
   lbExternalClusterIP: {{ cilium_vars.kubernetes.bpf.external_access | lower }}
   masquerade: {{ cilium_vars.kubernetes.bpf.masquerade | lower }}
+  monitorAggregation: {{ cilium_vars.kubernetes.bpf.monitor.aggregation }}
+  monitorInterval: {{ cilium_vars.kubernetes.bpf.monitor.interval }}
+  preallocateMaps: {{ cilium_vars.kubernetes.bpf.preallocate_maps | lower }}
   tproxy: {{ cilium_vars.kubernetes.bpf.tproxy | lower }}
 {% if cilium_vars.kubernetes.bpf.vlan_bypass_ids is iterable and cilium_vars.kubernetes.bpf.vlan_bypass_ids | length > 0 %}
   vlanBypass:
