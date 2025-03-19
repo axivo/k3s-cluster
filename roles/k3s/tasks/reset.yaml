@@ -46,19 +46,21 @@
       ansible.builtin.shell: |
         set -eo pipefail
         if [[ -d {{ item }} ]]; then
-          for process in $(ps -eo pid= -o args= | grep {{ item }} | grep -v grep | tr -s ' ' | cut -d ' ' -f 2); do
-            kill -KILL $process
-          done
-          for mount in $(grep {{ item }} /proc/self/mounts | cut -d ' ' -f 2); do
-            umount -f $mount
-          done
+          while read -r process; do
+            kill -KILL "$process" || true
+          done < <(ps -eo pid= -o args= | grep {{ item }} | grep -v grep | tr -s ' ' | cut -d ' ' -f 2)
+          while read -r mount; do
+            if mountpoint -q "$mount"; then
+              umount -f "$mount" || true
+            fi
+          done < <(grep {{ item }} /proc/self/mounts | cut -d ' ' -f 2)
           for type in c s p l f d; do
-            find {{ item }} -type $type -delete
+            find {{ item }} -type "$type" -delete || true
           done
         fi
       args:
         executable: /bin/bash
-      changed_when: result.rc == 0
+      changed_when: true
       loop:
         - /var/lib/cni
         - /var/lib/kubelet
