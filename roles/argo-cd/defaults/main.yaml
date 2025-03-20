@@ -181,4 +181,4 @@ argocd_vars:
     repository:
       name: argo-cd
       org: argoproj
-    version: v2.14.6
+    version: v2.14.7
