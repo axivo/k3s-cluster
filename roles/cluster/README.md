@@ -1,6 +1,6 @@
 # cluster
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 24.04.2](https://img.shields.io/badge/Version-24.04.2-informational?style=flat-square)
+![Version: 24.04.2](https://img.shields.io/badge/Version-24.04.2-informational?style=flat-square)
 
 The role performs various tasks related to Ubuntu LTS OS based [cluster](https://ubuntu.com/server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cluster), for additional details.
 

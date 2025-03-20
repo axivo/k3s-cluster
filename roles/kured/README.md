@@ -1,6 +1,6 @@
 # kured
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 5.6.1](https://img.shields.io/badge/Version-5.6.1-informational?style=flat-square)
+![Version: 5.6.1](https://img.shields.io/badge/Version-5.6.1-informational?style=flat-square)
 
 The role performs various tasks related to `kured` [chart](https://github.com/kubereboot/charts/tree/kured-5.6.1/charts/kured) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/kured), for additional details.
 
