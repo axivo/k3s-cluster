@@ -1,6 +1,6 @@
 # helm
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 3.17.2-1](https://img.shields.io/badge/Version-3.17.2--1-informational?style=flat-square)
+![Version: 3.17.2-1](https://img.shields.io/badge/Version-3.17.2--1-informational?style=flat-square)
 
 The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.17.2-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
 

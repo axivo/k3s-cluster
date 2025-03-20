@@ -1,6 +1,6 @@
 # cert-manager
 
-![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![Version: 1.17.1](https://img.shields.io/badge/Version-1.17.1-informational?style=flat-square)
+![Version: 1.17.1](https://img.shields.io/badge/Version-1.17.1-informational?style=flat-square)
 
 The role performs various tasks related to `cert-manager` [chart](https://github.com/cert-manager/cert-manager/tree/v1.17.1/deploy/charts/cert-manager) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/certmanager), for additional details.
 
