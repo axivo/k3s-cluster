@@ -109,7 +109,7 @@
           ansible.builtin.set_fact:
             chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release | float > 0
+            - comparison.release is version('0', '>')
             - comparison.release != comparison.chart
 
         - name: Update chart postinstall fact
@@ -122,7 +122,7 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release | float > 0
+            - comparison.release is version('0', '>')
             - comparison.release != comparison.chart
           block:
             - name: Update chart values fact

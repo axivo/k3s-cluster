@@ -95,7 +95,7 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release | float > 0
+            - comparison.release is version('0', '>')
             - comparison.release != comparison.chart
           block:
             - name: Simulate chart deployment
