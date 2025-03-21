@@ -1,8 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "assignees": [
-    "fmunteanu"
-  ],
+  "assignees": ["fmunteanu"],
   "customDatasources": {
     "cilium": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium/main/stable.txt",
@@ -371,20 +369,9 @@
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     }
   ],
-  "enabledManagers": [
-    "ansible-galaxy",
-    "custom.regex"
-  ],
-  "extends": [
-    ":semanticCommitTypeAll(chore)",
-    "config:recommended"
-  ],
-  "gitIgnoredAuthors": [
-    "41898282+github-actions[bot]@users.noreply.github.com"
-  ],
-  "labels": [
-    "dependency"
-  ],
+  "extends": [":semanticCommitTypeAll(chore)", "config:recommended"],
+  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
+  "labels": ["dependency"],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "semanticCommits": "enabled",
