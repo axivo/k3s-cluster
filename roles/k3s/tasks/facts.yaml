@@ -17,6 +17,7 @@
           bin: /usr/local/bin
           config: /etc/rancher/k3s
           data: /var/lib/rancher/k3s
+          log: /log/log/k3s
         sysctl_parameters:
           fs.file-max: 1048576
           fs.inotify.max_user_watches: 262144

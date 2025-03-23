@@ -1,0 +1,1771 @@
+#!/usr/bin/env python3
+
+import argparse
+import datetime
+import json
+import logging
+import os
+import platform
+import subprocess
+import sys
+import tarfile
+import time
+import math
+import csv
+import shutil
+from pathlib import Path
+from typing import Dict, List, Any, Optional, Tuple
+from collections import defaultdict
+
+try:
+    from kubernetes import client, config
+except ImportError:
+    print("Required dependency not found. Please install with:")
+    print("apt install python3-kubernetes")
+    sys.exit(1)
+
+
+class K3sLabels:
+    """Helper class for common Kubernetes label selectors and patterns"""
+
+    # Component labels
+    APP_KUBERNETES_COMPONENT = "app.kubernetes.io/component"
+    APP_KUBERNETES_INSTANCE = "app.kubernetes.io/instance"
+    APP_KUBERNETES_NAME = "app.kubernetes.io/name"
+    APP_KUBERNETES_PART_OF = "app.kubernetes.io/part-of"
+
+    # Common label keys
+    APP = "app"
+    APP_LABEL = "app.label"
+    COMPONENT = "component"
+    K8S_APP = "k8s-app"
+    NAME = "name"
+    TIER = "tier"
+
+    # Node roles
+    NODE_ROLE_CONTROL_PLANE = "node-role.kubernetes.io/control-plane"
+    NODE_ROLE_MASTER = "node-role.kubernetes.io/master"
+    NODE_ROLE_WORKER = "node-role.kubernetes.io/worker"
+
+    @staticmethod
+    def get_label_selector(key, value):
+        """
+        Create a label selector string for use with kubectl
+
+        Args:
+            key: Label key
+            value: Label value
+
+        Returns:
+            String formatted for kubectl label selector
+        """
+        return f"{key}={value}"
+
+    @staticmethod
+    def get_component_selector(component_name):
+        """
+        Create a selector for common component patterns
+
+        Args:
+            component_name: Name of the component
+
+        Returns:
+            List of possible label selectors for the component
+        """
+        return [
+            f"{K3sLabels.APP_KUBERNETES_COMPONENT}={component_name}",
+            f"{K3sLabels.APP_KUBERNETES_NAME}={component_name}",
+            f"{K3sLabels.APP_KUBERNETES_INSTANCE}={component_name}",
+            f"{K3sLabels.K8S_APP}={component_name}",
+            f"{K3sLabels.APP}={component_name}",
+            f"{K3sLabels.COMPONENT}={component_name}"
+        ]
+
+
+class K3sMonitor:
+    """K3s Cluster Monitor"""
+
+    def __init__(self, duration_seconds: int = 3600, interval_seconds: int = 300,
+                 log_dir: str = "{{ k3s_map.node.directory.log }}", log_max_size: int = 50):
+        """
+        Initialize the K3s monitoring tool.
+
+        Args:
+            duration_seconds: Total monitoring duration in seconds
+            interval_seconds: Time between metric collections in seconds
+            log_dir: Directory to store logs and reports
+            log_max_size: Maximum log file size in MB
+        """
+        # Components to monitor
+        self.components = {
+            "argo-cd": ["argo-cd", "argocd"],
+            "cert-manager": ["cert-manager"],
+            "cilium": ["cilium"],
+            "coredns": ["coredns", "kube-dns"],
+            "external-dns": ["external-dns"],
+            "kured": ["kured"],
+            "longhorn": ["longhorn"],
+            "metrics-server": ["metrics-server"],
+            "victorialogs": ["vls", "victoria-logs-single"],
+            "victoriametrics": ["vmks", "victoria-metrics-k8s-stack"]
+        }
+
+        # Services to collect logs from
+        self.log_services = [
+            "k3s",
+            "kubelet",
+            "containerd"
+        ]
+
+        self.default_namespace = "kube-system"
+        self.duration_seconds = duration_seconds
+        self.interval_seconds = interval_seconds
+        self.log_dir = Path(log_dir)
+        self.log_max_size = log_max_size
+
+        # Add the namespace attribute with default value
+        self.namespace = self.default_namespace
+
+        # Create a unique deployment ID based on timestamp
+        self.deployment_id = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        # Create log directory with deployment_id
+        self.deploy_log_dir = self.log_dir / self.deployment_id
+        self.deploy_log_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create a logs subdirectory
+        self.service_logs_dir = self.deploy_log_dir / "service"
+        self.service_logs_dir.mkdir(parents=True, exist_ok=True)
+
+        # Setup logging
+        log_file = self.deploy_log_dir / "k3s-monitor.log"
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler()
+            ]
+        )
+        self.logger = logging.getLogger("k3s-monitor")
+
+        # Data storage
+        self.node_metrics = []
+        self.pod_metrics = []
+        self.component_metrics = {}
+        self.log_collection_times = []
+
+        # Initialize the Kubernetes client
+        try:
+            config.load_kube_config()
+            self.k8s_api = client.CoreV1Api()
+            self.k8s_apps_api = client.AppsV1Api()
+            self.k8s_custom_api = client.CustomObjectsApi()
+            self.logger.info("Successfully initialized Kubernetes client")
+
+            # Discover namespaces for components
+            self.discover_component_namespaces()
+
+        except Exception as e:
+            self.logger.error(f"Failed to initialize Kubernetes client: {e}")
+            raise
+
+    def discover_component_namespaces(self) -> None:
+        """
+        Dynamically discover the namespaces where components are installed.
+        Updates the self.components dictionary with detected namespaces.
+        """
+        self.logger.info("Discovering component namespaces...")
+
+        try:
+            # Get all namespaces
+            namespaces = [ns.metadata.name for ns in self.k8s_api.list_namespace().items]
+            self.logger.info(f"Found {len(namespaces)} namespaces")
+
+            # Get all pods across all namespaces
+            pods = self.k8s_api.list_pod_for_all_namespaces(watch=False)
+
+            # Map to track components found
+            found_components = {}
+
+            # First check using pod names
+            for pod in pods.items:
+                pod_name = pod.metadata.name
+                pod_namespace = pod.metadata.namespace
+
+                for component, prefixes in self.components.items():
+                    if component in found_components:
+                        continue
+
+                    for prefix in prefixes:
+                        if prefix in pod_name.lower():
+                            found_components[component] = pod_namespace
+                            self.logger.info(f"Found component {component} in namespace {pod_namespace} via pod {pod_name}")
+                            break
+
+            # If not all components found, try using labels
+            if len(found_components) < len(self.components):
+                for pod in pods.items:
+                    pod_name = pod.metadata.name
+                    pod_namespace = pod.metadata.namespace
+                    labels = pod.metadata.labels or {}
+
+                    for component, prefixes in self.components.items():
+                        if component in found_components:
+                            continue
+
+                        # Check multiple common label patterns
+                        if (labels.get('app.kubernetes.io/instance') == component or 
+                            labels.get('app.kubernetes.io/name') == component):
+                            found_components[component] = pod_namespace
+                            self.logger.info(f"Found component {component} in namespace {pod_namespace} via pod labels")
+                            break
+
+            # If still not all components found, try using deployments, daemonsets, and statefulsets
+            if len(found_components) < len(self.components):
+                # Check deployments
+                for ns in namespaces:
+                    deployments = self.k8s_apps_api.list_namespaced_deployment(namespace=ns)
+                    for deploy in deployments.items:
+                        deploy_name = deploy.metadata.name
+
+                        for component, prefixes in self.components.items():
+                            if component in found_components:
+                                continue
+
+                            for prefix in prefixes:
+                                if prefix in deploy_name.lower():
+                                    found_components[component] = ns
+                                    self.logger.info(f"Found component {component} in namespace {ns} via deployment {deploy_name}")
+                                    break
+
+                # Check daemonsets
+                for ns in namespaces:
+                    daemonsets = self.k8s_apps_api.list_namespaced_daemon_set(namespace=ns)
+                    for ds in daemonsets.items:
+                        ds_name = ds.metadata.name
+
+                        for component, prefixes in self.components.items():
+                            if component in found_components:
+                                continue
+
+                            for prefix in prefixes:
+                                if prefix in ds_name.lower():
+                                    found_components[component] = ns
+                                    self.logger.info(f"Found component {component} in namespace {ns} via daemonset {ds_name}")
+                                    break
+
+                # Check statefulsets
+                for ns in namespaces:
+                    statefulsets = self.k8s_apps_api.list_namespaced_stateful_set(namespace=ns)
+                    for sts in statefulsets.items:
+                        sts_name = sts.metadata.name
+
+                        for component, prefixes in self.components.items():
+                            if component in found_components:
+                                continue
+
+                            for prefix in prefixes:
+                                if prefix in sts_name.lower():
+                                    found_components[component] = ns
+                                    self.logger.info(f"Found component {component} in namespace {ns} via statefulset {sts_name}")
+                                    break
+
+            # Initialize component namespace dictionary
+            component_namespaces = {}
+
+            # Update components with discovered namespaces
+            for component, namespace in found_components.items():
+                component_namespaces[component] = namespace
+
+            # For any components not found, use the default namespace
+            for component in self.components.keys():
+                if component not in component_namespaces:
+                    component_namespaces[component] = self.default_namespace
+                    self.logger.warning(f"Component {component} not found, using default namespace {self.default_namespace}")
+
+            # Replace self.components with the namespace dict
+            self.component_namespaces = component_namespaces
+
+            self.logger.info("Component namespace discovery completed")
+
+        except Exception as e:
+            self.logger.error(f"Error discovering component namespaces: {e}")
+            # Use default namespace for all components if discovery fails
+            self.component_namespaces = {component: self.default_namespace for component in self.components.keys()}
+            self.logger.warning(f"Using default namespace {self.default_namespace} for all components due to discovery failure")
+
+    def check_prerequisites(self) -> bool:
+        """Check if all prerequisites are met to run the monitoring."""
+        try:
+            # Check if journalctl is available
+            subprocess.run(["journalctl", "--version"],
+                          check=True, capture_output=True, text=True)
+
+            # Check if jq is available (used in some helper functions)
+            subprocess.run(["jq", "--version"],
+                          check=True, capture_output=True, text=True)
+
+            # Check if kubectl is available
+            subprocess.run(["kubectl", "version", "--client"],
+                          check=True, capture_output=True, text=True)
+
+            # Check cluster connectivity
+            nodes = self.k8s_api.list_node()
+            self.logger.info(f"Connected to cluster with {len(nodes.items)} nodes")
+
+            return True
+        except Exception as e:
+            self.logger.error(f"Prerequisite check failed: {e}")
+            return False
+
+    def collect_service_logs(self) -> None:
+        """
+        Collect filtered logs from system services using journalctl.
+        Logs are aligned with metrics collection timestamps.
+        """
+        current_time = datetime.datetime.now()
+        self.log_collection_times.append(current_time)
+
+        # Create timestamp for this collection
+        timestamp_str = current_time.strftime("%Y%m%d-%H%M%S")
+        self.logger.info(f"Collecting service logs at {timestamp_str}")
+
+        # If this isn't the first collection, use the previous timestamp as the start time
+        if len(self.log_collection_times) > 1:
+            prev_time = self.log_collection_times[-2]
+            # Format for journalctl: YYYY-MM-DD HH:MM:SS
+            time_since = prev_time.strftime("%Y-%m-%d %H:%M:%S")
+            time_filter = f"--since=\"{time_since}\""
+        else:
+            # For the first collection, get logs from the last hour
+            time_filter = "--since=\"1 hour ago\""
+
+        # Collect logs for each service
+        for service in self.log_services:
+            log_file = self.service_logs_dir / f"{service}.log"
+
+            try:
+                # Run journalctl with filtering
+                cmd = f"journalctl -u {service} {time_filter} --no-pager"
+                output = subprocess.check_output(cmd, shell=True, text=True)
+
+                # Check if output exceeds maximum size
+                output_size = len(output.encode('utf-8')) / (1024 * 1024)
+                if output_size > self.log_max_size:
+                    # If too large, get only the most recent entries
+                    self.logger.warning(f"{service} logs exceed size limit ({output_size:.2f}MB > {self.log_max_size}MB). Limiting output.")
+                    cmd = f"journalctl -u {service} {time_filter} --no-pager -n 10000"  # Limit to last 10000 lines
+                    output = subprocess.check_output(cmd, shell=True, text=True)
+
+                # Write logs to file
+                with open(log_file, 'w') as f:
+                    f.write(f"=== {service} logs collected at {current_time} ===\n")
+                    f.write(output)
+
+                self.logger.info(f"Collected {service} logs to {log_file}")
+
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Error collecting logs for {service}: {e}")
+            except Exception as e:
+                self.logger.error(f"Unexpected error collecting logs for {service}: {e}")
+
+    def collect_kubernetes_logs(self) -> None:
+        """
+        Collect logs from key Kubernetes components, focusing on errors and warnings.
+        """
+        current_time = datetime.datetime.now()
+        timestamp_str = current_time.strftime("%Y%m%d-%H%M%S")
+        self.logger.info(f"Collecting Kubernetes component logs at {timestamp_str}")
+
+        # Create a directory for component logs
+        k8s_logs_dir = self.service_logs_dir / "components"
+        k8s_logs_dir.mkdir(parents=True, exist_ok=True)
+
+        # Components to collect logs from and their namespaces
+        try:
+            # Get pods from key components
+            for component, namespace in self.component_namespaces.items():
+                component_log_file = k8s_logs_dir / f"{component}_{timestamp_str}.log"
+
+                try:
+                    # Get patterns for this component
+                    patterns = self.components.get(component, [component])
+
+                    # Get pods for this component using label selectors when possible
+                    component_pods = []
+
+                    # First try using labels
+                    for pattern in patterns:
+                        # Try using common label patterns
+                        label_selector = K3sLabels.get_label_selector(K3sLabels.APP, pattern)
+                        success, output = self.run_kubectl_command([
+                            "kubectl", "get", "pods", "-n", namespace, 
+                            "-l", label_selector, "-o", "name"
+                        ])
+
+                        if success and output.strip():
+                            component_pods.extend(output.strip().split("\n"))
+
+                    # If no pods found with labels, fallback to name-based matching
+                    if not component_pods:
+                        pods = self.k8s_api.list_namespaced_pod(namespace=namespace)
+
+                        for pod in pods.items:
+                            pod_name = pod.metadata.name
+                            for pattern in patterns:
+                                if pattern in pod_name.lower():
+                                    component_pods.append(f"pod/{pod_name}")
+                                    break
+
+                    if not component_pods:
+                        self.logger.warning(f"No pods found for component {component} in namespace {namespace}")
+                        continue
+
+                    # Write logs for each pod
+                    with open(component_log_file, 'w') as f:
+                        f.write(f"=== {component} logs collected at {current_time} ===\n")
+
+                        for pod_ref in component_pods:
+                            # Extract pod name from the reference (format: pod/name)
+                            pod_name = pod_ref.split("/")[-1]
+                            f.write(f"\n--- Pod: {pod_name} ---\n")
+                            try:
+                                # Get the last 500 lines, focusing on recent activity
+                                success, pod_logs = self.run_kubectl_command([
+                                    "kubectl", "logs", "-n", namespace, pod_name,
+                                    "--tail", "500"
+                                ])
+
+                                if success:
+                                    f.write(pod_logs)
+                                else:
+                                    f.write(f"Error retrieving logs: {pod_logs}\n")
+                            except Exception as e:
+                                f.write(f"Error retrieving logs: {str(e)}\n")
+
+                    self.logger.info(f"Collected logs for {component} ({len(component_pods)} pods)")
+
+                except Exception as e:
+                    self.logger.error(f"Error collecting logs for component {component}: {e}")
+
+        except Exception as e:
+            self.logger.error(f"Error in Kubernetes log collection: {e}")
+
+    def log_cluster_info(self) -> None:
+        """Collect and log basic cluster information."""
+        info_file = self.deploy_log_dir / "cluster-info.log"
+
+        try:
+            # Get nodes information
+            nodes = self.k8s_api.list_node()
+
+            # Get K3s version from the first node
+            k3s_version = nodes.items[0].status.node_info.kubelet_version if nodes.items else "Unknown"
+
+            # Identify control plane and worker nodes
+            control_plane_nodes = []
+            worker_nodes = []
+
+            for node in nodes.items:
+                node_info = {
+                    "name": node.metadata.name,
+                    "status": node.status.conditions[-1].type,
+                    "kubelet_version": node.status.node_info.kubelet_version,
+                    "os_image": node.status.node_info.os_image,
+                    "kernel_version": node.status.node_info.kernel_version,
+                    "addresses": [addr.address for addr in node.status.addresses]
+                }
+
+                if node.metadata.labels.get("node-role.kubernetes.io/control-plane") == "true":
+                    control_plane_nodes.append(node_info)
+                else:
+                    worker_nodes.append(node_info)
+
+            # Get deployments, daemonsets and statefulsets in kube-system
+            api_apps = client.AppsV1Api()
+            deployments = api_apps.list_namespaced_deployment(namespace=self.default_namespace)
+            daemonsets = api_apps.list_namespaced_daemon_set(namespace=self.default_namespace)
+            statefulsets = api_apps.list_namespaced_stateful_set(namespace=self.default_namespace)
+
+            # Write information to file
+            with open(info_file, 'w') as f:
+                f.write("=== Cluster Information ===\n")
+                f.write(f"Timestamp: {datetime.datetime.now()}\n")
+
+                # Get OS information using platform module
+                try:
+                    # Get Linux distribution info
+                    linux_dist = platform.freedesktop_os_release() if hasattr(platform, 'freedesktop_os_release') else {}
+                    os_name = linux_dist.get('NAME', platform.system())
+                    os_version = linux_dist.get('VERSION', platform.release())
+
+                    if os_name and os_version:
+                        f.write(f"OS: {os_name} {os_version}\n")
+                    else:
+                        # Fallback to platform.platform() if specific info not found
+                        f.write(f"OS: {platform.platform()}\n")
+                except Exception as e:
+                    self.logger.error(f"Failed to get OS version: {e}")
+                    f.write(f"OS: Unknown (error retrieving info)\n")
+
+                f.write(f"K3s Version: {k3s_version}\n")
+                f.write(f"Number of Nodes: {len(nodes.items)}\n\n")
+
+                f.write("=== Control Plane Nodes ===\n")
+                for node in control_plane_nodes:
+                    f.write(f"Name: {node['name']}\n")
+                    f.write(f"Status: {node['status']}\n")
+                    f.write(f"Addresses: {', '.join(node['addresses'])}\n\n")
+
+                f.write("=== Worker Nodes ===\n")
+                for node in worker_nodes:
+                    f.write(f"Name: {node['name']}\n")
+                    f.write(f"Status: {node['status']}\n")
+                    f.write(f"Addresses: {', '.join(node['addresses'])}\n\n")
+
+                f.write("=== Deployments in kube-system ===\n")
+                for deploy in deployments.items:
+                    f.write(f"Name: {deploy.metadata.name}, Replicas: {deploy.status.ready_replicas}/{deploy.status.replicas}\n")
+                f.write("\n")
+
+                f.write("=== DaemonSets in kube-system ===\n")
+                for ds in daemonsets.items:
+                    f.write(f"Name: {ds.metadata.name}, Desired: {ds.status.desired_number_scheduled}, Ready: {ds.status.number_ready}\n")
+                f.write("\n")
+
+                f.write("=== StatefulSets in kube-system ===\n")
+                for sts in statefulsets.items:
+                    f.write(f"Name: {sts.metadata.name}, Replicas: {sts.status.ready_replicas}/{sts.status.replicas if sts.status.replicas else 0}\n")
+                f.write("\n")
+
+                f.write("=== Sysctl Optimizations ===\n")
+                f.write("Standard optimized parameters are applied on all nodes.\n")
+                f.write("Cilium-specific sysctl overrides are also applied.\n")
+
+            self.logger.info(f"Cluster information logged to {info_file}")
+        except Exception as e:
+            self.logger.error(f"Failed to log cluster information: {e}")
+
+    def collect_node_metrics(self) -> None:
+        """Collect metrics for all nodes in the cluster."""
+        timestamp = datetime.datetime.now()
+        self.logger.info("Collecting node metrics")
+
+        try:
+            # Get node metrics using kubectl (more reliable than metrics API in some cases)
+            success, output = self.run_kubectl_command(["kubectl", "top", "nodes"])
+
+            if not success:
+                self.logger.warning("Failed to get node metrics with kubectl")
+                return
+
+            # Parse the output
+            lines = output.strip().split('\n')
+            if len(lines) <= 1:
+                self.logger.warning("No node metrics data available")
+                return
+
+            # Skip the header line
+            for line in lines[1:]:
+                parts = line.split()
+                if len(parts) >= 5:  # NAME CPU(cores) CPU(%) MEMORY(bytes) MEMORY(%)
+                    node_name = parts[0]
+                    cpu_cores = parts[1]
+                    cpu_percent = float(parts[2].rstrip('%'))
+                    memory_used = parts[3]
+                    memory_percent = float(parts[4].rstrip('%'))
+
+                    node_data = {
+                        "timestamp": timestamp,
+                        "node_name": node_name, 
+                        "cpu_percent": cpu_percent,
+                        "cpu_cores": cpu_cores,
+                        "memory_percent": memory_percent,
+                        "memory_used": memory_used
+                    }
+
+                    self.node_metrics.append(node_data)
+
+            # Check sysctl values on the current node
+            self.logger.info("Checking sysctl values")
+            hostname = subprocess.getoutput("hostname")
+            sysctl_file = self.deploy_log_dir / "sysctl.txt"
+
+            with open(sysctl_file, 'w') as f:
+                f.write(f"=== Sysctl Values on {hostname} ===\n")
+                f.write(f"Timestamp: {timestamp}\n\n")
+
+                # Check the important sysctl parameters
+                sysctl_params = [
+                    # Original parameters
+                    "net.core.somaxconn",
+                    "net.ipv4.tcp_congestion_control",
+                    "net.ipv4.conf.all.rp_filter",
+                    "vm.max_map_count",
+                    "fs.file-max",
+                    # Additional network parameters
+                    "net.ipv4.ip_local_port_range",
+                    "net.ipv4.tcp_tw_reuse",
+                    "net.ipv4.tcp_keepalive_time",
+                    "net.ipv4.tcp_keepalive_intvl",
+                    "net.ipv4.tcp_keepalive_probes",
+                    "net.ipv4.tcp_max_syn_backlog",
+                    "net.netfilter.nf_conntrack_max",
+                    "net.bridge.bridge-nf-call-iptables",
+                    "net.ipv4.ip_forward",
+                    # Memory parameters
+                    "vm.swappiness",
+                    "vm.overcommit_memory",
+                    "vm.min_free_kbytes",
+                    # System limits
+                    "kernel.pid_max",
+                    "fs.inotify.max_user_watches",
+                    "fs.inotify.max_user_instances",
+                    "fs.nr_open"
+                ]
+
+                for param in sysctl_params:
+                    try:
+                        value = subprocess.getoutput(f"sysctl -n {param}")
+                        f.write(f"{param} = {value}\n")
+                    except Exception:
+                        f.write(f"{param} = Error retrieving value\n")
+
+                # Check for Cilium sysctl override file
+                f.write("\n=== Cilium Sysctl Overrides ===\n")
+                if os.path.exists("/etc/sysctl.d/99-zzz-override_cilium.conf"):
+                    f.write("Cilium sysctl overrides are present\n")
+                    with open("/etc/sysctl.d/99-zzz-override_cilium.conf", 'r') as cilium_file:
+                        f.write(cilium_file.read())
+                else:
+                    f.write("Warning: Cilium sysctl overrides not found\n")
+
+            self.logger.info(f"Collected metrics for {len(lines)-1} nodes")
+
+        except Exception as e:
+            self.logger.error(f"Error collecting node metrics: {e}")
+
+    def collect_pod_metrics(self) -> None:
+        """Collect metrics for pods in the cluster, focusing on resource usage."""
+        timestamp = datetime.datetime.now()
+        self.logger.info("Collecting pod metrics")
+
+        try:
+            # Get pod metrics for all namespaces using kubectl
+            success, output = self.run_kubectl_command(["kubectl", "top", "pods", "--all-namespaces"])
+
+            if not success:
+                self.logger.warning(f"Failed to get pod metrics with kubectl: {output}")
+                return
+
+            # Parse the output
+            lines = output.strip().split('\n')
+            if len(lines) <= 1:
+                self.logger.warning("No pod metrics data available")
+                return
+
+            # Skip the header line
+            for line in lines[1:]:
+                parts = line.split()
+                if len(parts) >= 4:  # Format: NAMESPACE NAME CPU(cores) MEMORY(bytes)
+                    namespace = parts[0]
+                    pod_name = parts[1]
+
+                    # Parse CPU value (might be in millicores 'm')
+                    cpu_value = parts[2]
+                    if cpu_value.endswith('m'):
+                        cpu_cores = float(cpu_value.rstrip('m')) / 1000  # Convert millicores to cores
+                    else:
+                        cpu_cores = float(cpu_value)
+
+                    # Parse memory value (might have Ki, Mi, Gi suffix)
+                    memory_value = parts[3]
+                    memory_bytes = self.parse_memory_value(memory_value)
+
+                    pod_data = {
+                        "timestamp": timestamp,
+                        "namespace": namespace,
+                        "pod_name": pod_name,
+                        "cpu_cores": cpu_cores,
+                        "memory_bytes": memory_bytes,
+                        "raw_cpu": cpu_value,
+                        "raw_memory": memory_value
+                    }
+
+                    self.pod_metrics.append(pod_data)
+
+            # Write pod metrics to file
+            pod_metrics_file = self.deploy_log_dir / "pod-metrics.csv"
+
+            # Check if file exists to determine if we need to write header
+            file_exists = pod_metrics_file.exists()
+
+            with open(pod_metrics_file, 'a', newline='') as f:
+                writer = csv.writer(f)
+
+                # Write header if file is new
+                if not file_exists:
+                    writer.writerow(["timestamp", "namespace", "pod_name", "cpu_cores", "memory_bytes", "raw_cpu", "raw_memory"])
+
+                # Write data rows
+                for pod_data in self.pod_metrics:
+                    writer.writerow([
+                        pod_data["timestamp"].isoformat(),
+                        pod_data["namespace"],
+                        pod_data["pod_name"],
+                        pod_data["cpu_cores"],
+                        pod_data["memory_bytes"],
+                        pod_data["raw_cpu"],
+                        pod_data["raw_memory"]
+                    ])
+
+            self.logger.info(f"Collected metrics for {len(self.pod_metrics)} pods")
+
+        except Exception as e:
+            self.logger.error(f"Error collecting pod metrics: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
+
+    def parse_memory_value(self, memory_str: str) -> int:
+        """Convert Kubernetes memory strings (Ki, Mi, Gi) to bytes."""
+        try:
+            if memory_str.endswith('Ki'):
+                return int(float(memory_str[:-2]) * 1024)
+            elif memory_str.endswith('Mi'):
+                return int(float(memory_str[:-2]) * 1024 * 1024)
+            elif memory_str.endswith('Gi'):
+                return int(float(memory_str[:-2]) * 1024 * 1024 * 1024)
+            elif memory_str.endswith('Ti'):
+                return int(float(memory_str[:-2]) * 1024 * 1024 * 1024 * 1024)
+            elif memory_str.endswith('m'):
+                return int(float(memory_str[:-1]) / 1000)
+            else:
+                return int(float(memory_str))
+        except (ValueError, TypeError):
+            self.logger.warning(f"Could not parse memory value: {memory_str}")
+            return 0
+
+    def collect_component_metrics(self) -> None:
+        """Collect metrics for key cluster components."""
+        timestamp = datetime.datetime.now()
+        self.logger.info("Collecting component metrics")
+
+        # Get all component namespaces
+        try:
+            # Check if pod metrics are available
+            if not self.pod_metrics:
+                self.logger.warning("No pod metrics available. Collecting pod metrics first.")
+                self.collect_pod_metrics()
+
+                # Double-check if collection was successful
+                if not self.pod_metrics:
+                    self.logger.error("Failed to collect pod metrics. Component metrics collection aborted.")
+                    return
+
+            # Initialize component metrics if not exists
+            if not self.component_metrics:
+                self.component_metrics = {component: [] for component in self.components.keys()}
+
+            # For each component, collect metrics for all pods in its namespace matching the component pattern
+            for component, patterns in self.components.items():
+                namespace = self.component_namespaces.get(component, self.default_namespace)
+
+                # Debug - log current state
+                self.logger.info(f"Looking for component {component} in namespace {namespace}")
+                self.logger.info(f"Using patterns: {patterns}")
+                self.logger.info(f"Total pod metrics collected: {len(self.pod_metrics)}")
+
+                # Get all pods in the namespace
+                try:
+                    namespace_pods = self.k8s_api.list_namespaced_pod(namespace=namespace)
+                    pod_names = [pod.metadata.name for pod in namespace_pods.items]
+                    self.logger.info(f"Found {len(pod_names)} pods in namespace {namespace}")
+                except Exception as e:
+                    self.logger.error(f"Error listing pods in namespace {namespace}: {e}")
+                    continue
+
+                # Match component pods first by name
+                matching_pod_names = []
+                for pod_name in pod_names:
+                    for pattern in patterns:
+                        if pattern in pod_name.lower():
+                            matching_pod_names.append(pod_name)
+                            break
+
+                self.logger.info(f"Found {len(matching_pod_names)} pods matching component {component}")
+
+                # Get metrics for matching pods
+                component_pods = []
+                for pod_metric in self.pod_metrics:
+                    if pod_metric["namespace"] != namespace:
+                        continue
+
+                    if pod_metric["pod_name"] in matching_pod_names:
+                        component_pods.append(pod_metric)
+
+                # If no pods found, log a warning
+                if not component_pods:
+                    self.logger.warning(f"No metrics available for component {component} in namespace {namespace}")
+                    continue
+
+                # Calculate aggregated metrics for this component
+                total_cpu = sum(pod["cpu_cores"] for pod in component_pods)
+                total_memory = sum(pod["memory_bytes"] for pod in component_pods)
+                pod_count = len(component_pods)
+
+                component_data = {
+                    "timestamp": timestamp,
+                    "component": component,
+                    "namespace": namespace,
+                    "total_cpu_cores": total_cpu,
+                    "total_memory_bytes": total_memory,
+                    "pod_count": pod_count,
+                    "pods": [pod["pod_name"] for pod in component_pods]
+                }
+
+                self.component_metrics[component].append(component_data)
+
+                self.logger.info(f"Collected metrics for component {component}: {pod_count} pods, {total_cpu:.2f} CPU cores, {total_memory/(1024*1024):.2f} MB RAM")
+
+            # Write component metrics to file
+            component_metrics_file = self.deploy_log_dir / "component-metrics.csv"
+
+            # Check if file exists to determine if we need to write header
+            file_exists = component_metrics_file.exists()
+
+            with open(component_metrics_file, 'a', newline='') as f:
+                writer = csv.writer(f)
+
+                # Write header if file is new
+                if not file_exists:
+                    writer.writerow(["timestamp", "component", "namespace", "pod_count", "total_cpu_cores", "total_memory_mb"])
+
+                # Write data rows for each component
+                for component, metrics_list in self.component_metrics.items():
+                    if metrics_list:  # Only write if we have metrics
+                        latest = metrics_list[-1]  # Get most recent metrics
+                        writer.writerow([
+                            latest["timestamp"].isoformat(),
+                            component,
+                            latest["namespace"],
+                            latest["pod_count"],
+                            latest["total_cpu_cores"],
+                            latest["total_memory_bytes"] / (1024 * 1024)  # Convert to MB
+                        ])
+
+        except Exception as e:
+            self.logger.error(f"Error collecting component metrics: {e}")
+
+    def collect_etcd_metrics(self) -> None:
+        """Collect etcd metrics for high-availability K3s clusters using kubectl."""
+        timestamp = datetime.datetime.now()
+        self.logger.info("Collecting etcd metrics")
+
+        try:
+            # First check for the existence of etcd endpoints, which indicates the cluster is using etcd
+            success, output = self.run_kubectl_command([
+                "kubectl", "get", "endpoints", "kubernetes", "-n", "default", "-o", "json"
+            ])
+
+            if not success:
+                self.logger.error("Failed to check if cluster is using etcd")
+                return
+
+            # Parse the endpoints to check if etcd is being used
+            try:
+                import json
+                endpoints = json.loads(output)
+                # If we have endpoints, the cluster is likely using etcd in HA mode
+                using_etcd = len(endpoints.get("subsets", [])) > 0
+
+                if not using_etcd:
+                    self.logger.info("Cluster does not appear to be using etcd")
+                    return
+
+                self.logger.info("Cluster is using etcd in HA mode")
+
+                # Get the control plane nodes
+                success, output = self.run_kubectl_command([
+                    "kubectl", "get", "nodes", 
+                    "-l", K3sLabels.NODE_ROLE_CONTROL_PLANE,
+                    "-o", "jsonpath='{.items[*].status.addresses[?(@.type==\"InternalIP\")].address}'"
+                ])
+
+                if not success or not output:
+                    self.logger.warning("Could not find control plane nodes")
+                    return
+
+                # Create etcd metrics file
+                etcd_metrics_file = self.deploy_log_dir / "etcd-metrics.log"
+
+                with open(etcd_metrics_file, 'w') as f:
+                    f.write(f"=== etcd metrics collected at {timestamp} ===\n\n")
+
+                    # List of K3s control plane nodes
+                    control_plane_ips = output.strip("'").split()
+                    self.logger.info(f"Found {len(control_plane_ips)} control plane nodes")
+
+                    # Get K3s server version (includes etcd version)
+                    f.write("=== K3s server version ===\n")
+                    success, output = self.run_kubectl_command(["kubectl", "version"])
+
+                    if success:
+                        f.write(output + "\n\n")
+                    else:
+                        f.write("Failed to get K3s version\n\n")
+
+                    # Get etcd metrics from Kubernetes API
+                    f.write("\n=== etcd metrics from Kubernetes API ===\n")
+                    success, output = self.run_kubectl_command([
+                        "kubectl", "get", "--raw", "/metrics"
+                    ])
+
+                    if success:
+                        # Extract etcd-related metrics from the output
+                        etcd_metrics = []
+                        for line in output.splitlines():
+                            if "etcd_" in line and not line.startswith("#"):
+                                etcd_metrics.append(line)
+
+                        if etcd_metrics:
+                            f.write("\nFound etcd metrics in Kubernetes API:\n")
+                            for metric in etcd_metrics[:50]:  # Increased limit to 50 metrics
+                                f.write(metric + "\n")
+
+                            if len(etcd_metrics) > 50:
+                                f.write(f"... and {len(etcd_metrics) - 50} more metrics\n")
+                        else:
+                            f.write("No etcd metrics found in Kubernetes API metrics\n")
+                    else:
+                        f.write("Failed to get metrics from Kubernetes API\n")
+
+                    # Try to get etcd health using kubectl
+                    f.write("\n=== etcd health status ===\n")
+
+                    # Find etcd pods using label selectors
+                    success, output = self.run_kubectl_command([
+                        "kubectl", "get", "pods", "-n", "kube-system",
+                        "-l", K3sLabels.get_label_selector(K3sLabels.COMPONENT, "etcd"),
+                        "-o", "name"
+                    ])
+
+                    if success and output.strip():
+                        etcd_pods = output.strip().split('\n')
+                        if etcd_pods and len(etcd_pods) > 0:
+                            etcd_pod = etcd_pods[0]  # Use the first etcd pod
+
+                            # Extract just the pod name without the "pod/" prefix
+                            etcd_pod_name = etcd_pod.split("/")[-1]
+
+                            # Try to get etcd health status
+                            success, output = self.run_kubectl_command([
+                                "kubectl", "exec", "-n", "kube-system", etcd_pod_name, "--",
+                                "etcdctl", "endpoint", "health", "--cluster"
+                            ])
+
+                            if success:
+                                f.write("etcd cluster health status:\n")
+                                f.write(output + "\n")
+                            else:
+                                # Try alternative approaches for K3s
+                                f.write("Could not get etcd health directly, trying alternatives for K3s\n")
+
+                                # Try K3s specific approach - checking through k3s
+                                success, output = self.run_kubectl_command([
+                                    "kubectl", "get", "nodes", 
+                                    "-l", K3sLabels.NODE_ROLE_CONTROL_PLANE,
+                                    "-o", "custom-columns=NAME:.metadata.name"
+                                ])
+
+                                if success and output.strip():
+                                    header_and_nodes = output.strip().split('\n')
+                                    # Skip the header row
+                                    control_plane_nodes = header_and_nodes[1:] if len(header_and_nodes) > 1 else []
+
+                                    if control_plane_nodes:
+                                        f.write(f"Found control plane nodes: {', '.join(control_plane_nodes)}\n")
+                                        f.write("K3s clusters typically embed etcd within the k3s process\n")
+
+                                        # Get K3s process status on one of the control plane nodes
+                                        success, output = self.run_kubectl_command([
+                                            "kubectl", "get", "--raw",
+                                            "/api/v1/namespaces/kube-system/pods"
+                                        ])
+
+                                        if success:
+                                            f.write("Control plane pods in kube-system namespace are running\n")
+                                            f.write("This indicates that etcd (embedded in K3s) is likely functioning\n")
+                                        else:
+                                            f.write("Could not verify control plane pod status\n")
+                                    else:
+                                        f.write("No control plane nodes found\n")
+                                else:
+                                    f.write("Could not identify control plane nodes\n")
+                        else:
+                            f.write("No dedicated etcd pods found. K3s likely uses embedded etcd.\n")
+                            # Try to check K3s system pod status as an indicator
+                            success, output = self.run_kubectl_command([
+                                "kubectl", "get", "pods", "-n", "kube-system",
+                                "-l", K3sLabels.get_label_selector(K3sLabels.K8S_APP, "kube-controller-manager")
+                            ])
+
+                            if success:
+                                f.write("Controller manager is running, indicating etcd is functional:\n")
+                                f.write(output + "\n")
+                            else:
+                                f.write("Could not verify controller manager status\n")
+                    else:
+                        f.write("No dedicated etcd pods found. K3s uses embedded etcd.\n")
+                        # Check k3s server components
+                        success, output = self.run_kubectl_command([
+                            "kubectl", "get", "pods", "-n", "kube-system",
+                            "-o", "wide"
+                        ])
+
+                        if success:
+                            f.write("K3s system pods (which include embedded etcd):\n")
+                            # Filter output to show only likely control plane pods
+                            system_pods = []
+                            for line in output.strip().split('\n'):
+                                if any(x in line.lower() for x in ["server", "control", "master", "k3s"]):
+                                    system_pods.append(line)
+
+                            if system_pods:
+                                for pod in system_pods:
+                                    f.write(pod + "\n")
+                            else:
+                                f.write("No specific K3s server pods identified\n")
+                        else:
+                            f.write("Could not list K3s system pods\n")
+
+                self.logger.info(f"Collected etcd metrics to {etcd_metrics_file}")
+
+            except json.JSONDecodeError:
+                self.logger.error("Failed to parse endpoints JSON")
+                return
+
+        except Exception as e:
+            self.logger.error(f"Error collecting etcd metrics: {e}")
+
+    def collect_cilium_metrics(self) -> None:
+        """Collect Cilium networking metrics."""
+        timestamp = datetime.datetime.now()
+        self.logger.info("Collecting Cilium metrics")
+
+        try:
+            # Check if Cilium is installed
+            cilium_namespace = self.component_namespaces.get("cilium", self.default_namespace)
+
+            # Get Cilium status using kubectl
+            cilium_metrics_file = self.deploy_log_dir / "cilium-metrics.log"
+
+            with open(cilium_metrics_file, 'w') as f:
+                f.write(f"=== Cilium metrics collected at {timestamp} ===\n\n")
+
+                # First find Cilium pods using label selectors
+                success, output = self.run_kubectl_command([
+                    "kubectl", "get", "pods", "-n", cilium_namespace,
+                    "-l", K3sLabels.get_label_selector(K3sLabels.K8S_APP, "cilium"),
+                    "-o", "name"
+                ])
+
+                if not success or not output.strip():
+                    f.write("No Cilium pods found. Cilium may not be installed.\n")
+                    self.logger.warning("No Cilium pods found")
+                    return
+
+                # Extract pod name from the first line of output
+                cilium_pods = output.strip().split('\n')
+                if not cilium_pods:
+                    f.write("No Cilium pods found after parsing output.\n")
+                    self.logger.warning("No Cilium pods found after parsing output")
+                    return
+
+                # Use the first pod in the list
+                cilium_pod = cilium_pods[0]
+                # Remove "pod/" prefix if present
+                cilium_pod_name = cilium_pod.split('/')[-1]
+
+                # Get Cilium status
+                f.write("=== Cilium status ===\n")
+                success, output = self.run_kubectl_command([
+                    "kubectl", "exec", "-n", cilium_namespace, cilium_pod_name,
+                    "--", "cilium", "status"
+                ])
+
+                if success:
+                    f.write(output + "\n\n")
+                else:
+                    f.write("Failed to get Cilium status\n\n")
+                    self.logger.warning(f"Failed to get Cilium status: {output}")
+
+                # Get Cilium endpoints
+                f.write("=== Cilium endpoints ===\n")
+                success, output = self.run_kubectl_command([
+                    "kubectl", "exec", "-n", cilium_namespace, cilium_pod_name,
+                    "--", "cilium", "endpoint", "list", "-o", "json"
+                ])
+
+                if success:
+                    # Process and summarize endpoint data to avoid excessive output
+                    try:
+                        endpoints = json.loads(output)
+                        f.write(f"Total endpoints: {len(endpoints)}\n")
+
+                        # Count endpoints by state
+                        endpoint_states = {}
+                        for endpoint in endpoints:
+                            state = endpoint.get("state", "unknown")
+                            endpoint_states[state] = endpoint_states.get(state, 0) + 1
+
+                        f.write("Endpoint states:\n")
+                        for state, count in endpoint_states.items():
+                            f.write(f"  {state}: {count}\n")
+                    except json.JSONDecodeError:
+                        f.write("Failed to parse Cilium endpoints JSON\n")
+                else:
+                    f.write("Failed to get Cilium endpoints\n\n")
+                    self.logger.warning(f"Failed to get Cilium endpoints: {output}")
+
+                # Get Cilium service list
+                f.write("\n=== Cilium services ===\n")
+                success, output = self.run_kubectl_command([
+                    "kubectl", "exec", "-n", cilium_namespace, cilium_pod_name,
+                    "--", "cilium", "service", "list"
+                ])
+
+                if success:
+                    f.write(output + "\n\n")
+                else:
+                    f.write("Failed to get Cilium services\n\n")
+                    self.logger.warning(f"Failed to get Cilium services: {output}")
+
+            self.logger.info("Collected Cilium metrics")
+
+        except Exception as e:
+            self.logger.error(f"Error collecting Cilium metrics: {e}")
+
+    def run_kubectl_command(self, command: List[str]) -> Tuple[bool, str]:
+        """
+        Run a kubectl command and return the output.
+
+        Args:
+            command: List of command parts to run
+
+        Returns:
+            Tuple of (success, output)
+        """
+        try:
+            result = subprocess.run(
+                command,
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            return True, result.stdout
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Command failed: {' '.join(command)}")
+            self.logger.error(f"Error: {e.stderr}")
+            return False, e.stderr
+        except Exception as e:
+            self.logger.error(f"Failed to run command: {' '.join(command)}")
+            self.logger.error(f"Error: {str(e)}")
+            return False, str(e)
+
+    def manage_log_storage(self) -> None:
+        """
+        Manage log storage to prevent excessive disk usage.
+        Compresses older logs and removes the oldest if storage limit is reached.
+        """
+        self.logger.info("Managing log storage")
+
+        try:
+            # Check current storage usage of the service logs directory
+            total_size = 0
+            for root, dirs, files in os.walk(self.service_logs_dir):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    total_size += os.path.getsize(file_path)
+
+            total_size_mb = total_size / (1024 * 1024)
+            self.logger.info(f"Current log storage usage: {total_size_mb:.2f}MB")
+
+            # If we're approaching the limit (80% of max allowed), compress older logs
+            max_storage_mb = self.log_max_size * 10  # Allow for approximately 10 services/components
+
+            if total_size_mb > 0.8 * max_storage_mb:
+                self.logger.warning(f"Log storage approaching limit ({total_size_mb:.2f}MB/{max_storage_mb}MB)")
+
+                # Find all log files older than the most recent collection
+                log_files = []
+                for root, dirs, files in os.walk(self.service_logs_dir):
+                    for file in files:
+                        if file.endswith('.log'):
+                            file_path = os.path.join(root, file)
+                            log_files.append((file_path, os.path.getmtime(file_path)))
+
+                # Sort by modification time (oldest first)
+                log_files.sort(key=lambda x: x[1])
+
+                # Keep only the most recent 3 collections for each service
+                services_collections = defaultdict(list)
+
+                for file_path, mtime in log_files:
+                    file_name = os.path.basename(file_path)
+                    # Extract service name from filename (format: service_timestamp.log)
+                    service_name = file_name.split('_')[0] if '_' in file_name else 'unknown'
+                    services_collections[service_name].append((file_path, mtime))
+
+                # For each service, keep only the 3 most recent collections
+                files_to_remove = []
+                for service, files in services_collections.items():
+                    if len(files) > 3:
+                        # Sort by mtime (newest first) and remove the oldest
+                        files.sort(key=lambda x: x[1], reverse=True)
+                        files_to_remove.extend([f[0] for f in files[3:]])
+
+                # Remove the oldest files
+                bytes_removed = 0
+                for file_path in files_to_remove:
+                    try:
+                        file_size = os.path.getsize(file_path)
+                        os.remove(file_path)
+                        bytes_removed += file_size
+                        self.logger.info(f"Removed old log file: {file_path}")
+                    except Exception as e:
+                        self.logger.error(f"Error removing log file {file_path}: {e}")
+
+                self.logger.info(f"Removed {bytes_removed / (1024 * 1024):.2f}MB of old log files")
+
+        except Exception as e:
+            self.logger.error(f"Error in log storage management: {e}")
+
+    def generate_log_summary(self) -> None:
+        """
+        Generate a summary of important log events.
+        Focus on errors, warnings, and critical issues.
+        """
+        self.logger.info("Generating log summary")
+
+        summary_file = self.deploy_log_dir / "log-summary.txt"
+
+        try:
+            with open(summary_file, 'w') as f:
+                f.write(f"=== Log Summary for Deployment ID: {self.deployment_id} ===\n")
+                f.write(f"Generated at: {datetime.datetime.now()}\n\n")
+
+                # Find all log files
+                log_files = []
+                for root, dirs, files in os.walk(self.service_logs_dir):
+                    for file in files:
+                        if file.endswith('.log'):
+                            log_files.append(os.path.join(root, file))
+
+                # Process each log file
+                for log_file in sorted(log_files):
+                    service_name = os.path.basename(log_file).split('_')[0]
+                    f.write(f"=== Summary for {service_name} ===\n")
+
+                    # Extract warnings and errors
+                    warnings = []
+                    errors = []
+                    criticals = []
+
+                    with open(log_file, 'r', errors='replace') as log_f:
+                        for line in log_f:
+                            lower_line = line.lower()
+                            # Check for critical errors first
+                            if 'critical' in lower_line or 'fatal' in lower_line or 'panic' in lower_line:
+                                criticals.append(line.strip())
+                            # Then check for errors
+                            elif 'error' in lower_line or 'exception' in lower_line or 'fail' in lower_line:
+                                errors.append(line.strip())
+                            # Finally check for warnings
+                            elif 'warn' in lower_line:
+                                warnings.append(line.strip())
+
+                    # Write summary counts
+                    f.write(f"Critical issues: {len(criticals)}\n")
+                    f.write(f"Errors: {len(errors)}\n")
+                    f.write(f"Warnings: {len(warnings)}\n\n")
+
+                    # Write critical issues
+                    if criticals:
+                        f.write("CRITICAL ISSUES:\n")
+                        # Limit to prevent excessive output
+                        for line in criticals[:20]:
+                            f.write(f"  {line}\n")
+                        if len(criticals) > 20:
+                            f.write(f"  ... and {len(criticals) - 20} more critical issues\n")
+                        f.write("\n")
+
+                    # Write important errors (limited)
+                    if errors:
+                        f.write("ERRORS:\n")
+                        for line in errors[:15]:
+                            f.write(f"  {line}\n")
+                        if len(errors) > 15:
+                            f.write(f"  ... and {len(errors) - 15} more errors\n")
+                        f.write("\n")
+
+                    # Write some warnings (even more limited)
+                    if warnings:
+                        f.write("WARNINGS:\n")
+                        for line in warnings[:10]:
+                            f.write(f"  {line}\n")
+                        if len(warnings) > 10:
+                            f.write(f"  ... and {len(warnings) - 10} more warnings\n")
+                        f.write("\n")
+
+                f.write("=== End of Log Summary ===\n")
+
+            self.logger.info(f"Log summary generated at {summary_file}")
+
+        except Exception as e:
+            self.logger.error(f"Error generating log summary: {e}")
+
+    def generate_summary(self) -> None:
+        """Generate summary report of all collected metrics."""
+        self.logger.info("Generating summary report")
+
+        summary_file = self.deploy_log_dir / "summary.log"
+
+        try:
+            with open(summary_file, 'w') as f:
+                f.write(f"=== K3s Cluster Monitoring Summary ===\n")
+                f.write(f"Deployment ID: {self.deployment_id}\n")
+                f.write(f"Generated at: {datetime.datetime.now()}\n")
+                f.write(f"Monitoring period: {len(self.log_collection_times)} iterations\n")
+                if self.log_collection_times:
+                    f.write(f"Start time: {self.log_collection_times[0]}\n")
+                    f.write(f"End time: {self.log_collection_times[-1]}\n")
+                f.write("\n")
+
+                # Node metrics summary
+                f.write("=== Node Metrics Summary ===\n")
+                if not self.node_metrics:
+                    f.write("No node metrics collected\n\n")
+                else:
+                    # Group metrics by node
+                    node_groups = defaultdict(list)
+                    for metric in self.node_metrics:
+                        node_groups[metric["node_name"]].append(metric)
+
+                    # Calculate averages for each node
+                    for node_name, metrics in node_groups.items():
+                        avg_cpu = sum(m["cpu_percent"] for m in metrics) / len(metrics)
+                        avg_mem = sum(m["memory_percent"] for m in metrics) / len(metrics)
+
+                        # Find peak values
+                        peak_cpu = max(metrics, key=lambda m: m["cpu_percent"])
+                        peak_mem = max(metrics, key=lambda m: m["memory_percent"])
+
+                        f.write(f"Node: {node_name}\n")
+                        f.write(f"  Average CPU: {avg_cpu:.2f}%\n")
+                        f.write(f"  Average Memory: {avg_mem:.2f}%\n")
+                        f.write(f"  Peak CPU: {peak_cpu['cpu_percent']:.2f}% at {peak_cpu['timestamp']}\n")
+                        f.write(f"  Peak Memory: {peak_mem['memory_percent']:.2f}% at {peak_mem['timestamp']}\n\n")
+
+                # Component metrics summary
+                f.write("=== Component Metrics Summary ===\n")
+                if not self.component_metrics:
+                    f.write("No component metrics collected\n\n")
+                else:
+                    for component, metrics in self.component_metrics.items():
+                        if not metrics:
+                            continue
+
+                        # Calculate averages
+                        avg_cpu = sum(m["total_cpu_cores"] for m in metrics) / len(metrics)
+                        avg_mem_mb = sum(m["total_memory_bytes"] for m in metrics) / (1024 * 1024 * len(metrics))
+                        avg_pods = sum(m["pod_count"] for m in metrics) / len(metrics)
+
+                        # Find peak values
+                        peak_cpu = max(metrics, key=lambda m: m["total_cpu_cores"])
+                        peak_mem = max(metrics, key=lambda m: m["total_memory_bytes"])
+
+                        f.write(f"Component: {component}\n")
+                        f.write(f"  Namespace: {metrics[0]['namespace']}\n")
+                        f.write(f"  Average Pods: {avg_pods:.1f}\n")
+                        f.write(f"  Average CPU: {avg_cpu:.2f} cores\n")
+                        f.write(f"  Average Memory: {avg_mem_mb:.2f} MB\n")
+                        f.write(f"  Peak CPU: {peak_cpu['total_cpu_cores']:.2f} cores at {peak_cpu['timestamp']}\n")
+                        f.write(f"  Peak Memory: {peak_mem['total_memory_bytes'] / (1024 * 1024):.2f} MB at {peak_mem['timestamp']}\n\n")
+
+                # System recommendations based on metrics
+                f.write("=== System Recommendations ===\n")
+
+                # Check for high CPU usage
+                high_cpu_nodes = []
+                for node_name, metrics in node_groups.items():
+                    avg_cpu = sum(m["cpu_percent"] for m in metrics) / len(metrics)
+                    if avg_cpu > 70:  # Threshold for high CPU usage
+                        high_cpu_nodes.append((node_name, avg_cpu))
+
+                if high_cpu_nodes:
+                    f.write("High CPU Usage Detected:\n")
+                    for node_name, avg_cpu in high_cpu_nodes:
+                        f.write(f"  Node {node_name} has average CPU usage of {avg_cpu:.2f}%\n")
+                    f.write("  Recommendations:\n")
+                    f.write("  - Consider adding more nodes to the cluster\n")
+                    f.write("  - Check for CPU-intensive workloads that could be optimized\n")
+                    f.write("  - Review resource limits and requests for pods\n\n")
+
+                # Check for high memory usage
+                high_mem_nodes = []
+                for node_name, metrics in node_groups.items():
+                    avg_mem = sum(m["memory_percent"] for m in metrics) / len(metrics)
+                    if avg_mem > 80:  # Threshold for high memory usage
+                        high_mem_nodes.append((node_name, avg_mem))
+
+                if high_mem_nodes:
+                    f.write("High Memory Usage Detected:\n")
+                    for node_name, avg_mem in high_mem_nodes:
+                        f.write(f"  Node {node_name} has average memory usage of {avg_mem:.2f}%\n")
+                    f.write("  Recommendations:\n")
+                    f.write("  - Consider adding more nodes or increasing memory on existing nodes\n")
+                    f.write("  - Check for memory leaks in applications\n")
+                    f.write("  - Review memory limits and requests for pods\n\n")
+
+                # Check for component-specific issues
+                resource_intensive_components = []
+                for component, metrics in self.component_metrics.items():
+                    if not metrics:
+                        continue
+
+                    avg_cpu = sum(m["total_cpu_cores"] for m in metrics) / len(metrics)
+                    avg_mem_mb = sum(m["total_memory_bytes"] for m in metrics) / (1024 * 1024 * len(metrics))
+
+                    # Define thresholds based on component type (these are example thresholds)
+                    cpu_threshold = 2.0  # 2 cores
+                    mem_threshold = 1024  # 1 GB
+
+                    if avg_cpu > cpu_threshold or avg_mem_mb > mem_threshold:
+                        resource_intensive_components.append((component, avg_cpu, avg_mem_mb))
+
+                if resource_intensive_components:
+                    f.write("Resource-Intensive Components Detected:\n")
+                    for component, avg_cpu, avg_mem_mb in resource_intensive_components:
+                        f.write(f"  Component {component} uses {avg_cpu:.2f} CPU cores and {avg_mem_mb:.2f} MB RAM on average\n")
+                    f.write("  Recommendations:\n")
+                    f.write("  - Review configuration of these components\n")
+                    f.write("  - Consider tuning resource limits and requests\n")
+                    f.write("  - Check documentation for optimization tips\n\n")
+
+                # If no issues detected
+                if not high_cpu_nodes and not high_mem_nodes and not resource_intensive_components:
+                    f.write("No significant resource issues detected. Cluster appears to be healthy.\n\n")
+
+                f.write("=== End of Summary ===\n")
+
+            self.logger.info(f"Summary report generated at {summary_file}")
+
+        except Exception as e:
+            self.logger.error(f"Error generating summary report: {e}")
+
+    def compare_with_previous(self) -> None:
+        """Compare current metrics with previous monitoring results if available."""
+        self.logger.info("Comparing with previous monitoring results")
+
+        comparison_file = self.deploy_log_dir / "comparison.log"
+
+        try:
+            # Look for previous monitoring results
+            previous_dirs = []
+            for item in self.log_dir.iterdir():
+                if item.is_dir() and item.name != self.deployment_id:
+                    try:
+                        # Check if the directory name is a valid timestamp format
+                        datetime.datetime.strptime(item.name, "%Y%m%d-%H%M%S")
+                        previous_dirs.append(item)
+                    except ValueError:
+                        # Not a monitoring results directory, skip
+                        continue
+
+            # Sort by name (which is timestamp)
+            previous_dirs.sort(reverse=True)
+
+            if not previous_dirs:
+                self.logger.info("No previous monitoring results found for comparison")
+                with open(comparison_file, 'w') as f:
+                    f.write("No previous monitoring results found for comparison.\n")
+                return
+
+            # Use the most recent previous result
+            prev_dir = previous_dirs[0]
+            self.logger.info(f"Found previous monitoring results: {prev_dir.name}")
+
+            with open(comparison_file, 'w') as f:
+                f.write(f"=== Comparison with Previous Monitoring Results ===\n")
+                f.write(f"Current deployment ID: {self.deployment_id}\n")
+                f.write(f"Previous deployment ID: {prev_dir.name}\n")
+                f.write(f"Generated at: {datetime.datetime.now()}\n\n")
+
+                # Load previous summary if available
+                prev_summary_file = prev_dir / "summary.log"
+                if not prev_summary_file.exists():
+                    f.write("Previous summary file not found. Cannot perform detailed comparison.\n")
+                else:
+                    # Compare node metrics
+                    f.write("=== Node Metrics Comparison ===\n")
+
+                    # Load current node metrics
+                    current_node_metrics = defaultdict(dict)
+                    for metric in self.node_metrics:
+                        node_name = metric["node_name"]
+                        if node_name not in current_node_metrics:
+                            current_node_metrics[node_name] = {
+                                "cpu_values": [],
+                                "memory_values": []
+                            }
+                        current_node_metrics[node_name]["cpu_values"].append(metric["cpu_percent"])
+                        current_node_metrics[node_name]["memory_values"].append(metric["memory_percent"])
+
+                    # Calculate current averages
+                    current_node_avgs = {}
+                    for node_name, metrics in current_node_metrics.items():
+                        cpu_values = metrics["cpu_values"]
+                        memory_values = metrics["memory_values"]
+                        current_node_avgs[node_name] = {
+                            "avg_cpu": sum(cpu_values) / len(cpu_values) if cpu_values else 0,
+                            "avg_memory": sum(memory_values) / len(memory_values) if memory_values else 0
+                        }
+
+                    # Try to extract previous averages from the summary file
+                    prev_node_avgs = {}
+                    with open(prev_summary_file, 'r') as prev_f:
+                        in_node_section = False
+                        current_node = None
+
+                        for line in prev_f:
+                            if "=== Node Metrics Summary ===" in line:
+                                in_node_section = True
+                                continue
+                            elif "===" in line and "Node Metrics Summary" not in line:
+                                in_node_section = False
+                                continue
+
+                            if not in_node_section:
+                                continue
+
+                            if line.strip().startswith("Node:"):
+                                current_node = line.strip().split("Node:")[1].strip()
+                                prev_node_avgs[current_node] = {}
+                            elif current_node and "Average CPU:" in line:
+                                cpu_val = float(line.strip().split("Average CPU:")[1].strip().rstrip('%'))
+                                prev_node_avgs[current_node]["avg_cpu"] = cpu_val
+                            elif current_node and "Average Memory:" in line:
+                                mem_val = float(line.strip().split("Average Memory:")[1].strip().rstrip('%'))
+                                prev_node_avgs[current_node]["avg_memory"] = mem_val
+
+                    # Compare and report differences
+                    all_nodes = set(list(current_node_avgs.keys()) + list(prev_node_avgs.keys()))
+
+                    for node in sorted(all_nodes):
+                        f.write(f"Node: {node}\n")
+
+                        if node in current_node_avgs and node in prev_node_avgs:
+                            curr_cpu = current_node_avgs[node].get("avg_cpu", 0)
+                            prev_cpu = prev_node_avgs[node].get("avg_cpu", 0)
+                            cpu_diff = curr_cpu - prev_cpu
+
+                            curr_mem = current_node_avgs[node].get("avg_memory", 0)
+                            prev_mem = prev_node_avgs[node].get("avg_memory", 0)
+                            mem_diff = curr_mem - prev_mem
+
+                            f.write(f"  CPU: {curr_cpu:.2f}% (previous: {prev_cpu:.2f}%, change: {cpu_diff:+.2f}%)\n")
+                            f.write(f"  Memory: {curr_mem:.2f}% (previous: {prev_mem:.2f}%, change: {mem_diff:+.2f}%)\n")
+
+                            # Add trend indicators
+                            if abs(cpu_diff) > 10:  # Significant CPU change threshold
+                                if cpu_diff > 0:
+                                    f.write("  CPU ALERT: Significant increase in CPU usage\n")
+                                else:
+                                    f.write("  CPU IMPROVED: Significant decrease in CPU usage\n")
+
+                            if abs(mem_diff) > 15:  # Significant memory change threshold
+                                if mem_diff > 0:
+                                    f.write("  MEMORY ALERT: Significant increase in memory usage\n")
+                                else:
+                                    f.write("  MEMORY IMPROVED: Significant decrease in memory usage\n")
+
+                        elif node in current_node_avgs:
+                            curr_cpu = current_node_avgs[node].get("avg_cpu", 0)
+                            curr_mem = current_node_avgs[node].get("avg_memory", 0)
+                            f.write(f"  CPU: {curr_cpu:.2f}% (new node, no previous data)\n")
+                            f.write(f"  Memory: {curr_mem:.2f}% (new node, no previous data)\n")
+
+                        else:
+                            f.write("  Node present in previous monitoring but not in current (removed?)\n")
+
+                        f.write("\n")
+
+                    # Add overall system observations
+                    f.write("=== System Observations ===\n")
+
+                    # Compare total number of nodes
+                    current_node_count = len(current_node_avgs)
+                    prev_node_count = len(prev_node_avgs)
+
+                    f.write(f"Current node count: {current_node_count}, Previous: {prev_node_count}\n")
+                    if current_node_count > prev_node_count:
+                        f.write(f"Cluster has expanded by {current_node_count - prev_node_count} node(s)\n")
+                    elif current_node_count < prev_node_count:
+                        f.write(f"Cluster has shrunk by {prev_node_count - current_node_count} node(s)\n")
+
+                    # Compare overall resource usage
+                    if current_node_avgs and prev_node_avgs:
+                        current_avg_cpu = sum(n["avg_cpu"] for n in current_node_avgs.values()) / current_node_count
+                        prev_avg_cpu = sum(n["avg_cpu"] for n in prev_node_avgs.values()) / prev_node_count
+                        cpu_change = current_avg_cpu - prev_avg_cpu
+
+                        current_avg_mem = sum(n["avg_memory"] for n in current_node_avgs.values()) / current_node_count
+                        prev_avg_mem = sum(n["avg_memory"] for n in prev_node_avgs.values()) / prev_node_count
+                        mem_change = current_avg_mem - prev_avg_mem
+
+                        f.write(f"Average CPU usage across all nodes: {current_avg_cpu:.2f}% (previous: {prev_avg_cpu:.2f}%, change: {cpu_change:+.2f}%)\n")
+                        f.write(f"Average Memory usage across all nodes: {current_avg_mem:.2f}% (previous: {prev_avg_mem:.2f}%, change: {mem_change:+.2f}%)\n")
+
+                        if cpu_change > 5:
+                            f.write("OBSERVATION: Overall CPU usage has increased significantly\n")
+                        elif cpu_change < -5:
+                            f.write("OBSERVATION: Overall CPU usage has decreased significantly\n")
+
+                        if mem_change > 10:
+                            f.write("OBSERVATION: Overall Memory usage has increased significantly\n")
+                        elif mem_change < -10:
+                            f.write("OBSERVATION: Overall Memory usage has decreased significantly\n")
+
+                f.write("\n=== End of Comparison ===\n")
+
+            self.logger.info(f"Comparison report generated at {comparison_file}")
+
+        except Exception as e:
+            self.logger.error(f"Error comparing with previous results: {e}")
+            with open(comparison_file, 'w') as f:
+                f.write(f"Error comparing with previous results: {str(e)}\n")
+
+    def compress_results(self) -> None:
+        """Compress all monitoring results into a tarball."""
+        self.logger.info("Compressing monitoring results")
+
+        try:
+            # Create a tarball of the entire log directory
+            tarball_path = f"{self.deploy_log_dir}.tar.gz"
+
+            with tarfile.open(tarball_path, "w:gz") as tar:
+                tar.add(self.deploy_log_dir, arcname=os.path.basename(self.deploy_log_dir))
+
+            self.logger.info(f"Monitoring results compressed to {tarball_path}")
+
+            # Check if the compressed file was created successfully
+            if os.path.exists(tarball_path):
+                # Get size of the tarball
+                size_bytes = os.path.getsize(tarball_path)
+                size_mb = size_bytes / (1024 * 1024)
+
+                self.logger.info(f"Compressed file size: {size_mb:.2f} MB")
+            else:
+                self.logger.error("Failed to create compressed file")
+
+        except Exception as e:
+            self.logger.error(f"Error compressing results: {e}")
+
+    def run(self) -> None:
+        """Run the monitoring process."""
+        # Check prerequisites
+        if not self.check_prerequisites():
+            self.logger.error("Failed prerequisite check. Exiting.")
+            return
+
+        # Log cluster information
+        self.log_cluster_info()
+
+        self.logger.info(f"Starting K3s cluster resource monitoring on Ubuntu 24.04...")
+        self.logger.info(f"Logs will be stored in {self.deploy_log_dir}")
+        self.logger.info(f"Deployment ID: {self.deployment_id}")
+
+        iterations = self.duration_seconds // self.interval_seconds
+        for i in range(1, iterations + 1):
+            self.logger.info(f"Collecting metrics (iteration {i} of {iterations})...")
+
+            # Clear pod metrics between iterations to avoid duplicates
+            self.pod_metrics = []
+
+            # Collect metrics - FIXED ORDER: nodes, pods, then components
+            self.collect_node_metrics()
+            self.collect_pod_metrics()
+            self.collect_component_metrics()
+            self.collect_etcd_metrics()
+            self.collect_cilium_metrics()
+
+            # Collect logs aligned with metrics
+            self.collect_service_logs()
+            self.collect_kubernetes_logs()
+
+            # Manage log storage to prevent excessive disk usage
+            self.manage_log_storage()
+
+            # Sleep until next interval if not the last iteration
+            if i < iterations:
+                time.sleep(self.interval_seconds)
+
+        # Generate reports
+        self.generate_summary()
+        self.compare_with_previous()
+        self.generate_log_summary()
+
+        self.logger.info(f"Monitoring completed. Results stored in {self.deploy_log_dir}")
+        self.logger.info(f"Summary log: {self.deploy_log_dir / 'summary.log'}")
+
+        # Compress the results directory
+        self.compress_results()
+
+
+def main():
+    """Parse arguments and start monitoring."""
+    parser = argparse.ArgumentParser(
+        description='K3s Cluster Monitor',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument('-d', '--duration', type=int, default=3600,
+                        help='Total monitoring duration in seconds')
+    parser.add_argument('-i', '--interval', type=int, default=300,
+                        help='Time between metric collections in seconds')
+    parser.add_argument('-l', '--log-dir', type=str, default='{{ k3s_map.node.directory.log }}',
+                        help='Directory to store logs and reports')
+    parser.add_argument('-m', '--log-max-size', type=int, default=50,
+                        help='Maximum log file size in MB')
+    parser.add_argument('-n', '--namespace', type=str, default='kube-system',
+                        help='Default namespace')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Enable verbose logging')
+
+    args = parser.parse_args()
+
+    # Set logging level based on verbose flag
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+
+    # Create the monitor with the provided arguments
+    monitor = K3sMonitor(
+        duration_seconds=args.duration,
+        interval_seconds=args.interval,
+        log_dir=args.log_dir,
+        log_max_size=args.log_max_size
+    )
+
+    # Set the default namespace if provided
+    if args.namespace != 'kube-system':
+        monitor.default_namespace = args.namespace
+        monitor.namespace = args.namespace
+
+    # Set log level
+    monitor.logger.setLevel(log_level)
+
+    # Run the monitoring process
+    monitor.run()
+
+
+if __name__ == '__main__':
+    main()
