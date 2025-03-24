@@ -98,43 +98,20 @@
             - comparison.release is version('0', '>')
             - comparison.release != comparison.chart
           block:
-            - name: Simulate chart deployment
-              ansible.builtin.command:
-                cmd: >-
-                  helm diff upgrade
-                    {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}
-                    {{ victoriametrics_project.helm.chart.victoriametrics.reference }}
-                    --kubeconfig {{ k3s_project.cluster.kubeconfig }}
-                    --namespace {{ victoriametrics_vars.kubernetes.namespace }}
-                    --version {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version }}
-                    --context 3 --values -
-                stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
-              register: result
-              delay: 1
-              retries: 3
-              until: result is not failed
-              changed_when: false
-
-            - name: Chart deployment simulation result
-              ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+            - name: Set chart values url fact
+              ansible.builtin.set_fact:
+                chart_values_url:
+                  - '{{ victoriametrics_map.helm.platform.raw }}'
+                  - '{{ victoriametrics_vars.kubernetes.helm.repository.org }}'
+                  - '{{ victoriametrics_vars.kubernetes.helm.repository.name }}/refs/tags'
+                  - '{{ victoriametrics_vars.kubernetes.helm.chart.name }}-%s/charts'
+                  - '{{ victoriametrics_vars.kubernetes.helm.chart.name }}/values.yaml'
 
             - name: Compare chart values
               ansible.builtin.command:
-                cmd: bash -c "{{
-                  ' '.join(['diff', '-u', '<(curl', '-s ' +
-                    '/'.join([victoriametrics_map.helm.platform.raw,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name,
-                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.release]), 'charts',
-                      victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')',
-                  '<(curl', '-s ' +
-                    '/'.join([victoriametrics_map.helm.platform.raw,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name,
-                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.chart]), 'charts',
-                      victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')'])
-                  }}"
+                cmd: bash -c "diff -u
+                  <(curl -s {{ chart_values_url | join('/') | format(comparison.release) }})
+                  <(curl -s {{ chart_values_url | join('/') | format(comparison.chart) }})"
               register: result
               delay: 1
               retries: 3
@@ -145,3 +122,34 @@
             - name: Chart values comparison result
               ansible.builtin.debug:
                 msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+
+            - name: Set release chart fact
+              ansible.builtin.set_fact:
+                release_chart:
+                  - '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}'
+                  - '{{ victoriametrics_project.helm.chart.victoriametrics.reference }}'
+
+            - name: Set chart deployment simulation command fact
+              ansible.builtin.set_fact:
+                simulation_command:
+                  - "helm diff upgrade {{ release_chart | join(' ') }}"
+                  - '  --kubeconfig {{ k3s_project.cluster.kubeconfig }} --namespace {{ victoriametrics_vars.kubernetes.namespace }}'
+                  - '  --version {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version }} --context 3 --values -'
+
+            - name: Display chart deployment simulation command
+              ansible.builtin.debug:
+                msg: "{{ simulation_command | join(' \\\n') }} << 'EOF'\n{{ lookup('ansible.builtin.template', 'values.j2') }}EOF"
+
+            - name: Run chart deployment simulation command
+              ansible.builtin.command:
+                cmd: "{{ simulation_command | join(' ') }}"
+                stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
+              register: result
+              delay: 1
+              retries: 3
+              until: result is not failed
+              changed_when: false
+
+            - name: Chart deployment simulation result
+              ansible.builtin.debug:
+                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
