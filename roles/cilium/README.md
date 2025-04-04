@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/cilium/cilium-cli | cilium-cli | 0.18.2 |
+| https://github.com/cilium/cilium-cli | cilium-cli | 0.18.3 |
 | https://github.com/cilium/hubble | hubble | 1.17.1 |
 | https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.2.1 |
 
@@ -99,7 +99,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.release.cli.file | string | `"cilium-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.cli.repository.name | string | `"cilium-cli"` |  |
 | cilium_vars.release.cli.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.cli.version | string | `"v0.18.2"` |  |
+| cilium_vars.release.cli.version | string | `"v0.18.3"` |  |
 | cilium_vars.release.gateway_api.file | string | `"experimental-install.yaml"` | See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details |
 | cilium_vars.release.gateway_api.repository.name | string | `"gateway-api"` |  |
 | cilium_vars.release.gateway_api.repository.org | string | `"kubernetes-sigs"` |  |
