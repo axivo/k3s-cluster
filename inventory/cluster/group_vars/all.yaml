@@ -106,3 +106,22 @@ global_map:
             38323135393830336132393239363236373961336464623432363338616266626334393233366263
             6164623332633535310a626532356161363563303036353838306234306562303333333231643432
             38383463653931373134663230383033666264646364316563663636303736326630
+  tags:
+    play:
+      - charts
+      - cluster
+      - kubernetes
+    role:
+      - argo-cd
+      - cert-manager
+      - cilium
+      - cluster
+      - coredns
+      - external-dns
+      - helm
+      - k3s
+      - kured
+      - longhorn
+      - metrics-server
+      - victoria-logs
+      - victoria-metrics
