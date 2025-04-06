@@ -1,4 +1,17 @@
 ---
+- name: Tags Validation
+  hosts: localhost
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Validate tags
+      ansible.builtin.fail:
+        msg: "Invalid tag(s): {{ ansible_run_tags | difference(global_map.tags.role | union(['validation'])) | join(', ') }}"
+      tags: always
+      when:
+        - ansible_run_tags not in [[], ['all']]
+        - ansible_run_tags | difference(global_map.tags.role | union(['validation'])) | length > 0
+
 - name: Cluster Validation
   hosts: cluster
   become: true
@@ -10,20 +23,7 @@
           tags: '{{ validation }}'
         name: '{{ validation }}'
         tasks_from: validation
-      loop:
-        - cluster
-        - k3s
-        - argo-cd
-        - cert-manager
-        - cilium
-        - coredns
-        - external-dns
-        - helm
-        - kured
-        - longhorn
-        - metrics-server
-        - victoria-logs
-        - victoria-metrics
+      loop: '{{ global_map.tags.role }}'
       loop_control:
         loop_var: validation
       tags: always

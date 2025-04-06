@@ -1,4 +1,17 @@
 ---
+- name: Tags Validation
+  hosts: localhost
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Validate tags
+      ansible.builtin.fail:
+        msg: "Invalid tag(s): {{ ansible_run_tags | difference(global_map.tags.role) | join(', ') }}"
+      tags: always
+      when:
+        - ansible_run_tags not in [[], ['all']]
+        - ansible_run_tags | difference(global_map.tags.role) | length > 0
+
 - name: Cluster Upgrade
   hosts: cluster
   become: true
@@ -10,20 +23,7 @@
           tags: '{{ upgrade }}'
         name: '{{ upgrade }}'
         tasks_from: upgrade
-      loop:
-        - argo-cd
-        - cert-manager
-        - cilium
-        - cluster
-        - coredns
-        - external-dns
-        - helm
-        - k3s
-        - kured
-        - longhorn
-        - metrics-server
-        - victoria-logs
-        - victoria-metrics
+      loop: '{{ global_map.tags.role }}'
       loop_control:
         loop_var: upgrade
       tags: always

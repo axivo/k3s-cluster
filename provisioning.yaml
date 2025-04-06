@@ -1,4 +1,17 @@
 ---
+- name: Tags Validation
+  hosts: localhost
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Validate tags
+      ansible.builtin.fail:
+        msg: "Invalid tag(s): {{ ansible_run_tags | difference(global_map.tags.play) | join(', ') }}"
+      tags: always
+      when:
+        - ansible_run_tags not in [[], ['all']]
+        - ansible_run_tags | difference(global_map.tags.play) | length > 0
+
 - name: Cluster Provisioning
   hosts: cluster
   become: true
