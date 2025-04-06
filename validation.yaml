@@ -6,11 +6,22 @@
   tasks:
     - name: Validate tags
       ansible.builtin.fail:
-        msg: "Invalid tag(s): {{ ansible_run_tags | difference(global_map.tags.role | union(['validation'])) | join(', ') }}"
+        msg: |
+          Improper usage of '--tags' flag:
+          {% set invalid_tags = ansible_run_tags | difference(global_map.tags.role | union(['validation'])) %}
+          {% if invalid_tags | length > 0 %}
+            - invalid tag{% if invalid_tags | length > 1 %}s{% endif %}: {{ invalid_tags | join(', ') }}
+          {% endif %}
+          {% if 'validation' not in ansible_run_tags %}
+            - required tag: validation
+          {% endif %}
+            - valid tags: {{ global_map.tags.role | join(', ') }}
       tags: always
       when:
         - ansible_run_tags not in [[], ['all']]
-        - ansible_run_tags | difference(global_map.tags.role | union(['validation'])) | length > 0
+        - >-
+          ('validation' not in ansible_run_tags) or
+          (ansible_run_tags | difference(global_map.tags.role | union(['validation'])) | length > 0)
 
 - name: Cluster Validation
   hosts: cluster
