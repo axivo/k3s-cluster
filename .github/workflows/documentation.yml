@@ -70,7 +70,7 @@ jobs:
                 runGit(['config', 'user.name', 'github-actions[bot]']),
                 runGit(['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'])
               ]);
-              await runGit(['fetch']);
+              await runGit(['fetch', 'origin', process.env.GITHUB_HEAD_REF]);
               await runGit(['switch', process.env.GITHUB_HEAD_REF]);
               await exec.exec('helm-docs', ['-f', './defaults/main.yaml']);
               const exclusions = await excludeList();
