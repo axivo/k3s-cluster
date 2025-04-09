@@ -90,7 +90,9 @@
         - '{{ k3s_map.node.directory.bin }}/crictl'
         - '{{ k3s_map.node.directory.bin }}/ctr'
         - '{{ k3s_map.node.directory.bin }}/kubectl'
+        - '{{ k3s_map.node.directory.bin }}/k3s-monitor'
         - '{{ k3s_map.node.directory.config }}'
+        - '{{ k3s_map.node.directory.log }}'
         - /etc/sysctl.d/90-kubernetes-node.conf
         - /etc/sysctl.d/99-zzz-override_cilium.conf
         - /etc/systemd/system/{{ k3s_map.service.name }}.service
