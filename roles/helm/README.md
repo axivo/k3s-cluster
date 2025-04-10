@@ -10,7 +10,7 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/databus23/helm-diff | diff | 3.10.0 |
+| https://github.com/databus23/helm-diff | diff | 3.11.0 |
 
 ## Role Variables
 
@@ -26,7 +26,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.plugins[0].name | string | `"diff"` |  |
 | helm_vars.plugins[0].packages[0] | string | `"python3-jsonpatch"` |  |
 | helm_vars.plugins[0].repository.url | string | `"https://github.com/databus23/helm-diff"` |  |
-| helm_vars.plugins[0].version | string | `"v3.10.0"` |  |
+| helm_vars.plugins[0].version | string | `"v3.11.0"` |  |
 | helm_vars.release.helm.distro.name | string | `"debian"` |  |
 | helm_vars.release.helm.distro.url | string | `"https://helm.baltorepo.com"` |  |
 | helm_vars.release.helm.key | string | `"helm-archive-keyring.gpg"` |  |
