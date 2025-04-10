@@ -102,7 +102,7 @@ jobs:
                 }
               `;
               const { createCommitOnBranch } = await github.graphql(mutation, { input });
-              core.info('Signed commit created with OID:', createCommitOnBranch.commit.oid);
+              core.info('Signed commit created with OID: ' + createCommitOnBranch.commit.oid);
             } catch (error) {
               core.setFailed(error.message);
             }
