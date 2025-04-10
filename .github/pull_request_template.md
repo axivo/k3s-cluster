@@ -1,17 +1,28 @@
-## WHY
+## Objective
 
-<!-- Please include a summary of the changes and any related issues. -->
+<!-- 
+Please include a summary of the changes and any related issues.
 
-## WHAT
+### Related Issues
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality not working as expected)
-- [ ] This change requires a documentation update
+- #123
+-->
 
-## HOW
+## Scope
 
-- [ ] My code follows the style guidelines of this project
+- [ ] Bug (resolves an issue)
+- [ ] Enhancement (improves existing functionality)
+- [ ] Feature (adds new functionality)
+- [ ] Documentation (adds or improves documentation)
+
+### Impact
+
+- [ ] Non-breaking (backwards compatible)
+- [ ] Breaking (backwards incompatible, impacts end-user)
+
+## Checklist
+
+- [ ] My code follows the contributing guidelines of this project
 - [ ] I have performed a self-review of my code
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new issues or warnings
