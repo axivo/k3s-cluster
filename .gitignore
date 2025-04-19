@@ -1,2 +1,4 @@
 .ansible
 **/.DS_Store
+.venv
+.vault

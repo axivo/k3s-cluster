@@ -49,7 +49,7 @@
   serial:
     - 1
     - 2
-    - 5
+    - 4
   tags: kubernetes
 
 - name: Charts Provisioning

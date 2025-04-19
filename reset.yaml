@@ -5,7 +5,7 @@
   gather_facts: true
   serial:
     - 3
-    - 5
+    - 4
   post_tasks:
     - name: Remove archived journal files
       ansible.builtin.command:

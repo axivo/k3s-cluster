@@ -2,7 +2,7 @@
 k3s_vars:
   cluster:
     controlplane:
-      tainted: true
+      tainted: false
     domain: cluster.local
     kubeconfig:
       local: true

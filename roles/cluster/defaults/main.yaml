@@ -2,7 +2,7 @@
 cluster_vars:
   device:
     # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#storage-devices), for details
-    enabled: true
+    enabled: false
     # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#deviceid), for details
     id: '2:2'
     # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#devicename), for details
@@ -22,8 +22,8 @@ cluster_vars:
       enabled: true
       protocols: ipv4
       relay:
-        # -- iCloud mail server relay host
-        host: smtp.mail.me.com
+        # -- Mailgun mail server relay host
+        host: smtp.mailgun.org
         port: 587
       # -- (string) Postfix user credentials, set at global level
       # @default -- Set values into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
@@ -41,6 +41,6 @@ cluster_vars:
       enabled: false
   ssh:
     # -- See [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/user/#ssh-key), for details
-    key: id_ed25519.pub
+    key: id_ed25519_mhcluster.pub
     # -- Full path to `.ssh` directory, a hardcoded value can be used
     path: "{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"

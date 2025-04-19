@@ -7,7 +7,7 @@ externaldns_vars:
       server: staging
     host:
       # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
-      domain: noty.cc
+      domain: gatheringhub.dev
     prefix: cloudflare
   kubernetes:
     helm:

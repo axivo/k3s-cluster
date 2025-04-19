@@ -1,16 +1,15 @@
 server:
   hosts:
-    apollo:
-    boreas:
-    cerus:
+    arkveld:
+    zohshia:
+    reydau:
 
 agent:
   hosts:
-    chaos:
-    crios:
-    helios:
-    hermes:
-    hypnos:
+    rathalos:
+    rathian:
+    gravios:
+    congalala:
 
 cluster:
   children:
