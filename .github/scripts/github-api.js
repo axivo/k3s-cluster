@@ -140,7 +140,7 @@ async function createSignedCommit({
     `;
     const { createCommitOnBranch } = await github.graphql(mutation, { input });
     const commitOid = createCommitOnBranch.commit.oid;
-    core.info(`Signed commit created with ${commitOid} OID`);
+    core.info(`Successfully created signed commit with '${commitOid}' OID`);
     return commitOid;
   } catch (error) {
     utils.handleError(error, core, 'create signed commit');
