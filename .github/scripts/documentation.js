@@ -101,10 +101,10 @@ async function updateDocumentation({
       .filter((dir, index, self) => self.indexOf(dir) === index); // Unique directories
     if (!dirs.length) {
       core.info('No specific directories found, running helm-docs on all directories');
-      await exec.exec('helm-docs', ['-l', config('workflow').docs.logLevel]);
+      await exec.exec('helm-docs', ['-f', './defaults/main.yaml', '-l', config('workflow').docs.logLevel]);
     } else {
       const dirsList = dirs.join(',');
-      await exec.exec('helm-docs', ['-g', dirsList, '-l', config('workflow').docs.logLevel]);
+      await exec.exec('helm-docs', ['-f', './defaults/main.yaml', '-g', dirsList, '-l', config('workflow').docs.logLevel]);
     }
     await runGit(['add', '.']);
     const files = (await runGit(['diff', '--staged', '--name-only']))
