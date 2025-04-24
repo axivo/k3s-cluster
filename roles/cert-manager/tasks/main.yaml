@@ -54,6 +54,7 @@
       kubernetes.core.helm_repository:
         name: '{{ certmanager_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ certmanager_vars.kubernetes.helm.repository.url }}'
+        force_update: true
 
     - name: Chart Setup
       run_once: true

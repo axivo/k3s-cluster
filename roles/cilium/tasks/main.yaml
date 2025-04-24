@@ -49,6 +49,7 @@
       kubernetes.core.helm_repository:
         name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ cilium_map.helm.repository.url }}'
+        force_update: true
 
     - name: Chart Setup
       run_once: true

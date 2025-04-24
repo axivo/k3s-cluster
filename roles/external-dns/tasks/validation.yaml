@@ -26,10 +26,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ externaldns_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ externaldns_map.helm.repository.url }}'
+            force_update: true
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
@@ -42,7 +43,7 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ externaldns_map.helm.chart.version }}'
+              chart: '{{ externaldns_map.helm.chart.version[1:] }}'
               release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
 
         - name: Validate api token values

@@ -58,10 +58,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ cilium_map.helm.repository.url }}'
+            force_update: true
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
@@ -74,8 +75,8 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-              release: "v{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              chart: '{{ cilium_vars.kubernetes.helm.chart.version[1:] }}'
+              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
 
         - name: Validate certificate values
           ansible.builtin.debug:

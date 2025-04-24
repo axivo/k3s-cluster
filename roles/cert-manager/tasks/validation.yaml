@@ -44,10 +44,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ certmanager_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ certmanager_vars.kubernetes.helm.repository.url }}'
+            force_update: true
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
@@ -60,8 +61,8 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ certmanager_vars.kubernetes.helm.chart.version }}'
-              release: "v{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              chart: '{{ certmanager_vars.kubernetes.helm.chart.version[1:] }}'
+              release: "{{ (release.status.chart | default('0')).split('-')[-1][1:] }}"
 
         - name: Validate cluster issuer values
           ansible.builtin.debug:

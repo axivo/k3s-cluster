@@ -30,6 +30,7 @@
       kubernetes.core.helm_repository:
         name: '{{ longhorn_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ longhorn_vars.kubernetes.helm.repository.url }}'
+        force_update: true
 
     - name: Chart Setup
       run_once: true
