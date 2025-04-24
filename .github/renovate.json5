@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "assignees": ["fmunteanu"],
+  "assignees": [
+    "fmunteanu"
+  ],
   "customDatasources": {
     "cilium": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/cilium/main/stable.txt",
@@ -46,6 +48,18 @@
   "customManagers": [
     {
       "customType": "regex",
+      "datasourceTemplate": "node",
+      "depNameTemplate": "node",
+      "fileMatch": [
+        ".github/workflows/documentation.yml"
+      ],
+      "matchStrings": [
+        "with:[\\s\\S]+?node-version:\\s+(?<currentValue>.+)"
+      ],
+      "versioningTemplate": "node"
+    },
+    {
+      "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "norwoodj/helm-docs",
       "extractVersionTemplate": "^v(?<version>.+)$",
@@ -53,7 +67,7 @@
         ".github/workflows/documentation.yml"
       ],
       "matchStrings": [
-        "HELM_DOCS_VERSION:\\s+(?<currentValue>.+)"
+        "await\\s+installHelmDocs[\\s\\S]+?version:\\s+'(?<currentValue>.+)'"
       ]
     },
     {
@@ -369,10 +383,21 @@
       "packageNameTemplate": "VictoriaMetrics/helm-charts"
     }
   ],
-  "enabledManagers": ["ansible-galaxy", "custom.regex", "github-actions"],
-  "extends": [":semanticCommitTypeAll(chore)", "config:recommended"],
-  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
-  "labels": ["dependency"],
+  "enabledManagers": [
+    "ansible-galaxy",
+    "custom.regex",
+    "github-actions"
+  ],
+  "extends": [
+    ":semanticCommitTypeAll(chore)",
+    "config:recommended"
+  ],
+  "gitIgnoredAuthors": [
+    "41898282+github-actions[bot]@users.noreply.github.com"
+  ],
+  "labels": [
+    "dependency"
+  ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "semanticCommits": "enabled",
