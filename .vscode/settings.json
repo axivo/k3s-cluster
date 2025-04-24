@@ -31,7 +31,7 @@
     "*.j2": "ansible-jinja",
     "*.yaml": "ansible",
     "*.yml": "ansible",
-    "**/.github/workflows/*.yml": "yaml",
+    "**/.github/workflows/*.yml": "github-actions-workflow",
     "**/renovate.json5": "jsonc"
   },
   "files.exclude": {
