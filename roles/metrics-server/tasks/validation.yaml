@@ -27,10 +27,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ metricsserver_vars.kubernetes.helm.repository.name }}'
             repo_url: '{{ metricsserver_map.helm.repository.url }}'
+            force_update: true
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
@@ -43,7 +44,7 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ metricsserver_map.helm.chart.version }}'
+              chart: '{{ metricsserver_map.helm.chart.version[1:] }}'
               release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
 
         - name: Set chart postinstall fact

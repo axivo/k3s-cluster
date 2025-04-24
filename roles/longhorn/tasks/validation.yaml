@@ -44,10 +44,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ longhorn_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ longhorn_vars.kubernetes.helm.repository.url }}'
+            force_update: true
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
@@ -60,7 +61,7 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ longhorn_map.helm.chart.version }}'
+              chart: '{{ longhorn_map.helm.chart.version[1:] }}'
               release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
 
         - name: Credentials Validation

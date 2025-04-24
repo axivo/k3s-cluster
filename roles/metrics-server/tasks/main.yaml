@@ -17,6 +17,7 @@
       kubernetes.core.helm_repository:
         name: '{{ metricsserver_vars.kubernetes.helm.repository.name }}'
         repo_url: '{{ metricsserver_map.helm.repository.url }}'
+        force_update: true
 
     - name: Chart Setup
       run_once: true

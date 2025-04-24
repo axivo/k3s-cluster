@@ -36,10 +36,11 @@
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ item.org }}'
             repo_url: '{{ item.url }}/{{ item.name }}'
+            force_update: true
           loop: '{{ victoriametrics_map.helm.repository }}'
 
         - name: Get deployed chart info
@@ -56,7 +57,7 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version[1:] }}'
+              chart: "{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version[1:] }}"
               release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
 
         - name: Set credentials fact

@@ -48,6 +48,7 @@
       kubernetes.core.helm_repository:
         name: '{{ argocd_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ argocd_map.helm.repository.url }}'
+        force_update: true
 
     - name: Chart Setup
       run_once: true

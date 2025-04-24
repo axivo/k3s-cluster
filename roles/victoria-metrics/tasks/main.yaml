@@ -17,6 +17,7 @@
       kubernetes.core.helm_repository:
         name: '{{ item.org }}'
         repo_url: '{{ item.url }}/{{ item.name }}'
+        force_update: true
       loop: '{{ victoriametrics_map.helm.repository }}'
 
     - name: Chart Setup
