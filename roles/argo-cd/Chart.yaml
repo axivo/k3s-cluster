@@ -2,7 +2,7 @@ apiVersion: v2
 name: argo-cd
 description: Documentation generator for argo-cd Ansible role
 home: https://github.com/argoproj/argo-helm
-version: 7.8.23
+version: 7.8.28
 dependencies:
   - name: argocd
     repository: https://github.com/argoproj/argo-cd
