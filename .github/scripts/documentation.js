@@ -92,21 +92,20 @@ async function updateDocumentation({
     await runGit(['switch', headRef]);
     core.info('Generating documentation with helm-docs...');
     const updatedFiles = await api.getUpdatedFiles({ github, context, core });
-    const dirs = updatedFiles
+    const updatedDirs = updatedFiles
       .map(file => {
         const parts = file.split('/');
         parts.pop();
         return parts.join('/');
-      })
-      .filter((dir, index, self) => self.indexOf(dir) === index); // Unique directories
-    if (!dirs.length) {
-      core.info('No specific directories found, running helm-docs on all directories');
-      await exec.exec('helm-docs', ['-f', './defaults/main.yaml', '-l', config('workflow').docs.logLevel]);
-    } else {
-      const dirsList = dirs.join(',');
-      await exec.exec('helm-docs', ['-f', './defaults/main.yaml', '-g', dirsList, '-l', config('workflow').docs.logLevel]);
-    }
-    await runGit(['add', '.']);
+      }).filter(dir => !dir.includes('/defaults'))
+      .filter((dir, index, self) => self.indexOf(dir) === index);
+    const helmDocsArgs = [
+      '-f', './defaults/main.yaml',
+      '-g', updatedDirs.join(','),
+      '-l', config('workflow').docs.logLevel
+    ];
+    await exec.exec('helm-docs', helmDocsArgs);
+    await runGit(['add', ...updatedDirs]);
     const files = (await runGit(['diff', '--staged', '--name-only']))
       .split('\n')
       .filter(Boolean);
