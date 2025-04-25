@@ -2,7 +2,7 @@ apiVersion: v2
 name: victoria-metrics-k8s-stack
 description: Documentation generator for victoria-metrics Ansible role
 home: https://github.com/VictoriaMetrics/helm-charts
-version: 0.41.3
+version: 0.44.0
 dependencies:
   - name: prometheus-operator-crds
     repository: https://prometheus-community.github.io/helm-charts
