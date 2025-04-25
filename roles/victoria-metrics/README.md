@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 19.0.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 19.1.0 |
 
 ## Role Variables
 
@@ -58,7 +58,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User name used to access Grafana UI |
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.prometheus.name | string | `"prometheus-operator-crds"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v19.0.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v19.1.0"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name | string | `"victoria-metrics-k8s-stack"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.41.3"` |  |
