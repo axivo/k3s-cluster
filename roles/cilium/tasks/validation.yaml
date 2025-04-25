@@ -76,7 +76,7 @@
           ansible.builtin.set_fact:
             comparison:
               chart: '{{ cilium_vars.kubernetes.helm.chart.version[1:] }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate certificate values
           ansible.builtin.debug:

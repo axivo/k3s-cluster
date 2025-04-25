@@ -43,8 +43,8 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ coredns_map.helm.chart.version[1:] }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              chart: '{{ coredns_map.helm.chart.version }}'
+              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:

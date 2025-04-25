@@ -58,7 +58,7 @@
           ansible.builtin.set_fact:
             comparison:
               chart: "{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version[1:] }}"
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              release: "{{ release.status.chart | default('0') | replace('k8s', '') | regex_search('[0-9.]+') }}"
 
         - name: Set credentials fact
           ansible.builtin.set_fact:
@@ -126,13 +126,13 @@
                   ' '.join(['diff', '-u', '<(curl', '-s ' +
                     '/'.join([victoriametrics_map.helm.platform.raw,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name,
+                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name, 'refs', 'tags',
                       '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.release]), 'charts',
                       victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([victoriametrics_map.helm.platform.raw,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
-                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name,
+                      victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name, 'refs', 'tags',
                       '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.chart]), 'charts',
                       victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')'])
                   }}"

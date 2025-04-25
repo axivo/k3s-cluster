@@ -62,7 +62,7 @@
           ansible.builtin.set_fact:
             comparison:
               chart: '{{ certmanager_vars.kubernetes.helm.chart.version[1:] }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1][1:] }}"
+              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate cluster issuer values
           ansible.builtin.debug:

@@ -35,7 +35,7 @@
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            name: '{{ victorialogs_vars.kubernetes.helm.chart.name }}'
+            name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}'
             namespace: '{{ victorialogs_vars.kubernetes.namespace }}'
           register: release
           changed_when: false
@@ -43,8 +43,8 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ victorialogs_map.helm.chart.version[1:] }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              chart: '{{ victorialogs_map.helm.chart.version }}'
+              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:

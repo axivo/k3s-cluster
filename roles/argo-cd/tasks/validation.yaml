@@ -62,8 +62,8 @@
         - name: Set comparison fact
           ansible.builtin.set_fact:
             comparison:
-              chart: '{{ argocd_map.helm.chart.version[1:] }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              chart: '{{ argocd_map.helm.chart.version }}'
+              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate configuration params values
           ansible.builtin.debug:
