@@ -1,6 +1,6 @@
-# K3s Cluster Roles
+# Roles
 
-This directory contains all the Ansible roles used for provisioning and managing the k3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides explicit details about role functionality to enable accurate understanding of the cluster provisioning system.
+This directory contains all the Ansible roles used for provisioning and managing the K3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides details about role functionality to enable accurate understanding of the cluster provisioning system. Visit the [Wiki](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles), for detailed configuration instructions.
 
 ## Core Infrastructure Roles
 
@@ -23,7 +23,7 @@ This directory contains all the Ansible roles used for provisioning and managing
 
 - **Purpose**: Handles the core Kubernetes installation and configuration
 - **Key Functions**:
-  - Installing and configuring k3s binary
+  - Installing and configuring K3s binary
   - Setting up server nodes (control plane) and agent nodes (workers)
   - Configuring high availability with embedded etcd and cluster-init on first server
   - Implementing HAProxy + Keepalived load balancer for the API server (tasks/loadbalancer.yaml)
@@ -58,7 +58,7 @@ This directory contains all the Ansible roles used for provisioning and managing
 
 - **Purpose**: Implements advanced container networking
 - **Key Functions**:
-  - Replacing k3s default CNI (Flannel) and kube-proxy with Cilium
+  - Replacing K3s default CNI (Flannel) and kube-proxy with Cilium
   - Installing cilium and hubble CLI tools for management
   - Configuring eBPF-based networking with specific optimizations
   - Setting up service load balancing with DSR (Direct Server Return) mode
@@ -77,7 +77,7 @@ This directory contains all the Ansible roles used for provisioning and managing
 
 - **Purpose**: Provides DNS services for the cluster
 - **Key Functions**:
-  - Replacing default k3s CoreDNS with a customized deployment
+  - Replacing default K3s CoreDNS with a customized deployment
   - Configuring DNS resolution for cluster services and pods
   - Setting up horizontal pod autoscaling (HPA) based on memory utilization
   - Configuring resource limits and requests
@@ -201,7 +201,7 @@ This directory contains all the Ansible roles used for provisioning and managing
 
 - **Purpose**: Provides resource metrics for the Kubernetes API
 - **Key Functions**:
-  - Installing and configuring Metrics Server (replacing k3s default)
+  - Installing and configuring Metrics Server (replacing K3s default)
   - Setting up TLS with cert-manager integration
   - Configuring metrics collection intervals
   - Setting resource requests and limits
