@@ -27,8 +27,6 @@ The automation is built around a collection of specialized Ansible roles that ha
 - **GitOps**: ArgoCD for declarative application deployment following GitOps principles
 - **Maintenance**: Coordinated node updates with Kured for minimizing disruption during system maintenance
 
-This cluster implementation is designed for both `arm64` and `amd64` architectures, with optimizations for Raspberry Pi and regular server hardware.
-
 ### Documentation
 
 Visit the [Wiki](https://axivo.com/k3s-cluster) (powered by [Hextra](https://github.com/imfing/hextra)), for detailed configuration instructions.
