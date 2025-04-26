@@ -44,17 +44,22 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.default_dashboards.timezone | string | `"utc"` |  |
 | victoriametrics_vars.kubernetes.grafana.ingress.enabled | bool | `true` |  |
 | victoriametrics_vars.kubernetes.grafana.ingress.subdomain | string | `"grafana"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
+| victoriametrics_vars.kubernetes.grafana.ini.security.unsigned_plugins[0] | string | `"grafana-lokiexplore-app"` |  |
 | victoriametrics_vars.kubernetes.grafana.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.grafana.replicas | int | `1` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.limits.cpu | string | `nil` |  |
-| victoriametrics_vars.kubernetes.grafana.resources.limits.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.resources.limits.memory | string | `"256Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.requests.cpu | string | `"10m"` |  |
-| victoriametrics_vars.kubernetes.grafana.resources.requests.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.resources.requests.memory | string | `"256Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu | string | `nil` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu | string | `"10m"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.class | string | `"longhorn"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.enabled | bool | `true` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.size | string | `"5Gi"` |  |
 | victoriametrics_vars.kubernetes.grafana.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User name used to access Grafana UI |
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.prometheus.name | string | `"prometheus-operator-crds"` |  |
