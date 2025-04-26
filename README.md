@@ -1,9 +1,32 @@
-# K3s Cluster
+# AXIVO K3s Cluster
 
-High Availability K3s cluster, deployed with Ansible.
+<a href="https://axivo.com/k3s-cluster">
+  <img align="right" width="250" height="250" style="margin: 0 0 0 10px;" src="https://raw.githubusercontent.com/axivo/k3s-cluster/main/docs/images/logo-services.svg" alt="AXIVO K3s high-availability cluster, deployed with Ansible" />
+<a/>
 
-<img src="docs/images/logo-services.svg" width="400" height="400" alt="K3s high-availability cluster, deployed with Ansible." />
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-LTS-orange?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Helm](https://img.shields.io/badge/Helm-v3-0F1689?style=flat&logo=helm&logoColor=white)](https://helm.sh)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat&logo=opensourceinitiative&logoColor=white)](https://github.com/axivo/k3s-cluster/blob/main/LICENSE)
 
-## Wiki
+### Introduction
+
+This project provides a comprehensive solution for deploying and managing a production-ready Kubernetes environment using K3s and Ansible. It creates a highly available Kubernetes cluster with embedded etcd and a full suite of essential components configured for optimal performance and reliability.
+
+### Key Features
+
+- **Core Infrastructure**: Fully automated K3s installation on Ubuntu LTS with embedded `etcd` for high availability and HAProxy with Keepalived for Kubernetes API server load balancing
+- **Advanced Networking**: Cilium CNI for eBPF-based networking, replacing `kube-proxy` with optimized service load balancing and Gateway API for ingress
+- **DNS Management**: CoreDNS for internal cluster DNS resolution and External-DNS for automatic external DNS record synchronization
+- **Package Management**: Helm for simplified application deployment and management
+- **Security**: TLS certificate management via `cert-manager` with automatic renewal and integration with external DNS providers
+- **Storage**: Distributed block storage with Longhorn providing volume replication and backup capabilities
+- **Observability**: Complete monitoring stack with Metrics Server for core resource metrics, VictoriaMetrics for advanced metrics collection, AlertManager for alert handling and routing, VictoriaLogs for centralized logging, and Grafana for visualization
+- **GitOps**: ArgoCD for declarative application deployment following GitOps principles
+- **Maintenance**: Coordinated node updates with Kured for minimizing disruption during system maintenance
+
+This cluster implementation is designed for both `arm64` and `amd64` architectures, with optimizations for Raspberry Pi and regular server hardware.
+
+### Documentation
 
 Visit the [Wiki](https://axivo.com/k3s-cluster) (powered by [Hextra](https://github.com/imfing/hextra)), for detailed configuration instructions.
