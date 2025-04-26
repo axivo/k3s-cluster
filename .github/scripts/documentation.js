@@ -92,14 +92,9 @@ async function updateDocumentation({
     await runGit(['switch', headRef]);
     core.info('Generating documentation with helm-docs...');
     const updatedFiles = await api.getUpdatedFiles({ github, context, core });
-    const updatedDirs = [...new Set(updatedFiles.map(file => {
-      const parts = file.split('/');
-      parts.pop();
-      if (parts[parts.length - 1] === 'defaults') {
-        parts.pop();
-      }
-      return parts.join('/');
-    }))];
+    const updatedDirs = [...new Set(updatedFiles.map(file => 
+      file.split('/').slice(0, 2).join('/')
+    ))];
     const helmDocsArgs = [
       '-f', './defaults/main.yaml',
       '-g', updatedDirs.join(','),
