@@ -19,7 +19,7 @@ The automation is built around a collection of specialized Ansible roles that ha
 
 - **Core Infrastructure**: Fully automated K3s installation on Ubuntu LTS with embedded `etcd` for high availability and HAProxy with Keepalived for Kubernetes API server load balancing
 - **Advanced Networking**: Cilium CNI for eBPF-based networking, replacing `kube-proxy` with optimized service load balancing and Gateway API for ingress
-- **DNS Management**: CoreDNS for internal cluster DNS resolution and External-DNS for automatic external DNS record synchronization
+- **DNS Management**: CoreDNS for internal cluster DNS resolution and ExternalDNS for automatic external DNS record synchronization
 - **Package Management**: Helm for simplified application deployment and management
 - **Security**: TLS certificate management via `cert-manager` with automatic renewal and integration with external DNS providers
 - **Storage**: Distributed block storage with Longhorn providing volume replication and backup capabilities
