@@ -1,7 +1,7 @@
 # AXIVO K3s Cluster
 
 <a href="https://axivo.com/k3s-cluster">
-  <img align="right" width="250" height="250" style="margin: 0 0 0 10px;" src="https://raw.githubusercontent.com/axivo/k3s-cluster/main/docs/images/logo-services.svg" alt="AXIVO K3s high-availability cluster, deployed with Ansible" />
+  <img align="right" width="250" height="250" style="margin: 0 0 10px 10px;" src="https://raw.githubusercontent.com/axivo/k3s-cluster/main/docs/images/logo-services.svg" alt="AXIVO K3s high-availability cluster, deployed with Ansible" />
 <a/>
 
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-LTS-orange?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
