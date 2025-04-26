@@ -11,7 +11,9 @@
 
 ### Introduction
 
-This project provides a comprehensive solution for deploying and managing a production-ready Kubernetes environment using K3s and Ansible. It creates a highly available Kubernetes cluster with embedded etcd and a full suite of essential components configured for optimal performance and reliability.
+This project provides a comprehensive framework for deploying and managing production-ready Kubernetes clusters on bare-metal and virtual machines. It leverages Ansible automation to create resilient, fully automated K3s environments with minimal configuration effort.
+
+The automation is built around a collection of specialized Ansible roles that handle every aspect of the cluster lifecycle - from initial deployment and configuration to ongoing maintenance and upgrades. Each role is designed with flexibility in mind, allowing for customization while enforcing operational best practices.
 
 ### Key Features
 
