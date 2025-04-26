@@ -2,6 +2,56 @@
 
 This directory contains all the Ansible roles used for provisioning and managing the K3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides details about role functionality to enable accurate understanding of the cluster provisioning system. Visit the [Wiki](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles), for detailed configuration instructions.
 
+## Roles Structure
+
+Each role typically follows this structure:
+
+- `defaults/main.yaml`: Default variables with specific role-prefixed structure (e.g., `<role>_vars`)
+- `tasks/main.yaml`: Main tasks entry point with role validation and provisioning logic
+- `tasks/validation.yaml`: Validation checks to ensure prerequisites are met
+- `tasks/facts.yaml`: Fact gathering for role-specific data
+- `templates/`: Jinja2 templates for generating configuration files (values.yaml, etc.)
+- `handlers/`: Handlers for service management and restarts
+- `tasks/postinstall.yaml`: Post-installation tasks run after the main deployment
+- `tasks/upgrade.yaml`: Upgrade procedures for version updates
+- `tasks/reset.yaml`: Cleanup and reset procedures for removing components
+- `Chart.yaml`: Info for roles that deploy applications
+- `README.md`: Documentation for the role
+
+## Provisioning Workflow
+
+The roles are applied in this general order:
+
+1. `cluster`: Base system setup
+2. `k3s`: Kubernetes installation
+3. `helm`: Package manager setup
+4. Networking: `cilium` → `coredns` → `external-dns`
+5. Security: `cert-manager`
+6. Storage: `longhorn`
+7. Observability: `metrics-server` → `victoria-logs` → `victoria-metrics`
+8. Application Management: `argo-cd` → `kured`
+
+## Configuration Patterns
+
+The roles follow these common patterns:
+
+- Variables defined in `defaults/main.yaml` with specific structure using `<role>_vars` namespace
+- Facts and computed values in `<role>_map` and `<role>_project` variables
+- Templates for generating role `values.yaml` and Kubernetes manifests
+- Run-once tasks with `run_once: true` for cluster-wide operations (usually on first server)
+- Conditional execution based on node types (`when: inventory_hostname in k3s_map.server.hosts`)
+- Dependencies between roles indicated with imports or includes
+- Validation checks before installation with `any_errors_fatal: true`
+- Idempotent operations with proper change detection and status checking
+- Retry logic for network operations with `delay`, `retries`, and `until` parameters
+- Handlers for service management using `notify` directive
+- Secret management with no_log: true for sensitive operations
+- Proper error handling with informative failure messages
+- Wait conditions for ensuring services are ready
+- Use of Helm for package management with specific chart versions
+- Kubernetes manifest application using k8s module
+- Templating with complex Jinja2 conditionals and filters
+
 ## Core Infrastructure Roles
 
 ### `cluster`
@@ -257,53 +307,3 @@ This directory contains all the Ansible roles used for provisioning and managing
   - Setting up sidecars for dashboard discovery
   - Managing replicas and high-availability configurations
   - Setting log levels for all components (WARN by default)
-
-## Role Structure
-
-Each role typically follows this structure:
-
-- `defaults/main.yaml`: Default variables with specific role-prefixed structure (e.g., `<role>_vars`)
-- `tasks/main.yaml`: Main tasks entry point with role validation and provisioning logic
-- `tasks/validation.yaml`: Validation checks to ensure prerequisites are met
-- `tasks/facts.yaml`: Fact gathering for role-specific data
-- `templates/`: Jinja2 templates for generating configuration files (values.yaml, etc.)
-- `handlers/`: Handlers for service management and restarts
-- `tasks/postinstall.yaml`: Post-installation tasks run after the main deployment
-- `tasks/upgrade.yaml`: Upgrade procedures for version updates
-- `tasks/reset.yaml`: Cleanup and reset procedures for removing components
-- `Chart.yaml`: Info for roles that deploy applications
-- `README.md`: Documentation for the role
-
-## Provisioning Workflow
-
-The roles are applied in this general order:
-
-1. `cluster`: Base system setup
-2. `k3s`: Kubernetes installation
-3. `helm`: Package manager setup
-4. Networking: `cilium` → `coredns` → `external-dns`
-5. Security: `cert-manager`
-6. Storage: `longhorn`
-7. Observability: `metrics-server` → `victoria-logs` → `victoria-metrics`
-8. Application Management: `argo-cd` → `kured`
-
-## Configuration Patterns
-
-The roles follow these common patterns:
-
-- Variables defined in `defaults/main.yaml` with specific structure using `<role>_vars` namespace
-- Facts and computed values in `<role>_map` and `<role>_project` variables
-- Templates for generating role `values.yaml` and Kubernetes manifests
-- Run-once tasks with `run_once: true` for cluster-wide operations (usually on first server)
-- Conditional execution based on node types (`when: inventory_hostname in k3s_map.server.hosts`)
-- Dependencies between roles indicated with imports or includes
-- Validation checks before installation with `any_errors_fatal: true`
-- Idempotent operations with proper change detection and status checking
-- Retry logic for network operations with `delay`, `retries`, and `until` parameters
-- Handlers for service management using `notify` directive
-- Secret management with no_log: true for sensitive operations
-- Proper error handling with informative failure messages
-- Wait conditions for ensuring services are ready
-- Use of Helm for package management with specific chart versions
-- Kubernetes manifest application using k8s module
-- Templating with complex Jinja2 conditionals and filters
