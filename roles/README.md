@@ -1,6 +1,6 @@
 # Roles
 
-This directory contains all the Ansible roles used for provisioning and managing the K3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides explicit details about role functionality to enable accurate understanding of the cluster provisioning system.
+This directory contains all the Ansible roles used for provisioning and managing the K3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides details about role functionality to enable accurate understanding of the cluster provisioning system. Visit the [Wiki](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles), for detailed configuration instructions.
 
 ## Core Infrastructure Roles
 
