@@ -97,7 +97,7 @@ async function updateDocumentation({
         const parts = file.split('/');
         parts.pop();
         return parts.join('/');
-      }).filter(dir => !dir.includes('/defaults'))
+      }).filter(dir => !dir.endsWith('/defaults'))
       .filter((dir, index, self) => self.indexOf(dir) === index);
     const helmDocsArgs = [
       '-f', './defaults/main.yaml',
