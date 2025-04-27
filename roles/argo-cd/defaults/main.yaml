@@ -54,6 +54,7 @@ argocd_vars:
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn
         server:
+          # -- If `false`, serves HTTPS traffic with TLS encryption, else HTTP plaintext
           insecure: false
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn

@@ -40,7 +40,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.configs.params.dexserver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.notificationscontroller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.reposerver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
-| argocd_vars.kubernetes.configs.params.server.insecure | bool | `false` |  |
+| argocd_vars.kubernetes.configs.params.server.insecure | bool | `false` | If `false`, serves HTTPS traffic with TLS encryption, else HTTP plaintext |
 | argocd_vars.kubernetes.configs.params.server.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled | bool | `true` | See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution), for details |
 | argocd_vars.kubernetes.controller.replicas | int | `1` |  |
