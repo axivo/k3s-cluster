@@ -54,8 +54,7 @@ argocd_vars:
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn
         server:
-          # -- If `true`, HTTPRoute is used, otherwise Ingress
-          insecure: true
+          insecure: false
           # -- Available options are `debug`, `info', `warn` and `error`
           log_level: warn
     controller:
@@ -163,8 +162,7 @@ argocd_vars:
           # -- (string) ArgoCD UI user password, set at global level
           # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
           password:
-      gateway:
-        service: argo-cd-argocd-server
+      ingress:
         # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: argocd
       resources:

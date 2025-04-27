@@ -11,11 +11,13 @@ resource.exclusions: |
       - cilium.io
       - snapshot.storage.k8s.io
     kinds:
+      - CiliumClusterwideNetworkPolicy
       - CiliumIdentity
+      - CiliumNetworkPolicy
       - VolumeSnapshot
       - VolumeSnapshotContent
     clusters:
-      - "*.local"
+      - "*"
 
 {# See https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#argocd-app
 resource.customizations.health.argoproj.io_Application: |
