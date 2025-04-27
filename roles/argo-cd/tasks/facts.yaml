@@ -9,20 +9,17 @@
           user:
             name: '{{ global_map.credentials.argocd.server.user.name }}'
             password: "{{ global_map.credentials.argocd.server.user.password | string | password_hash('blowfish') }}"
-      gateway:
-        server:
-          annotations:
-            cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
-          hostname: '{{ argocd_vars.kubernetes.server.gateway.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
-          http_route:
-            insecure: '{{ argocd_vars.kubernetes.server.gateway.service }}-http'
-            secure: '{{ argocd_vars.kubernetes.server.gateway.service }}-https'
       ingress:
         class:
           name: cilium
         server:
           annotations:
-            ingress.cilium.io/tls-passthrough: enabled
+            api:
+              cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+            grpc:
+              cert-manager.io/cluster-issuer: '{{ externaldns_project.cloudflare.cluster.issuer }}'
+              ingress.cilium.io/tls-passthrough: enabled
+          hostname: '{{ argocd_vars.kubernetes.server.ingress.subdomain }}.{{ externaldns_vars.cloudflare.host.domain }}'
       helm:
         chart:
           reference: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'

@@ -5,7 +5,7 @@ global:
       maxUnavailable: 0
     type: RollingUpdate
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
-  domain: {{ argocd_map.gateway.server.hostname }}
+  domain: {{ argocd_map.ingress.server.hostname }}
 {% endif %}
   logging:
     level: {{ argocd_vars.kubernetes.global.logging.level }}
@@ -262,23 +262,38 @@ server:
 {% else %}
   replicas: {{ argocd_vars.kubernetes.server.autoscaling.min_replicas }}
 {% endif %}
-{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy and externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
   certificate:
     enabled: true
     issuer:
       group: cert-manager.io
       kind: ClusterIssuer
-      name: {{ certmanager_map.ca.cluster.issuer.name }}
+      name: {{ externaldns_project.cloudflare.cluster.issuer }}
     privateKey:
       rotationPolicy: Always
+{% endif %}
   ingress:
     annotations:
-{% for key, value in argocd_map.ingress.server.annotations.items() %}
+{% for key, value in argocd_map.ingress.server.annotations.api.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
     enabled: true
     ingressClassName: {{ argocd_map.ingress.class.name }}
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
     tls: true
+{% endif %}
+  ingressGrpc:
+    annotations:
+{% for key, value in argocd_map.ingress.server.annotations.grpc.items() %}
+      {{ key | indent(6) }}: {{ value }}
+{% endfor %}
+    enabled: true
+    ingressClassName: {{ argocd_map.ingress.class.name }}
+    hostname: {{ argocd_map.ingress.server.hostname }}
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
+    tls: true
+{% endif %}
 {% endif %}
 {% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
@@ -297,6 +312,8 @@ server:
       scrapeTimeout: {{ argocd_map.metrics.service.monitor.scrape.timeout }}
 {% endif %}
 {% endif %}
+  service:
+    servicePortHttpsAppProtocol: h2
   pdb:
     enabled: true
     maxUnavailable: 1

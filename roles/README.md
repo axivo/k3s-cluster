@@ -2,7 +2,20 @@
 
 This directory contains all the Ansible roles used for provisioning and managing the K3s Kubernetes cluster. Each role has a specific purpose in the overall architecture. This document provides details about role functionality to enable accurate understanding of the cluster provisioning system. Visit the [Wiki](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles), for detailed configuration instructions.
 
-## Roles Structure
+## Provisioning Workflow
+
+The roles are applied in this general order:
+
+1. Base System: `cluster`
+2. Kubernetes: `k3s`
+3. Package Manager: `helm`
+4. Networking: `cilium` → `coredns` → `external-dns`
+5. Security: `cert-manager`
+6. Storage: `longhorn`
+7. Observability: `metrics-server` → `victoria-logs` → `victoria-metrics`
+8. Application Management: `argo-cd` → `kured`
+
+## Structure
 
 Each role typically follows this structure:
 
@@ -15,21 +28,9 @@ Each role typically follows this structure:
 - `tasks/postinstall.yaml`: Post-installation tasks run after the main deployment
 - `tasks/upgrade.yaml`: Upgrade procedures for version updates
 - `tasks/reset.yaml`: Cleanup and reset procedures for removing components
-- `Chart.yaml`: Info for roles that deploy applications
-- `README.md`: Documentation for the role
-
-## Provisioning Workflow
-
-The roles are applied in this general order:
-
-1. `cluster`: Base system setup
-2. `k3s`: Kubernetes installation
-3. `helm`: Package manager setup
-4. Networking: `cilium` → `coredns` → `external-dns`
-5. Security: `cert-manager`
-6. Storage: `longhorn`
-7. Observability: `metrics-server` → `victoria-logs` → `victoria-metrics`
-8. Application Management: `argo-cd` → `kured`
+- `Chart.yaml`: Role information needed for documentation generated with `helm-docs`
+- `README.md`: Role documentation generated with `helm-docs`
+- `README.md.gotmpl`: Role documentation template used with `helm-docs`
 
 ## Configuration Patterns
 
