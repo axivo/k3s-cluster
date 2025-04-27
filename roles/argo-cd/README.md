@@ -40,7 +40,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.configs.params.dexserver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.notificationscontroller.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.configs.params.reposerver.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
-| argocd_vars.kubernetes.configs.params.server.insecure | bool | `true` | If `true`, HTTPRoute is used, otherwise Ingress |
+| argocd_vars.kubernetes.configs.params.server.insecure | bool | `false` |  |
 | argocd_vars.kubernetes.configs.params.server.log_level | string | `"warn"` | Available options are `debug`, `info', `warn` and `error` |
 | argocd_vars.kubernetes.controller.dynamic_cluster_distribution.enabled | bool | `true` | See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution), for details |
 | argocd_vars.kubernetes.controller.replicas | int | `1` |  |
@@ -93,8 +93,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.server.credentials.admin.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI admin password, set at global level |
 | argocd_vars.kubernetes.server.credentials.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user name, set at global level |
 | argocd_vars.kubernetes.server.credentials.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user password, set at global level |
-| argocd_vars.kubernetes.server.gateway.service | string | `"argo-cd-argocd-server"` |  |
-| argocd_vars.kubernetes.server.gateway.subdomain | string | `"argocd"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
+| argocd_vars.kubernetes.server.ingress.subdomain | string | `"argocd"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | argocd_vars.kubernetes.server.resources.limits.cpu | string | `nil` |  |
 | argocd_vars.kubernetes.server.resources.limits.memory | string | `"128Mi"` |  |
 | argocd_vars.kubernetes.server.resources.requests.cpu | string | `"10m"` |  |
