@@ -34,13 +34,14 @@ const config = require('./config');
  * REST APIs. These operations must be performed using Git CLI commands on the local repository.
  * 
  * @param {Object} options - Function parameters
- * @param {Object} options.github - GitHub API client (unused but kept for consistent parameter structure)
- * @param {Object} options.context - GitHub Actions context containing repository information
  * @param {Object} options.core - GitHub Actions Core API for logging and output
  * @param {Object} options.exec - GitHub Actions exec helpers for running commands
  * @returns {Promise<Function>} - Async function to run Git commands that returns trimmed stdout
  */
-async function configureGitRepository({ github, context, core, exec }) {
+async function configureGitRepository({
+  core,
+  exec 
+}) {
   const runGit = async (args) => (await exec.getExecOutput('git', args)).stdout.trim();
   try {
     core.info('Configuring Git repository...');
