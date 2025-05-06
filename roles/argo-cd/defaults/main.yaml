@@ -111,7 +111,7 @@ argocd_vars:
         # -- Helm chart name
         name: argo-cd
         # -- Helm chart version
-        version: v7.8.28
+        version: v7.9.1
       repository:
         # -- Repository name in Helm
         name: argo-helm
