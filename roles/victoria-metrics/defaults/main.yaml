@@ -41,7 +41,7 @@ victoriametrics_vars:
       chart:
         prometheus:
           name: prometheus-operator-crds
-          version: v19.1.0
+          version: v20.0.1
         victoriametrics:
           alias: vmks
           name: victoria-metrics-k8s-stack
