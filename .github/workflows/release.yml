@@ -1,4 +1,4 @@
-name: Documentation
+name: Release
 
 on:
   pull_request:
@@ -16,6 +16,7 @@ defaults:
     shell: bash
 
 permissions:
+  checks: write
   contents: write
   issues: write
 
@@ -36,29 +37,35 @@ jobs:
         run: npm install handlebars
 
       - name: Configure repository
+        id: workflow
         uses: actions/github-script@v7
         with:
           script: |
-            const { configureGitRepository } = require('./.github/scripts/utils.js');
-            await configureGitRepository({ core, exec });
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.configureRepository();
 
       - name: Install helm-docs
         uses: actions/github-script@v7
         with:
           script: |
-            const { installHelmDocs } = require('./.github/scripts/documentation.js');
-            await installHelmDocs({ core, exec, version: '1.14.2' });
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.installHelmDocs('1.14.2');
 
-      - name: Update documentation
+      - name: Process releases
         uses: actions/github-script@v7
         with:
           script: |
-            const { updateDocumentation } = require('./.github/scripts/documentation.js');
-            await updateDocumentation({ github, context, core, exec });
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.processReleases();
 
       - name: Report workflow issue
         uses: actions/github-script@v7
+        if: always()
         with:
           script: |
-            const { reportWorkflowIssue } = require('./.github/scripts/utils.js');
-            await reportWorkflowIssue({ github, context, core });
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.reportIssue();
