@@ -50,7 +50,7 @@
       "customType": "regex",
       "datasourceTemplate": "node",
       "depNameTemplate": "node",
-      "fileMatch": [
+      "managerFilePatterns": [
         ".github/workflows/documentation.yml"
       ],
       "matchStrings": [
@@ -63,7 +63,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "norwoodj/helm-docs",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         ".github/workflows/documentation.yml"
       ],
       "matchStrings": [
@@ -75,7 +75,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-helm",
       "extractVersionTemplate": "^argo-cd-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/argo-cd/Chart.yaml",
         "roles/argo-cd/defaults/main.yaml"
       ],
@@ -89,7 +89,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "argoproj/argo-cd",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/argo-cd/Chart.yaml",
         "roles/argo-cd/defaults/main.yaml"
       ],
@@ -103,7 +103,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "cert-manager/cert-manager",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cert-manager/Chart.yaml",
         "roles/cert-manager/defaults/main.yaml"
       ],
@@ -117,7 +117,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "cert-manager/cmctl",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cert-manager/Chart.yaml",
         "roles/cert-manager/defaults/main.yaml"
       ],
@@ -131,7 +131,7 @@
       "datasourceTemplate": "custom.cilium",
       "depNameTemplate": "cilium/cilium",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
@@ -145,7 +145,7 @@
       "datasourceTemplate": "custom.cilium-cli",
       "depNameTemplate": "cilium/cilium-cli",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
@@ -159,7 +159,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/gateway-api",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
@@ -173,7 +173,7 @@
       "datasourceTemplate": "custom.hubble",
       "depNameTemplate": "cilium/hubble",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cilium/Chart.yaml",
         "roles/cilium/defaults/main.yaml"
       ],
@@ -186,7 +186,7 @@
       "customType": "regex",
       "datasourceTemplate": "custom.cluster",
       "depNameTemplate": "canonical/ubuntu",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/cluster/Chart.yaml"
       ],
       "matchStrings": [
@@ -199,7 +199,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "coredns/helm",
       "extractVersionTemplate": "^coredns-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/coredns/Chart.yaml",
         "roles/coredns/defaults/main.yaml"
       ],
@@ -213,7 +213,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/external-dns",
       "extractVersionTemplate": "^external-dns-helm-chart-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/external-dns/Chart.yaml",
         "roles/external-dns/defaults/main.yaml"
       ],
@@ -226,7 +226,7 @@
       "customType": "regex",
       "datasourceTemplate": "custom.helm",
       "depNameTemplate": "balto/helm",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/helm/Chart.yaml",
         "roles/helm/defaults/main.yaml"
       ],
@@ -241,7 +241,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "databus23/helm-diff",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/helm/Chart.yaml",
         "roles/helm/defaults/main.yaml"
       ],
@@ -255,7 +255,7 @@
       "datasourceTemplate": "custom.k3s",
       "depNameTemplate": "k3s-io/k3s",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/k3s/Chart.yaml",
         "roles/k3s/defaults/main.yaml"
       ],
@@ -270,7 +270,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubepug/kubepug",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/k3s/Chart.yaml",
         "roles/k3s/defaults/main.yaml"
       ],
@@ -284,7 +284,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubereboot/kured",
       "extractVersionTemplate": "^kured-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/kured/Chart.yaml",
         "roles/kured/defaults/main.yaml"
       ],
@@ -299,7 +299,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "longhorn/cli",
       "extractVersionTemplate": "^v(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/longhorn/Chart.yaml",
         "roles/longhorn/defaults/main.yaml"
       ],
@@ -313,7 +313,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "longhorn/longhorn",
       "extractVersionTemplate": "^longhorn-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/longhorn/Chart.yaml",
         "roles/longhorn/defaults/main.yaml"
       ],
@@ -328,7 +328,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "kubernetes-sigs/metrics-server",
       "extractVersionTemplate": "^metrics-server-helm-chart-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/metrics-server/Chart.yaml",
         "roles/metrics-server/defaults/main.yaml"
       ],
@@ -342,7 +342,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "VictoriaMetrics/victoria-logs-single",
       "extractVersionTemplate": "^victoria-logs-single-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/victoria-logs/Chart.yaml",
         "roles/victoria-logs/defaults/main.yaml"
       ],
@@ -357,7 +357,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "prometheus-community/prometheus-operator-crds",
       "extractVersionTemplate": "^prometheus-operator-crds-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/victoria-metrics/Chart.yaml",
         "roles/victoria-metrics/defaults/main.yaml"
       ],
@@ -372,7 +372,7 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "VictoriaMetrics/victoria-metrics-k8s-stack",
       "extractVersionTemplate": "^victoria-metrics-k8s-stack-(?<version>.+)$",
-      "fileMatch": [
+      "managerFilePatterns": [
         "roles/victoria-metrics/Chart.yaml",
         "roles/victoria-metrics/defaults/main.yaml"
       ],
