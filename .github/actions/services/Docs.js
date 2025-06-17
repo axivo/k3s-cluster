@@ -41,9 +41,11 @@ class DocsService extends Action {
   async generate(directories) {
     return this.execute('generate documentation', async () => {
       this.logger.info('Generating documentation with helm-docs...');
-      const result = await this.shellService.execute('helm-docs', helmDocsArgs, {
-        output: true,
-        returnFullResult: true,
+      const dirsList = directories.join(',');
+      await this.shellService.execute('helm-docs', [
+        '-g', dirsList, 
+        '-l', this.config.get('workflow.docs.logLevel')
+      ], {
         silent: false
       });
       const statusResult = await this.gitService.getStatus();
