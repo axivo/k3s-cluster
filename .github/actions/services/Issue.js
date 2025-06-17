@@ -37,13 +37,13 @@ class IssueService extends Action {
     return this.execute('validate workflow status', async () => {
       let hasFailures = false;
       const workflowRun = await this.gitHubService.getWorkflowRun(id);
-      if (['cancelled', 'failure'].includes(workflowRun.conclusion)) {
-        return true;
-      }
+      if (['cancelled', 'failure'].includes(workflowRun.conclusion)) return true;
       const jobs = await this.gitHubService.listJobs();
       for (const job of jobs) {
         if (job.steps) {
-          const failedSteps = job.steps.filter(step => step.conclusion !== 'success');
+          const failedSteps = job.steps.filter(step =>
+            step.status === 'completed' && step.conclusion !== 'success'
+          );
           if (failedSteps.length) {
             hasFailures = true;
             break;
