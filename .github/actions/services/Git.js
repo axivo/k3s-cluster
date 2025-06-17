@@ -90,7 +90,7 @@ class GitService extends Action {
       if (result) {
         result.split('\n').filter(Boolean).forEach(line => {
           const statusCode = line.substring(0, 2);
-          const file = line.substring(3);
+          const file = line.substring(2).trim();
           if (statusCode.includes('D')) status.deleted.push(file);
           else if (['A', 'C', 'M', 'R'].some(filter => statusCode.includes(filter))) status.modified.push(file);
           else status.untracked.push(file);
