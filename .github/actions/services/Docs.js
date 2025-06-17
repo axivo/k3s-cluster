@@ -45,9 +45,7 @@ class DocsService extends Action {
         '-f', 'defaults/main.yaml',
         '-g', directories.join(','), 
         '-l', this.config.get('workflow.docs.logLevel')
-      ], {
-        output: true
-      });
+      ], { output: true });
       const statusResult = await this.gitService.getStatus();
       const files = [...statusResult.modified, ...statusResult.untracked];
       if (!files.length) {
