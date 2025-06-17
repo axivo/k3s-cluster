@@ -41,9 +41,9 @@ class DocsService extends Action {
   async generate(directories) {
     return this.execute('generate documentation', async () => {
       this.logger.info('Generating documentation with helm-docs...');
-      const dirsList = directories.join(',');
       await this.shellService.execute('helm-docs', [
-        '-g', dirsList, 
+        '-f', 'defaults/main.yaml',
+        '-g', directories.join(','), 
         '-l', this.config.get('workflow.docs.logLevel')
       ], {
         silent: false
