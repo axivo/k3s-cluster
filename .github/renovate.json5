@@ -398,6 +398,20 @@
   "labels": [
     "dependency"
   ],
+  "packageRules": [
+    {
+      "enabled": true,
+      "matchDatasources": [
+        "node-version"
+      ],
+      "matchDepNames": [
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ]
+    }
+  ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "semanticCommits": "enabled",
