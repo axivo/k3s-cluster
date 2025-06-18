@@ -62,8 +62,8 @@
             name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ argocd_vars.kubernetes.namespace }}'
           register: release
-          changed_when: false
           when: kubeconfig.stat.exists
+          changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:

@@ -111,7 +111,7 @@ argocd_vars:
         # -- Helm chart name
         name: argo-cd
         # -- Helm chart version
-        version: v7.8.28
+        version: v8.0.17
       repository:
         # -- Repository name in Helm
         name: argo-helm
@@ -216,7 +216,9 @@ argocd_vars:
           password:
       ingress:
         # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
-        subdomain: argocd
+        subdomain:
+          api: argocd
+          grpc: grpc.argocd
       resources:
         limits:
           # -- CPU limit, `null` for no limit
@@ -239,4 +241,4 @@ argocd_vars:
       # -- Organization name
       org: argoproj
     # -- CLI version to install
-    version: v2.14.11
+    version: v3.0.6
