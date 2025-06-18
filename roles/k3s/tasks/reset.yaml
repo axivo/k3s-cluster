@@ -45,7 +45,7 @@
     - name: Remove cluster files
       ansible.builtin.shell: |
         set -eo pipefail
-        kill -KILL -f {{ k3s_project.node.binary }} || true
+        kill -KILL -f {{ k3s_node.binary }} || true
         if [[ -d {{ item }} ]]; then
           while read -r process; do
             kill -KILL "$process" || true
@@ -86,11 +86,11 @@
         path: '{{ item }}'
         state: absent
       loop:
-        - '{{ k3s_project.node.binary }}'
         - '{{ k3s_map.node.directory.bin }}/crictl'
         - '{{ k3s_map.node.directory.bin }}/ctr'
         - '{{ k3s_map.node.directory.bin }}/kubectl'
         - '{{ k3s_map.node.directory.config }}'
+        - '{{ k3s_node.binary }}'
         - /etc/sysctl.d/90-kubernetes-node.conf
         - /etc/sysctl.d/99-zzz-override_cilium.conf
         - /etc/systemd/system/{{ k3s_map.service.name }}.service
@@ -109,10 +109,11 @@
       become: false
       run_once: true
 
-    - name: Reset systemd
+    - name: Reload systemd unit files
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Reset failed systemd services
       ansible.builtin.command:
-        cmd: systemctl '{{ item }}' # noqa command-instead-of-module
+        cmd: systemctl reset-failed
       changed_when: false
-      loop:
-        - daemon-reload
-        - reset-failed

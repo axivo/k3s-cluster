@@ -36,7 +36,7 @@
     - name: Create symlinks
       ansible.builtin.file:
         path: '{{ k3s_map.node.directory.bin }}/{{ item }}'
-        src: '{{ k3s_project.node.binary }}'
+        src: '{{ k3s_node.binary }}'
         state: link
       loop:
         - crictl
@@ -157,7 +157,7 @@
           clusters:
             - cluster:
                 certificate-authority-data: "{{ datasource.clusters[0].cluster['certificate-authority-data'] }}"
-                server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha else k3s_node.ip }}:{{ k3s_vars.server.api.port }}
+                server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha is truthy else k3s_node.ip }}:{{ k3s_vars.server.api.port }}
               name: '{{ datasource.clusters[0].name }}'
 
     - name: Create local .kube directory
@@ -178,7 +178,7 @@
     - name: Copy remote .kube/config file locally
       ansible.builtin.fetch:
         src: '{{ kubeconfig.path }}'
-        dest: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
+        dest: "{{ k3s_vars.cluster.kubeconfig.path }}/config"
         flat: true
 
     - name: Remove remote .kube/config file
@@ -188,7 +188,7 @@
 
     - name: Set local .kube/config file permissions
       ansible.builtin.file:
-        path: "{{ k3s_vars.cluster.kubeconfig.path + '/config' }}"
+        path: "{{ k3s_vars.cluster.kubeconfig.path }}/config"
         mode: '600'
         state: file
       delegate_to: localhost

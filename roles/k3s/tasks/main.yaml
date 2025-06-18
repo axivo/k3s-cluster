@@ -11,7 +11,7 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_project.node.binary }}'
+        dest: '{{ k3s_node.binary }}'
         owner: root
         group: root
         mode: '755'
@@ -39,6 +39,14 @@
         owner: root
         group: root
         mode: '600'
+
+    - name: Create kubelet configuration file
+      ansible.builtin.template:
+        src: config_kubelet.j2
+        dest: '{{ k3s_project.cluster.config_kubelet }}'
+        owner: root
+        group: root
+        mode: '644'
 
     - name: Create service file
       ansible.builtin.template:
