@@ -34,4 +34,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.service.unattended_upgrades.remove_deps | string | `"true"` |  |
 | cluster_vars.service.wifi.enabled | bool | `false` | By default, related `apt` packages are not installed |
 | cluster_vars.ssh.key | string | `"id_ed25519.pub"` | See [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/user/#ssh-key), for details |
-| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"` | Full path to `.ssh` directory, a hardcoded value can be used |
+| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') }}/.ssh"` | Full path to `.ssh` directory, a hardcoded value can be used |
