@@ -58,7 +58,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` | Minimum CPU request |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` | Minimum memory request |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` | Helm chart name |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v7.8.28"` | Helm chart version |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v8.0.17"` | Helm chart version |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` | Repository name in Helm |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` | Organization name |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` | Helm repository URL |
@@ -94,7 +94,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.server.credentials.admin.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI admin password, set at global level |
 | argocd_vars.kubernetes.server.credentials.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user name, set at global level |
 | argocd_vars.kubernetes.server.credentials.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | ArgoCD UI user password, set at global level |
-| argocd_vars.kubernetes.server.ingress.subdomain | string | `"argocd"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
+| argocd_vars.kubernetes.server.ingress.subdomain | object | `{"api":"argocd","grpc":"grpc.argocd"}` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
 | argocd_vars.kubernetes.server.resources.limits.cpu | string | `nil` | CPU limit, `null` for no limit |
 | argocd_vars.kubernetes.server.resources.limits.memory | string | `"128Mi"` | Memory limit |
 | argocd_vars.kubernetes.server.resources.requests.cpu | string | `"10m"` | Minimum CPU request |
@@ -103,4 +103,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | argocd_vars.release.repository.name | string | `"argo-cd"` | CLI repository name |
 | argocd_vars.release.repository.org | string | `"argoproj"` | Organization name |
-| argocd_vars.release.version | string | `"v2.14.11"` | CLI version to install |
+| argocd_vars.release.version | string | `"v3.0.6"` | CLI version to install |
