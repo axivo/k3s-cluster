@@ -1,8 +1,8 @@
 # longhorn
 
-![Version: 1.8.1](https://img.shields.io/badge/Version-1.8.1-informational?style=flat-square)
+![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square)
 
-The role performs various tasks related to `longhorn` [chart](https://github.com/longhorn/charts/tree/longhorn-1.8.1/charts/longhorn) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/longhorn), for additional details.
+The role performs various tasks related to `longhorn` [chart](https://github.com/longhorn/charts/tree/longhorn-1.9.0/charts/longhorn) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/longhorn), for additional details.
 
 ## Role Dependencies
 
