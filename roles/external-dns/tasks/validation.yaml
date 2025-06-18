@@ -32,12 +32,19 @@
             repo_url: '{{ externaldns_map.helm.repository.url }}'
             force_update: true
 
+        - name: Validate cluster kubeconfig path
+          ansible.builtin.stat:
+            path: '{{ k3s_project.cluster.kubeconfig }}'
+          register: kubeconfig
+          changed_when: false
+
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ externaldns_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ externaldns_vars.kubernetes.namespace }}'
           register: release
+          when: kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact

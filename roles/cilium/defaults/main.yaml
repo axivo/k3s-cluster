@@ -56,7 +56,7 @@ cilium_vars:
     helm:
       chart:
         name: cilium
-        version: v1.17.3
+        version: v1.17.4
       repository:
         name: cilium
         org: cilium
@@ -167,4 +167,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.17.2
+      version: v1.17.3

@@ -1,0 +1,31 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+evictionHard:
+  imagefs.available: "15%"
+  imagefs.inodesFree: "5%"
+  memory.available: "{{ k3s_map.node.kubelet.eviction_hard.memory_available }}"
+  nodefs.available: "10%"
+  nodefs.inodesFree: "5%"
+evictionMaxPodGracePeriod: {{ k3s_map.node.kubelet.eviction_max_pod_grace_period }}
+evictionMinimumReclaim:
+  imagefs.available: "15%"
+  imagefs.inodesFree: "5%"
+  memory.available: "{{ k3s_map.node.kubelet.eviction_hard.memory_available }}"
+  nodefs.available: "10%"
+  nodefs.inodesFree: "5%"
+evictionSoft:
+  imagefs.available: "30%"
+  imagefs.inodesFree: "10%"
+  memory.available: "{{ k3s_map.node.kubelet.eviction_soft.memory_available }}"
+  nodefs.available: "30%"
+  nodefs.inodesFree: "10%"
+evictionSoftGracePeriod:
+  imagefs.available: "2m"
+  imagefs.inodesFree: "2m"
+  memory.available: "1m30s"
+  nodefs.available: "2m"
+  nodefs.inodesFree: "2m"
+systemReserved:
+  cpu: "{{ k3s_map.node.kubelet.system_reserved.cpu }}"
+  ephemeral-storage: "{{ k3s_map.node.kubelet.system_reserved.ephemeral_storage }}"
+  memory: "{{ k3s_map.node.kubelet.system_reserved.memory }}"

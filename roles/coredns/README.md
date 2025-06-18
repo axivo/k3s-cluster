@@ -16,7 +16,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 |-----|------|---------|-------------|
 | coredns_vars.kubernetes.deployment.legacy | bool | `false` | Legacy deployment, using `kube-dns` label selectors |
 | coredns_vars.kubernetes.helm.chart.name | string | `"coredns"` |  |
-| coredns_vars.kubernetes.helm.chart.version | string | `"v1.40.0"` |  |
+| coredns_vars.kubernetes.helm.chart.version | string | `"v1.42.3"` |  |
 | coredns_vars.kubernetes.helm.repository.name | string | `"helm"` |  |
 | coredns_vars.kubernetes.helm.repository.org | string | `"coredns"` |  |
 | coredns_vars.kubernetes.helm.repository.url | string | `"https://coredns.github.io"` |  |

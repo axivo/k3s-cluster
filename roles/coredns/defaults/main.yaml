@@ -4,7 +4,7 @@ coredns_vars:
     helm:
       chart:
         name: coredns
-        version: v1.40.0
+        version: v1.42.3
       repository:
         name: helm
         org: coredns

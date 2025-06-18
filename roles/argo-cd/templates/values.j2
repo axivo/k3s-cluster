@@ -5,10 +5,12 @@ global:
       maxUnavailable: 0
     type: RollingUpdate
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
-  domain: {{ argocd_map.ingress.server.hostname }}
+  domain: {{ argocd_map.ingress.server.hostname.api }}
 {% endif %}
   logging:
     level: {{ argocd_vars.kubernetes.global.logging.level }}
+  networkPolicy:
+    create: true
 applicationSet:
 {% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:
@@ -270,30 +272,30 @@ server:
       group: cert-manager.io
       kind: ClusterIssuer
       name: {{ externaldns_project.cloudflare.cluster.issuer }}
-    privateKey:
-      rotationPolicy: Always
+  containerPorts:
+    server: 443
 {% endif %}
   ingress:
+    enabled: true
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
     annotations:
 {% for key, value in argocd_map.ingress.server.annotations.api.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
-    ingressClassName: {{ argocd_map.ingress.class.name }}
-{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
     tls: true
 {% endif %}
+    ingressClassName: {{ argocd_map.ingress.class.name }}
   ingressGrpc:
+    enabled: true
+{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
     annotations:
-{% for key, value in argocd_map.ingress.server.annotations.grpc.items() %}
+{% for key, value in argocd_map.ingress.server.annotations.api.items() %}
       {{ key | indent(6) }}: {{ value }}
 {% endfor %}
-    enabled: true
-    ingressClassName: {{ argocd_map.ingress.class.name }}
-    hostname: {{ argocd_map.ingress.server.hostname }}
-{% if argocd_vars.kubernetes.configs.params.server.insecure is falsy %}
     tls: true
 {% endif %}
+    ingressClassName: {{ argocd_map.ingress.class.name }}
+    hostname: {{ argocd_map.ingress.server.hostname.grpc }}
 {% endif %}
 {% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
   metrics:

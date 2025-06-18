@@ -10,7 +10,7 @@
   block:
     - name: Get binary status
       ansible.builtin.stat:
-        path: '{{ k3s_project.node.binary }}'
+        path: '{{ k3s_node.binary }}'
       changed_when: not k3s_binary.stat.exists
       register: k3s_binary
 
@@ -32,7 +32,7 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_project.node.binary }}'
+        dest: '{{ k3s_node.binary }}'
         owner: root
         group: root
         mode: '755'
