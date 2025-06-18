@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/longhorn/cli | longhornctl | 1.8.1 |
+| https://github.com/longhorn/cli | longhornctl | 1.9.0 |
 
 ## Role Variables
 
