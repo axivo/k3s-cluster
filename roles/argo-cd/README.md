@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/argoproj/argo-cd | argocd | 2.14.11 |
+| https://github.com/argoproj/argo-cd | argocd | 3.0.6 |
 
 ## Role Variables
 
