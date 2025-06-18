@@ -1,8 +1,8 @@
 # cilium
 
-![Version: 1.17.3](https://img.shields.io/badge/Version-1.17.3-informational?style=flat-square)
+![Version: 1.17.4](https://img.shields.io/badge/Version-1.17.4-informational?style=flat-square)
 
-The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.17.3/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
+The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.17.4/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
 
 ## Role Dependencies
 
