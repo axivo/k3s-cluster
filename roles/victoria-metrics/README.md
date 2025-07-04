@@ -66,7 +66,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v21.0.0"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.52.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.55.2"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |

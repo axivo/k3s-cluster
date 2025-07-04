@@ -33,7 +33,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | certmanager_vars.kubernetes.controller.resources.requests.memory | string | `"128Mi"` |  |
 | certmanager_vars.kubernetes.global.log_level | int | `2` |  |
 | certmanager_vars.kubernetes.helm.chart.name | string | `"cert-manager"` |  |
-| certmanager_vars.kubernetes.helm.chart.version | string | `"v1.18.0"` |  |
+| certmanager_vars.kubernetes.helm.chart.version | string | `"v1.18.2"` |  |
 | certmanager_vars.kubernetes.helm.repository.name | string | `"cert-manager"` |  |
 | certmanager_vars.kubernetes.helm.repository.org | string | `"jetstack"` |  |
 | certmanager_vars.kubernetes.helm.repository.url | string | `"https://charts.jetstack.io"` |  |
