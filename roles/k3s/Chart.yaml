@@ -2,7 +2,7 @@ apiVersion: v2
 name: k3s
 description: Documentation generator for k3s Ansible role
 home: https://github.com/k3s-io/k3s
-version: 1.32.5+k3s1
+version: 1.32.6+k3s1
 dependencies:
   - name: kubepug
     repository: https://github.com/kubepug/kubepug
