@@ -1,8 +1,8 @@
 # coredns
 
-![Version: 1.42.4](https://img.shields.io/badge/Version-1.42.4-informational?style=flat-square)
+![Version: 1.43.0](https://img.shields.io/badge/Version-1.43.0-informational?style=flat-square)
 
-The role performs various tasks related to `coredns` [chart](https://github.com/coredns/helm/tree/coredns-1.42.4/charts/coredns) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/coredns), for additional details.
+The role performs various tasks related to `coredns` [chart](https://github.com/coredns/helm/tree/coredns-1.43.0/charts/coredns) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/coredns), for additional details.
 
 ## Role Variables
 
