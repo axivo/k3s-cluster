@@ -3,9 +3,13 @@
   ansible.builtin.set_fact:
     victoriametrics_map:
       credentials:
-        grafana:
-          secret: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}-grafana-credentials'
+        secret: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}-credentials'
       helm:
+        application:
+          name: "{{
+            '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias,
+              victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name])
+            }}"
         chart:
           - name: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.name }}'
             version: '{{ victoriametrics_vars.kubernetes.helm.chart.prometheus.version[1:] }}'
@@ -156,6 +160,12 @@
                 victoriametrics_map.helm.repository[2].org,
                 victoriametrics_map.helm.repository[2].name, 'releases', 'tag'])
               }}"
+          vmalert:
+            notifier:
+              labels:
+                app.kubernetes.io/instance: '{{ victoriametrics_map.helm.application.name }}'
+                app.kubernetes.io/name: vmalertmanager
+                managed-by: vm-operator
   run_once: true
 
 - name: Set variables fact

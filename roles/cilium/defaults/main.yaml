@@ -56,7 +56,7 @@ cilium_vars:
     helm:
       chart:
         name: cilium
-        version: v1.17.4
+        version: v1.17.5
       repository:
         name: cilium
         org: cilium
@@ -153,7 +153,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.18.4
+      version: v0.18.5
     gateway_api:
       # -- See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details
       file: experimental-install.yaml
@@ -167,4 +167,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.17.3
+      version: v1.17.5

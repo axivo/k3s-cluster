@@ -1,3 +1,8 @@
+{#
+  VMAlertmanagerConfigSpec
+  Manual: https://docs.victoriametrics.com/operator/api/#vmalertmanagerconfigspec
+#}
+
 inhibit_rules:
   - target_matchers:
       - severity=~"info|warning"
@@ -22,6 +27,24 @@ inhibit_rules:
     equal:
       - cluster
       - namespace
+
+receivers:
+  - name: default
+    email_configs:
+      - auth_username: {{ global_map.credentials.cluster.postfix.user.name }}
+        auth_password:
+          key: smtp-password
+          name: {{ victoriametrics_map.credentials.secret }}
+        from: {{ global_map.credentials.cluster.postfix.user.alias }}
+        to: {{ global_map.credentials.cluster.postfix.user.alias }}
+        headers:
+          Subject: '[{% raw %}{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing
+            | len }}{{ end }}{% endraw %}] {% raw %}{{ .GroupLabels.SortedPairs.Values | join " " }}{% endraw %}'
+        smarthost: '{{ cluster_vars.service.postfix.relay.host }}:{{ cluster_vars.service.postfix.relay.port }}'
+        require_tls: true
+        send_resolved: true
+  - name: watchdog
+
 route:
   group_by:
     - alertgroup
@@ -29,3 +52,17 @@ route:
   group_interval: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval }}
   group_wait: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait }}
   repeat_interval: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval }}
+  receiver: default
+  routes:
+    - matchers:
+        - severity="critical"
+      receiver: default
+    - matchers:
+        - alertname="Watchdog"
+      receiver: watchdog
+{% if k3s_map.server.ha is truthy %}
+    - matchers:
+        - job="kube-etcd"
+      group_wait: 15m
+      receiver: default
+{% endif %}

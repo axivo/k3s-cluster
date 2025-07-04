@@ -80,7 +80,13 @@
 
         - name: Validate alertmanager configuration values
           ansible.builtin.debug:
-            msg: "{{ lookup('ansible.builtin.template', 'config_alertmanager.j2') }}"
+            msg: "{{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | trim | regex_replace('\\n[\\s\\t]*\\n', '\\n') }}"
+
+        - name: Validate alerting rules
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', item) }}"
+          with_fileglob:
+            - '{{ role_path }}/templates/alerts/*.j2'
 
         - name: Validate credentials values
           ansible.builtin.debug:

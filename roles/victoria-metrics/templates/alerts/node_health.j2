@@ -1,0 +1,25 @@
+{%- set group_interval = victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval -%}
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: {{ victoriametrics_map.helm.application.name }}-node-health
+  namespace: {{ victoriametrics_vars.kubernetes.namespace }}
+  labels:
+    app: {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name }}
+    app.kubernetes.io/instance: {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}
+    app.kubernetes.io/name: {{ victoriametrics_map.helm.application.name }}-node-health
+    app.kubernetes.io/part-of: {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name }}
+spec:
+  groups:
+    - name: node.critical
+      interval: {{ victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait }}
+      rules:
+        - alert: NodeHighCPU
+          expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[{{ group_interval }}])) by (instance) * 100) > 90
+          for: {{ group_interval }}
+          labels:
+            severity: warning
+            service: node
+          annotations:
+            summary: 'High CPU usage on {% raw %}{{ $labels.instance }}{% endraw %}'
+            description: 'CPU usage is {% raw %}{{ printf "%.1f" $value }}{% endraw %}% for a {{ group_interval }} period, on {% raw %}{{ $labels.instance }}{% endraw %}'
