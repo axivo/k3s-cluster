@@ -27,7 +27,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | kured_vars.kubernetes.configuration.time.start | string | `"04:00"` |  |
 | kured_vars.kubernetes.configuration.time.zone | string | `"UTC"` |  |
 | kured_vars.kubernetes.helm.chart.name | string | `"kured"` |  |
-| kured_vars.kubernetes.helm.chart.version | string | `"v5.6.1"` |  |
+| kured_vars.kubernetes.helm.chart.version | string | `"v5.6.2"` |  |
 | kured_vars.kubernetes.helm.repository.name | string | `"charts"` |  |
 | kured_vars.kubernetes.helm.repository.org | string | `"kubereboot"` |  |
 | kured_vars.kubernetes.helm.repository.url | string | `"https://kubereboot.github.io"` |  |

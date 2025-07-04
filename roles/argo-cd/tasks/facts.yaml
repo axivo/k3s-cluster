@@ -3,6 +3,7 @@
   ansible.builtin.set_fact:
     argocd_map:
       credentials:
+        secret: argocd-secret
         server:
           admin:
             password: "{{ global_map.credentials.argocd.server.admin.password | string | password_hash('blowfish') }}"
@@ -22,6 +23,8 @@
             api: '{{ argocd_vars.kubernetes.server.ingress.subdomain.api }}.{{ externaldns_vars.cloudflare.host.domain }}'
             grpc: '{{ argocd_vars.kubernetes.server.ingress.subdomain.grpc }}.{{ externaldns_vars.cloudflare.host.domain }}'
       helm:
+        application:
+          name: argocd
         chart:
           reference: '{{ argocd_vars.kubernetes.helm.repository.org }}/{{ argocd_vars.kubernetes.helm.chart.name }}'
           version: '{{ argocd_vars.kubernetes.helm.chart.version[1:] }}'

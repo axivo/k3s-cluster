@@ -58,7 +58,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` | Minimum CPU request |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` | Minimum memory request |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` | Helm chart name |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v8.1.0"` | Helm chart version |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v8.1.2"` | Helm chart version |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` | Repository name in Helm |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` | Organization name |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` | Helm repository URL |

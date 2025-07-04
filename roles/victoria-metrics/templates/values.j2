@@ -1,16 +1,14 @@
 global:
   cluster:
-    dnsDomain: {{ k3s_vars.cluster.domain }}.
+    dnsDomain: {{ k3s_vars.cluster.domain }}
   clusterLabel: {{ k3s_map.cluster.label }}
 alertmanager:
   config:
-    {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | trim | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | trim | regex_replace('\n[\s\t]*\n', '\n') | indent(4) }}
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victoriametrics_map.ingress.alertmanager.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
+      {{ victoriametrics_map.ingress.alertmanager.annotations | to_nice_yaml | indent(6) | trim }}
     enabled: {{ victoriametrics_vars.kubernetes.alertmanager.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.alertmanager.hostname }}
@@ -21,6 +19,9 @@ alertmanager:
         secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.alertmanager.name }}
 {% endif %}
   spec:
+{% if victoriametrics_vars.kubernetes.alertmanager.replicas > 1 %}
+    clusterDomainName: {{ k3s_vars.cluster.domain }}
+{% endif %}
     configReloaderResources:
       limits:
 {% if victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu is truthy %}
@@ -30,12 +31,14 @@ alertmanager:
       requests:
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.memory }}
+{% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' and
+      victoriametrics_vars.kubernetes.alertmanager.ingress.enabled %}
+    externalURL: https://{{ victoriametrics_map.ingress.alertmanager.hostname }}
+{% endif %}
 {% if victoriametrics_map.spec.alertmanager.extra_args is mapping and
       victoriametrics_map.spec.alertmanager.extra_args.keys() | length > 0 %}
     extraArgs:
-{% for key, value in victoriametrics_map.spec.alertmanager.extra_args.items() %}
-      {{ key | indent(6) }}: '{{ value }}'
-{% endfor %}
+      {{ victoriametrics_map.spec.alertmanager.extra_args | to_nice_yaml(indent=2) | indent(6) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.alertmanager.extra_envs is iterable and
       victoriametrics_map.spec.alertmanager.extra_envs | length > 0 %}
@@ -51,7 +54,7 @@ alertmanager:
       volumeClaimTemplate:
         spec:
           accessModes:
-            {{ victoriametrics_vars.kubernetes.alertmanager.storage.access_modes | to_nice_yaml | indent(12) }}
+            {{ victoriametrics_vars.kubernetes.alertmanager.storage.access_modes | to_nice_yaml | indent(12) | trim }}
           resources:
             requests:
               storage: {{ victoriametrics_vars.kubernetes.alertmanager.storage.size }}
@@ -75,6 +78,15 @@ alertmanager:
         cpu: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
   useManagedConfig: true
+coreDns:
+  selector:
+    app.kubernetes.io/component: metrics
+    k8s-app: coredns
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: metrics
 defaultDashboards:
   dashboards:
     victoriametrics-operator:
@@ -84,7 +96,7 @@ defaultDashboards:
   defaultTimezone: {{ victoriametrics_vars.kubernetes.default_dashboards.timezone }}
 grafana:
   admin:
-    existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
+    existingSecret: {{ victoriametrics_map.credentials.secret }}
     userKey: admin-user
     passwordKey: admin-password
   deploymentStrategy:
@@ -113,9 +125,7 @@ grafana:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victoriametrics_map.ingress.grafana.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
+      {{ victoriametrics_map.ingress.grafana.annotations | to_nice_yaml | indent(6) | trim }}
     enabled: {{ victoriametrics_vars.kubernetes.grafana.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.grafana.hostname }}
@@ -129,7 +139,7 @@ grafana:
 {% if victoriametrics_vars.kubernetes.grafana.storage.enabled is truthy %}
   persistence:
     accessModes:
-      {{ victoriametrics_vars.kubernetes.grafana.storage.access_modes | to_nice_yaml | indent(6) }}
+      {{ victoriametrics_vars.kubernetes.grafana.storage.access_modes | to_nice_yaml | indent(6) | trim }}
     enabled: true
     size: {{ victoriametrics_vars.kubernetes.grafana.storage.size }}
     storageClassName: {{ victoriametrics_vars.kubernetes.grafana.storage.class }}
@@ -158,7 +168,7 @@ grafana:
         cpu: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu }}
         memory: {{ victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory }}
   smtp:
-    existingSecret: {{ victoriametrics_map.credentials.grafana.secret }}
+    existingSecret: {{ victoriametrics_map.credentials.secret }}
     userKey: smtp-user
     passwordKey: smtp-password
 kube-state-metrics:
@@ -187,7 +197,7 @@ kubeApiServer:
             serverName: localhost
 kubeControllerManager:
   endpoints:
-    {{ k3s_map_server.ips | to_nice_yaml | trim | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) | trim }}
   vmScrape:
     spec:
       endpoints:
@@ -203,7 +213,7 @@ kubeEtcd:
   enabled: false
 {% endif %}
   endpoints:
-    {{ k3s_map_server.ips | to_nice_yaml | trim | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) | trim }}
   service:
     port: 2381
     targetPort: 2381
@@ -224,7 +234,7 @@ kubelet:
         scrapeTimeout: {{ victoriametrics_map.service.monitor.scrape.timeout }}
 kubeScheduler:
   endpoints:
-    {{ k3s_map_server.ips | to_nice_yaml | trim | indent(4) }}
+    {{ k3s_map_server.ips | to_nice_yaml | indent(4) | trim }}
   vmScrape:
     spec:
       endpoints:
@@ -273,9 +283,7 @@ vmagent:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victoriametrics_map.ingress.vmagent.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
+      {{ victoriametrics_map.ingress.vmagent.annotations | to_nice_yaml | indent(6) | trim }}
     enabled: {{ victoriametrics_vars.kubernetes.vmagent.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmagent.hostname }}
@@ -298,9 +306,7 @@ vmagent:
 {% if victoriametrics_map.spec.vmagent.extra_args is mapping and
       victoriametrics_map.spec.vmagent.extra_args.keys() | length > 0 %}
     extraArgs:
-{% for key, value in victoriametrics_map.spec.vmagent.extra_args.items() %}
-      {{ key | indent(6) }}: '{{ value }}'
-{% endfor %}
+      {{ victoriametrics_map.spec.vmagent.extra_args | to_nice_yaml(indent=2) | indent(6) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.vmagent.extra_envs is iterable and
       victoriametrics_map.spec.vmagent.extra_envs | length > 0 %}
@@ -330,7 +336,7 @@ vmagent:
       volumeClaimTemplate:
         spec:
           accessModes:
-            {{ victoriametrics_vars.kubernetes.vmagent.storage.access_modes | to_nice_yaml | trim | indent(12) }}
+            {{ victoriametrics_vars.kubernetes.vmagent.storage.access_modes | to_nice_yaml | indent(12) | trim }}
           resources:
             requests:
               storage: {{ victoriametrics_vars.kubernetes.vmagent.storage.size }}
@@ -343,9 +349,7 @@ vmalert:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victoriametrics_map.ingress.vmalert.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
+      {{ victoriametrics_map.ingress.vmalert.annotations | to_nice_yaml | indent(6) | trim }}
     enabled: {{ victoriametrics_vars.kubernetes.vmalert.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmalert.hostname }}
@@ -371,6 +375,14 @@ vmalert:
       external.url: https://{{ victoriametrics_map.ingress.vmalert.hostname }}
 {% endif %}
     logLevel: {{ victoriametrics_vars.kubernetes.vmalert.log_level }}
+    notifier:
+      selector:
+        labelSelector:
+          matchLabels:
+            {{ victoriametrics_project.helm.chart.vmalert.notifier.labels | to_nice_yaml(indent=2) | indent(12) | trim }}
+        namespaceSelector:
+          matchNames:
+            - {{ victoriametrics_vars.kubernetes.namespace }}
     podDisruptionBudget:
       maxUnavailable: 1
     replicaCount: {{ victoriametrics_vars.kubernetes.vmalert.replicas }}
@@ -393,9 +405,7 @@ vmcluster:
   ingress:
     insert:
       annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vminsert.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
+        {{ victoriametrics_map.ingress.vmcluster.vminsert.annotations | to_nice_yaml | indent(8) | trim }}
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vminsert.ingress.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vminsert.hostname }}
@@ -406,9 +416,7 @@ vmcluster:
           secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vminsert.name }}
     select:
       annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vmselect.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
+        {{ victoriametrics_map.ingress.vmcluster.vmselect.annotations | to_nice_yaml | indent(8) | trim }}
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.ingress.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmselect.hostname }}
@@ -419,9 +427,7 @@ vmcluster:
           secretName: {{ externaldns_vars.cloudflare.prefix }}-{{ victoriametrics_map.ingress.vmcluster.vmselect.name }}
     storage:
       annotations:
-{% for key, value in victoriametrics_map.ingress.vmcluster.vmstorage.annotations.items() %}
-        {{ key | indent(8) }}: {{ value }}
-{% endfor %}
+        {{ victoriametrics_map.ingress.vmcluster.vmstorage.annotations | to_nice_yaml | indent(8) | trim }}
       enabled: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.enabled | lower }}
       hosts:
         - {{ victoriametrics_map.ingress.vmcluster.vmstorage.hostname }}
@@ -438,9 +444,7 @@ vmcluster:
 {% if victoriametrics_map.spec.vmcluster.vminsert.extra_args is mapping and
       victoriametrics_map.spec.vmcluster.vminsert.extra_args.keys() | length > 0 %}
       extraArgs:
-{% for key, value in victoriametrics_map.spec.vmcluster.vminsert.extra_args.items() %}
-        {{ key | indent(8) }}: '{{ value }}'
-{% endfor %}
+        {{ victoriametrics_map.spec.vmcluster.vminsert.extra_args | to_nice_yaml(indent=2) | indent(6) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vminsert.extra_envs is iterable and
       victoriametrics_map.spec.vmcluster.vminsert.extra_envs | length > 0 %}
@@ -481,9 +485,7 @@ vmcluster:
         dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmcluster.vmselect.extra_args is mapping and
       victoriametrics_map.spec.vmcluster.vmselect.extra_args.keys() | length > 0 %}
-{% for key, value in victoriametrics_map.spec.vmcluster.vmselect.extra_args.items() %}
-        {{ key | indent(8) }}: '{{ value }}'
-{% endfor %}
+        {{ victoriametrics_map.spec.vmcluster.vmselect.extra_args | to_nice_yaml(indent=2) | indent(8) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vmselect.extra_envs is iterable and
       victoriametrics_map.spec.vmcluster.vmselect.extra_envs | length > 0 %}
@@ -522,7 +524,7 @@ vmcluster:
         volumeClaimTemplate:
           spec:
             accessModes:
-              {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.access_modes | to_nice_yaml | trim | indent(14) }}
+              {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.access_modes | to_nice_yaml | indent(14) | trim }}
             resources:
               requests:
                 storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmselect.storage.size }}
@@ -536,9 +538,7 @@ vmcluster:
         dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmcluster.vmstorage.extra_args is mapping and
       victoriametrics_map.spec.vmcluster.vmstorage.extra_args.keys() | length > 0 %}
-{% for key, value in victoriametrics_map.spec.vmcluster.vmstorage.extra_args.items() %}
-        {{ key | indent(8) }}: '{{ value }}'
-{% endfor %}
+        {{ victoriametrics_map.spec.vmcluster.vmstorage.extra_args | to_nice_yaml(indent=2) | indent(8) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.vmcluster.vmstorage.extra_envs is iterable and
       victoriametrics_map.spec.vmcluster.vmstorage.extra_envs | length > 0 %}
@@ -564,7 +564,7 @@ vmcluster:
         volumeClaimTemplate:
           spec:
             accessModes:
-              {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes | to_nice_yaml | trim | indent(14) }}
+              {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.access_modes | to_nice_yaml | indent(14) | trim }}
             resources:
               requests:
                 storage: {{ victoriametrics_vars.kubernetes.vmcluster.vmstorage.storage.size }}
@@ -580,9 +580,7 @@ vmsingle:
 {% if externaldns_vars.cloudflare.host.domain | lower != 'disabled' %}
   ingress:
     annotations:
-{% for key, value in victoriametrics_map.ingress.vmsingle.annotations.items() %}
-      {{ key | indent(6) }}: {{ value }}
-{% endfor %}
+      {{ victoriametrics_map.ingress.vmsingle.annotations | to_nice_yaml | indent(6) | trim }}
     enabled: {{ victoriametrics_vars.kubernetes.vmsingle.ingress.enabled | lower }}
     hosts:
       - {{ victoriametrics_map.ingress.vmsingle.hostname }}
@@ -597,9 +595,7 @@ vmsingle:
       dedup.minScrapeInterval: {{ victoriametrics_map.service.monitor.scrape.interval }}
 {% if victoriametrics_map.spec.vmsingle.extra_args is mapping and
       victoriametrics_map.spec.vmsingle.extra_args.keys() | length > 0 %}
-{% for key, value in victoriametrics_map.spec.vmsingle.extra_args.items() %}
-      {{ key | indent(6) }}: '{{ value }}'
-{% endfor %}
+      {{ victoriametrics_map.spec.vmsingle.extra_args | to_nice_yaml(indent=2) | indent(6) | trim }}
 {% endif %}
 {% if victoriametrics_map.spec.vmsingle.extra_envs is iterable and
       victoriametrics_map.spec.vmsingle.extra_envs | length > 0 %}
@@ -621,7 +617,7 @@ vmsingle:
 {% if victoriametrics_vars.kubernetes.vmsingle.storage.enabled is truthy %}
     storage:
       accessModes:
-        {{ victoriametrics_vars.kubernetes.vmsingle.storage.access_modes | to_nice_yaml | trim | indent(12) }}
+        {{ victoriametrics_vars.kubernetes.vmsingle.storage.access_modes | to_nice_yaml | indent(12) | trim }}
       resources:
         requests:
           storage: {{ victoriametrics_vars.kubernetes.vmsingle.storage.size }}

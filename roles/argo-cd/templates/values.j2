@@ -48,11 +48,11 @@ configs:
     {{ '.'.join(['accounts', user.name]) | indent(4) }}: {{ user.permissions }}
     {{ '.'.join(['accounts', user.name, 'enabled']) | indent(4) }}: '{{ user.enabled | lower }}'
 {% endfor %}
-    {{ lookup('ansible.builtin.template', 'config_cm.j2') | trim | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_cm.j2') | trim | regex_replace('\n[\s\t]*\n', '\n') | indent(4) }}
   params:
-    {{ lookup('ansible.builtin.template', 'config_params.j2') | trim | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_params.j2') | trim | regex_replace('\n[\s\t]*\n', '\n') | indent(4) }}
   rbac:
-    {{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim | indent(4) }}
+    {{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim | regex_replace('\n[\s\t]*\n', '\n') | indent(4) }}
   secret:
     argocdServerAdminPassword: {{ argocd_map.credentials.server.admin.password }}
 controller:
@@ -135,6 +135,10 @@ redis:
   enabled: false
 redis-ha:
   enabled: true
+{% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
+  exporter:
+    enabled: true
+{% endif %}
   podDisruptionBudget:
     maxUnavailable: 1
   haproxy:
@@ -184,6 +188,17 @@ redis-ha:
 {% else %}
 redis:
 {% if argocd_postinstall is truthy and argocd_map.metrics.service.monitor.enabled is truthy %}
+  exporter:
+    enabled: true
+    resources:
+      limits:
+{% if argocd_vars.kubernetes.redis.resources.limits.cpu is truthy %}
+        cpu: {{ argocd_vars.kubernetes.redis.resources.limits.cpu }}
+{% endif %}
+        memory: {{ argocd_vars.kubernetes.redis.resources.limits.memory }}
+      requests:
+        cpu: {{ argocd_vars.kubernetes.redis.resources.requests.cpu }}
+        memory: {{ argocd_vars.kubernetes.redis.resources.requests.memory }}
   metrics:
     enabled: true
     serviceMonitor:

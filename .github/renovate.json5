@@ -51,7 +51,7 @@
       "datasourceTemplate": "node",
       "depNameTemplate": "node",
       "managerFilePatterns": [
-        ".github/workflows/documentation.yml"
+        ".github/workflows/release.yml"
       ],
       "matchStrings": [
         "with:[\\s\\S]+?node-version:\\s+(?<currentValue>.+)"
@@ -64,10 +64,10 @@
       "depNameTemplate": "norwoodj/helm-docs",
       "extractVersionTemplate": "^v(?<version>.+)$",
       "managerFilePatterns": [
-        ".github/workflows/documentation.yml"
+        ".github/workflows/release.yml"
       ],
       "matchStrings": [
-        "await\\s+installHelmDocs[\\s\\S]+?version:\\s+'(?<currentValue>.+)'"
+        "await[\\s\\S]+?installHelmDocs[\\s\\S]+'(?<currentValue>.+)'"
       ]
     },
     {
@@ -192,7 +192,7 @@
       "matchStrings": [
         "home:[\\s\\S]+?version:\\s+(?<currentValue>.+)"
       ],
-      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
+      "versioningTemplate": "loose"
     },
     {
       "customType": "regex",
@@ -234,7 +234,7 @@
         "home:[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+helm:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
-      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
+      "versioningTemplate": "loose"
     },
     {
       "customType": "regex",

@@ -71,13 +71,17 @@
               chart: '{{ argocd_map.helm.chart.version }}'
               release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
+        - name: Validate configuration map values
+          ansible.builtin.debug:
+            msg: "{{ lookup('ansible.builtin.template', 'config_cm.j2') | trim | regex_replace('\\n[\\s\\t]*\\n', '\\n') }}"
+
         - name: Validate configuration params values
           ansible.builtin.debug:
-            msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') | trim }}"
+            msg: "{{ lookup('ansible.builtin.template', 'config_params.j2') | trim | regex_replace('\\n[\\s\\t]*\\n', '\\n') }}"
 
         - name: Validate configuration rbac values
           ansible.builtin.debug:
-            msg: "{{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim }}"
+            msg: "{{ lookup('ansible.builtin.template', 'config_rbac.j2') | trim | regex_replace('\\n[\\s\\t]*\\n', '\\n') }}"
 
         - name: Validate credentials values
           ansible.builtin.debug:

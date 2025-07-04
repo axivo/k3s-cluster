@@ -1,0 +1,704 @@
+
+PLAY [Tags Validation] *********************************************************
+Thursday 03 July 2025  23:56:35 -0400 (0:00:00.006)       0:00:00.006 ********* 
+
+PLAY [Cluster Validation] ******************************************************
+Thursday 03 July 2025  23:56:35 -0400 (0:00:00.032)       0:00:00.038 ********* 
+
+TASK [Gathering Facts] *********************************************************
+ok: [apollo]
+ok: [boreas]
+ok: [chaos]
+ok: [crios]
+ok: [cerus]
+ok: [hermes]
+ok: [helios]
+ok: [hypnos]
+Thursday 03 July 2025  23:56:53 -0400 (0:00:18.196)       0:00:18.235 ********* 
+
+TASK [Validate global settings] ************************************************
+included: victoria-metrics for apollo, cerus, boreas, chaos, crios, helios, hermes, hypnos => (item=victoria-metrics)
+Thursday 03 July 2025  23:56:53 -0400 (0:00:00.505)       0:00:18.740 ********* 
+
+TASK [Role Facts] **************************************************************
+included: cert-manager for apollo, boreas, cerus, chaos, crios, helios, hermes, hypnos => (item=cert-manager)
+included: cluster for apollo, boreas, cerus, chaos, crios, helios, hermes, hypnos => (item=cluster)
+included: external-dns for apollo, boreas, cerus, chaos, crios, helios, hermes, hypnos => (item=external-dns)
+included: k3s for apollo, boreas, cerus, chaos, crios, helios, hermes, hypnos => (item=k3s)
+included: victoria-metrics for apollo, boreas, cerus, chaos, crios, helios, hermes, hypnos => (item=victoria-metrics)
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.262)       0:00:19.003 ********* 
+
+TASK [cert-manager : Set map fact] *********************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.035)       0:00:19.038 ********* 
+
+TASK [cert-manager : Set project fact] *****************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.035)       0:00:19.074 ********* 
+
+TASK [cert-manager : Set variables fact] ***************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.063)       0:00:19.138 ********* 
+
+TASK [cluster : Set map fact] **************************************************
+ok: [apollo]
+ok: [boreas]
+ok: [cerus]
+ok: [chaos]
+ok: [crios]
+ok: [helios]
+ok: [hermes]
+ok: [hypnos]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.113)       0:00:19.251 ********* 
+
+TASK [cluster : Set variables fact] ********************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.061)       0:00:19.313 ********* 
+
+TASK [external-dns : Set map fact] *********************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.045)       0:00:19.358 ********* 
+
+TASK [external-dns : Set project fact] *****************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.032)       0:00:19.391 ********* 
+
+TASK [external-dns : Set variables fact] ***************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.058)       0:00:19.450 ********* 
+
+TASK [k3s : Set map fact] ******************************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.050)       0:00:19.501 ********* 
+
+TASK [k3s : Set map loadbalancer fact] *****************************************
+ok: [boreas]
+ok: [cerus]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.100)       0:00:19.601 ********* 
+
+TASK [k3s : Set map server fact] ***********************************************
+ok: [apollo]
+ok: [boreas]
+ok: [cerus]
+Thursday 03 July 2025  23:56:54 -0400 (0:00:00.100)       0:00:19.702 ********* 
+
+TASK [k3s : Set node fact] *****************************************************
+ok: [apollo]
+ok: [boreas]
+ok: [cerus]
+ok: [chaos]
+ok: [crios]
+ok: [helios]
+ok: [hermes]
+ok: [hypnos]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.096)       0:00:19.798 ********* 
+
+TASK [k3s : Set project fact] **************************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.049)       0:00:19.848 ********* 
+
+TASK [k3s : Set project taints fact] *******************************************
+ok: [apollo] => (item={'key': 'node.cilium.io/agent-not-ready', 'operator': 'Exists', 'effect': 'NoExecute'})
+ok: [apollo] => (item={'key': 'node-role.kubernetes.io/control-plane', 'operator': 'Exists', 'effect': 'NoSchedule'})
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.061)       0:00:19.909 ********* 
+
+TASK [k3s : Set resources fact] ************************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.039)       0:00:19.949 ********* 
+
+TASK [k3s : Set variables fact] ************************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.058)       0:00:20.008 ********* 
+
+TASK [victoria-metrics : Set map fact] *****************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.056)       0:00:20.064 ********* 
+
+TASK [victoria-metrics : Set project fact] *************************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.037)       0:00:20.102 ********* 
+
+TASK [victoria-metrics : Set variables fact] ***********************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:55 -0400 (0:00:00.062)       0:00:20.165 ********* 
+
+TASK [victoria-metrics : Validate project url] *********************************
+ok: [apollo]
+Thursday 03 July 2025  23:56:57 -0400 (0:00:02.064)       0:00:22.230 ********* 
+
+TASK [victoria-metrics : Validate project dependency url] **********************
+ok: [apollo]
+Thursday 03 July 2025  23:56:59 -0400 (0:00:02.064)       0:00:24.294 ********* 
+
+TASK [victoria-metrics : Update repository] ************************************
+changed: [apollo] => (item={'name': 'helm-charts', 'org': 'grafana', 'url': 'https://grafana.github.io'})
+changed: [apollo] => (item={'name': 'helm-charts', 'org': 'prometheus-community', 'url': 'https://prometheus-community.github.io'})
+changed: [apollo] => (item={'name': 'helm-charts', 'org': 'VictoriaMetrics', 'url': 'https://victoriametrics.github.io'})
+Thursday 03 July 2025  23:57:13 -0400 (0:00:14.457)       0:00:38.752 ********* 
+
+TASK [victoria-metrics : Validate cluster kubeconfig path] *********************
+ok: [apollo]
+Thursday 03 July 2025  23:57:15 -0400 (0:00:01.294)       0:00:40.047 ********* 
+
+TASK [victoria-metrics : Get deployed chart release info] **********************
+ok: [apollo]
+Thursday 03 July 2025  23:57:34 -0400 (0:00:19.263)       0:00:59.310 ********* 
+
+TASK [victoria-metrics : Set comparison fact] **********************************
+ok: [apollo]
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.049)       0:00:59.360 ********* 
+
+TASK [victoria-metrics : Set credentials fact] *********************************
+ok: [apollo]
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.084)       0:00:59.444 ********* 
+
+TASK [victoria-metrics : Set string data fact] *********************************
+ok: [apollo]
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.039)       0:00:59.484 ********* 
+
+TASK [victoria-metrics : Validate alertmanager configuration values] ***********
+ok: [apollo] => 
+    msg: |-
+        inhibit_rules:
+          - target_matchers:
+              - severity=~"info|warning"
+            source_matchers:
+              - severity="critical"
+            equal:
+              - alertname
+              - cluster
+              - namespace
+          - target_matchers:
+              - severity="info"
+            source_matchers:
+              - severity="warning"
+            equal:
+              - alertname
+              - cluster
+              - namespace
+          - target_matchers:
+              - severity="info"
+            source_matchers:
+              - alertname="InfoInhibitor"
+            equal:
+              - cluster
+              - namespace
+        receivers:
+          - name: default
+            email_configs:
+              - auth_username: floren.munteanu@icloud.com
+                auth_password:
+                  key: smtp-password
+                  name: vmks-credentials
+                from: k3slab@icloud.com
+                to: k3slab@icloud.com
+                headers:
+                  Subject: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing
+                    | len }}{{ end }}] {{ .GroupLabels.SortedPairs.Values | join " " }}'
+                smarthost: 'smtp.mail.me.com:587'
+                require_tls: true
+                send_resolved: true
+          - name: watchdog
+        route:
+          group_by:
+            - alertgroup
+            - job
+          group_interval: 5m
+          group_wait: 30s
+          repeat_interval: 12h
+          receiver: default
+          routes:
+            - matchers:
+                - severity="critical"
+              receiver: default
+            - matchers:
+                - alertname="Watchdog"
+              receiver: watchdog
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.086)       0:00:59.570 ********* 
+
+TASK [victoria-metrics : Validate alerting rules] ******************************
+ok: [apollo] => (item=/Users/floren/github/k3s-cluster/roles/victoria-metrics/templates/alerts/node_health.j2) => 
+    msg: |-
+        apiVersion: operator.victoriametrics.com/v1beta1
+        kind: VMRule
+        metadata:
+          name: vmks-victoria-metrics-k8s-stack-node-health
+          namespace: kube-system
+          labels:
+            app: victoria-metrics-k8s-stack
+            app.kubernetes.io/instance: vmks
+            app.kubernetes.io/name: vmks-victoria-metrics-k8s-stack-node-health
+            app.kubernetes.io/part-of: victoria-metrics-k8s-stack
+        spec:
+          groups:
+            - name: node.critical
+              interval: 30s
+              rules:
+                - alert: NodeHighCPU
+                  expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance) * 100) > 90
+                  for: 5m
+                  labels:
+                    severity: warning
+                    service: node
+                  annotations:
+                    summary: 'High CPU usage on {{ $labels.instance }}'
+                    description: 'CPU usage is {{ printf "%.1f" $value }}% for a 5m period, on {{ $labels.instance }}'
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.067)       0:00:59.638 ********* 
+
+TASK [victoria-metrics : Validate credentials values] **************************
+ok: [apollo] => 
+    msg:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+            labels:
+                app.kubernetes.io/instance: vmks
+                app.kubernetes.io/name: vmks-credentials
+                app.kubernetes.io/part-of: victoria-metrics-k8s-stack
+            name: vmks-credentials
+            namespace: kube-system
+        stringData:
+            admin-password: d2lweGViLWh5d25hNy14aWZ3SXY=
+            admin-user: YWRtaW4=
+            smtp-password: YmxuZi12bG1wLWl4b3Ytenl0bA==
+            smtp-user: ZmxvcmVuLm11bnRlYW51QGljbG91ZC5jb20=
+        type: Opaque
+Thursday 03 July 2025  23:57:34 -0400 (0:00:00.070)       0:00:59.709 ********* 
+
+TASK [victoria-metrics : Validate chart values] ********************************
+ok: [apollo] => 
+    msg: |-
+        global:
+          cluster:
+            dnsDomain: cluster.local
+          clusterLabel: default
+        alertmanager:
+          config:
+            inhibit_rules:
+              - target_matchers:
+                  - severity=~"info|warning"
+                source_matchers:
+                  - severity="critical"
+                equal:
+                  - alertname
+                  - cluster
+                  - namespace
+              - target_matchers:
+                  - severity="info"
+                source_matchers:
+                  - severity="warning"
+                equal:
+                  - alertname
+                  - cluster
+                  - namespace
+              - target_matchers:
+                  - severity="info"
+                source_matchers:
+                  - alertname="InfoInhibitor"
+                equal:
+                  - cluster
+                  - namespace
+            receivers:
+              - name: default
+                email_configs:
+                  - auth_username: floren.munteanu@icloud.com
+                    auth_password:
+                      key: smtp-password
+                      name: vmks-credentials
+                    from: k3slab@icloud.com
+                    to: k3slab@icloud.com
+                    headers:
+                      Subject: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing
+                        | len }}{{ end }}] {{ .GroupLabels.SortedPairs.Values | join " " }}'
+                    smarthost: 'smtp.mail.me.com:587'
+                    require_tls: true
+                    send_resolved: true
+              - name: watchdog
+            route:
+              group_by:
+                - alertgroup
+                - job
+              group_interval: 5m
+              group_wait: 30s
+              repeat_interval: 12h
+              receiver: default
+              routes:
+                - matchers:
+                    - severity="critical"
+                  receiver: default
+                - matchers:
+                    - alertname="Watchdog"
+                  receiver: watchdog
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: cloudflare-cluster-issuer-staging
+            enabled: true
+            hosts:
+              - alertmanager.noty.cc
+            ingressClassName: cilium
+            tls:
+              - hosts:
+                  - alertmanager.noty.cc
+                secretName: cloudflare-alertmanager-vmks-victoria-metrics-k8s-stack
+          spec:
+            clusterDomainName: .cluster.local
+            configReloaderResources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            externalURL: https://alertmanager.noty.cc
+            logLevel: WARN
+            podDisruptionBudget:
+              maxUnavailable: 1
+            rollingUpdateStrategy: RollingUpdate
+            storage:
+            emptyDir:
+              sizeLimit: 5Gi
+            replicaCount: 2
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+          useManagedConfig: true
+        coreDns:
+          selector:
+            app.kubernetes.io/component: metrics
+            k8s-app: coredns
+          vmScrape:
+            spec:
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: metrics
+        defaultDashboards:
+          dashboards:
+            victoriametrics-operator:
+              enabled: true
+            victoriametrics-vmalert:
+              enabled: true
+          defaultTimezone: utc
+        grafana:
+          admin:
+            existingSecret: vmks-credentials
+            userKey: admin-user
+            passwordKey: admin-password
+          deploymentStrategy:
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+            type: RollingUpdate
+          grafana.ini:
+            database:
+              cache_mode: shared
+              wal: true
+            security:
+              admin_email: k3slab@icloud.com
+              allow_loading_unsigned_plugins: grafana-lokiexplore-app
+              cookie_secure: true
+              strict_transport_security: true
+            smtp:
+              enabled: true
+              from_address: k3slab@icloud.com
+              from_name: admin
+              host: smtp.mail.me.com:587
+              startTLS_policy: MandatoryStartTLS
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: cloudflare-cluster-issuer-staging
+            enabled: true
+            hosts:
+              - grafana.noty.cc
+            ingressClassName: cilium
+            tls:
+              - hosts:
+                  - grafana.noty.cc
+                secretName: cloudflare-vmks-grafana
+          logLevel: WARN
+          persistence:
+            accessModes:
+              - ReadWriteOnce
+            enabled: true
+            size: 5Gi
+            storageClassName: longhorn
+          podDisruptionBudget:
+            maxUnavailable: 1
+          replicas: 1
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 256Mi
+          sidecar:
+            logLevel: WARN
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+          smtp:
+            existingSecret: vmks-credentials
+            userKey: smtp-user
+            passwordKey: smtp-password
+        kube-state-metrics:
+          podDisruptionBudget:
+            maxUnavailable: 1
+          replicas: 1
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+        kubeApiServer:
+          vmScrape:
+            spec:
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: https
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    insecureSkipVerify: true
+                    serverName: localhost
+        kubeControllerManager:
+          endpoints:
+            - 192.168.4.2
+            - 192.168.4.3
+            - 192.168.4.4
+          vmScrape:
+            spec:
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    insecureSkipVerify: true
+                    serverName: localhost
+        kubeEtcd:
+          endpoints:
+            - 192.168.4.2
+            - 192.168.4.3
+            - 192.168.4.4
+          service:
+            port: 2381
+            targetPort: 2381
+          vmScrape:
+            spec:
+              endpoints:
+                - port: http-metrics
+                  scheme: http
+        kubelet:
+          vmScrape:
+            spec:
+              interval: 30s
+              scrapeTimeout: 25s
+          vmScrapes:
+            kubelet:
+              spec:
+                scrapeInterval: 30s
+                scrapeTimeout: 25s
+        kubeScheduler:
+          endpoints:
+            - 192.168.4.2
+            - 192.168.4.3
+            - 192.168.4.4
+          vmScrape:
+            spec:
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    insecureSkipVerify: true
+                    serverName: localhost
+        prometheus-node-exporter:
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+        victoria-metrics-operator:
+          logLevel: error
+          operator:
+            admissionWebhooks:
+              certManager:
+                enabled: true
+                issuer:
+                  group: cert-manager.io
+                  kind: ClusterIssuer
+                  name: cert-manager-cluster-issuer
+            enable_converter_ownership: true
+          podDisruptionBudget:
+            enabled: true
+            maxUnavailable: 1
+          replicaCount: 1
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+        vmagent:
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: cloudflare-cluster-issuer-staging
+            enabled: true
+            hosts:
+              - agent.noty.cc
+            ingressClassName: cilium
+            tls:
+              - hosts:
+                  - agent.noty.cc
+                secretName: cloudflare-vmagent-vmks-victoria-metrics-k8s-stack
+          spec:
+            configReloaderResources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            extraEnvs:
+              - name: GOGC
+                value: '60'
+            logLevel: WARN
+            podDisruptionBudget:
+              maxUnavailable: 1
+            replicaCount: 1
+            resources:
+              limits:
+                memory: 1024Mi
+              requests:
+                cpu: 10m
+                memory: 1024Mi
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+            scrapeInterval: 30s
+            scrapeTimeout: 25s
+            storage:
+              emptyDir:
+                sizeLimit: 5Gi
+        vmalert:
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: cloudflare-cluster-issuer-staging
+            enabled: true
+            hosts:
+              - alert.noty.cc
+            ingressClassName: cilium
+            tls:
+              - hosts:
+                  - alert.noty.cc
+                secretName: cloudflare-vmalert-vmks-victoria-metrics-k8s-stack
+          spec:
+            configReloaderResources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            extraArgs:
+              external.url: https://alert.noty.cc
+            logLevel: WARN
+            notifier:
+              selector:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: vmks-victoria-metrics-k8s-stack
+                    app.kubernetes.io/name: vmalertmanager
+                    managed-by: vm-operator
+                namespaceSelector:
+                  matchNames:
+                    - kube-system
+            podDisruptionBudget:
+              maxUnavailable: 1
+            replicaCount: 1
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+        vmsingle:
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: cloudflare-cluster-issuer-staging
+            enabled: true
+            hosts:
+              - metrics.noty.cc
+            ingressClassName: cilium
+            tls:
+              - hosts:
+                  - metrics.noty.cc
+                secretName: cloudflare-vmsingle-vmks-victoria-metrics-k8s-stack
+          spec:
+            extraArgs:
+              dedup.minScrapeInterval: 30s
+            extraEnvs:
+              - name: GOGC
+                value: '60'
+            logLevel: WARN
+            replicaCount: 1
+            resources:
+              limits:
+                memory: 2560Mi
+              requests:
+                cpu: 10m
+                memory: 2560Mi
+            retentionPeriod: 72h
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 50Gi
+              storageClassName: longhorn
+Thursday 03 July 2025  23:57:35 -0400 (0:00:00.209)       0:00:59.918 ********* 
+Thursday 03 July 2025  23:57:35 -0400 (0:00:00.026)       0:00:59.945 ********* 
+Thursday 03 July 2025  23:57:35 -0400 (0:00:00.025)       0:00:59.970 ********* 
+Thursday 03 July 2025  23:57:35 -0400 (0:00:00.025)       0:00:59.996 ********* 
+
+PLAY RECAP *********************************************************************
+apollo                     : ok=37   changed=1    unreachable=0    failed=0    skipped=5    rescued=0    ignored=0   
+boreas                     : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+cerus                      : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+chaos                      : ok=9    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+crios                      : ok=9    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+helios                     : ok=9    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+hermes                     : ok=9    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+hypnos                     : ok=9    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+localhost                  : ok=0    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+
+Thursday 03 July 2025  23:57:35 -0400 (0:00:00.049)       0:01:00.046 ********* 
+=============================================================================== 
+victoria-metrics : Get deployed chart release info --------------------- 19.26s
+Gathering Facts -------------------------------------------------------- 18.20s
+victoria-metrics : Update repository ----------------------------------- 14.46s
+victoria-metrics : Validate project url --------------------------------- 2.06s
+victoria-metrics : Validate project dependency url ---------------------- 2.06s
+victoria-metrics : Validate cluster kubeconfig path --------------------- 1.29s
+Validate global settings ------------------------------------------------ 0.51s
+Role Facts -------------------------------------------------------------- 0.26s
+victoria-metrics : Validate chart values -------------------------------- 0.21s
+cluster : Set map fact -------------------------------------------------- 0.11s
+k3s : Set map server fact ----------------------------------------------- 0.10s
+k3s : Set map loadbalancer fact ----------------------------------------- 0.10s
+k3s : Set node fact ----------------------------------------------------- 0.10s
+victoria-metrics : Validate alertmanager configuration values ----------- 0.09s
+victoria-metrics : Set credentials fact --------------------------------- 0.08s
+victoria-metrics : Validate credentials values -------------------------- 0.07s
+victoria-metrics : Validate alerting rules ------------------------------ 0.07s
+cert-manager : Set variables fact --------------------------------------- 0.06s
+victoria-metrics : Set variables fact ----------------------------------- 0.06s
+k3s : Set project taints fact ------------------------------------------- 0.06s

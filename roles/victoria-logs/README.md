@@ -16,7 +16,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 |-----|------|---------|-------------|
 | victorialogs_vars.kubernetes.helm.chart.alias | string | `"vls"` |  |
 | victorialogs_vars.kubernetes.helm.chart.name | string | `"victoria-logs-single"` |  |
-| victorialogs_vars.kubernetes.helm.chart.version | string | `"v0.11.2"` |  |
+| victorialogs_vars.kubernetes.helm.chart.version | string | `"v0.11.3"` |  |
 | victorialogs_vars.kubernetes.helm.repository.name | string | `"helm-charts"` |  |
 | victorialogs_vars.kubernetes.helm.repository.org | string | `"VictoriaMetrics"` |  |
 | victorialogs_vars.kubernetes.helm.repository.url | string | `"https://victoriametrics.github.io"` |  |
