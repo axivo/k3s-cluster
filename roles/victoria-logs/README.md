@@ -1,8 +1,8 @@
 # victoria-logs-single
 
-![Version: 0.11.2](https://img.shields.io/badge/Version-0.11.2-informational?style=flat-square)
+![Version: 0.11.3](https://img.shields.io/badge/Version-0.11.3-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-logs-single` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-logs-single-0.11.2/charts/victoria-logs-single) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victorialogs), for additional details.
+The role performs various tasks related to `victoria-logs-single` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-logs-single-0.11.3/charts/victoria-logs-single) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victorialogs), for additional details.
 
 ## Role Variables
 
