@@ -1,6 +1,7 @@
 # Ansible
 .ansible
 ansible.log
+validation.log
 
 # MacOS
 **/.DS_Store
