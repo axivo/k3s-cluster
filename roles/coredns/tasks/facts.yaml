@@ -28,3 +28,8 @@
       tag: '{{ coredns_vars.kubernetes.helm.chart.name }}-{{ coredns_map.helm.chart.version }}'
       url: '{{ coredns_map.helm.platform.key }}/{{ coredns_map.helm.repository.name }}/releases/tag'
   run_once: true
+
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    coredns_vars: '{{ coredns_vars }}'
+  run_once: true

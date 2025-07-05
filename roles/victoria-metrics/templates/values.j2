@@ -79,9 +79,11 @@ alertmanager:
         memory: {{ victoriametrics_vars.kubernetes.alertmanager.resources.requests.memory }}
   useManagedConfig: true
 coreDns:
-  selector:
-    app.kubernetes.io/component: metrics
-    k8s-app: coredns
+{% if coredns_vars.kubernetes.deployment.legacy is falsy %}
+  service:
+    selector:
+      k8s-app: coredns
+{% endif %}
   vmScrape:
     spec:
       endpoints:

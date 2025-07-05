@@ -6,6 +6,7 @@
   loop:
     - cert-manager
     - cluster
+    - coredns
     - external-dns
     - k3s
     - victoria-metrics
