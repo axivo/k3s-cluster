@@ -2,7 +2,6 @@ global:
   cluster:
     dnsDomain: {{ k3s_vars.cluster.domain }}
   clusterLabel: {{ k3s_map.cluster.label }}
-fullnameOverride: {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}
 alertmanager:
   config:
     {{ lookup('ansible.builtin.template', 'config_alertmanager.j2') | trim | regex_replace('\n[\s\t]*\n', '\n') | indent(4) }}
