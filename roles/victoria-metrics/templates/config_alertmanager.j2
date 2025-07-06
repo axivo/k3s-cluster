@@ -60,9 +60,3 @@ route:
     - matchers:
         - alertname="Watchdog"
       receiver: watchdog
-{% if k3s_map.server.ha is truthy %}
-    - matchers:
-        - job="kube-etcd"
-      group_wait: 15m
-      receiver: default
-{% endif %}

@@ -19,6 +19,10 @@ disable-kube-proxy: true
 disable-network-policy: true
 embedded-registry: true
 {% if k3s_map.server.ha is truthy %}
+etcd-arg:
+{% for key, value in k3s_map.server.etcd.items() %}
+  - --{{ key | indent(2) }}={{ value }}
+{% endfor %}
 etcd-expose-metrics: true
 {% endif %}
 flannel-backend: none
