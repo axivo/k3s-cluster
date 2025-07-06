@@ -81,6 +81,9 @@
           url: 'https://github.com/{{ k3s_vars.release.kubepug.repository.org }}/{{ k3s_vars.release.kubepug.repository.name }}/releases'
       server:
         default_host: '{{ hostvars[groups.server[0]].ansible_hostname | default(groups.server[0]) }}'
+        etcd:
+          election-timeout: 5000
+          heartbeat-interval: 500
         ha: '{{ groups.server | length > 2 }}'
         hosts: '{{ groups.server }}'
         non_ha: '{{ groups.server | length == 1 }}'
