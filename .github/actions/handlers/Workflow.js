@@ -42,7 +42,7 @@ class WorkflowHandler extends Action {
   }
 
   /**
-   * Configure repository
+   * Configures repository
    * 
    * @returns {Promise<void>}
    */
@@ -55,7 +55,7 @@ class WorkflowHandler extends Action {
   }
 
   /**
-   * Install helm-docs
+   * Installs helm-docs
    * 
    * @param {string} version - Version of helm-docs to install
    * @returns {Promise<void>}
@@ -67,7 +67,7 @@ class WorkflowHandler extends Action {
   }
 
   /**
-   * Generate documentation and optionally update labels
+   * Generates documentation and optionally updates labels
    * 
    * @returns {Promise<void>}
    */
@@ -93,7 +93,7 @@ class WorkflowHandler extends Action {
   }
 
   /**
-   * Report workflow issues
+   * Reports workflow issues
    * 
    * @returns {Promise<void>}
    */
@@ -101,13 +101,12 @@ class WorkflowHandler extends Action {
     return this.execute('report workflow issue', async () => {
       this.logger.info('Checking for workflow issues...');
       if (this.config.get('issue.createLabels')) {
-        this.logger.warning('Set "createLabels: false" after initial setup');
+        await this.gitHubService.createAnnotation('Set "createLabels: false" after initial setup');
       }
       const templatePath = this.config.get('workflow.template');
       const templateContent = await this.fileService.read(templatePath);
       const issue = await this.issueService.report(
         this.context,
-        this.labelService,
         {
           content: templateContent,
           service: this.templateService

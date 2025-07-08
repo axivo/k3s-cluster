@@ -17,6 +17,38 @@ const Action = require('../core/Action');
  */
 class GitHubService extends Action {
   /**
+   * Creates an annotation for the current workflow run
+   * 
+   * @param {string} message - Annotation message
+   * @param {string} [level='warning'] - Annotation level (warning, error, notice)
+   * @returns {Promise<Object>} Created check run data
+   */
+  async createAnnotation(message, level = 'warning') {
+    return this.execute('create annotation', async () => {
+      const checkRun = await this.github.rest.checks.create({
+        owner: this.context.repo.owner,
+        repo: this.context.repo.repo,
+        name: level,
+        head_sha: this.context.sha,
+        status: 'completed',
+        conclusion: 'neutral',
+        output: {
+          title: level,
+          summary: message,
+          annotations: [{
+            path: level,
+            start_line: 1,
+            end_line: 1,
+            annotation_level: level,
+            message: message
+          }]
+        }
+      });
+      return checkRun.data;
+    });
+  }
+
+  /**
    * Creates a signed commit using GitHub GraphQL API
    * 
    * @param {string} branch - Branch name
@@ -130,6 +162,40 @@ class GitHubService extends Action {
   }
 
   /**
+   * Gets annotations for the current workflow run
+   * 
+   * @returns {Promise<Array<Object>>} Array of annotations
+   */
+  async getAnnotations() {
+    return this.execute('get annotations', async () => {
+      const checkRuns = await this.github.rest.checks.listForRef({
+        owner: this.context.repo.owner,
+        repo: this.context.repo.repo,
+        ref: this.context.sha
+      });
+      const annotations = [];
+      for (const checkRun of checkRuns.data.check_runs) {
+        if (checkRun.output?.annotations_url) {
+          try {
+            const response = await this.github.request(checkRun.output.annotations_url);
+            if (response.data && response.data.length > 0) {
+              annotations.push(...response.data.map(annotation => ({
+                level: annotation.annotation_level,
+                message: annotation.message,
+                path: annotation.path,
+                line: annotation.start_line
+              })));
+            }
+          } catch (error) {
+            continue;
+          }
+        }
+      }
+      return annotations;
+    }, false);
+  }
+
+  /**
   * Gets a label from a repository
   *
   * @param {string} name - Label name
@@ -181,47 +247,6 @@ class GitHubService extends Action {
       }
       return files;
     }, false);
-  }
-
-  /**
-   * Gets workflow run data
-   * 
-   * @param {number} id - Workflow run ID
-   * @returns {Promise<Object>} Workflow run data
-   */
-  async getWorkflowRun(id) {
-    return this.execute(`get workflow run '${id}' ID`, async () => {
-      const response = await this.github.rest.actions.getWorkflowRun({
-        owner: this.context.repo.owner,
-        repo: this.context.repo.repo,
-        run_id: id
-      });
-      return {
-        id: response.data.id,
-        status: response.data.status,
-        conclusion: response.data.conclusion,
-        url: response.data.html_url,
-        createdAt: response.data.created_at,
-        updatedAt: response.data.updated_at
-      };
-    }, false);
-  }
-
-  /**
-   * Gets workflow run logs
-   * 
-   * @param {number} id - Workflow run ID
-   * @returns {Promise<string>} Workflow run logs data
-   */
-  async getWorkflowRunLogs(id) {
-    return this.execute(`get workflow run '${id}' logs`, async () => {
-      const response = await this.github.rest.actions.downloadWorkflowRunLogs({
-        owner: this.context.repo.owner,
-        repo: this.context.repo.repo,
-        run_id: parseInt(id, 10)
-      });
-      return response.data;
-    }, false, true);
   }
 
   /**

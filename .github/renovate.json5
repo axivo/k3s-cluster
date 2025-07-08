@@ -48,7 +48,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "datasourceTemplate": "node",
+      "datasourceTemplate": "node-version",
       "depNameTemplate": "node",
       "managerFilePatterns": [
         ".github/workflows/release.yml"
