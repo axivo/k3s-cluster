@@ -5,11 +5,13 @@
 
 - zones:
     - zone: .
+      use_tcp: true
   port: 53
   plugins:
     - name: errors
     - name: health
-      configBlock: lameduck 5s
+      configBlock: |-
+        lameduck 10s
     - name: ready
     - name: kubernetes
       parameters: {{ k3s_vars.cluster.domain }} in-addr.arpa ip6.arpa
