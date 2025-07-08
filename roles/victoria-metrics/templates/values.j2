@@ -86,9 +86,9 @@ coreDns:
 {% endif %}
   vmScrape:
     spec:
-      endpoints:
-        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-          port: metrics
+      namespaceSelector:
+        matchNames:
+          - {{ coredns_vars.kubernetes.namespace }}
 defaultDashboards:
   dashboards:
     victoriametrics-operator:
