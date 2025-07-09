@@ -56,11 +56,10 @@ class IssueService extends Action {
         RepoURL: repoUrl
       });
       if (!issueBody) return null;
-      const labelNames = this.config.get('workflow.labels');
       return this.gitHubService.createIssue(
         this.config.get('workflow.title'),
         issueBody,
-        labelNames
+        this.config.get('workflow.labels')
       );
     }, false);
   }
