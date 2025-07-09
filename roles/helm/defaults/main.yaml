@@ -9,7 +9,7 @@ helm_vars:
         - python3-jsonpatch
       repository:
         url: https://github.com/databus23/helm-diff
-      version: v3.12.2
+      version: v3.12.3
   release:
     helm:
       distro:
