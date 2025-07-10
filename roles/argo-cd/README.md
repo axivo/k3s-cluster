@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/argoproj/argo-cd | argocd | 3.0.6 |
+| https://github.com/argoproj/argo-cd | argocd | 3.0.11 |
 
 ## Role Variables
 
@@ -103,4 +103,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.release.file | string | `"argocd-linux-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | argocd_vars.release.repository.name | string | `"argo-cd"` | CLI repository name |
 | argocd_vars.release.repository.org | string | `"argoproj"` | Organization name |
-| argocd_vars.release.version | string | `"v3.0.6"` | CLI version to install |
+| argocd_vars.release.version | string | `"v3.0.11"` | CLI version to install |
