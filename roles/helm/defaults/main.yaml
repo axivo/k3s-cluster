@@ -20,4 +20,4 @@ helm_vars:
         channel: stable
         key: signing.asc
         url: https://baltocdn.com/helm
-      version: v3.18.3-1
+      version: v3.18.4-1
