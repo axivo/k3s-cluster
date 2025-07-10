@@ -241,4 +241,4 @@ argocd_vars:
       # -- Organization name
       org: argoproj
     # -- CLI version to install
-    version: v3.0.6
+    version: v3.0.11
