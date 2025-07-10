@@ -1,8 +1,8 @@
 # argo-cd
 
-![Version: 8.1.2](https://img.shields.io/badge/Version-8.1.2-informational?style=flat-square)
+![Version: 8.1.3](https://img.shields.io/badge/Version-8.1.3-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-8.1.2/charts/argo-cd) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/argocd), for additional details.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-8.1.3/charts/argo-cd) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/argocd), for additional details.
 
 ## Role Dependencies
 
@@ -58,7 +58,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | argocd_vars.kubernetes.haproxy.resources.requests.cpu | string | `"10m"` | Minimum CPU request |
 | argocd_vars.kubernetes.haproxy.resources.requests.memory | string | `"128Mi"` | Minimum memory request |
 | argocd_vars.kubernetes.helm.chart.name | string | `"argo-cd"` | Helm chart name |
-| argocd_vars.kubernetes.helm.chart.version | string | `"v8.1.2"` | Helm chart version |
+| argocd_vars.kubernetes.helm.chart.version | string | `"v8.1.3"` | Helm chart version |
 | argocd_vars.kubernetes.helm.repository.name | string | `"argo-helm"` | Repository name in Helm |
 | argocd_vars.kubernetes.helm.repository.org | string | `"argoproj"` | Organization name |
 | argocd_vars.kubernetes.helm.repository.url | string | `"https://argoproj.github.io"` | Helm repository URL |
