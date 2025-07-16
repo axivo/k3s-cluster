@@ -1,8 +1,8 @@
 # cilium
 
-![Version: 1.17.5](https://img.shields.io/badge/Version-1.17.5-informational?style=flat-square)
+![Version: 1.17.6](https://img.shields.io/badge/Version-1.17.6-informational?style=flat-square)
 
-The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.17.5/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
+The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.17.6/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
 
 ## Role Dependencies
 
@@ -52,7 +52,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.envoy.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.envoy.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.helm.chart.name | string | `"cilium"` |  |
-| cilium_vars.kubernetes.helm.chart.version | string | `"v1.17.5"` |  |
+| cilium_vars.kubernetes.helm.chart.version | string | `"v1.17.6"` |  |
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |
