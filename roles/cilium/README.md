@@ -52,7 +52,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.envoy.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.envoy.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.helm.chart.name | string | `"cilium"` |  |
-| cilium_vars.kubernetes.helm.chart.version | string | `"v1.17.5"` |  |
+| cilium_vars.kubernetes.helm.chart.version | string | `"v1.17.6"` |  |
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |

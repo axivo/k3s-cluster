@@ -4,8 +4,11 @@ victoriametrics_vars:
     alertmanager:
       config:
         route:
-          group_interval: 5m
-          group_wait: 30s
+          # -- Delay between additional notifications for new alerts added to an existing group
+          group_interval: 30m
+          # -- Collection period for grouping alerts before sending initial notification
+          group_wait: 15m
+          # -- Minimum interval between repeat notifications for unresolved alerts
           repeat_interval: 12h
       config_reloader:
         resources:
@@ -41,11 +44,11 @@ victoriametrics_vars:
       chart:
         prometheus:
           name: prometheus-operator-crds
-          version: v21.0.0
+          version: v22.0.0
         victoriametrics:
           alias: vmks
           name: victoria-metrics-k8s-stack
-          version: v0.56.0
+          version: v0.57.0
       repository:
         grafana:
           name: helm-charts

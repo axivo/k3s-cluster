@@ -22,9 +22,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval | string | `"5m"` |  |
-| victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait | string | `"30s"` |  |
-| victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval | string | `"12h"` |  |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval | string | `"30m"` | Delay between additional notifications for new alerts added to an existing group |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait | string | `"15m"` | Collection period for grouping alerts before sending initial notification |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval | string | `"12h"` | Minimum interval between repeat notifications for unresolved alerts |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu | string | `nil` |  |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu | string | `"10m"` |  |
@@ -63,10 +63,10 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.grafana.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User name used to access Grafana UI |
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.prometheus.name | string | `"prometheus-operator-crds"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v21.0.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v22.0.0"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.56.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.57.0"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |
