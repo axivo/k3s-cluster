@@ -29,7 +29,6 @@ body:
       label: Relevant Logs
       description: |
         Please copy and paste any relevant log output.
-        > [!TIP]
         > This will be automatically formatted into code, there is no need to insert backticks.
       render: shell
   - type: textarea
@@ -38,7 +37,6 @@ body:
       label: Anything Else
       description: |
         Links? References? Anything that will provide more context.
-        > [!TIP]
         > You can attach images or log files by clicking this area to highlight it and then dragging files in.
   - type: checkboxes
     id: terms
