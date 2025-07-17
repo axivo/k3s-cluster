@@ -1,8 +1,8 @@
 # external-dns
 
-![Version: 1.17.0](https://img.shields.io/badge/Version-1.17.0-informational?style=flat-square)
+![Version: 1.18.0](https://img.shields.io/badge/Version-1.18.0-informational?style=flat-square)
 
-The role performs various tasks related to [Cloudflare](https://github.com/kubernetes-sigs/external-dns/blob/external-dns-helm-chart-1.17.0/docs/tutorials/cloudflare.md) based `external-dns` [chart](https://github.com/kubernetes-sigs/external-dns/tree/external-dns-helm-chart-1.17.0/charts/external-dns) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/externaldns), for additional details.
+The role performs various tasks related to [Cloudflare](https://github.com/kubernetes-sigs/external-dns/blob/external-dns-helm-chart-1.18.0/docs/tutorials/cloudflare.md) based `external-dns` [chart](https://github.com/kubernetes-sigs/external-dns/tree/external-dns-helm-chart-1.18.0/charts/external-dns) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/externaldns), for additional details.
 
 ## Role Variables
 
