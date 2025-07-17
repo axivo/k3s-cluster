@@ -33,4 +33,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.release.helm.repository.channel | string | `"stable"` |  |
 | helm_vars.release.helm.repository.key | string | `"signing.asc"` |  |
 | helm_vars.release.helm.repository.url | string | `"https://baltocdn.com/helm"` |  |
-| helm_vars.release.helm.version | string | `"v3.18.3-1"` |  |
+| helm_vars.release.helm.version | string | `"v3.18.4-1"` |  |
