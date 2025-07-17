@@ -315,9 +315,13 @@ vmagent:
     extraEnvs:
       {{ victoriametrics_map.spec.vmagent.extra_envs | to_nice_yaml(indent=2) | trim | indent(6) }}
 {% endif %}
+    livenessProbe:
+      periodSeconds: {{ victoriametrics_map.service.monitor.scrape.interval[:-1] }}
     logLevel: {{ victoriametrics_vars.kubernetes.vmagent.log_level }}
     podDisruptionBudget:
       maxUnavailable: 1
+    readinessProbe:
+      periodSeconds: {{ victoriametrics_map.service.monitor.scrape.interval[:-1] }}
     replicaCount: {{ victoriametrics_vars.kubernetes.vmagent.replicas }}
     resources:
       limits:
