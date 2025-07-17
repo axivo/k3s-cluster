@@ -1,12 +1,6 @@
 ## Objective
 
-<!-- 
-Please include a summary of the changes and any related issues.
-
-### Related Issues
-
-- #123
--->
+<!-- Please include a summary of the changes and any related issues. -->
 
 ## Scope
 
