@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/cert-manager/cmctl | cmctl | 2.2.0 |
+| https://github.com/cert-manager/cmctl | cmctl | 2.3.0 |
 
 ## Role Variables
 
