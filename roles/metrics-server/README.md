@@ -1,8 +1,8 @@
 # metrics-server
 
-![Version: 3.12.2](https://img.shields.io/badge/Version-3.12.2-informational?style=flat-square)
+![Version: 3.13.0](https://img.shields.io/badge/Version-3.13.0-informational?style=flat-square)
 
-The role performs various tasks related to `metrics-server` [chart](https://github.com/kubernetes-sigs/metrics-server/tree/metrics-server-helm-chart-3.12.2/charts/metrics-server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/metricsserver), for additional details.
+The role performs various tasks related to `metrics-server` [chart](https://github.com/kubernetes-sigs/metrics-server/tree/metrics-server-helm-chart-3.13.0/charts/metrics-server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/metricsserver), for additional details.
 
 ## Role Variables
 
@@ -15,7 +15,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | metricsserver_vars.kubernetes.helm.chart.name | string | `"metrics-server"` |  |
-| metricsserver_vars.kubernetes.helm.chart.version | string | `"v3.12.2"` |  |
+| metricsserver_vars.kubernetes.helm.chart.version | string | `"v3.13.0"` |  |
 | metricsserver_vars.kubernetes.helm.repository.name | string | `"metrics-server"` |  |
 | metricsserver_vars.kubernetes.helm.repository.org | string | `"kubernetes-sigs"` |  |
 | metricsserver_vars.kubernetes.helm.repository.url | string | `"https://kubernetes-sigs.github.io"` |  |
