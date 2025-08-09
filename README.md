@@ -27,6 +27,10 @@ The automation is built around a collection of specialized Ansible roles that ha
 - **GitOps**: ArgoCD for declarative application deployment following GitOps principles
 - **Maintenance**: Coordinated node updates with Kured for minimizing disruption during system maintenance
 
+### Claude's Review
+
+A [public session](https://claude.ai/share/8ccaba98-ebb2-4b1a-8bbe-79fa0bdddbf4) provides a comprehensive analysis of the cluster's architecture, technology choices, and operational characteristics, demonstrating production-grade SRE practices.
+
 ### Documentation
 
 Visit the [Wiki](https://axivo.com/k3s-cluster) (powered by [Hextra](https://github.com/imfing/hextra)), for detailed configuration instructions.
