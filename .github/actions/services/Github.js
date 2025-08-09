@@ -20,18 +20,22 @@ class GitHubService extends Action {
    * Creates an annotation for the current workflow run
    * 
    * @param {string} message - Annotation message
-   * @param {string} [level='warning'] - Annotation level (warning, error, notice)
+   * @param {Object} [options={}] - Annotation options
+   * @param {Object} [options.level] - Annotation level (notice, warning, error)
+   * @param {Object} [options.status] - Annotation status
+   *  @param {Object} [options.conclusion] - Annotation conclusion
    * @returns {Promise<Object>} Created check run data
    */
-  async createAnnotation(message, level = 'warning') {
+  async createAnnotation(message, options = {}) {
     return this.execute('create annotation', async () => {
+      const { level = 'notice', status = 'completed', conclusion = 'neutral' } = options;
       const checkRun = await this.github.rest.checks.create({
         owner: this.context.repo.owner,
         repo: this.context.repo.repo,
         name: level,
         head_sha: this.context.sha,
-        status: 'completed',
-        conclusion: 'neutral',
+        status,
+        conclusion,
         output: {
           title: level,
           summary: message,
@@ -40,7 +44,7 @@ class GitHubService extends Action {
             start_line: 1,
             end_line: 1,
             annotation_level: level,
-            message: message
+            message
           }]
         }
       });

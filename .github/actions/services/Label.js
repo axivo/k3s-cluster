@@ -27,43 +27,30 @@ class LabelService extends Action {
   }
 
   /**
-   * Adds a label to the repository if it doesn't exist
+   * Sets a label to the repository
    * 
-   * @param {string} name - Name of the label to add
-   * @returns {Promise<boolean>} True if label was created or exists
+   * @private
+   * @param {string} name - Name of the label to set
+   * @returns {Promise<boolean>} True if label was created or updated
    */
-  async add(name) {
-    return this.execute(`add '${name}' label`, async () => {
+  async #set(name) {
+    return this.execute(`set '${name}' label`, async () => {
       if (!name) {
         this.logger.warning('Label name is required');
         return false;
       }
       const labelConfig = this.config.get(`issue.labels.${name}`);
       if (!labelConfig) {
-        this.logger.warning(`Label configuration not found for '${name}'`);
+        this.logger.warning(`Label '${name}' configuration not found`);
         return false;
       }
       const existingLabel = await this.gitHubService.getLabel(name);
-      if (existingLabel) {
-        // Update existing label
-        await this.gitHubService.updateLabel(
-          name,
-          labelConfig.color,
-          labelConfig.description
-        );
-        this.logger.info(`Successfully updated '${name}' label`);
-        return true;
-      }
-      if (!this.config.get('issue.createLabels')) {
-        this.logger.warning(`Label '${name}' not found and createLabels is disabled`);
-        return false;
-      }
-      await this.gitHubService.createLabel(
+      const method = existingLabel ? 'updateLabel' : 'createLabel';
+      await this.gitHubService[method](
         name,
         labelConfig.color,
         labelConfig.description
       );
-      this.logger.info(`Successfully created '${name}' label`);
       return true;
     }, false);
   }
@@ -71,27 +58,21 @@ class LabelService extends Action {
   /**
    * Update repository labels based on configuration
    * 
-   * @returns {Promise<string[]>} Array of created label names
+   * @returns {Promise<void>}
    */
   async update() {
     return this.execute('update repository issue labels', async () => {
-      if (!this.config.get('issue.createLabels')) {
-        this.logger.info('Label creation is disabled in configuration, skipping label updates');
-        return [];
-      }
       this.logger.info('Updating repository issue labels...');
+      const message = 'Set "updateLabels: false" after initial setup';
+      await this.gitHubService.createAnnotation(message, { level: 'warning' });
+      this.logger.warning(message);
       const labelNames = Object.keys(this.config.get('issue.labels'));
-      const results = await Promise.all(
+      await Promise.all(
         labelNames.map(async labelName => {
-          const created = await this.add(labelName);
-          return created ? labelName : null;
+          await this.#set(labelName);
         })
       );
-      const createdLabels = results.filter(Boolean);
-      if (createdLabels.length) {
-        this.logger.info(`Successfully updated ${createdLabels.length} issue labels`);
-      }
-      return createdLabels;
+      this.logger.info(`Successfully updated ${labelNames.length} issue labels`);
     }, false);
   }
 }

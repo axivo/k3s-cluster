@@ -55,7 +55,7 @@ class Logger {
    */
   #format(message, meta = {}) {
     const parts = [`[${this.context}]`];
-    if (meta.level && meta.level !== 'info') parts.push(`[${meta.level.toUpperCase()}]`);
+    if (meta.level) parts.push(`[${meta.level.toUpperCase()}]`);
     if (meta.timestamp) parts.push(`[${new Date().toISOString()}]`);
     if (meta.component) parts.push(`[${meta.component}]`);
     return `${parts.join('')} ${message}`;
@@ -71,7 +71,19 @@ class Logger {
   debug(message, meta = {}) {
     if (!this.#allow('debug')) return;
     const logMeta = { level: 'debug', timestamp: true, ...meta };
-    this.core.info(this.#format(message, logMeta));
+    const formattedMessage = this.#format(message, logMeta);
+    if (meta.file) {
+      const params = {
+        file: meta.file,
+        startLine: meta.line || 1,
+        startColumn: meta.col || 1,
+        title: meta.title || 'Debug',
+        message: formattedMessage
+      };
+      this.core.info(formattedMessage, params);
+    } else {
+      this.core.info(formattedMessage);
+    }
   }
 
   /**
@@ -109,7 +121,19 @@ class Logger {
   info(message, meta = {}) {
     if (!this.#allow('info')) return;
     const logMeta = { level: 'info', ...meta };
-    this.core.info(this.#format(message, logMeta));
+    const formattedMessage = this.#format(message, logMeta);
+    if (meta.file) {
+      const params = {
+        file: meta.file,
+        startLine: meta.line || 1,
+        startColumn: meta.col || 1,
+        title: meta.title || 'Info',
+        message: formattedMessage
+      };
+      this.core.info(formattedMessage, params);
+    } else {
+      this.core.info(formattedMessage);
+    }
   }
 
   /**
