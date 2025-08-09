@@ -3,6 +3,7 @@
  * 
  * This module defines the production configuration values used throughout the application.
  */
+
 module.exports = {
   /**
    * Issue-specific configuration
@@ -11,27 +12,27 @@ module.exports = {
    */
   issue: {
     /**
-     * Controls automatic label creation for repository
+     * Controls automatic label update for repository
      * 
-     * When enabled, the system will automatically create missing labels defined
+     * When enabled, the system will automatically update repository labels defined
      * in the labels configuration during workflow execution. When disabled,
-     * the system will only use existing labels without creating missing ones.
+     * the system will only use existing labels.
      * 
-     * Note: If enabled, the system will create GitHub issues during each workflow run,
+     * Note: If enabled, the system will update GitHub issues during each workflow run,
      * including a reminder to set this value to "false" after initial setup. This can result in
      * numerous notifications for repository maintainers.
      * 
      * @type {boolean}
      * @default false
      */
-    createLabels: false,
+    updateLabels: false,
 
     /**
      * Predefined issue label definitions used across the repository
      * 
      * Contains standardized label definitions (color, description) that are used
      * for categorizing issues in GitHub and generating release notes. These labels
-     * can be automatically created when createLabels is true.
+     * can be automatically created when updateLabels is true.
      * 
      * @type {Object}
      */
@@ -344,7 +345,7 @@ module.exports = {
      * @type {string}
      * @default 'info'
      */
-    logLevel: 'debug',
+    logLevel: 'info',
 
     /**
      * Path to the Handlebars template for workflow-generated issues

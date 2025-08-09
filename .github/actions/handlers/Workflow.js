@@ -73,10 +73,7 @@ class WorkflowHandler extends Action {
    */
   async processReleases() {
     return this.execute('process releases', async () => {
-      if (this.config.get('issue.createLabels')) {
-        this.logger.info('Updating repository labels...');
-        await this.labelService.update();
-      }
+      if (this.config.get('issue.updateLabels')) await this.labelService.update();
       this.logger.info('Generating documentation...');
       const updatedFiles = await this.gitHubService.getUpdatedFiles();
       const updatedDirs = [...new Set(updatedFiles
@@ -88,7 +85,7 @@ class WorkflowHandler extends Action {
         return;
       }
       await this.docsService.generate(updatedDirs);
-      this.logger.info('Successfully generated documentation');
+      this.logger.info('Documentation generation process complete');
     });
   }
 
@@ -100,11 +97,6 @@ class WorkflowHandler extends Action {
   async reportIssue() {
     return this.execute('report workflow issue', async () => {
       this.logger.info('Checking for workflow issues...');
-      if (this.config.get('issue.createLabels')) {
-        const message = 'Set "createLabels: false" after initial setup';
-        await this.gitHubService.createAnnotation(message);
-        this.logger.warning(message);
-      }
       const templatePath = this.config.get('workflow.template');
       const templateContent = await this.fileService.read(templatePath);
       const issue = await this.issueService.report(
