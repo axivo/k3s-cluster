@@ -2,4 +2,4 @@ apiVersion: v2
 name: cluster
 description: Documentation generator for cluster Ansible role
 home: https://ubuntu.com/server
-version: 24.04.2
+version: 24.04.3
