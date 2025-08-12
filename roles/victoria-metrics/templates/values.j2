@@ -222,8 +222,7 @@ kubeEtcd:
   vmScrape:
     spec:
       endpoints:
-        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-          port: http-metrics
+        - port: http-metrics
           scheme: http
       namespaceSelector:
         matchNames:
