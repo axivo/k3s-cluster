@@ -222,8 +222,12 @@ kubeEtcd:
   vmScrape:
     spec:
       endpoints:
-        - port: http-metrics
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
           scheme: http
+      namespaceSelector:
+        matchNames:
+          - {{ victoriametrics_vars.kubernetes.namespace }}
 kubelet:
   vmScrape:
     spec:
