@@ -107,8 +107,8 @@
   ansible.builtin.set_fact:
     k3s_node:
       binary: '{{ k3s_map.node.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
-      ip_address: '{{ ansible_default_ipv4.address }}'
-      service_type: "{{ 'agent' if inventory_hostname not in k3s_map.server.hosts else 'server' }}"
+      ip: '{{ ansible_default_ipv4.address }}'
+      service: "{{ 'agent' if inventory_hostname not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set project fact
   ansible.builtin.set_fact:
