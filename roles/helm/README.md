@@ -10,7 +10,7 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/databus23/helm-diff | diff | 3.12.3 |
+| https://github.com/databus23/helm-diff | diff | 3.13.0 |
 
 ## Role Variables
 
