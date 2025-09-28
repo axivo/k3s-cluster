@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 22.0.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 23.0.0 |
 
 ## Role Variables
 
