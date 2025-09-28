@@ -1,8 +1,8 @@
 # metrics-server
 
-![Version: 3.12.2](https://img.shields.io/badge/Version-3.12.2-informational?style=flat-square)
+![Version: 3.13.0](https://img.shields.io/badge/Version-3.13.0-informational?style=flat-square)
 
-The role performs various tasks related to `metrics-server` [chart](https://github.com/kubernetes-sigs/metrics-server/tree/metrics-server-helm-chart-3.12.2/charts/metrics-server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/metricsserver), for additional details.
+The role performs various tasks related to `metrics-server` [chart](https://github.com/kubernetes-sigs/metrics-server/tree/metrics-server-helm-chart-3.13.0/charts/metrics-server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/metricsserver), for additional details.
 
 ## Role Variables
 
