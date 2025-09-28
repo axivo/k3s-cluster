@@ -1,5 +1,5 @@
 [Unit]
-Description=Lightweight Kubernetes {{ k3s_node.service_type | capitalize }}
+Description=Lightweight Kubernetes {{ k3s_node.service | capitalize }}
 Documentation=https://k3s.io
 Wants=network-online.target
 After=network-online.target
@@ -9,7 +9,7 @@ Type=notify
 Delegate=yes
 EnvironmentFile=-/etc/default/%N
 EnvironmentFile=-/etc/systemd/system/{{ k3s_map.service.name }}.service.env
-ExecStart={{ k3s_node.binary }} {{ k3s_node.service_type }}{{ ' --debug' if k3s_vars.service.debug }}
+ExecStart={{ k3s_node.binary }} {{ k3s_node.service }}{{ ' --debug' if k3s_vars.service.debug }}
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=process
 LimitCORE=infinity
