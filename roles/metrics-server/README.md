@@ -15,7 +15,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | metricsserver_vars.kubernetes.helm.chart.name | string | `"metrics-server"` |  |
-| metricsserver_vars.kubernetes.helm.chart.version | string | `"v3.12.2"` |  |
+| metricsserver_vars.kubernetes.helm.chart.version | string | `"v3.13.0"` |  |
 | metricsserver_vars.kubernetes.helm.repository.name | string | `"metrics-server"` |  |
 | metricsserver_vars.kubernetes.helm.repository.org | string | `"kubernetes-sigs"` |  |
 | metricsserver_vars.kubernetes.helm.repository.url | string | `"https://kubernetes-sigs.github.io"` |  |

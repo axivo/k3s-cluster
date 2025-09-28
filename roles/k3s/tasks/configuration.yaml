@@ -61,18 +61,18 @@
         - name: Read token
           ansible.builtin.slurp:
             path: '{{ k3s_map.node.directory.data }}/server/node-token'
-          register: node_token
+          register: k3s_token
 
         - name: Set project token
           ansible.utils.update_fact:
             updates:
               - path: k3s_project.cluster.token
-                value: '{{ node_token.content | b64decode | trim }}'
-          register: update
+                value: '{{ k3s_token.content | b64decode | trim }}'
+          register: k3s_update
 
         - name: Update project fact
           ansible.builtin.set_fact:
-            k3s_project: '{{ update.k3s_project }}'
+            k3s_project: '{{ k3s_update.k3s_project }}'
 
     - name: Kubepug Configuration
       block:
@@ -83,27 +83,27 @@
               ansible.builtin.uri:
                 url: '{{ k3s_project.release.kubepug.checksum }}'
                 return_content: true
-              register: checksum
+              register: k3s_checksum
               check_mode: false
 
             - name: Set sha256 checksum fact
               ansible.builtin.set_fact:
-                sha256_checksum: "{{ item.split(' ')[0] }}"
-              loop: "{{ checksum.content.split('\n') }}"
-              when: item | regex_search(k3s_vars.release.kubepug.file + '$')
+                k3s_sha256_checksum: "{{ item.split(' ')[0] }}"
+              loop: "{{ k3s_checksum.content.split('\n') }}"
+              when: item is search(k3s_vars.release.kubepug.file + '$')
 
         - name: Download kubepug archive
           ansible.builtin.get_url:
             url: '{{ k3s_project.release.kubepug.file }}'
-            checksum: sha256:{{ sha256_checksum }}
+            checksum: sha256:{{ k3s_sha256_checksum }}
             dest: /tmp
             owner: root
             group: root
             mode: '644'
-          register: result
+          register: k3s_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: k3s_result is not failed
           check_mode: false
 
         - name: Install kubepug binary
@@ -131,34 +131,34 @@
     - name: Create temporary file
       ansible.builtin.tempfile:
         prefix: kubeconfig.
-      register: kubeconfig
+      register: k3s_kubeconfig
 
     - name: Copy kubeconfig file
       ansible.builtin.copy:
         src: '{{ k3s_project.cluster.kubeconfig }}'
-        dest: '{{ kubeconfig.path }}'
+        dest: '{{ k3s_kubeconfig.path }}'
         mode: preserve
         remote_src: true
 
     - name: Get file content
       ansible.builtin.slurp:
-        path: '{{ kubeconfig.path }}'
-      register: file
+        path: '{{ k3s_kubeconfig.path }}'
+      register: k3s_file
 
     - name: Set datasource fact
       ansible.builtin.set_fact:
-        datasource: '{{ file.content | b64decode | from_yaml }}'
+        k3s_datasource: '{{ k3s_file.content | b64decode | from_yaml }}'
 
     - name: Set datasource parameters
       ansible.builtin.set_fact:
-        datasource: '{{ datasource | combine(parameters) }}'
+        k3s_datasource: '{{ k3s_datasource | combine(parameters) }}'
       vars:
         parameters:
           clusters:
             - cluster:
-                certificate-authority-data: "{{ datasource.clusters[0].cluster['certificate-authority-data'] }}"
+                certificate-authority-data: "{{ k3s_datasource.clusters[0].cluster['certificate-authority-data'] }}"
                 server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha is truthy else k3s_node.ip }}:{{ k3s_vars.server.api.port }}
-              name: '{{ datasource.clusters[0].name }}'
+              name: '{{ k3s_datasource.clusters[0].name }}'
 
     - name: Create local .kube directory
       ansible.builtin.file:
@@ -170,20 +170,20 @@
 
     - name: Update remote .kube/config file
       ansible.builtin.copy:
-        content: '{{ datasource | to_nice_yaml(indent=2) }}'
-        dest: '{{ kubeconfig.path }}'
+        content: '{{ k3s_datasource | to_nice_yaml(indent=2) }}'
+        dest: '{{ k3s_kubeconfig.path }}'
         mode: preserve
         remote_src: true
 
     - name: Copy remote .kube/config file locally
       ansible.builtin.fetch:
-        src: '{{ kubeconfig.path }}'
+        src: '{{ k3s_kubeconfig.path }}'
         dest: "{{ k3s_vars.cluster.kubeconfig.path }}/config"
         flat: true
 
     - name: Remove remote .kube/config file
       ansible.builtin.file:
-        path: '{{ kubeconfig.path }}'
+        path: '{{ k3s_kubeconfig.path }}'
         state: absent
 
     - name: Set local .kube/config file permissions

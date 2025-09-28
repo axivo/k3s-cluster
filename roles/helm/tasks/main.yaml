@@ -1,12 +1,13 @@
 ---
 - name: Role Facts
-  ansible.builtin.import_role:
-    name: k3s
+  ansible.builtin.include_role:
+    name: '{{ role }}'
     tasks_from: facts
-
-- name: Role Validation
-  ansible.builtin.import_tasks:
-    file: validation.yaml
+  loop:
+    - k3s
+    - helm
+  loop_control:
+    loop_var: role
 
 - name: Role Provisioning
   when: inventory_hostname in k3s_map.server.hosts
@@ -38,11 +39,11 @@
     - name: Get file status
       ansible.builtin.stat:
         path: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
-      changed_when: not gpg_key.stat.exists
-      register: gpg_key
+      changed_when: not helm_gpg_key.stat.exists
+      register: helm_gpg_key
 
     - name: Helm Repository
-      when: not gpg_key.stat.exists
+      when: not helm_gpg_key.stat.exists
       block:
         - name: Download key
           ansible.builtin.get_url:
@@ -51,16 +52,16 @@
             owner: root
             group: root
             mode: '644'
-          register: result
+          register: helm_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: helm_result is not failed
 
         - name: Dearmor key
           ansible.builtin.command:
             cmd: gpg --dearmor -o /usr/share/keyrings/{{ helm_vars.release.helm.key }} /tmp/{{ helm_vars.release.helm.repository.key }}
-          changed_when: dearmor_key.rc == 0
-          register: dearmor_key
+          changed_when: helm_dearmor_key.rc == 0
+          register: helm_dearmor_key
 
         - name: Remove key
           ansible.builtin.file:
@@ -71,16 +72,16 @@
           ansible.builtin.command:
             cmd: dpkg --print-architecture
           changed_when: false
-          register: architecture
+          register: helm_architecture
 
         - name: Install repository
           ansible.builtin.deb822_repository:
-            architectures: '{{ architecture.stdout }}'
+            architectures: '{{ helm_architecture.stdout }}'
             components: main
             name: helm-{{ helm_vars.release.helm.repository.channel }}
             signed_by: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
-            suites: all
-            uris: '{{  helm_map.release.channel }}/{{ helm_vars.release.helm.distro.name }}/'
+            suites: '{{ helm_vars.release.helm.distro.channel }}'
+            uris: '{{  helm_map.release.channel }}/'
             enabled: true
             trusted: true
 
@@ -92,7 +93,7 @@
         update_cache: true
 
     - name: Helm Cache
-      notify: Start service
+      notify: Start cache service
       block:
         - name: Create service file
           ansible.builtin.template:
@@ -109,6 +110,9 @@
             owner: root
             group: root
             mode: '644'
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Helm Plugins
       ansible.builtin.import_tasks:

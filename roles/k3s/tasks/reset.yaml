@@ -36,7 +36,7 @@
         that: true
       changed_when: true
       notify:
-        - Stop service
+        - Stop kubernetes service
         - Reboot
 
     - name: Flush handlers
@@ -62,7 +62,6 @@
         - /var/lib/cni
         - /var/lib/kubelet
         - /var/lib/rancher
-      register: result
 
     - name: Server Reset
       when: inventory_hostname in k3s_map.server.hosts

@@ -38,7 +38,7 @@
         reset_values: false
         reuse_values: true
         wait: true
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed

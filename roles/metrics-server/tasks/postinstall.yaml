@@ -21,7 +21,7 @@
         reset_values: false
         reuse_values: true
         wait: true
-      register: result
+      register: metricsserver_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: metricsserver_result is not failed

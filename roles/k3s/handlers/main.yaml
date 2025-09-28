@@ -7,7 +7,7 @@
     cmd: sysctl --system
   changed_when: false
 
-- name: Restart loadbalancer services
+- name: Restart loadbalancer service
   ansible.builtin.systemd_service:
     name: '{{ services_item }}.service'
     state: restarted
@@ -19,21 +19,21 @@
   loop_control:
     loop_var: services_item
 
-- name: Restart service
+- name: Restart kubernetes service
   ansible.builtin.systemd_service:
     name: '{{ k3s_map.service.name }}.service'
     state: restarted
     daemon_reload: true
     enabled: true
 
-- name: Start service
+- name: Start kubernetes service
   ansible.builtin.systemd_service:
     name: '{{ k3s_map.service.name }}.service'
     state: started
     daemon_reload: true
     enabled: true
 
-- name: Stop service
+- name: Stop kubernetes service
   ansible.builtin.systemd_service:
     name: '{{ k3s_map.service.name }}.service'
     state: stopped

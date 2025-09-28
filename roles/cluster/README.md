@@ -21,6 +21,8 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.device.name | string | `"ASMedia Technology"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#devicename), for details |
 | cluster_vars.hardware.architecture | string | `"aarch64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cluster_vars.hardware.product | string | `"Raspberry Pi"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardwareproduct), for details |
+| cluster_vars.lsb.id | string | `"Ubuntu"` | Linux Standard Base distribution ID |
+| cluster_vars.lsb.release | float | `24.04` | Linux Standard Base distribution release |
 | cluster_vars.service.bluetooth.enabled | bool | `false` | By default, related `apt` packages are not installed |
 | cluster_vars.service.cloud_init.enabled | bool | `false` |  |
 | cluster_vars.service.postfix.enabled | bool | `true` |  |

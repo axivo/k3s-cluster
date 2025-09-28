@@ -88,7 +88,7 @@
         hosts: '{{ groups.server }}'
         non_ha: '{{ groups.server | length == 1 }}'
       service:
-        name: "k3s{{ '-agent' if inventory_hostname not in groups.server }}"
+        name: "{{ 'k3s-agent' if inventory_hostname not in groups.server else 'k3s' }}"
   run_once: true
 
 - name: Set map loadbalancer fact
@@ -131,7 +131,7 @@
 
 - name: Set project taints fact
   ansible.builtin.set_fact:
-    k3s_project_taints: "{{ k3s_project_taints | default([]) | union([':'.join((taint.key | string, taint.effect | string))]) | sort }}"
+    k3s_project_taints: "{{ k3s_project_taints | default([]) | union([taint.key ~ ':' ~ taint.effect]) | sort }}"
   loop: '{{ k3s_map.node.tolerations }}'
   loop_control:
     loop_var: taint

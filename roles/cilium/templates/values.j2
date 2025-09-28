@@ -58,7 +58,7 @@ gatewayAPI:
   enableAlpn: true
 ipam:
   operator:
-    clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool }}
+    clusterPoolIPv4PodCIDRList: {{ cilium_vars.kubernetes.ipam.operator.cluster_pool | split(',') }}
 {% if cilium_vars.kubernetes.ip_masq_agent.enabled is truthy %}
 ipMasqAgent:
   config:
@@ -101,7 +101,7 @@ resources:
 rollOutCiliumPods: true
 {% elif cilium_postinstall is truthy %}
 dashboards:
-  enabled: true
+  enabled: {{ cilium_vars.kubernetes.dashboards.enabled | lower }}
 {% if cilium_map.metrics.service.monitor.enabled is truthy %}
 envoy:
   prometheus:
@@ -117,15 +117,9 @@ envoy:
 hubble:
   metrics:
     dashboards:
-      enabled: true
+      enabled: {{ cilium_vars.kubernetes.dashboards.enabled | lower }}
     enabled:
-      - dns:query;ignoreAAAA
-      - drop
-      - flow
-      - httpV2
-      - icmp
-      - port-distribution
-      - tcp
+      {{ cilium_vars.kubernetes.hubble.metrics | to_nice_yaml | trim | indent(6) }}
 {% if cilium_map.metrics.service.monitor.enabled is truthy %}
     serviceMonitor:
       enabled: true

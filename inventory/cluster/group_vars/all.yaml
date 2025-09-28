@@ -10,6 +10,8 @@ ansible_password: !vault |
   3563
 ansible_become_password: '{{ ansible_password }}'
 global_map:
+  ansible:
+    version: 2.19.0
   credentials:
     argocd:
       server:

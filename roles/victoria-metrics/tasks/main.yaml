@@ -1,8 +1,17 @@
 ---
-- name: Role Validation
-  ansible.builtin.import_tasks:
-    file: validation.yaml
-  any_errors_fatal: true
+- name: Role Facts
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - cert-manager
+    - cluster
+    - coredns
+    - external-dns
+    - k3s
+    - victoria-metrics
+  loop_control:
+    loop_var: role
 
 - name: Role Provisioning
   when: inventory_hostname in k3s_map.server.hosts
@@ -19,6 +28,10 @@
         repo_url: '{{ item.url }}/{{ item.name }}'
         force_update: true
       loop: '{{ victoriametrics_map.helm.repository }}'
+      register: victoriametrics_result
+      delay: 1
+      retries: 3
+      until: victoriametrics_result is not failed
 
     - name: Chart Setup
       run_once: true
@@ -41,10 +54,10 @@
             create_namespace: true
             update_repo_cache: true
             wait: true
-          register: result
+          register: victoriametrics_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: victoriametrics_result is not failed
 
         - name: Install chart
           kubernetes.core.helm:
@@ -57,10 +70,10 @@
             values: "{{ lookup('ansible.builtin.template', 'values.j2') | from_yaml }}"
             update_repo_cache: true
             wait: true
-          register: result
+          register: victoriametrics_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: victoriametrics_result is not failed
 
         - name: Deploy alerting rules
           kubernetes.core.k8s:
