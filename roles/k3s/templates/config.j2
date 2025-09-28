@@ -2,8 +2,8 @@ data-dir: {{ k3s_map.node.directory.data }}
 {% if k3s_map.node.default_registry_endpoint.enabled is falsy %}
 disable-default-registry-endpoint: true
 {% endif %}
-{% if k3s_node.service | lower == 'server' %}
-bind-address: {{ k3s_node.ip }}
+{% if k3s_map.service.type | lower == 'server' %}
+bind-address: {{ k3s_map.node.ip }}
 cluster-domain: {{ k3s_vars.cluster.domain }}
 {% if k3s_map.server.ha is truthy and k3s_postinstall is falsy and inventory_hostname == k3s_map.server.default_host %}
 cluster-init: true
@@ -26,32 +26,32 @@ etcd-arg:
 etcd-expose-metrics: true
 {% endif %}
 flannel-backend: none
-kube-controller-manager-arg: bind-address={{ k3s_node.ip }}
-kube-scheduler-arg: bind-address={{ k3s_node.ip }}
+kube-controller-manager-arg: bind-address={{ k3s_map.node.ip }}
+kube-scheduler-arg: bind-address={{ k3s_map.node.ip }}
 {% endif %}
 kubelet-arg:
   - config={{ k3s_project.cluster.config_kubelet }}
 {% if
   (k3s_resources.node.taint.agent | length > 0) or
-  (k3s_vars.cluster.controlplane.tainted is truthy and k3s_node.service | lower == 'server' and k3s_resources.node.taint.server | length > 0)
+  (k3s_vars.cluster.controlplane.tainted is truthy and k3s_map.service.type | lower == 'server' and k3s_resources.node.taint.server | length > 0)
 %}
 node-taint:
 {% if k3s_resources.node.taint.agent | length > 0 %}
   {{ k3s_resources.node.taint.agent | to_nice_yaml | indent(2) }}
 {%- endif %}
-{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_node.service | lower == 'server' and k3s_resources.node.taint.server | length > 0 %}
+{% if k3s_vars.cluster.controlplane.tainted is truthy and k3s_map.service.type | lower == 'server' and k3s_resources.node.taint.server | length > 0 %}
   {{ k3s_resources.node.taint.server | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% endif %}
-{% if k3s_map.server.ha is truthy and (k3s_postinstall is truthy or k3s_node.service | lower == 'agent') %}
+{% if k3s_map.server.ha is truthy and (k3s_postinstall is truthy or k3s_map.service.type | lower == 'agent') %}
 server: https://{{ k3s_vars.server.api.host }}:{{ k3s_vars.server.api.port }}
 {% elif
-  (inventory_hostname != k3s_map.server.default_host and k3s_node.service | lower == 'server') or
-  (k3s_map.server.non_ha is truthy and k3s_node.service | lower == 'agent')
+  (inventory_hostname != k3s_map.server.default_host and k3s_map.service.type | lower == 'server') or
+  (k3s_map.server.non_ha is truthy and k3s_map.service.type | lower == 'agent')
 %}
 server: https://{{ k3s_map.server.default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
-{% if k3s_map.server.ha is truthy and k3s_node.service | lower == 'server' %}
+{% if k3s_map.server.ha is truthy and k3s_map.service.type | lower == 'server' %}
 tls-san:
   {{ k3s_vars.cluster.tls_san | to_nice_yaml | indent(2) }}
 {%- endif %}
