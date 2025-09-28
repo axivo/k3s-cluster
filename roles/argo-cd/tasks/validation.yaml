@@ -12,35 +12,35 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('argo-cd' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ argocd_project.url }}/{{ argocd_project.tag }}'
         timeout: 5
-      register: result
+      register: argocd_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: argocd_result is not failed
 
     - name: Validate release checksum url
       ansible.builtin.uri:
         url: '{{ argocd_project.release.url }}/{{ argocd_project.release.checksum }}'
         timeout: 5
-      register: result
+      register: argocd_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: argocd_result is not failed
 
     - name: Validate release file url
       ansible.builtin.uri:
         url: '{{ argocd_project.release.url }}/{{ argocd_project.release.file }}'
         timeout: 5
-      register: result
+      register: argocd_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: argocd_result is not failed
 
     - name: Chart Validation
       block:
@@ -53,7 +53,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: argocd_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -61,15 +61,15 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ argocd_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ argocd_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: argocd_release
+          when: argocd_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            argocd_comparison:
               chart: '{{ argocd_map.helm.chart.version }}'
-              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
+              release: "{{ argocd_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate configuration map values
           ansible.builtin.debug:
@@ -97,10 +97,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            argocd_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - argocd_comparison.release is version('0', '>')
+            - argocd_comparison.release != argocd_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -112,12 +112,13 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - argocd_comparison.release is version('0', '>')
+            - argocd_comparison.release != argocd_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                argocd_chart_values: >
+                  {{ argocd_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -129,16 +130,16 @@
                     --namespace {{ argocd_vars.kubernetes.namespace }}
                     --version {{ argocd_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ argocd_chart_values | to_yaml }}'
+              register: argocd_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: argocd_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ argocd_result.stdout if argocd_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -147,22 +148,22 @@
                     '/'.join([argocd_map.helm.platform.raw,
                       argocd_vars.kubernetes.helm.repository.org,
                       argocd_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([argocd_vars.kubernetes.helm.chart.name, comparison.release]), 'charts',
+                      '-'.join([argocd_vars.kubernetes.helm.chart.name, argocd_comparison.release]), 'charts',
                       argocd_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([argocd_map.helm.platform.raw,
                       argocd_vars.kubernetes.helm.repository.org,
                       argocd_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([argocd_vars.kubernetes.helm.chart.name, comparison.chart]), 'charts',
+                      '-'.join([argocd_vars.kubernetes.helm.chart.name, argocd_comparison.chart]), 'charts',
                       argocd_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: argocd_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: argocd_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: argocd_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ argocd_result.stdout if argocd_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

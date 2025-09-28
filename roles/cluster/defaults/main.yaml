@@ -12,6 +12,11 @@ cluster_vars:
     architecture: aarch64
     # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardwareproduct), for details
     product: 'Raspberry Pi'
+  lsb:
+    # -- Linux Standard Base distribution ID
+    id: Ubuntu
+    # -- Linux Standard Base distribution release
+    release: 24.04
   service:
     bluetooth:
       # -- By default, related `apt` packages are not installed

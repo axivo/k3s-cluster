@@ -11,10 +11,10 @@
       ansible.builtin.command:
         cmd: ufw status
       changed_when: false
-      register: firewall_status
+      register: cluster_firewall_status
 
     - name: Disable firewall
       ansible.builtin.command:
         cmd: ufw disable
       changed_when: false
-      when: firewall_status.stdout.find('Status":" active') != -1
+      when: cluster_firewall_status.stdout.find('Status":" active') != -1

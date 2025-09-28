@@ -13,17 +13,17 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('metrics-server' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ metricsserver_project.url }}/{{ metricsserver_project.tag }}'
         timeout: 5
-      register: result
+      register: metricsserver_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: metricsserver_result is not failed
 
     - name: Chart Validation
       block:
@@ -36,7 +36,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: metricsserver_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -44,15 +44,15 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ metricsserver_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ metricsserver_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: metricsserver_release
+          when: metricsserver_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            metricsserver_comparison:
               chart: '{{ metricsserver_map.helm.chart.version }}'
-              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
+              release: "{{ metricsserver_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
@@ -64,10 +64,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            metricsserver_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - metricsserver_comparison.release is version('0', '>')
+            - metricsserver_comparison.release != metricsserver_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -79,12 +79,13 @@
 
         - name: Chart Deployment Validation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - metricsserver_comparison.release is version('0', '>')
+            - metricsserver_comparison.release != metricsserver_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                metricsserver_chart_values: >
+                  {{ metricsserver_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -96,16 +97,16 @@
                     --namespace {{ metricsserver_vars.kubernetes.namespace }}
                     --version {{ metricsserver_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ metricsserver_chart_values | to_yaml }}'
+              register: metricsserver_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: metricsserver_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ metricsserver_result.stdout if metricsserver_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -114,22 +115,22 @@
                     '/'.join([metricsserver_map.helm.platform.raw,
                       metricsserver_vars.kubernetes.helm.repository.org,
                       metricsserver_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([metricsserver_vars.kubernetes.helm.chart.name, 'helm', 'chart', comparison.release]), 'charts',
+                      '-'.join([metricsserver_vars.kubernetes.helm.chart.name, 'helm', 'chart', metricsserver_comparison.release]), 'charts',
                       metricsserver_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([metricsserver_map.helm.platform.raw,
                       metricsserver_vars.kubernetes.helm.repository.org,
                       metricsserver_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([metricsserver_vars.kubernetes.helm.chart.name, 'helm', 'chart', comparison.chart]), 'charts',
+                      '-'.join([metricsserver_vars.kubernetes.helm.chart.name, 'helm', 'chart', metricsserver_comparison.chart]), 'charts',
                       metricsserver_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: metricsserver_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: metricsserver_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: metricsserver_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ metricsserver_result.stdout if metricsserver_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

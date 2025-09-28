@@ -45,6 +45,8 @@ cilium_vars:
         requests:
           cpu: 10m
           memory: 128Mi
+    dashboards:
+      enabled: true
     envoy:
       resources:
         limits:
@@ -56,12 +58,20 @@ cilium_vars:
     helm:
       chart:
         name: cilium
-        version: v1.17.6
+        version: v1.18.2
       repository:
         name: cilium
         org: cilium
         url: https://helm.cilium.io
     hubble:
+      metrics:
+        - dns:query;ignoreAAAA
+        - drop
+        - flow
+        - httpV2
+        - icmp
+        - port-distribution
+        - tcp
       relay:
         # -- See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details
         enabled: true
@@ -153,7 +163,7 @@ cilium_vars:
       repository:
         name: cilium-cli
         org: cilium
-      version: v0.18.5
+      version: v0.18.6
     gateway_api:
       # -- See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details
       file: experimental-install.yaml
@@ -167,4 +177,4 @@ cilium_vars:
       repository:
         name: hubble
         org: cilium
-      version: v1.17.5
+      version: v1.18.0

@@ -1,6 +1,6 @@
 ---
 - name: Remove Helm Plugins
-  notify: Restart service
+  notify: Restart cache service
   block:
     - name: Remove plugins
       kubernetes.core.helm_plugin:
@@ -31,8 +31,8 @@
         plugin_path: '{{ item.repository.url }}'
         plugin_version: '{{ item.version }}'
       loop: '{{ helm_vars.plugins }}'
-      register: result
+      register: helm_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: helm_result is not failed
       when: item.enabled is truthy

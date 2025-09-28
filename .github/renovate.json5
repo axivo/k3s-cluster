@@ -26,9 +26,10 @@
       ]
     },
     "helm": {
-      "defaultRegistryUrlTemplate": "https://helm.baltorepo.com/stable/debian/packages/helm/badge/latest.json",
+      "defaultRegistryUrlTemplate": "https://packages.buildkite.com/helm-linux/helm-debian/any/dists/any/main/binary-amd64/Packages",
+      "format": "plain",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $.status}], \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://helm.baltorepo.com/stable/debian/packages/helm/\"}"
+        "{\"releases\": $map($split(body, \"\\n\")[/^Version:(.*)$/, 1], \"version\", $trim($match(1))), \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian\"}"
       ]
     },
     "hubble": {
@@ -225,7 +226,7 @@
     {
       "customType": "regex",
       "datasourceTemplate": "custom.helm",
-      "depNameTemplate": "balto/helm",
+      "depNameTemplate": "buildkite/helm",
       "managerFilePatterns": [
         "roles/helm/Chart.yaml",
         "roles/helm/defaults/main.yaml"

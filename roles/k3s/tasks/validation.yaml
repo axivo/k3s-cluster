@@ -4,7 +4,7 @@
     file: facts.yaml
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('k3s' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate inventory
@@ -23,7 +23,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: k3s_kubeconfig
           changed_when: false
 
         - name: Get cluster resources
@@ -31,34 +31,34 @@
             kind: Node
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             api_version: v1
-          register: node
-          when: kubeconfig.stat.exists
+          register: k3s_cluster
+          when: k3s_kubeconfig.stat.exists
 
         - name: Validate cluster resources capacity
           ansible.builtin.assert:
             that:
-              - (node.resources |
+              - (k3s_cluster.resources |
                   map(attribute='status.allocatable.memory') |
                   map('regex_replace', 'Ki$', '') |
                   map('int') | sum) > (k3s_map.node.kubelet.system_reserved.memory | regex_replace('Gi$', '') | int * 1024 * 1024)
-              - (node.resources |
+              - (k3s_cluster.resources |
                   map(attribute='status.allocatable.cpu') |
                   map('int') | sum * 1000) > (k3s_map.node.kubelet.system_reserved.cpu | regex_replace('m$', '') | int)
             fail_msg: |-
               ERROR: Cluster resource capacity below minimum thresholds.
                 - Total allocatable memory: {{
-                    (node.resources |
+                    (k3s_cluster.resources |
                      map(attribute='status.allocatable.memory') |
                      map('regex_replace', 'Ki$', '') |
                      map('int') | sum / 1024 / 1024) | round(2)
                   }}GB (min: {{ k3s_map.node.kubelet.system_reserved.memory }})
                 - Total allocatable CPU: {{
-                    (node.resources |
+                    (k3s_cluster.resources |
                      map(attribute='status.allocatable.cpu') |
                      map('int') | sum * 1000)
                   }}m (min: {{ k3s_map.node.kubelet.system_reserved.cpu }})
             quiet: true
-          when: kubeconfig.stat.exists
+          when: k3s_kubeconfig.stat.exists
 
         - name: Get cluster system resources
           kubernetes.core.k8s_info:
@@ -67,29 +67,29 @@
             namespace: kube-system
             label_selectors:
               - app.kubernetes.io/name in (cilium-agent,coredns,metrics-server)
-          register: system
-          when: kubeconfig.stat.exists
+          register: k3s_system
+          when: k3s_kubeconfig.stat.exists
 
         - name: Validate cluster system components
           ansible.builtin.assert:
             that:
-              - system.resources |
+              - k3s_system.resources |
                   selectattr('status.phase', 'equalto', 'Running') |
                   list | length > 0
-              - system.resources |
+              - k3s_system.resources |
                   rejectattr('status.phase', 'equalto', 'Running') |
                   list | length == 0
             fail_msg: |-
               ERROR: Cluster system components not healthy.
                 - Running pods: {{
-                    system.resources |
+                    k3s_system.resources |
                     selectattr('status.phase', 'equalto', 'Running') |
                     list | length
                   }}
                 - Non-running pods: {{
-                    system.resources |
+                    k3s_system.resources |
                     rejectattr('status.phase', 'equalto', 'Running') |
                     map(attribute='metadata.name') | join(', ')
                   }}
             quiet: true
-          when: kubeconfig.stat.exists
+          when: k3s_kubeconfig.stat.exists

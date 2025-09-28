@@ -12,17 +12,17 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('coredns' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ coredns_project.url }}/{{ coredns_project.tag }}'
         timeout: 5
-      register: result
+      register: coredns_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: coredns_result is not failed
 
     - name: Chart Validation
       block:
@@ -35,7 +35,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: coredns_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -43,15 +43,15 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ coredns_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ coredns_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: coredns_release
+          when: coredns_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            coredns_comparison:
               chart: '{{ coredns_map.helm.chart.version }}'
-              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
+              release: "{{ coredns_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
@@ -63,10 +63,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            coredns_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - coredns_comparison.release is version('0', '>')
+            - coredns_comparison.release != coredns_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -78,12 +78,13 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - coredns_comparison.release is version('0', '>')
+            - coredns_comparison.release != coredns_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                coredns_chart_values: >
+                  {{ coredns_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -95,16 +96,16 @@
                     --namespace {{ coredns_vars.kubernetes.namespace }}
                     --version {{ coredns_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ coredns_chart_values | to_yaml }}'
+              register: coredns_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: coredns_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ coredns_result.stdout if coredns_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -113,22 +114,22 @@
                     '/'.join([coredns_map.helm.platform.raw,
                       coredns_vars.kubernetes.helm.repository.org,
                       coredns_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([coredns_vars.kubernetes.helm.chart.name, comparison.release]), 'charts',
+                      '-'.join([coredns_vars.kubernetes.helm.chart.name, coredns_comparison.release]), 'charts',
                       coredns_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([coredns_map.helm.platform.raw,
                       coredns_vars.kubernetes.helm.repository.org,
                       coredns_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([coredns_vars.kubernetes.helm.chart.name, comparison.chart]), 'charts',
+                      '-'.join([coredns_vars.kubernetes.helm.chart.name, coredns_comparison.chart]), 'charts',
                       coredns_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: coredns_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: coredns_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: coredns_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ coredns_result.stdout if coredns_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

@@ -12,35 +12,35 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('longhorn' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ longhorn_project.url }}/{{ longhorn_project.tag }}'
         timeout: 5
-      register: result
+      register: longhorn_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: longhorn_result is not failed
 
     - name: Validate release checksum url
       ansible.builtin.uri:
         url: '{{ longhorn_project.release.url }}/{{ longhorn_project.release.file }}.sha256'
         timeout: 5
-      register: result
+      register: longhorn_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: longhorn_result is not failed
 
     - name: Validate release file url
       ansible.builtin.uri:
         url: '{{ longhorn_project.release.url }}/{{ longhorn_project.release.file }}'
         timeout: 5
-      register: result
+      register: longhorn_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: longhorn_result is not failed
 
     - name: Chart Validation
       block:
@@ -53,7 +53,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: longhorn_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -61,34 +61,40 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ longhorn_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ longhorn_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: longhorn_release
+          when: longhorn_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            longhorn_comparison:
               chart: '{{ longhorn_map.helm.chart.version }}'
-              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
+              release: "{{ longhorn_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Credentials Validation
           when: longhorn_vars.kubernetes.backup.target[:4] | lower == 'cifs'
           block:
             - name: Set credentials fact
               ansible.builtin.set_fact:
-                credentials: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
+                longhorn_credentials: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
               no_log: true
 
             - name: Set string data fact
               ansible.builtin.set_fact:
-                string_data:
-                  user: "{{ credentials.stringData['CIFS_USERNAME'] | b64encode }}"
-                  password: "{{ credentials.stringData['CIFS_PASSWORD'] | b64encode }}"
+                longhorn_string_data:
+                  user: "{{ longhorn_credentials.stringData['CIFS_USERNAME'] | b64encode }}"
+                  password: "{{ longhorn_credentials.stringData['CIFS_PASSWORD'] | b64encode }}"
               no_log: true
 
             - name: Validate credentials values
               ansible.builtin.debug:
-                msg: "{{ credentials | combine({'stringData': {'CIFS_PASSWORD': string_data.password, 'CIFS_USERNAME': string_data.user}}) }}"
+                msg: >
+                  {{ longhorn_credentials | combine({
+                    'stringData': {
+                      'CIFS_PASSWORD': longhorn_string_data.password,
+                      'CIFS_USERNAME': longhorn_string_data.user
+                    }})
+                  }}
 
         - name: Gateway Validation
           when: longhorn_vars.kubernetes.frontend.ingress.enabled is falsy
@@ -115,10 +121,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            longhorn_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - longhorn_comparison.release is version('0', '>')
+            - longhorn_comparison.release != longhorn_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -130,12 +136,13 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - longhorn_comparison.release is version('0', '>')
+            - longhorn_comparison.release != longhorn_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                longhorn_chart_values: >
+                  {{ longhorn_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -147,16 +154,16 @@
                     --namespace {{ longhorn_vars.kubernetes.namespace }}
                     --version {{ longhorn_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ longhorn_chart_values | to_yaml }}'
+              register: longhorn_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: longhorn_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ longhorn_result.stdout if longhorn_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -164,21 +171,21 @@
                   ' '.join(['diff', '-u', '<(curl', '-s ' +
                     '/'.join([longhorn_map.helm.platform.raw,
                       longhorn_vars.kubernetes.helm.repository.org, 'charts', 'refs', 'tags',
-                      '-'.join([longhorn_vars.kubernetes.helm.chart.name, comparison.release]), 'charts',
+                      '-'.join([longhorn_vars.kubernetes.helm.chart.name, longhorn_comparison.release]), 'charts',
                       longhorn_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([longhorn_map.helm.platform.raw,
                       longhorn_vars.kubernetes.helm.repository.org, 'charts', 'refs', 'tags',
-                      '-'.join([longhorn_vars.kubernetes.helm.chart.name, comparison.chart]), 'charts',
+                      '-'.join([longhorn_vars.kubernetes.helm.chart.name, longhorn_comparison.chart]), 'charts',
                       longhorn_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: longhorn_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: longhorn_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: longhorn_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ longhorn_result.stdout if longhorn_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

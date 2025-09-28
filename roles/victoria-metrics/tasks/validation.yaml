@@ -14,26 +14,26 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('victoria-metrics' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ victoriametrics_project.helm.chart.victoriametrics.url }}/{{ victoriametrics_project.helm.chart.victoriametrics.tag }}'
         timeout: 5
-      register: result
+      register: victoriametrics_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: victoriametrics_result is not failed
 
     - name: Validate project dependency url
       ansible.builtin.uri:
         url: '{{ victoriametrics_project.helm.chart.prometheus.url }}/{{ victoriametrics_project.helm.chart.prometheus.tag }}'
         timeout: 5
-      register: result
+      register: victoriametrics_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: victoriametrics_result is not failed
 
     - name: Chart Validation
       block:
@@ -47,7 +47,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: victoriametrics_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -55,28 +55,28 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias }}'
             namespace: '{{ victoriametrics_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: victoriametrics_release
+          when: victoriametrics_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            victoriametrics_comparison:
               chart: "{{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version[1:] }}"
-              release: "{{ release.status.chart | default('0') | replace('k8s', '') | regex_search('[0-9.]+') }}"
+              release: "{{ victoriametrics_release.status.chart | default('0') | replace('k8s', '') | regex_search('[0-9.]+') }}"
 
         - name: Set credentials fact
           ansible.builtin.set_fact:
-            credentials: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
+            victoriametrics_credentials: "{{ lookup('ansible.builtin.template', 'credentials.j2') | from_yaml }}"
           no_log: true
 
         - name: Set string data fact
           ansible.builtin.set_fact:
-            string_data:
-              admin_password: "{{ credentials.stringData['admin-password'] | b64encode }}"
-              admin_user: "{{ credentials.stringData['admin-user'] | b64encode }}"
-              smtp_password: "{{ credentials.stringData['smtp-password'] | b64encode }}"
-              smtp_user: "{{ credentials.stringData['smtp-user'] | b64encode }}"
+            victoriametrics_string_data:
+              admin_password: "{{ victoriametrics_credentials.stringData['admin-password'] | b64encode }}"
+              admin_user: "{{ victoriametrics_credentials.stringData['admin-user'] | b64encode }}"
+              smtp_password: "{{ victoriametrics_credentials.stringData['smtp-password'] | b64encode }}"
+              smtp_user: "{{ victoriametrics_credentials.stringData['smtp-user'] | b64encode }}"
           no_log: true
 
         - name: Validate alertmanager configuration values
@@ -92,12 +92,12 @@
         - name: Validate credentials values
           ansible.builtin.debug:
             msg: >
-              {{ credentials | combine({
+              {{ victoriametrics_credentials | combine({
                 'stringData': {
-                  'admin-password': string_data.admin_password,
-                  'admin-user': string_data.admin_user,
-                  'smtp-password': string_data.smtp_password,
-                  'smtp-user': string_data.smtp_user
+                  'admin-password': victoriametrics_string_data.admin_password,
+                  'admin-user': victoriametrics_string_data.admin_user,
+                  'smtp-password': victoriametrics_string_data.smtp_password,
+                  'smtp-user': victoriametrics_string_data.smtp_user
                 }})
               }}
 
@@ -107,8 +107,8 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - victoriametrics_comparison.release is version('0', '>')
+            - victoriametrics_comparison.release != victoriametrics_comparison.chart
           block:
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -121,15 +121,15 @@
                     --version {{ victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version }}
                     --context 3 --values -
                 stdin: "{{ lookup('ansible.builtin.template', 'values.j2') }}"
-              register: result
+              register: victoriametrics_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: victoriametrics_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ victoriametrics_result.stdout if victoriametrics_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -138,22 +138,22 @@
                     '/'.join([victoriametrics_map.helm.platform.raw,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name, 'refs', 'tags',
-                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.release]), 'charts',
+                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, victoriametrics_comparison.release]), 'charts',
                       victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([victoriametrics_map.helm.platform.raw,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.org,
                       victoriametrics_vars.kubernetes.helm.repository.victoriametrics.name, 'refs', 'tags',
-                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, comparison.chart]), 'charts',
+                      '-'.join([victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, victoriametrics_comparison.chart]), 'charts',
                       victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: victoriametrics_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: victoriametrics_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: victoriametrics_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ victoriametrics_result.stdout if victoriametrics_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

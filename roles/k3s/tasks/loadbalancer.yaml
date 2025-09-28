@@ -10,7 +10,7 @@
     loop_var: role
 
 - name: Loadbalancer Setup
-  notify: Restart loadbalancer services
+  notify: Restart loadbalancer service
   when:
     - k3s_map.server.ha is truthy
     - inventory_hostname in k3s_map.loadbalancer.hosts
@@ -46,6 +46,3 @@
         owner: root
         group: root
         mode: '644'
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers

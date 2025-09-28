@@ -1,3 +1,6 @@
+global:
+  cluster:
+    dnsDomain: {{ k3s_vars.cluster.domain }}
 {% if victorialogs_postinstall is truthy %}
 dashboards:
   enabled: true

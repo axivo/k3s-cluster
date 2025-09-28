@@ -2,7 +2,7 @@
 - name: Reboot
   ansible.builtin.reboot:
 
-- name: Restart loadbalancer services
+- name: Restart loadbalancer service
   ansible.builtin.systemd_service:
     name: '{{ item }}.service'
     state: restarted
@@ -12,7 +12,7 @@
     - haproxy
     - keepalived
 
-- name: Reload mail service
+- name: Reload posfix service
   ansible.builtin.systemd_service:
     name: postfix.service
     state: reloaded

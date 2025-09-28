@@ -37,7 +37,8 @@
 
         - name: Create firmware purge configuration
           ansible.builtin.copy:
-            content: "DPkg::Post-Invoke {\"/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true\";};\n"
+            content: |
+              DPkg::Post-Invoke {"/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true";};
             dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
             owner: root
             group: root
@@ -50,33 +51,35 @@
           ansible.builtin.command:
             cmd: lsusb -s {{ cluster_vars.device.id }}
           changed_when: false
-          register: device_id
+          register: cluster_device_id
 
         - name: Device Trim
-          when: device_id.stdout.find(cluster_vars.device.name) != -1
+          when: cluster_device_id.stdout.find(cluster_vars.device.name) != -1
           block:
             - name: Set device attributes fact
               ansible.builtin.set_fact:
-                device_attributes: "{{ device_id.stdout | regex_search('ID\\s+(.*)\\s+' + cluster_vars.device.name, '\\1') | join | trim | split(':') }}"
+                cluster_device_attributes: "{{ cluster_device | join | trim | split(':') }}"
+              vars:
+                cluster_device: "{{ cluster_device_id.stdout | regex_search('ID\\s+([\\w:]+)\\s+' + cluster_vars.device.name, '\\1') }}"
 
             - name: Device Rule Setup
               when:
-                - device_attributes is iterable
-                - device_attributes | length == 2
+                - cluster_device_attributes is iterable
+                - cluster_device_attributes | length == 2
               block:
                 - name: Set device rule fact
                   ansible.builtin.set_fact:
-                    device_rule:
+                    cluster_device_rule:
                       - ACTION=="add|change"
-                      - ATTRS{idVendor}=="{{ device_attributes[0] }}"
-                      - ATTRS{idProduct}=="{{ device_attributes[1] }}"
+                      - ATTRS{idVendor}=="{{ cluster_device_attributes[0] }}"
+                      - ATTRS{idProduct}=="{{ cluster_device_attributes[1] }}"
                       - SUBSYSTEM=="scsi_disk"
                       - ATTR{provisioning_mode}="unmap"
 
                 - name: Create device rule
                   ansible.builtin.lineinfile:
                     path: /etc/udev/rules.d/10-unmap.fstrim.rules
-                    line: "{{ device_rule | join(', ') }}"
+                    line: "{{ cluster_device_rule | join(', ') }}"
                     regexp: ^ACTION
                     owner: root
                     group: root
@@ -89,13 +92,14 @@
           ansible.builtin.systemd_service:
             name: fstrim.timer
             state: started
+            daemon_reload: true
             enabled: true
 
         - name: Discard unused blocks on mounted filesystem
           ansible.builtin.command:
             cmd: fstrim -vA
-          changed_when: command.stdout.find('trimmed') != -1
-          register: command
+          changed_when: cluster_command.stdout.find('trimmed') != -1
+          register: cluster_command
 
 - name: OS Configuration
   block:
@@ -103,19 +107,19 @@
       ansible.builtin.command:
         cmd: hostname --fqdn
       changed_when: false
-      register: host_fqdn
+      register: cluster_host_fqdn
 
     - name: Get host all fqdns
       ansible.builtin.command:
         cmd: hostname --all-fqdns
       changed_when: false
-      register: host_all_fqdns
+      register: cluster_host_all_fqdns
 
     - name: Set cluster host fact
       ansible.builtin.set_fact:
         cluster_host:
-          extension: "{{ host_all_fqdns.stdout | split | first | split('.') | last | default('local') }}"
-          fqdn: '{{ host_all_fqdns.stdout | split | first }}'
+          extension: "{{ cluster_host_all_fqdns.stdout | split | first | split('.') | last | default('local') }}"
+          fqdn: '{{ cluster_host_all_fqdns.stdout | split | first }}'
           ipv4: "{{ ansible_default_ipv4['address'] }}"
           name: '{{ ansible_host }}'
 
@@ -125,7 +129,7 @@
         regexp: ^127.0.1.1\s.+\s{{ cluster_host['name'] }}$
         replace: 127.0.1.1 {{ cluster_host['fqdn'] }} {{ cluster_host['name'] }}
       notify: Reboot
-      when: host_fqdn.stdout != cluster_host['fqdn']
+      when: cluster_host_fqdn.stdout != cluster_host['fqdn']
 
     - name: Set root full name
       ansible.builtin.command:
@@ -212,7 +216,7 @@
               replace: '\g<1> "{{ cluster_vars.service.unattended_upgrades.remove_deps }}";'
 
 - name: Mail Configuration
-  notify: Reload mail service
+  notify: Reload postfix service
   when: cluster_vars.service.postfix.enabled is truthy
   block:
     - name: Set mail configuration
@@ -294,14 +298,14 @@
 
     - name: Set sasl password fact
       ansible.builtin.set_fact:
-        sasl_password:
+        cluster_sasl_password:
           - '[{{ cluster_vars.service.postfix.relay.host }}]'
           - '{{ cluster_vars.service.postfix.relay.port }} {{ global_map.credentials.cluster.postfix.user.name }}'
           - '{{ global_map.credentials.cluster.postfix.user.password }}'
 
     - name: Create sasl password map
       ansible.builtin.copy:
-        content: "{{ sasl_password | join(':') }}\n"
+        content: "{{ cluster_sasl_password | join(':') }}\n"
         dest: /etc/postfix/sasl/password
         owner: root
         group: root

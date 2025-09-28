@@ -12,35 +12,35 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('cert-manager' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ certmanager_project.url }}/{{ certmanager_project.tag }}'
         timeout: 5
-      register: result
+      register: certmanager_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: certmanager_result is not failed
 
     - name: Validate release checksum url
       ansible.builtin.uri:
         url: '{{ certmanager_project.release.url }}/{{ certmanager_project.release.checksum }}'
         timeout: 5
-      register: result
+      register: certmanager_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: certmanager_result is not failed
 
     - name: Validate release file url
       ansible.builtin.uri:
         url: '{{ certmanager_project.release.url }}/{{ certmanager_project.release.file }}'
         timeout: 5
-      register: result
+      register: certmanager_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: certmanager_result is not failed
 
     - name: Chart Validation
       block:
@@ -53,7 +53,7 @@
         - name: Validate cluster kubeconfig path
           ansible.builtin.stat:
             path: '{{ k3s_project.cluster.kubeconfig }}'
-          register: kubeconfig
+          register: certmanager_kubeconfig
           changed_when: false
 
         - name: Get deployed chart release info
@@ -61,15 +61,15 @@
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ certmanager_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ certmanager_vars.kubernetes.namespace }}'
-          register: release
-          when: kubeconfig.stat.exists
+          register: certmanager_release
+          when: certmanager_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            certmanager_comparison:
               chart: '{{ certmanager_vars.kubernetes.helm.chart.version[1:] }}'
-              release: "{{ release.status.chart | default('0') | regex_search('[0-9.]+') }}"
+              release: "{{ certmanager_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate cluster issuer values
           ansible.builtin.debug:
@@ -85,10 +85,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            certmanager_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - certmanager_comparison.release is version('0', '>')
+            - certmanager_comparison.release != certmanager_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -100,12 +100,13 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - certmanager_comparison.release is version('0', '>')
+            - certmanager_comparison.release != certmanager_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                certmanager_chart_values: >
+                  {{ certmanager_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -117,16 +118,16 @@
                     --namespace {{ certmanager_vars.kubernetes.namespace }}
                     --version {{ certmanager_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ certmanager_chart_values | to_yaml }}'
+              register: certmanager_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: certmanager_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ certmanager_result.stdout if certmanager_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -135,22 +136,22 @@
                     '/'.join([certmanager_map.helm.platform.raw,
                       certmanager_vars.kubernetes.helm.repository.name,
                       certmanager_vars.kubernetes.helm.chart.name, 'refs', 'tags',
-                      comparison.release, 'deploy', 'charts',
+                      certmanager_comparison.release, 'deploy', 'charts',
                       certmanager_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([certmanager_map.helm.platform.raw,
                       certmanager_vars.kubernetes.helm.repository.name,
                       certmanager_vars.kubernetes.helm.chart.name, 'refs', 'tags',
-                      comparison.chart, 'deploy', 'charts',
+                      certmanager_comparison.chart, 'deploy', 'charts',
                       certmanager_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: certmanager_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: certmanager_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: certmanager_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ certmanager_result.stdout if certmanager_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

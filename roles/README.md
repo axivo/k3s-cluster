@@ -59,7 +59,7 @@ The roles follow these common patterns:
 
 - **Purpose**: Manages the base system configuration and hardware optimization
 - **Key Functions**:
-  - Hardware validation for Raspberry Pi systems (validates hardware_product fact)
+  - Hardware validation for Raspberry Pi systems
   - OS optimization (disabling unnecessary services: bluetooth, wifi, cloud-init, snapd)
   - Storage optimization with fstrim for SSDs and USB device trim configuration
   - Postfix mail system configuration for notifications with iCloud SMTP relay
