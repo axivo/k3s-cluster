@@ -1,8 +1,8 @@
 # kured
 
-![Version: 5.6.2](https://img.shields.io/badge/Version-5.6.2-informational?style=flat-square)
+![Version: 5.10.0](https://img.shields.io/badge/Version-5.10.0-informational?style=flat-square)
 
-The role performs various tasks related to `kured` [chart](https://github.com/kubereboot/charts/tree/kured-5.6.2/charts/kured) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/kured), for additional details.
+The role performs various tasks related to `kured` [chart](https://github.com/kubereboot/charts/tree/kured-5.10.0/charts/kured) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/kured), for additional details.
 
 ## Role Variables
 
