@@ -17,7 +17,6 @@
           bin: /usr/local/bin
           config: /etc/rancher/k3s
           data: /var/lib/rancher/k3s
-        ip: '{{ ansible_default_ipv4.address }}'
         kubelet:
           eviction_hard:
             memory_available: 500Mi
@@ -90,7 +89,6 @@
         non_ha: '{{ groups.server | length == 1 }}'
       service:
         name: "{{ 'k3s-agent' if inventory_hostname not in groups.server else 'k3s' }}"
-        type: "{{ 'agent' if inventory_hostname not in groups.server else 'server' }}"
   run_once: true
 
 - name: Set map loadbalancer fact
@@ -109,6 +107,8 @@
   ansible.builtin.set_fact:
     k3s_node:
       binary: '{{ k3s_map.node.directory.bin }}/{{ k3s_vars.release.k3s.name }}'
+      ip: '{{ ansible_default_ipv4.address }}'
+      service: "{{ 'agent' if inventory_hostname not in k3s_map.server.hosts else 'server' }}"
 
 - name: Set project fact
   ansible.builtin.set_fact:

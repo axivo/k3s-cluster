@@ -157,7 +157,7 @@
           clusters:
             - cluster:
                 certificate-authority-data: "{{ k3s_datasource.clusters[0].cluster['certificate-authority-data'] }}"
-                server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha is truthy else k3s_map.node.ip }}:{{ k3s_vars.server.api.port }}
+                server: https://{{ k3s_vars.server.api.host if k3s_map.server.ha is truthy else k3s_node.ip }}:{{ k3s_vars.server.api.port }}
               name: '{{ k3s_datasource.clusters[0].name }}'
 
     - name: Create local .kube directory
