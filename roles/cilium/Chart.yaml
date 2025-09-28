@@ -2,7 +2,7 @@ apiVersion: v2
 name: cilium
 description: Documentation generator for cilium Ansible role
 home: https://github.com/cilium/cilium
-version: 1.17.6
+version: 1.18.2
 dependencies:
   - name: cilium-cli
     repository: https://github.com/cilium/cilium-cli
