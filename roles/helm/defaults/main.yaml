@@ -20,5 +20,4 @@ helm_vars:
         channel: stable
         key: gpgkey
         url: https://packages.buildkite.com/helm-linux/helm-debian
-      # -- See [repository releases](https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian), for details
       version: v3.19.0-1
