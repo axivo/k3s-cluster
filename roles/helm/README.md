@@ -2,7 +2,7 @@
 
 ![Version: 3.19.0-1](https://img.shields.io/badge/Version-3.19.0--1-informational?style=flat-square)
 
-The role performs various tasks related to `helm` [package](https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian/3.19.0-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
+The role performs various tasks related to `helm` [package](https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
 
 ## Helm Plugins
 
