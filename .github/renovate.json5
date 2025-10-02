@@ -25,13 +25,6 @@
         "{\"releases\": [{\"version\": $.lts.full_version}], \"homepage\": \"https://ubuntu.com\", \"sourceUrl\": \"https://github.com/canonical/ubuntu.com\"}"
       ]
     },
-    "helm": {
-      "defaultRegistryUrlTemplate": "https://packages.buildkite.com/helm-linux/helm-debian/any/dists/any/main/binary-amd64/Packages",
-      "format": "plain",
-      "transformTemplates": [
-        "{\"releases\": $map($split(body, \"\\n\")[/^Version:(.*)$/, 1], \"version\", $trim($match(1))), \"homepage\": \"https://helm.sh\", \"sourceUrl\": \"https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian\"}"
-      ]
-    },
     "hubble": {
       "defaultRegistryUrlTemplate": "https://raw.githubusercontent.com/cilium/hubble/main/stable.txt",
       "format": "plain",
@@ -225,7 +218,7 @@
     },
     {
       "customType": "regex",
-      "datasourceTemplate": "custom.helm",
+      "datasourceTemplate": "deb",
       "depNameTemplate": "buildkite/helm",
       "managerFilePatterns": [
         "roles/helm/Chart.yaml",
@@ -235,6 +228,7 @@
         "home:[\\s\\S]+?version:\\s+(?<currentValue>.+)",
         "release:[\\s\\S]+helm:[\\s\\S]+?version:\\s+v(?<currentValue>.+)"
       ],
+      "packageNameTemplate": "helm",
       "versioningTemplate": "loose"
     },
     {
@@ -400,6 +394,22 @@
     "dependency"
   ],
   "packageRules": [
+    {
+      "enabled": true,
+      "matchDatasources": [
+        "deb"
+      ],
+      "matchDepNames": [
+        "buildkite/helm"
+      ],
+      "matchPackageNames": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://packages.buildkite.com/helm-linux/helm-debian/any/?binaryArch=amd64&components=main&suite=any"
+      ],
+      "sourceUrl": "https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian"
+    },
     {
       "enabled": true,
       "matchDatasources": [
