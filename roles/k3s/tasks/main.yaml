@@ -50,14 +50,14 @@
     - name: Create service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        dest: /etc/systemd/system/{{ k3s_node.service.name }}.service
         owner: root
         group: root
         mode: '644'
 
     - name: Create service environment file
       ansible.builtin.file:
-        path: /etc/systemd/system/{{ k3s_map.service.name }}.service.env
+        path: /etc/systemd/system/{{ k3s_node.service.name }}.service.env
         access_time: preserve
         modification_time: preserve
         state: touch

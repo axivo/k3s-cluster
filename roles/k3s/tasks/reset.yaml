@@ -92,8 +92,8 @@
         - '{{ k3s_node.binary }}'
         - /etc/sysctl.d/90-kubernetes-node.conf
         - /etc/sysctl.d/99-zzz-override_cilium.conf
-        - /etc/systemd/system/{{ k3s_map.service.name }}.service
-        - /etc/systemd/system/{{ k3s_map.service.name }}.service.env
+        - /etc/systemd/system/{{ k3s_node.service.name }}.service
+        - /etc/systemd/system/{{ k3s_node.service.name }}.service.env
 
     - name: Remove local kubeconfig files
       ansible.builtin.file:
