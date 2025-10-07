@@ -1,8 +1,8 @@
 # k3s
 
-![Version: 1.33.4+k3s1](https://img.shields.io/badge/Version-1.33.4+k3s1-informational?style=flat-square)
+![Version: 1.33.5+k3s1](https://img.shields.io/badge/Version-1.33.5+k3s1-informational?style=flat-square)
 
-The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.33.4+k3s1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/k3s), for additional details.
+The role performs various tasks related to `k3s` [cluster](https://github.com/k3s-io/k3s/releases/tag/v1.33.5+k3s1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/k3s), for additional details.
 
 ## Role Dependencies
 
