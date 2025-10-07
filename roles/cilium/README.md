@@ -12,7 +12,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 |------------|------|---------|
 | https://github.com/cilium/cilium-cli | cilium-cli | 0.18.6 |
 | https://github.com/cilium/hubble | hubble | 1.18.0 |
-| https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.3.0 |
+| https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.4.0 |
 
 ## Role Variables
 
