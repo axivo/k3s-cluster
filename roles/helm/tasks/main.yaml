@@ -36,7 +36,7 @@
         executable: /bin/bash
       changed_when: false
 
-    - name: Get file status
+    - name: Get file statistics
       ansible.builtin.stat:
         path: /usr/share/keyrings/{{ helm_vars.release.helm.key }}
       changed_when: not helm_gpg_key.stat.exists
