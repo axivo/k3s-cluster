@@ -7,7 +7,7 @@
   when: inventory_hostname == k3s_map.server.default_host
   run_once: true
   block:
-    - name: Get binary status
+    - name: Get binary statistics
       ansible.builtin.stat:
         path: '{{ k3s_node.binary }}'
       changed_when: not k3s_binary.stat.exists
@@ -41,11 +41,11 @@
       until: k3s_result is not failed
       when: k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version
 
-    - name: Get configuration file status
+    - name: Get configuration file statistics
       ansible.builtin.stat:
         checksum: sha256
         path: '{{ k3s_project.cluster.config }}'
-      register: k3s_file
+      register: k3s_config
 
     - name: Set role postinstall fact
       ansible.builtin.set_fact:
@@ -83,11 +83,11 @@
         group: root
         mode: '600'
 
-    - name: Get revised configuration file status
+    - name: Get revised configuration file statistics
       ansible.builtin.stat:
         checksum: sha256
         path: '{{ k3s_project.cluster.config }}'
-      register: k3s_file_revised
+      register: k3s_config_revised
 
     - name: Schedule reboot
       ansible.builtin.file:
@@ -99,5 +99,5 @@
         group: root
         mode: '644'
       when: >
-        (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or
+        (k3s_config.stat.checksum != k3s_config_revised.stat.checksum) or
         (k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version)
