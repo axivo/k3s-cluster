@@ -62,7 +62,7 @@
     - name: Update service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        dest: /etc/systemd/system/{{ k3s_node.service.name }}.service
         owner: root
         group: root
         mode: '644'
