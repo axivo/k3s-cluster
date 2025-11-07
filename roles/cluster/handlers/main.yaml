@@ -12,7 +12,7 @@
     - haproxy
     - keepalived
 
-- name: Reload posfix service
+- name: Reload postfix service
   ansible.builtin.systemd_service:
     name: postfix.service
     state: reloaded
