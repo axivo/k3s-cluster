@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/longhorn/cli | longhornctl | 1.10.0 |
+| https://github.com/longhorn/cli | longhornctl | 1.10.1 |
 
 ## Role Variables
 
@@ -45,4 +45,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.release.file | string | `"longhornctl-linux-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | longhorn_vars.release.repository.name | string | `"cli"` |  |
 | longhorn_vars.release.repository.org | string | `"longhorn"` |  |
-| longhorn_vars.release.version | string | `"v1.10.0"` |  |
+| longhorn_vars.release.version | string | `"v1.10.1"` |  |
