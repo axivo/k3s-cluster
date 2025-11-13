@@ -58,7 +58,7 @@ cilium_vars:
     helm:
       chart:
         name: cilium
-        version: v1.18.2
+        version: v1.18.4
       repository:
         name: cilium
         org: cilium
