@@ -6,4 +6,4 @@ version: 3.19.0-1
 dependencies:
   - name: diff
     repository: https://github.com/databus23/helm-diff
-    version: 3.13.0
+    version: 3.14.1
