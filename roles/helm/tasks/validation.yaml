@@ -4,26 +4,17 @@
     file: facts.yaml
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('helm' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate release key url
       ansible.builtin.uri:
         url: '{{ helm_map.release.key }}'
         timeout: 5
-      register: result
+      register: helm_result
       delay: 1
       retries: 3
-      until: result is not failed
-
-    - name: Validate release package url
-      ansible.builtin.uri:
-        url: '{{ helm_project.release.package }}'
-        timeout: 5
-      register: result
-      delay: 1
-      retries: 3
-      until: result is not failed
+      until: helm_result is not failed
 
     - name: Validate release plugins url
       ansible.builtin.uri:
@@ -32,8 +23,8 @@
       loop: '{{ helm_vars.plugins }}'
       loop_control:
         loop_var: release
-      register: result
+      register: helm_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: helm_result is not failed
       when: release.enabled is truthy

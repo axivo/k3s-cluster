@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "github.vscode-github-actions",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "redhat.ansible",
+    "redhat.vscode-yaml"
+  ]
+}

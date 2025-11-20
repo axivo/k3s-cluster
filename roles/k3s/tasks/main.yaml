@@ -1,24 +1,23 @@
 ---
-- name: Role Validation
+- name: Role Facts
   ansible.builtin.import_tasks:
-    file: validation.yaml
-  any_errors_fatal: true
+    file: facts.yaml
 
 - name: Role Provisioning
-  notify: Start service
+  notify: Start kubernetes service
   block:
     - name: Install k3s binary
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_project.node.binary }}'
+        dest: '{{ k3s_node.binary }}'
         owner: root
         group: root
         mode: '755'
-      register: result
+      register: k3s_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: k3s_result is not failed
 
     - name: Create configuration directory
       ansible.builtin.file:
@@ -40,17 +39,25 @@
         group: root
         mode: '600'
 
+    - name: Create kubelet configuration file
+      ansible.builtin.template:
+        src: config_kubelet.j2
+        dest: '{{ k3s_project.cluster.config_kubelet }}'
+        owner: root
+        group: root
+        mode: '644'
+
     - name: Create service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        dest: /etc/systemd/system/{{ k3s_node.service.name }}.service
         owner: root
         group: root
         mode: '644'
 
     - name: Create service environment file
       ansible.builtin.file:
-        path: /etc/systemd/system/{{ k3s_map.service.name }}.service.env
+        path: /etc/systemd/system/{{ k3s_node.service.name }}.service.env
         access_time: preserve
         modification_time: preserve
         state: touch
@@ -66,7 +73,7 @@
     file: configuration.yaml
 
 - name: Server Configuration
-  notify: Restart service
+  notify: Restart kubernetes service
   when: inventory_hostname in k3s_map.server.hosts
   block:
     - name: Set role postinstall fact

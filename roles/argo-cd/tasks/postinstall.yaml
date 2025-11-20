@@ -22,10 +22,10 @@
             reset_values: false
             reuse_values: true
             wait: true
-          register: result
+          register: argocd_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: argocd_result is not failed
 
     - name: Update server user credentials
       kubernetes.core.k8s:

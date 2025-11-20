@@ -13,7 +13,7 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('cilium' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
@@ -21,61 +21,69 @@
         url: '{{ cilium_project.url }}/{{ cilium_project.tag }}'
         timeout: 5
       run_once: true
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed
 
     - name: Validate cli release file url
       ansible.builtin.uri:
         url: '{{ cilium_project.release.cli.url }}/{{ cilium_project.release.cli.file }}'
         timeout: 5
       run_once: true
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed
 
     - name: Validate gateway-api release file url
       ansible.builtin.uri:
         url: '{{ cilium_project.release.gateway_api.url }}/{{ cilium_project.release.gateway_api.file }}'
         timeout: 5
       run_once: true
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed
 
     - name: Validate hubble release file url
       ansible.builtin.uri:
         url: '{{ cilium_project.release.hubble.url }}/{{ cilium_project.release.hubble.file }}'
         timeout: 5
       run_once: true
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ cilium_map.helm.repository.url }}'
+            force_update: true
+
+        - name: Validate cluster kubeconfig path
+          ansible.builtin.stat:
+            path: '{{ k3s_project.cluster.kubeconfig }}'
+          register: cilium_kubeconfig
+          changed_when: false
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ cilium_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
-          register: release
+          register: cilium_release
+          when: cilium_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
-              chart: '{{ cilium_vars.kubernetes.helm.chart.version }}'
-              release: "v{{ (release.status.chart | default('0')).split('-')[-1] }}"
+            cilium_comparison:
+              chart: '{{ cilium_vars.kubernetes.helm.chart.version[1:] }}'
+              release: "{{ cilium_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate certificate values
           ansible.builtin.debug:
@@ -119,7 +127,7 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            cilium_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
 
         - name: Update chart setup fact
           ansible.builtin.set_fact:
@@ -131,10 +139,10 @@
 
         - name: Update chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+            cilium_chart_values: "{{ cilium_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - cilium_comparison.release is version('0', '>')
+            - cilium_comparison.release != cilium_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -146,12 +154,12 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - cilium_comparison.release is version('0', '>')
+            - cilium_comparison.release != cilium_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                cilium_chart_values: "{{ cilium_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -163,16 +171,16 @@
                     --namespace {{ cilium_vars.kubernetes.namespace }}
                     --version {{ cilium_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ cilium_chart_values | to_yaml }}'
+              register: cilium_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: cilium_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ cilium_result.stdout if cilium_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -181,22 +189,22 @@
                     '/'.join([cilium_map.helm.platform.raw,
                       cilium_vars.kubernetes.helm.repository.org,
                       cilium_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      comparison.release, 'install', 'kubernetes',
+                      cilium_comparison.release, 'install', 'kubernetes',
                       cilium_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([cilium_map.helm.platform.raw,
                       cilium_vars.kubernetes.helm.repository.org,
                       cilium_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      comparison.chart, 'install', 'kubernetes',
+                      cilium_comparison.chart, 'install', 'kubernetes',
                       cilium_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: cilium_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: cilium_result is not failed
               changed_when: false
               failed_when: result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ cilium_result.stdout if cilium_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

@@ -1,8 +1,8 @@
 # victoria-metrics-k8s-stack
 
-![Version: 0.41.3](https://img.shields.io/badge/Version-0.41.3-informational?style=flat-square)
+![Version: 0.60.1](https://img.shields.io/badge/Version-0.60.1-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.41.3/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
+The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.60.1/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
 
 ## Role Dependencies
 
@@ -10,7 +10,7 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 19.0.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 23.0.0 |
 
 ## Role Variables
 
@@ -22,9 +22,9 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval | string | `"5m"` |  |
-| victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait | string | `"30s"` |  |
-| victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval | string | `"12h"` |  |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.group_interval | string | `"30m"` | Delay between additional notifications for new alerts added to an existing group |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.group_wait | string | `"15m"` | Collection period for grouping alerts before sending initial notification |
+| victoriametrics_vars.kubernetes.alertmanager.config.route.repeat_interval | string | `"12h"` | Minimum interval between repeat notifications for unresolved alerts |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.cpu | string | `nil` |  |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.alertmanager.config_reloader.resources.requests.cpu | string | `"10m"` |  |
@@ -44,24 +44,29 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | victoriametrics_vars.kubernetes.default_dashboards.timezone | string | `"utc"` |  |
 | victoriametrics_vars.kubernetes.grafana.ingress.enabled | bool | `true` |  |
 | victoriametrics_vars.kubernetes.grafana.ingress.subdomain | string | `"grafana"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details |
+| victoriametrics_vars.kubernetes.grafana.ini.security.unsigned_plugins[0] | string | `"grafana-lokiexplore-app"` |  |
 | victoriametrics_vars.kubernetes.grafana.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.grafana.replicas | int | `1` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.limits.cpu | string | `nil` |  |
-| victoriametrics_vars.kubernetes.grafana.resources.limits.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.resources.limits.memory | string | `"256Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.resources.requests.cpu | string | `"10m"` |  |
-| victoriametrics_vars.kubernetes.grafana.resources.requests.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.resources.requests.memory | string | `"256Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.log_level | string | `"WARN"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.cpu | string | `nil` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.limits.memory | string | `"128Mi"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.cpu | string | `"10m"` |  |
 | victoriametrics_vars.kubernetes.grafana.sidecar.resources.requests.memory | string | `"128Mi"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.access_modes[0] | string | `"ReadWriteOnce"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.class | string | `"longhorn"` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.enabled | bool | `true` |  |
+| victoriametrics_vars.kubernetes.grafana.storage.size | string | `"5Gi"` |  |
 | victoriametrics_vars.kubernetes.grafana.user.name | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User name used to access Grafana UI |
 | victoriametrics_vars.kubernetes.grafana.user.password | string | Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection | User password used to access Grafana UI |
 | victoriametrics_vars.kubernetes.helm.chart.prometheus.name | string | `"prometheus-operator-crds"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v19.0.0"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.prometheus.version | string | `"v23.0.0"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.alias | string | `"vmks"` |  |
 | victoriametrics_vars.kubernetes.helm.chart.victoriametrics.name | string | `"victoria-metrics-k8s-stack"` |  |
-| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.41.3"` |  |
+| victoriametrics_vars.kubernetes.helm.chart.victoriametrics.version | string | `"v0.60.1"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.name | string | `"helm-charts"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.org | string | `"grafana"` |  |
 | victoriametrics_vars.kubernetes.helm.repository.grafana.url | string | `"https://grafana.github.io"` |  |

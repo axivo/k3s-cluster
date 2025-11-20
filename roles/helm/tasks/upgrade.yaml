@@ -4,10 +4,6 @@
     name: k3s
     tasks_from: facts
 
-- name: Role Validation
-  ansible.builtin.import_tasks:
-    file: validation.yaml
-
 - name: Role Upgrade
   when: inventory_hostname in k3s_map.server.hosts
   block:

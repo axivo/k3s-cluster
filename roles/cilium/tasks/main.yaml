@@ -1,8 +1,16 @@
 ---
-- name: Role Validation
-  ansible.builtin.import_tasks:
-    file: validation.yaml
-  any_errors_fatal: true
+- name: Role Facts
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - cert-manager
+    - external-dns
+    - k3s
+    - victoria-metrics
+    - cilium
+  loop_control:
+    loop_var: role
 
 - name: Role Provisioning
   when: inventory_hostname in k3s_map.server.hosts
@@ -22,10 +30,10 @@
         group: root
         mode: '644'
       loop: '{{ cilium_resources.release }}'
-      register: result
+      register: cilium_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: cilium_result is not failed
       check_mode: false
 
     - name: Install binary
@@ -49,6 +57,11 @@
       kubernetes.core.helm_repository:
         name: '{{ cilium_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ cilium_map.helm.repository.url }}'
+        force_update: true
+      register: cilium_result
+      delay: 1
+      retries: 3
+      until: cilium_result is not failed
 
     - name: Chart Setup
       run_once: true
@@ -57,10 +70,10 @@
           kubernetes.core.k8s:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             src: '{{ cilium_project.release.gateway_api.url }}/{{ cilium_project.release.gateway_api.file }}'
-          register: result
+          register: cilium_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: cilium_result is not failed
 
         - name: Set chart setup fact
           ansible.builtin.set_fact:
@@ -78,7 +91,7 @@
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             wait_timeout: 10
             wait: true
-          register: secret
+          register: cilium_secret
           no_log: true
 
         - name: Set secret metadata
@@ -100,8 +113,8 @@
             - hubble-relay-client-certs
             - hubble-server-certs
           when:
-            - secret.resources is iterable
-            - secret.resources | length > 0
+            - cilium_secret.resources is iterable
+            - cilium_secret.resources | length > 0
 
         - name: Install chart
           kubernetes.core.helm:
@@ -115,10 +128,10 @@
             create_namespace: true
             update_repo_cache: true
             wait: true
-          register: result
+          register: cilium_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: cilium_result is not failed
 
         - name: Reset secret metadata
           kubernetes.core.k8s:
@@ -139,8 +152,8 @@
             - hubble-relay-client-certs
             - hubble-server-certs
           when:
-            - secret.resources is iterable
-            - secret.resources | length > 0
+            - cilium_secret.resources is iterable
+            - cilium_secret.resources | length > 0
 
         - name: Create l2 announcement policy
           kubernetes.core.k8s:
@@ -162,13 +175,13 @@
             namespace: '{{ cilium_vars.kubernetes.namespace }}'
             wait_timeout: 10
             wait: true
-          register: gateway
+          register: cilium_gateway
 
         - name: Gateway Setup
           when:
             - cilium_vars.kubernetes.hubble.ui.enabled is falsy
             - externaldns_vars.cloudflare.host.domain | lower != 'disabled'
-            - gateway.resources is iterable and gateway.resources | length > 0
+            - cilium_gateway.resources is iterable and cilium_gateway.resources | length > 0
           block:
             - name: Delete gateway
               kubernetes.core.k8s:
@@ -207,10 +220,10 @@
             reuse_values: true
             update_repo_cache: true
             wait: true
-          register: result
+          register: cilium_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: cilium_result is not failed
 
         - name: Gateway Setup
           when:

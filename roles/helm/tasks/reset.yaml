@@ -55,13 +55,14 @@
             - /etc/systemd/system/helm-cache.timer
             - /usr/share/keyrings/{{ helm_vars.release.helm.key }}
 
-        - name: Reset systemd
+        - name: Reload systemd unit files
+          ansible.builtin.systemd_service:
+            daemon_reload: true
+
+        - name: Reset failed systemd services
           ansible.builtin.command:
-            cmd: systemctl '{{ item }}' # noqa command-instead-of-module
+            cmd: systemctl reset-failed
           changed_when: false
-          loop:
-            - daemon-reload
-            - reset-failed
 
     - name: Remove variables from environment file
       ansible.builtin.lineinfile:

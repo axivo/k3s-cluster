@@ -1,8 +1,9 @@
 ---
-- name: Tags Validation
+- name: Playbook Validation
   hosts: localhost
   become: false
   gather_facts: false
+  tags: always
   tasks:
     - name: Validate tags
       ansible.builtin.fail:
@@ -13,10 +14,14 @@
             - invalid tag{% if invalid_tags | length > 1 %}s{% endif %}: {{ invalid_tags | join(', ') }}
           {% endif %}
             - valid tags: {{ global_map.tags.role | join(', ') }}
-      tags: always
       when:
-        - ansible_run_tags not in [[], ['all']]
+        - ansible_run_tags not in [(), ('all',)]
         - ansible_run_tags | difference(global_map.tags.role) | length > 0
+
+    - name: Validate version
+      ansible.builtin.fail:
+        msg: Invalid Ansible version, minimum requirement is '{{ global_map.ansible.version }}'.
+      when: ansible_version.full is not version(global_map.ansible.version, '>=')
 
 - name: Cluster Upgrade
   hosts: cluster

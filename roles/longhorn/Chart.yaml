@@ -2,8 +2,8 @@ apiVersion: v2
 name: longhorn
 description: Documentation generator for longhorn Ansible role
 home: https://github.com/longhorn/charts
-version: 1.8.1
+version: 1.10.0
 dependencies:
   - name: longhornctl
     repository: https://github.com/longhorn/cli
-    version: 1.8.1
+    version: 1.10.0

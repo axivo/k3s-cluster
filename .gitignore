@@ -1,4 +1,15 @@
+# Ansible
 .ansible
+ansible.log
+validation.log
+
+# MacOS
 **/.DS_Store
-.venv
-.vault
+.AppleDouble
+.LSOverride
+._*
+
+# Node.js
+node_modules/
+package.json
+package-lock.json

@@ -64,7 +64,7 @@
 
         - name: Encrypt variable
           ansible.builtin.command:
-            cmd: >
+            cmd: >-
               ansible-vault encrypt_string {{ variable.user_input | split('|') | last | quote }}
                 -n {{ variable.user_input | split('|') | first | quote }}
           register: encrypted_variable
@@ -107,7 +107,7 @@
 
         - name: Update global password
           ansible.builtin.command:
-            cmd: >
+            cmd: >-
               ansible-vault encrypt_string {{ item.value | quote }}
                 -n {{ item.key | quote }} --vault-pass-file {{ vault_file.path }}
           loop:

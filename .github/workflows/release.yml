@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  pull_request:
+    paths:
+      - roles/*/defaults/main.yaml
+      - roles/*/Chart.yaml
+      - roles/*/README.md.gotmpl
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  checks: write
+  contents: write
+  issues: write
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Install node dependencies
+        run: npm install handlebars
+
+      - name: Configure repository
+        id: workflow
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.configureRepository();
+
+      - name: Install helm-docs
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.installHelmDocs('1.14.2');
+
+      - name: Process releases
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.processReleases();
+
+      - name: Report workflow issue
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const { Workflow } = require('./.github/actions/handlers');
+            const workflow = new Workflow({ github, context, core, exec });
+            await workflow.reportIssue();

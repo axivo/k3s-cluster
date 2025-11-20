@@ -12,38 +12,46 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('external-dns' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ externaldns_project.url }}/{{ externaldns_project.tag }}'
         timeout: 5
-      register: result
+      register: externaldns_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: externaldns_result is not failed
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ externaldns_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ externaldns_map.helm.repository.url }}'
+            force_update: true
+
+        - name: Validate cluster kubeconfig path
+          ansible.builtin.stat:
+            path: '{{ k3s_project.cluster.kubeconfig }}'
+          register: externaldns_kubeconfig
+          changed_when: false
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
             name: '{{ externaldns_vars.kubernetes.helm.chart.name }}'
             namespace: '{{ externaldns_vars.kubernetes.namespace }}'
-          register: release
+          register: externaldns_release
+          when: externaldns_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            externaldns_comparison:
               chart: '{{ externaldns_map.helm.chart.version }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              release: "{{ externaldns_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Validate api token values
           ansible.builtin.debug:
@@ -63,10 +71,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            externaldns_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - externaldns_comparison.release is version('0', '>')
+            - externaldns_comparison.release != externaldns_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -78,12 +86,13 @@
 
         - name: Chart Deployment Simulation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - externaldns_comparison.release is version('0', '>')
+            - externaldns_comparison.release != externaldns_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                externaldns_chart_values: >
+                  {{ externaldns_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -95,16 +104,16 @@
                     --namespace {{ externaldns_vars.kubernetes.namespace }}
                     --version {{ externaldns_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ externaldns_chart_values | to_yaml }}'
+              register: externaldns_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: externaldns_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ externaldns_result.stdout if externaldns_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -113,22 +122,22 @@
                     '/'.join([externaldns_map.helm.platform.raw,
                       externaldns_vars.kubernetes.helm.repository.org,
                       externaldns_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([externaldns_vars.kubernetes.helm.chart.name, 'helm', 'chart', comparison.release]), 'charts',
+                      '-'.join([externaldns_vars.kubernetes.helm.chart.name, 'helm', 'chart', externaldns_comparison.release]), 'charts',
                       externaldns_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([externaldns_map.helm.platform.raw,
                       externaldns_vars.kubernetes.helm.repository.org,
                       externaldns_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([externaldns_vars.kubernetes.helm.chart.name, 'helm', 'chart', comparison.chart]), 'charts',
+                      '-'.join([externaldns_vars.kubernetes.helm.chart.name, 'helm', 'chart', externaldns_comparison.chart]), 'charts',
                       externaldns_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: externaldns_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: externaldns_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: externaldns_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ externaldns_result.stdout if externaldns_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

@@ -4,8 +4,11 @@ victoriametrics_vars:
     alertmanager:
       config:
         route:
-          group_interval: 5m
-          group_wait: 30s
+          # -- Delay between additional notifications for new alerts added to an existing group
+          group_interval: 30m
+          # -- Collection period for grouping alerts before sending initial notification
+          group_wait: 15m
+          # -- Minimum interval between repeat notifications for unresolved alerts
           repeat_interval: 12h
       config_reloader:
         resources:
@@ -41,11 +44,11 @@ victoriametrics_vars:
       chart:
         prometheus:
           name: prometheus-operator-crds
-          version: v19.0.0
+          version: v23.0.0
         victoriametrics:
           alias: vmks
           name: victoria-metrics-k8s-stack
-          version: v0.41.3
+          version: v0.60.1
       repository:
         grafana:
           name: helm-charts
@@ -64,15 +67,19 @@ victoriametrics_vars:
         enabled: true
         # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
         subdomain: grafana
+      ini:
+        security:
+          unsigned_plugins:
+            - grafana-lokiexplore-app
       log_level: WARN
       replicas: 1
       resources:
         limits:
           cpu: null
-          memory: 128Mi
+          memory: 256Mi
         requests:
           cpu: 10m
-          memory: 128Mi
+          memory: 256Mi
       sidecar:
         log_level: WARN
         resources:
@@ -82,6 +89,12 @@ victoriametrics_vars:
           requests:
             cpu: 10m
             memory: 128Mi
+      storage:
+        enabled: true
+        access_modes:
+          - ReadWriteOnce
+        class: longhorn
+        size: 5Gi
       user:
         # -- (string) User name used to access Grafana UI
         # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection

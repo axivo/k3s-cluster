@@ -9,15 +9,15 @@ helm_vars:
         - python3-jsonpatch
       repository:
         url: https://github.com/databus23/helm-diff
-      version: v3.10.0
+      version: v3.13.0
   release:
     helm:
       distro:
+        channel: any
         name: debian
-        url: https://helm.baltorepo.com
       key: helm-archive-keyring.gpg
       repository:
         channel: stable
-        key: signing.asc
-        url: https://baltocdn.com/helm
-      version: v3.17.2-1
+        key: gpgkey
+        url: https://packages.buildkite.com/helm-linux/helm-debian
+      version: v3.19.0-1

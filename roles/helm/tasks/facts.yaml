@@ -5,9 +5,9 @@
       directory:
         share: /usr/local/share/helm
       release:
-        channel: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.channel }}'
+        channel: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.distro.channel }}'
         key: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.key }}'
-        url: '{{ helm_vars.release.helm.distro.url }}/{{ helm_vars.release.helm.repository.channel }}/{{ helm_vars.release.helm.distro.name }}'
+        url: '{{ helm_vars.release.helm.repository.url }}/{{ helm_vars.release.helm.repository.channel }}'
         version: '{{ helm_vars.release.helm.version[1:] }}'
   run_once: true
 
@@ -22,8 +22,6 @@
         HELM_REGISTRY_CONFIG: '{{ helm_map.directory.share }}/config/registry/config.json'
         HELM_REPOSITORY_CACHE: '{{ helm_map.directory.share }}/cache/repository'
         HELM_REPOSITORY_CONFIG: '{{ helm_map.directory.share }}/config/repositories.yaml'
-      release:
-        package: '{{ helm_map.release.url }}/packages/helm/releases/{{ helm_map.release.version }}'
   run_once: true
 
 - name: Set plugin packages fact

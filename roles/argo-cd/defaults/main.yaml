@@ -2,19 +2,26 @@
 argocd_vars:
   kubernetes:
     application_set:
+      # -- Number of ApplicationSet controller replicas
       replicas: 1
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     configs:
       cm:
         admin:
+          # -- Enable built-in admin user, `false` by default
           enabled: false
         exec:
+          # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/web_based_terminal/) for details
           enabled: true
         status_badge:
           # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/), for details
@@ -30,126 +37,170 @@ argocd_vars:
               # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git-File-Globbing/), for details
               enabled: true
             submodule:
-              # -- Enable git submodule support
+              # -- Enable git submodule support for Git repositories
               enabled: true
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
           progressive_syncs:
-            # -- Enable use of Progressive Syncs
+            # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Progressive-Syncs/) for details
             enabled: true
         controller:
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
           sharding:
             # -- Available options are `legacy`, `round-robin` and `consistent-hashing`,
             # see [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/) for details
             algorithm: consistent-hashing
         dexserver:
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
         notificationscontroller:
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
         reposerver:
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
         server:
-          # -- If `true`, HTTPRoute is used, otherwise Ingress
-          insecure: true
-          # -- Available options are `debug`, `info', `warn` and `error`
+          # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/tls/#configuring-tls-for-argocd-server) for details
+          insecure: false
+          # -- Available options are `debug`, `info`, `warn` and `error`
           log_level: warn
     controller:
       dynamic_cluster_distribution:
         # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution), for details
         enabled: true
+      # -- See [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/#argocd-application-controller) for details
       replicas: 1
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 512Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 512Mi
     dex:
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     haproxy:
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     helm:
       chart:
+        # -- Helm chart name
         name: argo-cd
-        version: v7.8.23
+        # -- Helm chart version
+        version: v8.5.9
       repository:
+        # -- Repository name in Helm
         name: argo-helm
+        # -- Organization name
         org: argoproj
+        # -- Helm repository URL
         url: https://argoproj.github.io
     global:
       logging:
-        # -- Available options are `debug`, `info', `warn` and `error`
+        # -- Available options are `debug`, `info`, `warn` and `error`
         level: warn
+    # -- Namespace for Argo CD installation
     namespace: kube-system
     notifications:
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     redis:
       ha:
         # -- Redis HA requires at least 3 worker nodes
         enabled: false
         storage:
+          # -- Enable persistent storage for Redis
           enabled: false
+          # -- Storage access modes
           access_modes:
+            # -- Access mode `ReadWriteOnce`
             - ReadWriteOnce
+          # -- Storage class name
           class: longhorn
+          # -- Storage size for Redis
           size: 10Gi
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     repo_server:
       autoscaling:
         # -- If `false`, `replicas` value is set from `min_replicas` value
         enabled: true
+        # -- Minimum number of replicas for autoscaling
         min_replicas: 1
+        # -- Maximum number of replicas for autoscaling
         max_replicas: 3
         target:
           utilization_percentage:
+            # -- Target CPU utilization percentage for autoscaling, `null` for no limit
             cpu: null
+            # -- Target memory utilization percentage for autoscaling
             memory: 80
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
     server:
       autoscaling:
         # -- If `false`, `replicas` value is set from `min_replicas` value
         enabled: true
+        # -- Minimum number of replicas for autoscaling
         min_replicas: 1
+        # -- Maximum number of replicas for autoscaling
         max_replicas: 3
         target:
           utilization_percentage:
+            # -- Target CPU utilization percentage for autoscaling, `null` for no limit
             cpu: null
+            # -- Target memory utilization percentage for autoscaling
             memory: 80
       credentials:
         admin:
@@ -163,22 +214,31 @@ argocd_vars:
           # -- (string) ArgoCD UI user password, set at global level
           # @default -- Set value into [all.yaml](../../inventory/cluster/group_vars/all.yaml) `credentials` collection
           password:
-      gateway:
-        service: argo-cd-argocd-server
+      ingress:
         # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/externaldns/#front-ends), for details
-        subdomain: argocd
+        subdomain:
+          api: argocd
+          grpc: grpc.argocd
       resources:
         limits:
+          # -- CPU limit, `null` for no limit
           cpu: null
+          # -- Memory limit
           memory: 128Mi
         requests:
+          # -- Minimum CPU request
           cpu: 10m
+          # -- Minimum memory request
           memory: 128Mi
   release:
+    # -- Checksum file name
     checksum: cli_checksums.txt
     # -- See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details
     file: argocd-linux-arm64
     repository:
+      # -- CLI repository name
       name: argo-cd
+      # -- Organization name
       org: argoproj
-    version: v2.14.9
+    # -- CLI version to install
+    version: v3.1.8

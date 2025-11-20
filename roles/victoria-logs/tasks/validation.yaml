@@ -12,38 +12,46 @@
     loop_var: role
 
 - name: Role Validation
-  when: ('validation' in ansible_run_tags)
+  when: (ansible_run_tags in [(), ('all',)]) or ('victoria-logs' in ansible_run_tags)
   run_once: true
   block:
     - name: Validate project url
       ansible.builtin.uri:
         url: '{{ victorialogs_project.url }}/{{ victorialogs_project.tag }}'
         timeout: 5
-      register: result
+      register: victorialogs_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: victorialogs_result is not failed
 
     - name: Chart Validation
       block:
-        - name: Add repository
+        - name: Update repository
           kubernetes.core.helm_repository:
             name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}'
             repo_url: '{{ victorialogs_map.helm.repository.url }}'
+            force_update: true
+
+        - name: Validate cluster kubeconfig path
+          ansible.builtin.stat:
+            path: '{{ k3s_project.cluster.kubeconfig }}'
+          register: victorialogs_kubeconfig
+          changed_when: false
 
         - name: Get deployed chart release info
           kubernetes.core.helm_info:
             kubeconfig: '{{ k3s_project.cluster.kubeconfig }}'
-            name: '{{ victorialogs_vars.kubernetes.helm.chart.name }}'
+            name: '{{ victorialogs_vars.kubernetes.helm.chart.alias }}'
             namespace: '{{ victorialogs_vars.kubernetes.namespace }}'
-          register: release
+          register: victorialogs_release
+          when: victorialogs_kubeconfig.stat.exists
           changed_when: false
 
         - name: Set comparison fact
           ansible.builtin.set_fact:
-            comparison:
+            victorialogs_comparison:
               chart: '{{ victorialogs_map.helm.chart.version }}'
-              release: "{{ (release.status.chart | default('0')).split('-')[-1] }}"
+              release: "{{ victorialogs_release.status.chart | default('0') | regex_search('[0-9.]+') }}"
 
         - name: Set chart postinstall fact
           ansible.builtin.set_fact:
@@ -55,10 +63,10 @@
 
         - name: Set chart values fact
           ansible.builtin.set_fact:
-            chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
+            victorialogs_chart_values: "{{ lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml }}"
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - victorialogs_comparison.release is version('0', '>')
+            - victorialogs_comparison.release != victorialogs_comparison.chart
 
         - name: Update chart postinstall fact
           ansible.builtin.set_fact:
@@ -70,12 +78,13 @@
 
         - name: Chart Deployment Validation
           when:
-            - comparison.release is version('0', '>')
-            - comparison.release != comparison.chart
+            - victorialogs_comparison.release is version('0', '>')
+            - victorialogs_comparison.release != victorialogs_comparison.chart
           block:
             - name: Update chart values fact
               ansible.builtin.set_fact:
-                chart_values: "{{ chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}"
+                victorialogs_chart_values: >
+                  {{ victorialogs_chart_values | combine(lookup('ansible.builtin.template', 'values.j2') | trim | from_yaml, recursive=true) }}
 
             - name: Simulate chart deployment
               ansible.builtin.command:
@@ -87,16 +96,16 @@
                     --namespace {{ victorialogs_vars.kubernetes.namespace }}
                     --version {{ victorialogs_vars.kubernetes.helm.chart.version }}
                     --context 3 --values -
-                stdin: '{{ chart_values | to_yaml }}'
-              register: result
+                stdin: '{{ victorialogs_chart_values | to_yaml }}'
+              register: victorialogs_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: victorialogs_result is not failed
               changed_when: false
 
             - name: Chart deployment simulation result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart deployment errors found.' }}"
+                msg: "{{ victorialogs_result.stdout if victorialogs_result.stdout | length > 0 else 'No chart deployment errors found.' }}"
 
             - name: Compare chart values
               ansible.builtin.command:
@@ -105,22 +114,22 @@
                     '/'.join([victorialogs_map.helm.platform.raw,
                       victorialogs_vars.kubernetes.helm.repository.org,
                       victorialogs_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([victorialogs_vars.kubernetes.helm.chart.name, comparison.release]), 'charts',
+                      '-'.join([victorialogs_vars.kubernetes.helm.chart.name, victorialogs_comparison.release]), 'charts',
                       victorialogs_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')',
                   '<(curl', '-s ' +
                     '/'.join([victorialogs_map.helm.platform.raw,
                       victorialogs_vars.kubernetes.helm.repository.org,
                       victorialogs_vars.kubernetes.helm.repository.name, 'refs', 'tags',
-                      '-'.join([victorialogs_vars.kubernetes.helm.chart.name, comparison.chart]), 'charts',
+                      '-'.join([victorialogs_vars.kubernetes.helm.chart.name, victorialogs_comparison.chart]), 'charts',
                       victorialogs_vars.kubernetes.helm.chart.name, 'values.yaml']) + ')'])
                   }}"
-              register: result
+              register: victorialogs_result
               delay: 1
               retries: 3
-              until: result is not failed
+              until: victorialogs_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: victorialogs_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:
-                msg: "{{ result.stdout if result.stdout | length > 0 else 'No chart comparison changes found.' }}"
+                msg: "{{ victorialogs_result.stdout if victorialogs_result.stdout | length > 0 else 'No chart comparison changes found.' }}"

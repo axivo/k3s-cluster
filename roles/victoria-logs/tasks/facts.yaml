@@ -12,7 +12,7 @@
         repository:
           name: '{{ victorialogs_vars.kubernetes.helm.repository.org }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
           url: '{{ victorialogs_vars.kubernetes.helm.repository.url }}/{{ victorialogs_vars.kubernetes.helm.repository.name }}'
-        timeout: 5m0s
+        timeout: 10m0s
       ingress:
         class:
           name: cilium

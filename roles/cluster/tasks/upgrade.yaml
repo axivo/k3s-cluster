@@ -16,10 +16,10 @@
         path: /boot/firmware
         patterns: '*.bak'
         recurse: true
-      register: backup_files
+      register: cluster_firmware_backup
 
     - name: Purge firmware backup files
       ansible.builtin.file:
         path: '{{ item }}'
         state: absent
-      loop: "{{ backup_files.files | map(attribute='path') | list }}"
+      loop: "{{ cluster_firmware_backup.files | map(attribute='path') | list }}"

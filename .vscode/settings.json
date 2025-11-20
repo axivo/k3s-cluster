@@ -1,8 +1,56 @@
 {
-    "ansible.python.interpreterPath": "/usr/bin/python3",
-    "files.associations": {
-        "*.j2": "ansible-jinja",
-        "*.json5": "json",
-        "*.yaml": "ansible"
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[helm]": {
+    "editor.autoIndent": "keep",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[yaml]": {
+    "editor.autoIndent": "keep",
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "ansible.python.interpreterPath": "/usr/bin/python3",
+  "ansible.validation.enabled": true,
+  "editor.tabSize": 2,
+  "files.associations": {
+    "*.gotmpl": "helm",
+    "*.j2": "ansible-jinja",
+    "*.yaml": "ansible",
+    "*.yml": "ansible",
+    "**/.github/workflows/*.yml": "github-actions-workflow",
+    "**/renovate.json5": "jsonc"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "renovate.json5"
+      ],
+      "url": "https://docs.renovatebot.com/renovate-schema.json"
     }
+  ],
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+  }
 }

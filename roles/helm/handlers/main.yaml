@@ -1,12 +1,12 @@
 ---
-- name: Restart service
+- name: Restart cache service
   ansible.builtin.systemd_service:
     name: helm-cache.service
     state: restarted
     daemon_reload: true
     enabled: true
 
-- name: Start service
+- name: Start cache service
   ansible.builtin.systemd_service:
     name: helm-cache.service
     state: started

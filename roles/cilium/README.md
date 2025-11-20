@@ -1,8 +1,8 @@
 # cilium
 
-![Version: 1.17.2](https://img.shields.io/badge/Version-1.17.2-informational?style=flat-square)
+![Version: 1.18.2](https://img.shields.io/badge/Version-1.18.2-informational?style=flat-square)
 
-The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.17.2/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
+The role performs various tasks related to `cilium` [chart](https://github.com/cilium/cilium/tree/v1.18.2/install/kubernetes/cilium) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cilium), for additional details.
 
 ## Role Dependencies
 
@@ -10,9 +10,9 @@ See the installed role dependencies listed below, defined into [main.yaml](./def
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/cilium/cilium-cli | cilium-cli | 0.18.3 |
-| https://github.com/cilium/hubble | hubble | 1.17.2 |
-| https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.2.1 |
+| https://github.com/cilium/cilium-cli | cilium-cli | 0.18.6 |
+| https://github.com/cilium/hubble | hubble | 1.18.0 |
+| https://github.com/kubernetes-sigs/gateway-api | gateway-api | 1.4.0 |
 
 ## Role Variables
 
@@ -47,15 +47,23 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.cni.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.cni.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.cni.resources.requests.memory | string | `"128Mi"` |  |
+| cilium_vars.kubernetes.dashboards.enabled | bool | `true` |  |
 | cilium_vars.kubernetes.envoy.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.envoy.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.envoy.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.envoy.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.helm.chart.name | string | `"cilium"` |  |
-| cilium_vars.kubernetes.helm.chart.version | string | `"v1.17.2"` |  |
+| cilium_vars.kubernetes.helm.chart.version | string | `"v1.18.2"` |  |
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |
+| cilium_vars.kubernetes.hubble.metrics[0] | string | `"dns:query;ignoreAAAA"` |  |
+| cilium_vars.kubernetes.hubble.metrics[1] | string | `"drop"` |  |
+| cilium_vars.kubernetes.hubble.metrics[2] | string | `"flow"` |  |
+| cilium_vars.kubernetes.hubble.metrics[3] | string | `"httpV2"` |  |
+| cilium_vars.kubernetes.hubble.metrics[4] | string | `"icmp"` |  |
+| cilium_vars.kubernetes.hubble.metrics[5] | string | `"port-distribution"` |  |
+| cilium_vars.kubernetes.hubble.metrics[6] | string | `"tcp"` |  |
 | cilium_vars.kubernetes.hubble.relay.enabled | bool | `true` | See [documentation](https://docs.cilium.io/en/stable/observability/hubble/setup/), for details |
 | cilium_vars.kubernetes.hubble.relay.replicas | int | `1` |  |
 | cilium_vars.kubernetes.hubble.relay.resources.limits.cpu | string | `nil` |  |
@@ -99,12 +107,12 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.release.cli.file | string | `"cilium-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.cli.repository.name | string | `"cilium-cli"` |  |
 | cilium_vars.release.cli.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.cli.version | string | `"v0.18.3"` |  |
+| cilium_vars.release.cli.version | string | `"v0.18.6"` |  |
 | cilium_vars.release.gateway_api.file | string | `"experimental-install.yaml"` | See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details |
 | cilium_vars.release.gateway_api.repository.name | string | `"gateway-api"` |  |
 | cilium_vars.release.gateway_api.repository.org | string | `"kubernetes-sigs"` |  |
-| cilium_vars.release.gateway_api.version | string | `"v1.2.1"` |  |
+| cilium_vars.release.gateway_api.version | string | `"v1.4.0"` |  |
 | cilium_vars.release.hubble.file | string | `"hubble-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.hubble.repository.name | string | `"hubble"` |  |
 | cilium_vars.release.hubble.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.hubble.version | string | `"v1.17.2"` |  |
+| cilium_vars.release.hubble.version | string | `"v1.18.0"` |  |

@@ -1,6 +1,6 @@
 # cluster
 
-![Version: 24.04.2](https://img.shields.io/badge/Version-24.04.2-informational?style=flat-square)
+![Version: 24.04.3](https://img.shields.io/badge/Version-24.04.3-informational?style=flat-square)
 
 The role performs various tasks related to Ubuntu LTS OS based [cluster](https://ubuntu.com/server) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/cluster), for additional details.
 
@@ -21,6 +21,8 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.device.name | string | `"ASMedia Technology"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#devicename), for details |
 | cluster_vars.hardware.architecture | string | `"aarch64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cluster_vars.hardware.product | string | `"Raspberry Pi"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardwareproduct), for details |
+| cluster_vars.lsb.id | string | `"Ubuntu"` | Linux Standard Base distribution ID |
+| cluster_vars.lsb.release | float | `24.04` | Linux Standard Base distribution release |
 | cluster_vars.service.bluetooth.enabled | bool | `false` | By default, related `apt` packages are not installed |
 | cluster_vars.service.cloud_init.enabled | bool | `false` |  |
 | cluster_vars.service.postfix.enabled | bool | `true` |  |
@@ -34,4 +36,4 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cluster_vars.service.unattended_upgrades.remove_deps | string | `"true"` |  |
 | cluster_vars.service.wifi.enabled | bool | `false` | By default, related `apt` packages are not installed |
 | cluster_vars.ssh.key | string | `"id_ed25519.pub"` | See [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/user/#ssh-key), for details |
-| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') + '/.ssh' }}"` | Full path to `.ssh` directory, a hardcoded value can be used |
+| cluster_vars.ssh.path | string | `"{{ lookup('ansible.builtin.env', 'HOME') }}/.ssh"` | Full path to `.ssh` directory, a hardcoded value can be used |

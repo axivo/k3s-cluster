@@ -1,8 +1,15 @@
 ---
-- name: Role Validation
-  ansible.builtin.import_tasks:
-    file: validation.yaml
-  any_errors_fatal: true
+- name: Role Facts
+  ansible.builtin.include_role:
+    name: '{{ role }}'
+    tasks_from: facts
+  loop:
+    - cluster
+    - external-dns
+    - k3s
+    - victoria-metrics
+  loop_control:
+    loop_var: role
 
 - name: Role Provisioning
   when:
@@ -19,6 +26,11 @@
       kubernetes.core.helm_repository:
         name: '{{ externaldns_vars.kubernetes.helm.repository.org }}'
         repo_url: '{{ externaldns_map.helm.repository.url }}'
+        force_update: true
+      register: externaldns_result
+      delay: 1
+      retries: 3
+      until: externaldns_result is not failed
 
     - name: Chart Setup
       run_once: true
@@ -45,10 +57,10 @@
             create_namespace: true
             update_repo_cache: true
             wait: true
-          register: result
+          register: externaldns_result
           delay: 1
           retries: 3
-          until: result is not failed
+          until: externaldns_result is not failed
 
         - name: Create cluster issuer
           kubernetes.core.k8s:

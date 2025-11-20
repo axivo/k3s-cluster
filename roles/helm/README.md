@@ -1,8 +1,8 @@
 # helm
 
-![Version: 3.17.2-1](https://img.shields.io/badge/Version-3.17.2--1-informational?style=flat-square)
+![Version: 3.19.0-1](https://img.shields.io/badge/Version-3.19.0--1-informational?style=flat-square)
 
-The role performs various tasks related to `helm` [package](https://helm.baltorepo.com/stable/debian/packages/helm/releases/3.17.2-1) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
+The role performs various tasks related to `helm` [package](https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/helm), for additional details.
 
 ## Helm Plugins
 
@@ -10,7 +10,7 @@ See the installed `helm` plugins listed below, defined into [main.yaml](./defaul
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://github.com/databus23/helm-diff | diff | 3.10.0 |
+| https://github.com/databus23/helm-diff | diff | 3.13.0 |
 
 ## Role Variables
 
@@ -26,11 +26,11 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.plugins[0].name | string | `"diff"` |  |
 | helm_vars.plugins[0].packages[0] | string | `"python3-jsonpatch"` |  |
 | helm_vars.plugins[0].repository.url | string | `"https://github.com/databus23/helm-diff"` |  |
-| helm_vars.plugins[0].version | string | `"v3.10.0"` |  |
+| helm_vars.plugins[0].version | string | `"v3.13.0"` |  |
+| helm_vars.release.helm.distro.channel | string | `"any"` |  |
 | helm_vars.release.helm.distro.name | string | `"debian"` |  |
-| helm_vars.release.helm.distro.url | string | `"https://helm.baltorepo.com"` |  |
 | helm_vars.release.helm.key | string | `"helm-archive-keyring.gpg"` |  |
 | helm_vars.release.helm.repository.channel | string | `"stable"` |  |
-| helm_vars.release.helm.repository.key | string | `"signing.asc"` |  |
-| helm_vars.release.helm.repository.url | string | `"https://baltocdn.com/helm"` |  |
-| helm_vars.release.helm.version | string | `"v3.17.2-1"` |  |
+| helm_vars.release.helm.repository.key | string | `"gpgkey"` |  |
+| helm_vars.release.helm.repository.url | string | `"https://packages.buildkite.com/helm-linux/helm-debian"` |  |
+| helm_vars.release.helm.version | string | `"v3.19.0-1"` |  |

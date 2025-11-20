@@ -9,13 +9,18 @@ statusbadge.enabled: {{ argocd_vars.kubernetes.configs.cm.status_badge.enabled |
 resource.exclusions: |
   - apiGroups:
       - cilium.io
+    kinds:
+      - CiliumClusterwideNetworkPolicy
+      - CiliumNetworkPolicy
+    clusters:
+      - "*"
+  - apiGroups:
       - snapshot.storage.k8s.io
     kinds:
-      - CiliumIdentity
       - VolumeSnapshot
       - VolumeSnapshotContent
     clusters:
-      - "*.local"
+      - "*"
 
 {# See https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#argocd-app
 resource.customizations.health.argoproj.io_Application: |

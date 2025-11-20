@@ -1,16 +1,15 @@
 ---
-- name: Role Validation
+- name: Role Facts
   ansible.builtin.import_tasks:
-    file: validation.yaml
-  any_errors_fatal: true
+    file: facts.yaml
 
 - name: Cluster Validation
   when: inventory_hostname == k3s_map.server.default_host
   run_once: true
   block:
-    - name: Get binary status
+    - name: Get binary statistics
       ansible.builtin.stat:
-        path: '{{ k3s_project.node.binary }}'
+        path: '{{ k3s_node.binary }}'
       changed_when: not k3s_binary.stat.exists
       register: k3s_binary
 
@@ -32,21 +31,21 @@
       ansible.builtin.get_url:
         url: '{{ k3s_project.release.k3s.file }}'
         checksum: sha256:{{ k3s_project.release.k3s.checksum }}
-        dest: '{{ k3s_project.node.binary }}'
+        dest: '{{ k3s_node.binary }}'
         owner: root
         group: root
         mode: '755'
-      register: result
+      register: k3s_result
       delay: 1
       retries: 3
-      until: result is not failed
+      until: k3s_result is not failed
       when: k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version
 
-    - name: Get configuration file status
+    - name: Get configuration file statistics
       ansible.builtin.stat:
         checksum: sha256
         path: '{{ k3s_project.cluster.config }}'
-      register: k3s_file
+      register: k3s_config
 
     - name: Set role postinstall fact
       ansible.builtin.set_fact:
@@ -63,7 +62,7 @@
     - name: Update service file
       ansible.builtin.template:
         src: service.j2
-        dest: /etc/systemd/system/{{ k3s_map.service.name }}.service
+        dest: /etc/systemd/system/{{ k3s_node.service.name }}.service
         owner: root
         group: root
         mode: '644'
@@ -84,11 +83,11 @@
         group: root
         mode: '600'
 
-    - name: Get revised configuration file status
+    - name: Get revised configuration file statistics
       ansible.builtin.stat:
         checksum: sha256
         path: '{{ k3s_project.cluster.config }}'
-      register: k3s_file_revised
+      register: k3s_config_revised
 
     - name: Schedule reboot
       ansible.builtin.file:
@@ -100,5 +99,5 @@
         group: root
         mode: '644'
       when: >
-        (k3s_file.stat.checksum != k3s_file_revised.stat.checksum) or
+        (k3s_config.stat.checksum != k3s_config_revised.stat.checksum) or
         (k3s_cluster.version.server.kubernetes.gitVersion != k3s_vars.release.k3s.version)
