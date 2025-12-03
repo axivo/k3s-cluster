@@ -45,4 +45,4 @@ certmanager_vars:
     repository:
       name: cmctl
       org: cert-manager
-    version: v2.3.0
+    version: v2.4.0

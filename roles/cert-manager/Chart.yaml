@@ -6,4 +6,4 @@ version: 1.19.0
 dependencies:
   - name: cmctl
     repository: https://github.com/cert-manager/cmctl
-    version: 2.3.0
+    version: 2.4.0
