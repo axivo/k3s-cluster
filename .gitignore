@@ -3,6 +3,9 @@
 ansible.log
 validation.log
 
+# Claude
+.claude/
+
 # MacOS
 **/.DS_Store
 .AppleDouble
