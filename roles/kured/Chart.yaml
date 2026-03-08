@@ -2,4 +2,4 @@ apiVersion: v2
 name: kured
 description: Documentation generator for kured Ansible role
 home: https://github.com/kubereboot/charts
-version: 5.10.0
+version: 5.11.0
