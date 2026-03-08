@@ -44,11 +44,13 @@ victoriametrics_vars:
       chart:
         prometheus:
           name: prometheus-operator-crds
-          version: v23.0.0
+          version: v27.0.0
+        operator:
+          name: victoria-metrics-operator
         victoriametrics:
           alias: vmks
           name: victoria-metrics-k8s-stack
-          version: v0.60.1
+          version: v0.72.4
       repository:
         grafana:
           name: helm-charts

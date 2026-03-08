@@ -261,15 +261,15 @@ prometheus-node-exporter:
       cpu: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.cpu }}
       memory: {{ victoriametrics_vars.kubernetes.prometheus_node_exporter.resources.requests.memory }}
 victoria-metrics-operator:
+  admissionWebhooks:
+    certManager:
+      enabled: true
+      issuer:
+        group: cert-manager.io
+        kind: ClusterIssuer
+        name: {{ certmanager_map.ca.cluster.issuer.name }}
   logLevel: {{ victoriametrics_vars.kubernetes.victoria_metrics_operator.log_level }}
   operator:
-    admissionWebhooks:
-      certManager:
-        enabled: true
-        issuer:
-          group: cert-manager.io
-          kind: ClusterIssuer
-          name: {{ certmanager_map.ca.cluster.issuer.name }}
     enable_converter_ownership: true
   podDisruptionBudget:
     enabled: true
