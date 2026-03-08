@@ -1,8 +1,8 @@
 # victoria-metrics-k8s-stack
 
-![Version: 0.60.1](https://img.shields.io/badge/Version-0.60.1-informational?style=flat-square)
+![Version: 0.72.4](https://img.shields.io/badge/Version-0.72.4-informational?style=flat-square)
 
-The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.60.1/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
+The role performs various tasks related to `victoria-metrics-k8s-stack` [chart](https://github.com/VictoriaMetrics/helm-charts/tree/victoria-metrics-k8s-stack-0.72.4/charts/victoria-metrics-k8s-stack) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/victoriametrics), for additional details.
 
 ## Role Dependencies
 
