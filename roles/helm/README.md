@@ -26,11 +26,11 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | helm_vars.plugins[0].name | string | `"diff"` |  |
 | helm_vars.plugins[0].packages[0] | string | `"python3-jsonpatch"` |  |
 | helm_vars.plugins[0].repository.url | string | `"https://github.com/databus23/helm-diff"` |  |
-| helm_vars.plugins[0].version | string | `"v3.13.0"` |  |
+| helm_vars.plugins[0].version | string | `"v3.15.2"` |  |
 | helm_vars.release.helm.distro.channel | string | `"any"` |  |
 | helm_vars.release.helm.distro.name | string | `"debian"` |  |
 | helm_vars.release.helm.key | string | `"helm-archive-keyring.gpg"` |  |
 | helm_vars.release.helm.repository.channel | string | `"stable"` |  |
 | helm_vars.release.helm.repository.key | string | `"gpgkey"` |  |
 | helm_vars.release.helm.repository.url | string | `"https://packages.buildkite.com/helm-linux/helm-debian"` |  |
-| helm_vars.release.helm.version | string | `"v3.19.0-1"` |  |
+| helm_vars.release.helm.version | string | `"v3.20.0-1"` |  |

@@ -35,7 +35,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.bpf.monitor.aggregation | string | `"maximum"` | Available options are `none`, `low`, `medium` and `maximum` |
 | cilium_vars.kubernetes.bpf.monitor.interval | string | `"15s"` |  |
 | cilium_vars.kubernetes.bpf.preallocate_maps | bool | `true` | If `true`, memory usage is increased and latency reduced |
-| cilium_vars.kubernetes.bpf.tproxy | bool | `true` |  |
+| cilium_vars.kubernetes.bpf.tproxy | bool | `false` | Set to `false` when `datapath_mode` has `netkit` value |
 | cilium_vars.kubernetes.bpf.vlan_bypass_ids | list | `[1,4]` | `1` for Longhorn CIFS backup, `4` for Cilium IP pool |
 | cilium_vars.kubernetes.cgroup.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.cgroup.resources.limits.memory | string | `"128Mi"` |  |
@@ -53,7 +53,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.envoy.resources.requests.cpu | string | `"10m"` |  |
 | cilium_vars.kubernetes.envoy.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.helm.chart.name | string | `"cilium"` |  |
-| cilium_vars.kubernetes.helm.chart.version | string | `"v1.18.2"` |  |
+| cilium_vars.kubernetes.helm.chart.version | string | `"v1.19.1"` |  |
 | cilium_vars.kubernetes.helm.repository.name | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.org | string | `"cilium"` |  |
 | cilium_vars.kubernetes.helm.repository.url | string | `"https://helm.cilium.io"` |  |
@@ -107,12 +107,12 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.release.cli.file | string | `"cilium-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.cli.repository.name | string | `"cilium-cli"` |  |
 | cilium_vars.release.cli.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.cli.version | string | `"v0.18.6"` |  |
+| cilium_vars.release.cli.version | string | `"v0.19.2"` |  |
 | cilium_vars.release.gateway_api.file | string | `"experimental-install.yaml"` | See [documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/), for details |
 | cilium_vars.release.gateway_api.repository.name | string | `"gateway-api"` |  |
 | cilium_vars.release.gateway_api.repository.org | string | `"kubernetes-sigs"` |  |
-| cilium_vars.release.gateway_api.version | string | `"v1.4.0"` |  |
+| cilium_vars.release.gateway_api.version | string | `"v1.5.0"` |  |
 | cilium_vars.release.hubble.file | string | `"hubble-linux-arm64.tar.gz"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | cilium_vars.release.hubble.repository.name | string | `"hubble"` |  |
 | cilium_vars.release.hubble.repository.org | string | `"cilium"` |  |
-| cilium_vars.release.hubble.version | string | `"v1.18.0"` |  |
+| cilium_vars.release.hubble.version | string | `"v1.18.6"` |  |
