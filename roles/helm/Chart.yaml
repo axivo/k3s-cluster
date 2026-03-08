@@ -2,7 +2,7 @@ apiVersion: v2
 name: helm
 description: Documentation generator for helm Ansible role
 home: https://buildkite.com/organizations/helm-linux/packages/registries/helm-debian
-version: 3.19.0-1
+version: 3.20.0-1
 dependencies:
   - name: diff
     repository: https://github.com/databus23/helm-diff
