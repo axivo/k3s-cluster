@@ -51,8 +51,6 @@ envoy:
   rollOutPods: true
 envoyConfig:
   enabled: true
-externalIPs:
-  enabled: true
 gatewayAPI:
   enabled: true
   enableAlpn: true
@@ -238,7 +236,7 @@ l2announcements:
   leaseRetryPeriod: 2s
 l2podAnnouncements:
   enabled: true
-  interface: {{ k3s_vars.network.interface }}
+  interfacePattern: {{ k3s_vars.network.interface }}
 loadBalancer:
   l7:
     backend: envoy

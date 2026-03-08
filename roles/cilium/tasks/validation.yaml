@@ -203,7 +203,7 @@
               retries: 3
               until: cilium_result is not failed
               changed_when: false
-              failed_when: result.rc > 1
+              failed_when: cilium_result.rc > 1
 
             - name: Chart values comparison result
               ansible.builtin.debug:

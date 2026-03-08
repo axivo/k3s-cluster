@@ -58,5 +58,5 @@ route:
         - severity="critical"
       receiver: default
     - matchers:
-        - alertname="Watchdog"
+        - alertname=~"InfoInhibitor|Watchdog"
       receiver: watchdog
