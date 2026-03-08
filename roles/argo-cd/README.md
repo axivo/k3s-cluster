@@ -1,8 +1,8 @@
 # argo-cd
 
-![Version: 8.5.9](https://img.shields.io/badge/Version-8.5.9-informational?style=flat-square)
+![Version: 9.4.8](https://img.shields.io/badge/Version-9.4.8-informational?style=flat-square)
 
-The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-8.5.9/charts/argo-cd) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/argocd), for additional details.
+The role performs various tasks related to `argo-cd` [chart](https://github.com/argoproj/argo-helm/tree/argo-cd-9.4.8/charts/argo-cd) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/argocd), for additional details.
 
 ## Role Dependencies
 
