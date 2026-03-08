@@ -2,4 +2,4 @@ apiVersion: v2
 name: coredns
 description: Documentation generator for coredns Ansible role
 home: https://github.com/coredns/helm
-version: 1.44.3
+version: 1.45.2
