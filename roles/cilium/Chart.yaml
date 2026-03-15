@@ -9,7 +9,7 @@ dependencies:
     version: 0.19.2
   - name: gateway-api
     repository: https://github.com/kubernetes-sigs/gateway-api
-    version: 1.5.0
+    version: 1.5.1
   - name: hubble
     repository: https://github.com/cilium/hubble
     version: 1.18.6
