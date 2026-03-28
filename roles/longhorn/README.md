@@ -42,7 +42,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | longhorn_vars.kubernetes.helm.repository.org | string | `"longhorn"` |  |
 | longhorn_vars.kubernetes.helm.repository.url | string | `"https://charts.longhorn.io"` |  |
 | longhorn_vars.kubernetes.namespace | string | `"kube-system"` |  |
-| longhorn_vars.release.file | string | `"longhornctl-linux-arm64"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
+| longhorn_vars.release.file | string | `"longhornctl-linux-{{ global_map.cpu_architecture.short }}"` | See [documentation](https://axivo.com/k3s-cluster/tutorials/handbook/server/#hardware), for details |
 | longhorn_vars.release.repository.name | string | `"cli"` |  |
 | longhorn_vars.release.repository.org | string | `"longhorn"` |  |
 | longhorn_vars.release.version | string | `"v1.11.0"` |  |
