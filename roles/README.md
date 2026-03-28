@@ -100,7 +100,7 @@ The roles follow these common patterns:
   - Installing Helm plugins (helm-diff for comparing releases)
   - Creating a systemd timer service for Helm cache updates
   - Implementing automated Helm cache refresh
-  - Handling architecture-specific installations (aarch64/ARM64)
+  - Handling architecture-specific installations (aarch64/ARM64 or x86_64/amd64)
   - Validating Helm installation and configuration
 
 ## Networking Roles
