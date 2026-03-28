@@ -12,6 +12,10 @@ ansible_become_password: '{{ ansible_password }}'
 global_map:
   ansible:
     version: 2.19.0
+  cpu_architecture:
+    # making it easier to switch to amd64 for those who uses that
+    short: 'arm64'
+    long: 'aarch64'
   credentials:
     argocd:
       server:
