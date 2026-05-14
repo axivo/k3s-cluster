@@ -44,7 +44,7 @@ victoriametrics_vars:
       chart:
         prometheus:
           name: prometheus-operator-crds
-          version: v28.0.1
+          version: v29.0.0
         operator:
           name: victoria-metrics-operator
         victoriametrics:
