@@ -12,4 +12,4 @@ dependencies:
     version: 1.5.1
   - name: hubble
     repository: https://github.com/cilium/hubble
-    version: 1.18.6
+    version: 1.19.3
