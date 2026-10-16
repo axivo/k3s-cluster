@@ -72,6 +72,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | cilium_vars.kubernetes.hubble.relay.resources.requests.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.relay.retry_timeout | string | `"10s"` |  |
 | cilium_vars.kubernetes.hubble.tls.auto.method | string | `"certmanager"` | Available options are `certmanager` and `helm` |
+| cilium_vars.kubernetes.hubble.tls.ca.duration | string | `"26280h"` | Must be longer than the Hubble certificates validity |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.limits.cpu | string | `nil` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.limits.memory | string | `"128Mi"` |  |
 | cilium_vars.kubernetes.hubble.ui.backend.resources.requests.cpu | string | `"10m"` |  |
