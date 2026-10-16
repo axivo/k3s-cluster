@@ -114,6 +114,9 @@ cilium_vars:
         auto:
           # -- Available options are `certmanager` and `helm`
           method: certmanager
+        ca:
+          # -- Must be longer than the Hubble certificates validity
+          duration: 26280h
     ingress_controller:
       loadbalancer:
         # -- Available options are `dedicated` and `shared`

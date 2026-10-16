@@ -5,6 +5,7 @@ metadata:
   namespace: {{ certmanager_vars.kubernetes.namespace }}
 spec:
   commonName: {{ cilium_map.ca.hubble.certificate.common.name }}
+  duration: {{ cilium_vars.kubernetes.hubble.tls.ca.duration }}
   isCA: true
   issuerRef:
     group: cert-manager.io
