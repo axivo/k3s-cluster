@@ -1,8 +1,8 @@
 # kured
 
-![Version: 5.11.0](https://img.shields.io/badge/Version-5.11.0-informational?style=flat-square)
+![Version: 6.1.0](https://img.shields.io/badge/Version-6.1.0-informational?style=flat-square)
 
-The role performs various tasks related to `kured` [chart](https://github.com/kubereboot/charts/tree/kured-5.11.0/charts/kured) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/kured), for additional details.
+The role performs various tasks related to `kured` [chart](https://github.com/kubereboot/charts/tree/kured-6.1.0/charts/kured) deployment, reset and validation. Review the [documentation](https://axivo.com/k3s-cluster/wiki/guide/configuration/roles/kured), for additional details.
 
 ## Role Variables
 
@@ -27,7 +27,7 @@ See the related role variables listed below, defined into [main.yaml](./defaults
 | kured_vars.kubernetes.configuration.time.start | string | `"04:00"` |  |
 | kured_vars.kubernetes.configuration.time.zone | string | `"UTC"` |  |
 | kured_vars.kubernetes.helm.chart.name | string | `"kured"` |  |
-| kured_vars.kubernetes.helm.chart.version | string | `"v5.11.0"` |  |
+| kured_vars.kubernetes.helm.chart.version | string | `"v6.1.0"` |  |
 | kured_vars.kubernetes.helm.repository.name | string | `"charts"` |  |
 | kured_vars.kubernetes.helm.repository.org | string | `"kubereboot"` |  |
 | kured_vars.kubernetes.helm.repository.url | string | `"https://kubereboot.github.io"` |  |
